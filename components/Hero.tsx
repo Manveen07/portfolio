@@ -234,7 +234,7 @@ export default function Hero() {
           <div className="flex items-center gap-3">
             <div className="status-dot-live" />
             <span className="text-[11px] font-mono tracking-widest uppercase text-white/40">
-              {corpus.personal.role} — {corpus.personal.location}
+              {corpus.personal.role} | {corpus.personal.location}
             </span>
           </div>
           <div className="hidden sm:flex items-center gap-4">

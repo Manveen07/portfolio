@@ -25,7 +25,7 @@ export const corpus = {
         ]
     },
     about: {
-        pitch: "I’m an AI & automation engineer focused on building production-ready workflow systems that actually ship. I treat system architecture like a disciplined practice—automating repetitive workflows, building leverage, and focusing on scalable impact. Logs don't lie. People do.",
+        pitch: "I’m an AI & automation engineer focused on building production-ready workflow systems that actually ship. I treat system architecture like a disciplined practice - automating repetitive workflows, building leverage, and focusing on scalable impact. Logs don’t lie. People do.",
         flavor: "If I repeat it twice, I automate it.",
         specializations: [
             "Multi-Agent Stacks",

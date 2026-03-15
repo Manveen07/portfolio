@@ -8,7 +8,7 @@ export default function CommandPalette() {
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState('');
     const [output, setOutput] = useState<{ text: string, type: 'info' | 'success' | 'warning' | 'error' }[]>([
-        { text: 'ManveenOS v2.4.1 — Mission Control active.', type: 'info' },
+        { text: 'ManveenOS v2.4.1 - Mission Control active.', type: 'info' },
         { text: 'Type "help" for available commands.', type: 'info' }
     ]);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +47,7 @@ export default function CommandPalette() {
                 type = 'warning';
                 break;
             case 'fix mcp':
-                text = 'Reconnecting MCP... [FAILED] — Have you tried rewriting it in Python? That usually works.';
+                text = 'Reconnecting MCP... [FAILED] - Have you tried rewriting it in Python? That usually works.';
                 type = 'error';
                 break;
             case 'run prod':
@@ -61,7 +61,7 @@ export default function CommandPalette() {
                 setTimeout(() => document.body.style.filter = '', 1000);
                 break;
             case 'whoami':
-                text = 'Manveen Singh — AI/ML Engineer, Automation Architect, Professional Coffee Consumer.';
+                text = 'Manveen Singh - AI/ML Engineer, Automation Architect, Professional Coffee Consumer.';
                 type = 'info';
                 break;
             case 'clear':
