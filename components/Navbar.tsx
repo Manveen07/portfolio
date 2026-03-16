@@ -14,7 +14,7 @@ export default function Navbar() {
 
   // Scroll progress
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 25 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -107,7 +107,7 @@ export default function Navbar() {
                     layoutId="nav-active"
                     className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#00ff88]"
                     style={{ boxShadow: "0 0 6px #00ff88" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    transition={{ type: "spring", stiffness: 250, damping: 25 }}
                   />
                 )}
               </a>

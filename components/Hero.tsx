@@ -33,8 +33,8 @@ function MagneticButton({ children, className, ...props }: React.ButtonHTMLAttri
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 300, damping: 20 });
-  const springY = useSpring(y, { stiffness: 300, damping: 20 });
+  const springX = useSpring(x, { stiffness: 150, damping: 15 });
+  const springY = useSpring(y, { stiffness: 150, damping: 15 });
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     if (!ref.current) return;
@@ -69,8 +69,8 @@ function MagneticLink({ children, className, ...props }: React.AnchorHTMLAttribu
   const ref = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 300, damping: 20 });
-  const springY = useSpring(y, { stiffness: 300, damping: 20 });
+  const springX = useSpring(x, { stiffness: 150, damping: 15 });
+  const springY = useSpring(y, { stiffness: 150, damping: 15 });
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     if (!ref.current) return;
@@ -228,7 +228,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="flex items-center justify-between mb-11 module-card px-5 py-3 rounded-xl"
         >
           <div className="flex items-center gap-3">
@@ -252,7 +252,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
             className="mb-5"
           >
             <span className="text-sm font-mono text-[#00ff88]/45 tracking-widest uppercase glitch-text" data-text={`// ${corpus.personal.name}`}>
@@ -264,7 +264,7 @@ export default function Hero() {
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="text-5xl sm:text-6xl md:text-[5.2rem] font-black tracking-tight leading-[1.02] mb-7 max-w-4xl"
           >
             <span className="text-white" style={{ textShadow: "0 0 60px rgba(255,255,255,0.04)" }}>
@@ -280,7 +280,7 @@ export default function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
             className="text-base sm:text-lg text-white/32 max-w-xl font-light leading-relaxed mb-4"
           >
             {corpus.hero.subHeadline}
@@ -299,7 +299,7 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, y: -7 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.35 }}
                 className="text-[13px] font-mono text-[#00ff88]/55"
               >
                 <span className="text-[#00ff88]/25">$ </span>
@@ -313,7 +313,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
           >
             <MagneticButton
@@ -344,7 +344,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.0, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mt-16"
         >
           <div className="gradient-border-wrap">

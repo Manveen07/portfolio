@@ -20,8 +20,8 @@ export default function About() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
           className="mb-14"
         >
           <div className="section-tag mb-5 w-fit">
@@ -45,7 +45,7 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: "-50px" }}
             className="lg:col-span-5 space-y-6"
           >
@@ -99,7 +99,7 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: "-50px" }}
             className="lg:col-span-7 space-y-6"
           >

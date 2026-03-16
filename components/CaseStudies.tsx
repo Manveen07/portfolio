@@ -38,7 +38,7 @@ function TiltCard({ children, className, style }: {
     <div ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} style={{ perspective: "900px" }} className="h-full">
       <motion.div
         animate={{ rotateX: tilt.x, rotateY: tilt.y }}
-        transition={{ type: "spring", stiffness: 260, damping: 22 }}
+        transition={{ type: "spring", stiffness: 180, damping: 18 }}
         className={className}
         style={{ ...style, transformStyle: "preserve-3d", willChange: "transform" }}
       >
@@ -62,8 +62,8 @@ export default function CaseStudies() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
           className="mb-14"
         >
           <div className="section-tag mb-5 w-fit">
@@ -94,7 +94,7 @@ export default function CaseStudies() {
                 key={study.id}
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.75, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
                 viewport={{ once: true, margin: "-50px" }}
                 className="h-full"
               >

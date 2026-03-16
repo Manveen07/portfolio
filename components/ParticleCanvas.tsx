@@ -186,13 +186,13 @@ export default function ParticleCanvas() {
         const dy = mouse.y - node.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < mouseDist && dist > 0) {
-          const force = (mouseDist - dist) / mouseDist * 0.01;
+          const force = (mouseDist - dist) / mouseDist * 0.006;
           node.vx += (dx / dist) * force;
           node.vy += (dy / dist) * force;
         }
 
-        node.vx *= 0.995;
-        node.vy *= 0.995;
+        node.vx *= 0.992;
+        node.vy *= 0.992;
       }
 
       // ── Draw inter-layer connections (neural net style) ──

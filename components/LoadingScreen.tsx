@@ -37,7 +37,7 @@ export default function LoadingScreen() {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="fixed inset-0 z-[100] bg-[#040810] flex flex-col items-center justify-center"
         >
           {/* Circuit grid background */}
@@ -47,7 +47,7 @@ export default function LoadingScreen() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 flex flex-col items-center"
           >
             {/* Logo mark */}

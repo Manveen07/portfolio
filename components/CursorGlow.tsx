@@ -18,8 +18,8 @@ export default function CursorGlow() {
     };
 
     const tick = () => {
-      cx += (mx - cx) * 0.15;
-      cy += (my - cy) * 0.15;
+      cx += (mx - cx) * 0.12;
+      cy += (my - cy) * 0.12;
       if (glow.current) {
         glow.current.style.transform = `translate(${cx - 200}px, ${cy - 200}px)`;
       }

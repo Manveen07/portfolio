@@ -21,8 +21,8 @@ export default function Skills() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
           className="mb-14"
         >
           <div className="section-tag mb-5 w-fit">
@@ -50,8 +50,8 @@ export default function Skills() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.06 }}
-                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, margin: "-60px" }}
                 className="module-card rounded-2xl p-6 group flex flex-col relative overflow-hidden"
               >
                 {/* Top accent */}
@@ -74,7 +74,7 @@ export default function Skills() {
                       key={si}
                       initial={{ opacity: 0, scale: 0.95 }}
                       whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2, delay: index * 0.04 + si * 0.02 }}
+                      transition={{ duration: 0.35, delay: index * 0.04 + si * 0.03, ease: [0.16, 1, 0.3, 1] }}
                       viewport={{ once: true }}
                       className="tech-chip"
                       style={{
@@ -95,8 +95,8 @@ export default function Skills() {
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, margin: "-60px" }}
           className="mt-8"
         >
           <div className="module-card rounded-2xl p-8 md:p-10" style={{ borderColor: "rgba(167,139,250,0.12)" }}>

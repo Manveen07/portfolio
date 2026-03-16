@@ -78,7 +78,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradient-shift 4s linear infinite;
+    animation: gradient-shift 6s linear infinite;
   }
 
   /* ─── Mission Control Panels ─── */
@@ -229,7 +229,7 @@
       0 0 0 1px rgba(0, 229, 255, 0.04),
       0 12px 48px rgba(0, 0, 0, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* Connector pin — top-left */
@@ -299,7 +299,7 @@
 
   .glitch-text::before {
     color: #00e5ff;
-    animation: glitch-shift-1 4s ease-in-out infinite;
+    animation: glitch-shift-1 6s ease-in-out infinite;
     clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
     -webkit-text-fill-color: initial;
     background: none;
@@ -309,7 +309,7 @@
 
   .glitch-text::after {
     color: #00ff88;
-    animation: glitch-shift-2 4s ease-in-out infinite 0.15s;
+    animation: glitch-shift-2 6s ease-in-out infinite 0.15s;
     clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%);
     -webkit-text-fill-color: initial;
     background: none;
@@ -409,7 +409,7 @@
       0 0 0 1px rgba(0, 229, 255, 0.04),
       0 16px 60px rgba(0, 0, 0, 0.65),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: default;
   }
 
@@ -788,5 +788,5 @@ html {
 }
 
 main {
-  animation: page-enter 0.5s ease forwards;
+  animation: page-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

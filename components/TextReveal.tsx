@@ -24,15 +24,15 @@ export default function TextReveal({ children, className = "", delay = 0 }: Text
           key={i}
           className="inline-block"
           variants={{
-            hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+            hidden: { opacity: 0, y: 10, filter: "blur(4px)" },
             visible: {
               opacity: 1,
               y: 0,
               filter: "blur(0px)",
               transition: {
-                duration: 0.4,
-                delay: delay + i * 0.04,
-                ease: [0.22, 1, 0.36, 1],
+                duration: 0.6,
+                delay: delay + i * 0.05,
+                ease: [0.16, 1, 0.3, 1],
               },
             },
           }}
