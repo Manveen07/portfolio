@@ -6,6 +6,8 @@ export default function CursorGlow() {
   const glow = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let raf: number;
     let mx = -200;
     let my = -200;

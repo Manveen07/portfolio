@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Menu, X, Github, Linkedin, Mail } from "lucide-react";
+import { Menu, X, Github, Linkedin, Mail, FileDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { corpus } from "@/data/corpus";
 
@@ -48,7 +48,7 @@ export default function Navbar() {
 
   return (
     <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-out",
       isScrolled ? "py-3" : "py-4"
     )}>
       {/* Scroll progress bar */}
@@ -63,7 +63,7 @@ export default function Navbar() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={cn(
-          "flex items-center justify-between transition-all duration-500 px-5 py-2.5 rounded-2xl",
+          "flex items-center justify-between transition-all duration-700 ease-out px-5 py-2.5 rounded-2xl",
           isScrolled
             ? "module-card shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,229,255,0.07)]"
             : "bg-transparent"
@@ -124,6 +124,10 @@ export default function Navbar() {
               className="p-2 text-white/30 hover:text-[#00e5ff] hover:bg-[#00e5ff]/[0.04] rounded-lg transition-all" aria-label="LinkedIn" suppressHydrationWarning>
               <Linkedin className="w-4 h-4" />
             </a>
+            <a href="/resume.pdf" download
+              className="p-2 text-white/30 hover:text-[#00ff88] hover:bg-[#00ff88]/[0.04] rounded-lg transition-all" aria-label="Download Resume" suppressHydrationWarning>
+              <FileDown className="w-4 h-4" />
+            </a>
             <div className="w-px h-5 bg-white/[0.06] mx-1" />
             <a
               href={`mailto:${corpus.personal.email}`}
@@ -165,6 +169,7 @@ export default function Navbar() {
             <div className="flex items-center justify-center gap-6 pt-4 mt-3 border-t border-white/[0.04]">
               <a href={corpus.personal.github} target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white"><Github className="w-5 h-5" /></a>
               <a href={corpus.personal.linkedin} target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-[#00e5ff]"><Linkedin className="w-5 h-5" /></a>
+              <a href="/resume.pdf" download className="text-white/30 hover:text-[#00ff88]"><FileDown className="w-5 h-5" /></a>
               <a href={`mailto:${corpus.personal.email}`} className="text-[#00ff88]/60 hover:text-[#00ff88]"><Mail className="w-5 h-5" /></a>
             </div>
           </div>

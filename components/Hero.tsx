@@ -281,7 +281,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-white/32 max-w-xl font-light leading-relaxed mb-4"
+            className="text-base sm:text-lg text-white/38 max-w-xl font-light leading-relaxed mb-4"
           >
             {corpus.hero.subHeadline}
           </motion.p>
@@ -374,7 +374,7 @@ export default function Hero() {
                       {metric.value}
                       <span className="text-xs" style={{ color: c, textShadow: `0 0 8px ${c}` }}>↗</span>
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-white/22 font-mono tracking-wider leading-relaxed">
+                    <div className="text-[10px] sm:text-[11px] text-white/28 font-mono tracking-wider leading-relaxed">
                       {metric.label}
                     </div>
                   </div>

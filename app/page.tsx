@@ -4,6 +4,7 @@ import Experience from "@/components/Experience";
 import Skills from "@/components/Skills";
 import CaseStudies from "@/components/CaseStudies";
 import FutureVision from "@/components/FutureVision";
+import Contact from "@/components/Contact";
 import SectionConnector from "@/components/SectionConnector";
 
 export default function Home() {
@@ -20,6 +21,8 @@ export default function Home() {
       <CaseStudies />
       <SectionConnector />
       <FutureVision />
+      <SectionConnector variant="glow" />
+      <Contact />
     </>
   );
 }
