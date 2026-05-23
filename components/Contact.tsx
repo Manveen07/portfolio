@@ -1,93 +1,148 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Mail, Calendar, ArrowRight, Send } from "lucide-react";
-import { corpus } from "@/data/corpus";
+import { T } from "@/lib/tokens";
+import { useInView } from "@/lib/hooks";
+import { ME, SERVICES } from "@/data/portfolio";
+
+function Reveal({ i = 0, children }: { i?: number; children: React.ReactNode }) {
+  const [ref] = useInView<HTMLDivElement>();
+  return <div ref={ref} className="pf-rev" data-i={i}>{children}</div>;
+}
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-24 sm:py-32 relative overflow-hidden">
-      {/* Ambient orbs */}
-      <div className="absolute w-[500px] h-[500px] top-[10%] -left-[200px] rounded-full aurora-orb-2 pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%)", filter: "blur(100px)" }} />
-      <div className="absolute w-[400px] h-[400px] bottom-[10%] -right-[150px] rounded-full aurora-orb-1 pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%)", filter: "blur(100px)" }} />
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true, margin: "-80px" }}
-          className="text-center mb-14"
-        >
-          <div className="section-tag mb-5 w-fit mx-auto">
-            <Send className="w-3.5 h-3.5 text-[#00ff88]" />
-            <span>initiate.connection</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-4">
-            Let&apos;s Build <span className="text-gradient-cyan">Something</span>
-          </h2>
-          <p className="text-white/30 text-base sm:text-lg font-light max-w-lg mx-auto">
-            Got a workflow that needs automating or a system that needs building? Let&apos;s talk.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true, margin: "-60px" }}
-          className="grid sm:grid-cols-2 gap-6"
-        >
-          {/* Email card */}
-          <a
-            href={`mailto:${corpus.personal.email}?subject=${encodeURIComponent(corpus.contact.emailSubject)}`}
-            className="group module-card rounded-2xl p-8 flex flex-col items-center text-center hover:border-[#00e5ff]/25 transition-all duration-500"
-          >
-            <div className="p-4 rounded-2xl bg-[#00e5ff]/[0.06] border border-[#00e5ff]/[0.12] mb-6 group-hover:bg-[#00e5ff]/[0.1] group-hover:border-[#00e5ff]/[0.25] group-hover:shadow-[0_0_24px_rgba(0,229,255,0.12)] transition-all duration-500">
-              <Mail className="w-7 h-7 text-[#00e5ff]" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Send an Email</h3>
-            <p className="text-white/25 text-sm font-light mb-5">For projects, collaborations, or just to say hey.</p>
-            <span className="text-[12px] font-mono text-[#00e5ff]/50 tracking-wider group-hover:text-[#00e5ff] transition-colors flex items-center gap-2">
-              {corpus.personal.email}
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </a>
-
-          {/* Calendly card */}
-          <a
-            href={corpus.contact.calendlyLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group module-card rounded-2xl p-8 flex flex-col items-center text-center hover:border-[#00ff88]/25 transition-all duration-500"
-          >
-            <div className="p-4 rounded-2xl bg-[#00ff88]/[0.06] border border-[#00ff88]/[0.12] mb-6 group-hover:bg-[#00ff88]/[0.1] group-hover:border-[#00ff88]/[0.25] group-hover:shadow-[0_0_24px_rgba(0,255,136,0.12)] transition-all duration-500">
-              <Calendar className="w-7 h-7 text-[#00ff88]" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Schedule a Call</h3>
-            <p className="text-white/25 text-sm font-light mb-5">30-min pipeline audit. No fluff, just systems.</p>
-            <span className="text-[12px] font-mono text-[#00ff88]/50 tracking-wider group-hover:text-[#00ff88] transition-colors flex items-center gap-2">
-              Book on Calendly
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </a>
-        </motion.div>
-
-        {/* Availability badge */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-10"
-        >
-          <span className="inline-flex items-center gap-2 text-[11px] font-mono text-white/20 tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" style={{ boxShadow: "0 0 6px #00ff88" }} />
-            {corpus.contact.availability}
+    <section id="contact" style={{ position: "relative", padding: "140px 0 100px" }}>
+      <div className="pf-wrap">
+        <div className="pf-sec-head">
+          <span className="num">// 07</span>
+          <span>comms.open — start the engagement</span>
+          <span className="rule" />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: T.accent }}>
+            <span
+              className="pf-pulse"
+              style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent, display: "inline-block" }}
+            />
+            2 slots open
           </span>
-        </motion.div>
+        </div>
+
+        <Reveal>
+          <div className="pf-card" style={{ padding: "56px 56px 0", position: "relative", overflow: "hidden" }}>
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: 2,
+              background: `linear-gradient(90deg, transparent, ${T.accent}, transparent)`,
+            }} />
+
+            <div style={{
+              fontFamily: T.mono, fontSize: 11, color: T.accent2, letterSpacing: "0.08em",
+              marginBottom: 16,
+            }}>
+              <span style={{ color: T.dim }}>$</span> ./request_audit.sh --listen --no-fluff
+            </div>
+
+            <h2 className="pf-h2" style={{ maxWidth: 760 }}>
+              Workflow eating hours?
+              <br />
+              <span style={{ color: T.dim, fontStyle: "italic", fontWeight: 300 }}>
+                Let&rsquo;s kill it.
+              </span>
+            </h2>
+
+            <p style={{
+              marginTop: 24, fontFamily: T.sans, fontSize: 17, color: T.dim,
+              lineHeight: 1.6, maxWidth: 620,
+            }}>
+              30-min audit, no slides, no fluff. Bring the workflow your team
+              is sick of. I&rsquo;ll sketch the architecture, scope the build,
+              and quote the retainer to keep it running — in one call.
+            </p>
+
+            <div style={{ marginTop: 36, display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <a className="pf-btn pf-btn-primary" href={ME.calendly} target="_blank" rel="noopener">
+                book the 30-min audit <span>→</span>
+              </a>
+              <a className="pf-btn" href={`mailto:${ME.email}?subject=Automation%20engagement`}>
+                {ME.email} <span style={{ color: T.accent }}>↗</span>
+              </a>
+            </div>
+
+            <div className="svc-head" style={{
+              marginTop: 56, paddingTop: 24, borderTop: `1px solid ${T.line2}`,
+              fontFamily: T.mono, fontSize: 11, color: T.dim,
+              letterSpacing: "0.14em", textTransform: "uppercase",
+            }}>
+              what i build / things i ship
+            </div>
+
+            <div className="svc-grid" style={{
+              marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0,
+            }}>
+              {SERVICES.map((s, i) => (
+                <div
+                  key={s.code}
+                  style={{
+                    padding: "16px 18px 16px 0",
+                    borderTop: i > 1 ? `1px dashed ${T.line2}` : "none",
+                    paddingTop: i > 1 ? 18 : 16,
+                    paddingLeft: i % 2 === 1 ? 24 : 0,
+                    borderLeft: i % 2 === 1 ? `1px solid ${T.line}` : "none",
+                  }}
+                >
+                  <div style={{
+                    display: "flex", alignItems: "baseline", gap: 10, marginBottom: 6,
+                  }}>
+                    <span style={{
+                      fontFamily: T.mono, fontSize: 10, color: T.accent,
+                      letterSpacing: "0.1em",
+                    }}>
+                      {s.code}
+                    </span>
+                    <span style={{
+                      fontFamily: T.sans, fontSize: 15, color: T.text, fontWeight: 500,
+                    }}>
+                      {s.name}
+                    </span>
+                  </div>
+                  <div style={{
+                    fontFamily: T.mono, fontSize: 11, color: T.dim, paddingLeft: 38,
+                    lineHeight: 1.55,
+                  }}>
+                    {s.sub}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="ct-grid" style={{
+              marginTop: 36, padding: "26px 0 36px",
+              borderTop: `1px solid ${T.line2}`,
+              display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 28,
+            }}>
+              {[
+                ["engagement", "build + retainer", T.accent],
+                ["reply window", "< 24h", T.text],
+                ["timezone", "IST · works async", T.text],
+                ["next opening", "2 slots this quarter", T.warn],
+              ].map(([k, v, c]) => (
+                <div key={k}>
+                  <div style={{
+                    fontFamily: T.mono, fontSize: 10, color: T.dim2,
+                    letterSpacing: "0.12em", textTransform: "uppercase",
+                  }}>{k}</div>
+                  <div style={{ marginTop: 8, fontFamily: T.sans, fontSize: 15, color: c }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        <style>{`
+          @media (max-width: 720px) {
+            .ct-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .svc-grid { grid-template-columns: 1fr !important; }
+            .svc-grid > * { padding-left: 0 !important; border-left: none !important; }
+          }
+        `}</style>
       </div>
     </section>
   );

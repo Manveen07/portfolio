@@ -1,399 +1,358 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll } from "framer-motion";
-import { ArrowRight, Calendar, Play, Cpu, Zap } from "lucide-react";
-import { corpus } from "@/data/corpus";
+import { useEffect, useRef, useState } from "react";
+import { T } from "@/lib/tokens";
+import { ME } from "@/data/portfolio";
+import { useMouse, useReducedMotion } from "@/lib/effects";
 
-/** Typewriter hook — types out text character by character */
-function useTypewriter(text: string, speed = 35) {
-  const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
-
+/* Typing effect — types one character at a time after an initial delay. */
+function Typed({
+  text,
+  speed = 38,
+  startDelay = 600,
+}: {
+  text: string;
+  speed?: number;
+  startDelay?: number;
+}) {
+  const [i, setI] = useState(0);
   useEffect(() => {
-    setDisplayed("");
-    setDone(false);
-    let i = 0;
-    const timer = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(timer);
-        setDone(true);
-      }
-    }, speed);
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
-  return { displayed, done };
+    let id: ReturnType<typeof setInterval>;
+    const t = setTimeout(() => {
+      id = setInterval(() => {
+        setI((x) => {
+          if (x >= text.length) {
+            clearInterval(id);
+            return x;
+          }
+          return x + 1;
+        });
+      }, speed);
+    }, startDelay);
+    return () => {
+      clearTimeout(t);
+      if (id) clearInterval(id);
+    };
+  }, [text, speed, startDelay]);
+  return <>{text.slice(0, i)}</>;
 }
 
-/** Magnetic button — pulls toward cursor on hover */
-function MagneticButton({ children, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 150, damping: 15 });
-  const springY = useSpring(y, { stiffness: 150, damping: 15 });
-
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const dx = e.clientX - (rect.left + rect.width / 2);
-    const dy = e.clientY - (rect.top + rect.height / 2);
-    x.set(dx * 0.25);
-    y.set(dy * 0.25);
-  }, [x, y]);
-
-  const onMouseLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
-
+/* Word-by-word headline reveal. */
+function HeadlineWords({
+  text,
+  color = T.text,
+  accent,
+}: {
+  text: string;
+  color?: string;
+  accent?: number;
+}) {
+  const words = String(text).split(" ");
   return (
-    <motion.button
-      ref={ref}
-      style={{ x: springX, y: springY }}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className={className}
-      {...(props as any)}
-    >
-      {children}
-    </motion.button>
+    <>
+      {words.map((w, i) => (
+        <span key={i} style={{ display: "inline-block", marginRight: "0.28em", overflow: "hidden" }}>
+          <span
+            className="pf-word-rise"
+            style={{
+              display: "inline-block",
+              color: accent !== undefined && i === accent ? T.accent : color,
+              fontStyle: accent !== undefined && i === accent ? "italic" : "normal",
+              fontWeight: accent !== undefined && i === accent ? 300 : "inherit",
+              animationDelay: `${0.15 + i * 0.07}s`,
+            }}
+          >
+            {w}
+          </span>
+        </span>
+      ))}
+    </>
   );
 }
 
-/** Magnetic link — same effect for anchor tags */
-function MagneticLink({ children, className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 150, damping: 15 });
-  const springY = useSpring(y, { stiffness: 150, damping: 15 });
-
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const dx = e.clientX - (rect.left + rect.width / 2);
-    const dy = e.clientY - (rect.top + rect.height / 2);
-    x.set(dx * 0.2);
-    y.set(dy * 0.2);
-  }, [x, y]);
-
-  const onMouseLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
-
-  return (
-    <motion.a
-      ref={ref}
-      style={{ x: springX, y: springY }}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className={className}
-      {...(props as any)}
-    >
-      {children}
-    </motion.a>
-  );
-}
-
-/** Mini neural-net SVG behind the headline — looks like data flowing through layers */
-function NeuralNetBg() {
-  const layers = [
-    { x: 80, nodes: [90, 200, 310, 420] },
-    { x: 240, nodes: [140, 260, 370] },
-    { x: 400, nodes: [100, 220, 340, 440] },
-    { x: 560, nodes: [170, 300, 410] },
-    { x: 720, nodes: [130, 250, 380] },
+/* Ambient drifting constellation behind the hero. */
+function HeroAmbient() {
+  const dots: [number, number][] = [
+    [120, 200], [240, 90], [380, 160], [500, 240],
+    [430, 380], [310, 460], [180, 410], [80, 320],
+    [260, 280], [400, 290],
   ];
+  const links: [number, number, number, number][] = [
+    [120, 200, 240, 90], [240, 90, 380, 160], [380, 160, 500, 240],
+    [500, 240, 430, 380], [430, 380, 310, 460], [310, 460, 180, 410],
+    [180, 410, 80, 320], [80, 320, 120, 200],
+    [260, 280, 400, 290], [400, 290, 380, 160],
+  ];
+
+  const mouse = useMouse();
+  const reduced = useReducedMotion();
+  const [vw, setVw] = useState(1280);
+  useEffect(() => {
+    setVw(window.innerWidth);
+    const onR = () => setVw(window.innerWidth);
+    window.addEventListener("resize", onR);
+    return () => window.removeEventListener("resize", onR);
+  }, []);
+  const nx = reduced || mouse.x < 0 ? 0 : (mouse.x / vw - 0.5);
+  const ny = reduced || mouse.y < 0 ? 0 : (mouse.y / Math.max(600, window.innerHeight) - 0.5);
+  const px = nx * 28;
+  const py = ny * 22;
 
   return (
     <svg
-      className="absolute inset-0 w-full h-full"
-      viewBox="0 0 800 500"
-      preserveAspectRatio="xMidYMid slice"
-      fill="none"
+      viewBox="0 0 600 600"
+      style={{
+        position: "absolute", top: "-40px", right: "-80px",
+        width: 720, height: 720, pointerEvents: "none", opacity: 0.55,
+        filter: "blur(.4px)", zIndex: 0,
+        transform: `translate3d(${-px}px, ${-py}px, 0)`,
+        transition: reduced ? "none" : "transform .35s cubic-bezier(.22,1,.36,1)",
+        willChange: "transform",
+      }}
     >
-      {/* Inter-layer connections */}
-      {layers.map((layer, li) => {
-        if (li >= layers.length - 1) return null;
-        const next = layers[li + 1];
-        return layer.nodes.map((y1, ni) =>
-          next.nodes.map((y2, nj) => (
-            <line
-              key={`${li}-${ni}-${nj}`}
-              x1={layer.x} y1={y1}
-              x2={next.x} y2={y2}
-              stroke="rgba(0,229,255,0.04)"
-              strokeWidth="0.8"
-            />
-          ))
-        );
-      })}
-
-      {/* Nodes */}
-      {layers.map((layer, li) =>
-        layer.nodes.map((y, ni) => (
-          <g key={`n-${li}-${ni}`}>
-            <circle cx={layer.x} cy={y} r="3"
-              fill={li % 2 === 0 ? "rgba(0,229,255,0.15)" : "rgba(0,255,136,0.12)"}>
-              <animate attributeName="opacity" values="0.12;0.3;0.12" dur={`${2.5 + ni * 0.3}s`} repeatCount="indefinite" />
-            </circle>
-            <circle cx={layer.x} cy={y} r="8"
-              stroke={li % 2 === 0 ? "rgba(0,229,255,0.06)" : "rgba(0,255,136,0.04)"}
-              strokeWidth="0.5" fill="none">
-              <animate attributeName="r" values="6;12;6" dur={`${3 + li * 0.5}s`} repeatCount="indefinite" begin={`${ni * 0.2}s`} />
-              <animate attributeName="opacity" values="0.08;0;0.08" dur={`${3 + li * 0.5}s`} repeatCount="indefinite" begin={`${ni * 0.2}s`} />
-            </circle>
-          </g>
-        ))
-      )}
-
-      {/* Data packets flowing through the network */}
-      {[0, 1, 2].map((idx) => {
-        const srcLayer = idx % 4;
-        const src = layers[srcLayer];
-        const dst = layers[srcLayer + 1];
-        const srcY = src.nodes[idx % src.nodes.length];
-        const dstY = dst.nodes[idx % dst.nodes.length];
-        return (
-          <circle key={`pkt-${idx}`} r="2.5"
-            fill={idx === 1 ? "#00ff88" : "#00e5ff"}>
-            <animateMotion
-              dur={`${2 + idx * 0.8}s`}
-              repeatCount="indefinite"
-              begin={`${idx * 1.2}s`}
-              path={`M${src.x},${srcY} L${dst.x},${dstY}`}
-            />
-            <animate attributeName="opacity" values="0;1;1;0" dur={`${2 + idx * 0.8}s`} repeatCount="indefinite" begin={`${idx * 1.2}s`} />
-          </circle>
-        );
-      })}
+      <defs>
+        <radialGradient id="pf-amb">
+          <stop offset="0%"   stopColor={T.accent} stopOpacity="0.18" />
+          <stop offset="60%"  stopColor={T.accent} stopOpacity="0.03" />
+          <stop offset="100%" stopColor={T.accent} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="300" cy="300" r="280" fill="url(#pf-amb)" />
+      {dots.map(([x, y], i) => (
+        <g key={i}>
+          <circle cx={x} cy={y} r="3" fill={T.accent} opacity="0.7" />
+          <circle
+            cx={x}
+            cy={y}
+            r="3"
+            fill={T.accent}
+            className="pf-blink-soft"
+            style={{ animationDelay: `${i * 0.27}s` }}
+          />
+        </g>
+      ))}
+      {links.map(([x1, y1, x2, y2], i) => (
+        <line
+          key={i}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={T.accent}
+          strokeWidth="0.6"
+          opacity="0.18"
+        />
+      ))}
     </svg>
   );
 }
 
 export default function Hero() {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Parallax — orbs move at different speeds as user scrolls
-  const { scrollY } = useScroll();
-  const orbY1 = useTransform(scrollY, [0, 800], [0, -120]);
-  const orbY2 = useTransform(scrollY, [0, 800], [0, -80]);
-  const orbY3 = useTransform(scrollY, [0, 800], [0, -50]);
-  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0.3]);
-
-  const [statusIndex, setStatusIndex] = useState(0);
-  const currentStatus = corpus.hero.terminalStatuses[statusIndex];
-  const { displayed, done } = useTypewriter(currentStatus, 30);
-
-  useEffect(() => {
-    if (!done) return;
-    const timeout = setTimeout(() => {
-      setStatusIndex((prev) => (prev + 1) % corpus.hero.terminalStatuses.length);
-    }, 2200);
-    return () => clearTimeout(timeout);
-  }, [done]);
+  const cmd = "schedule --call 30min --no-fluff";
 
   return (
-    <section id="hero" className="relative min-h-[100svh] flex items-center justify-center pt-16 overflow-hidden">
+    <section id="top" style={{ position: "relative", padding: "160px 0 120px", overflow: "hidden" }}>
+      <div className="pf-wrap" style={{ position: "relative", zIndex: 1 }}>
+        <HeroAmbient />
 
-      {/* ── Background layers ── */}
-      <div className="absolute inset-0 z-0" aria-hidden="true">
-        {/* Neural network visualization */}
-        <NeuralNetBg />
+        <div className="hero-grid" style={{
+          display: "grid", gridTemplateColumns: "minmax(0, 1.45fr) minmax(0, 1fr)",
+          gap: 56, alignItems: "start",
+        }}>
+          <div>
+            <div className="pf-word-rise" style={{
+              display: "inline-flex", alignItems: "center", gap: 12, padding: "6px 12px",
+              border: `1px solid ${T.line2}`, fontFamily: T.mono, fontSize: 11,
+              color: T.dim, letterSpacing: "0.06em",
+            }}>
+              <span
+                className="pf-pulse"
+                style={{ width: 6, height: 6, borderRadius: 9999, background: T.accent, boxShadow: `0 0 8px ${T.accent}` }}
+              />
+              <span style={{ color: T.text }}>{ME.role}</span>
+              <span style={{ color: T.dim2 }}>·</span>
+              <span>{ME.location}</span>
+              <span style={{ color: T.dim2 }}>·</span>
+              <span style={{ color: T.accent }}>{ME.version}</span>
+            </div>
 
-        {/* Ambient aurora orbs — parallax depth */}
-        <motion.div className="absolute -top-[200px] -left-[100px] w-[600px] h-[600px] rounded-full aurora-orb-1"
-          style={{ y: orbY1, background: "radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 65%)", filter: "blur(100px)" }} />
-        <motion.div className="absolute top-[20%] right-[-5%] w-[500px] h-[500px] rounded-full aurora-orb-2"
-          style={{ y: orbY2, background: "radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 65%)", filter: "blur(100px)" }} />
-        <motion.div className="absolute bottom-[10%] left-[15%] w-[350px] h-[350px] rounded-full aurora-orb-3"
-          style={{ y: orbY3, background: "radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 65%)", filter: "blur(90px)" }} />
+            <div className="pf-word-rise" style={{
+              marginTop: 28, fontFamily: T.mono, fontSize: 12,
+              color: T.accent2, letterSpacing: "0.06em",
+              animationDelay: "0.15s",
+            }}>
+              <span style={{ color: T.dim }}>$</span> cat&nbsp;./manifesto.txt
+            </div>
 
-        {/* Radial vignette */}
-        <div className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(4,8,16,0.75) 100%)" }} />
+            <h1 className="pf-h1" style={{ marginTop: 16, maxWidth: 760 }}>
+              <HeadlineWords text="Automating the boring." />
+              <br />
+              <HeadlineWords text="Scaling the interesting." color={T.dim} accent={2} />
+            </h1>
+
+            <div className="pf-word-rise" style={{
+              marginTop: 22, fontFamily: T.mono, fontSize: 14,
+              letterSpacing: "0.04em",
+              animationDelay: "0.45s",
+              display: "inline-flex", alignItems: "center", gap: 10,
+            }}>
+              <span style={{ color: T.accent }}>→</span>
+              <span
+                className="pf-pulse"
+                style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent2, display: "inline-block" }}
+              />
+              <span style={{ color: T.text, fontStyle: "italic" }}>Agentic Workflows.</span>
+              <span style={{ color: T.dim2 }}>—</span>
+              <span style={{ color: T.dim }}>built for your team.</span>
+            </div>
+
+            <p className="pf-word-rise" style={{
+              fontFamily: T.sans, fontSize: 20, lineHeight: 1.55, color: T.dim,
+              maxWidth: 580, marginTop: 24, marginBottom: 0,
+              animationDelay: "0.6s",
+            }}>
+              AI/ML engineer building multi-agent stacks and clever automation.
+              <br />
+              <span style={{ color: T.text }}>Writes code that nags less than humans.</span>
+            </p>
+
+            <div className="pf-word-rise" style={{
+              marginTop: 18, fontFamily: T.mono, fontSize: 11,
+              color: T.dim2, letterSpacing: "0.06em",
+              animationDelay: "0.7s",
+            }}>
+              // python · llms · n8n · postgres · production-grade · under maintenance
+            </div>
+
+            {/* Command bar */}
+            <div className="pf-word-rise" style={{
+              marginTop: 44, fontFamily: T.mono, fontSize: 14,
+              border: `1px solid ${T.line2}`, background: T.ink2,
+              padding: "16px 20px", display: "flex", alignItems: "center", gap: 14,
+              maxWidth: 600, animationDelay: "0.75s",
+            }}>
+              <span style={{ color: T.accent }}>manveen@prod</span>
+              <span style={{ color: T.dim }}>:</span>
+              <span style={{ color: T.warn }}>~/portfolio</span>
+              <span style={{ color: T.dim }}>$</span>
+              <span style={{ color: T.text }}>
+                <Typed text={cmd} />
+                <span
+                  className="pf-blink"
+                  style={{
+                    display: "inline-block",
+                    width: 9,
+                    height: 16,
+                    background: T.accent,
+                    marginLeft: 4,
+                    verticalAlign: "text-bottom",
+                  }}
+                />
+              </span>
+            </div>
+
+            <div className="pf-word-rise" style={{
+              marginTop: 28, display: "flex", gap: 14, flexWrap: "wrap",
+              animationDelay: "0.85s",
+            }}>
+              <a className="pf-btn pf-btn-primary" href={ME.calendly} target="_blank" rel="noopener">
+                <span>book a 30-min audit</span><span>→</span>
+              </a>
+              <a className="pf-btn" href="#ops">see the work ↓</a>
+              <a className="pf-btn" href={`mailto:${ME.email}`}>email →</a>
+            </div>
+
+            <div className="pf-word-rise" style={{
+              display: "flex", gap: 18, marginTop: 22,
+              fontFamily: T.mono, fontSize: 11, color: T.dim2,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              animationDelay: "1s",
+            }}>
+              <span style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+                <span
+                  className="pf-pulse"
+                  style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent, display: "inline-block" }}
+                />
+                taking 2 projects this quarter
+              </span>
+              <span>·</span>
+              <span>build &amp; retainer</span>
+              <span>·</span>
+              <span>replies within 24h</span>
+            </div>
+          </div>
+
+          {/* Identity card */}
+          <div className="pf-word-rise" style={{
+            position: "relative", alignSelf: "start", animationDelay: "0.35s",
+          }}>
+            <div className="pf-card" style={{ fontFamily: T.mono, fontSize: 13 }}>
+              <div style={{
+                padding: "12px 16px", borderBottom: `1px solid ${T.line}`,
+                display: "flex", alignItems: "center", gap: 10,
+                fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+              }}>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <span style={{ width: 9, height: 9, borderRadius: 9999, background: T.danger }} />
+                  <span style={{ width: 9, height: 9, borderRadius: 9999, background: T.warn }} />
+                  <span style={{ width: 9, height: 9, borderRadius: 9999, background: T.accent }} />
+                </div>
+                <span style={{ marginLeft: 6, color: T.dim }}>~/engineer.py</span>
+                <span style={{
+                  marginLeft: "auto", color: T.accent,
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                }}>
+                  <span
+                    className="pf-pulse"
+                    style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent, display: "inline-block" }}
+                  />
+                  live
+                </span>
+              </div>
+              <pre style={{ margin: 0, padding: "22px 24px", color: T.text, lineHeight: 1.75, fontSize: 13, overflow: "auto" }}>
+<span style={{ color: T.dim }}># manveen.singh — sys.engineer</span>{`\n`}
+<span style={{ color: T.accent2 }}>class</span> <span style={{ color: T.warn }}>Manveen</span>:{`\n`}
+{`    `}role     = <span style={{ color: T.accent }}>&quot;AI/ML Engineer&quot;</span>{`\n`}
+{`    `}location = <span style={{ color: T.accent }}>&quot;Delhi · Remote&quot;</span>{`\n`}
+{`    `}status   = <span style={{ color: T.accent }}>&quot;shipping&quot;</span>{`\n`}
+{`    `}focus    = [{`\n`}
+{`        `}<span style={{ color: T.accent }}>&quot;multi-agent systems&quot;</span>,{`\n`}
+{`        `}<span style={{ color: T.accent }}>&quot;workflow automation&quot;</span>,{`\n`}
+{`        `}<span style={{ color: T.accent }}>&quot;production tooling&quot;</span>,{`\n`}
+{`    `}]{`\n`}
+{`    `}hates    = [<span style={{ color: T.accent }}>&quot;manual workflows&quot;</span>, <span style={{ color: T.accent }}>&quot;unclear logs&quot;</span>]{`\n\n`}
+{`    `}<span style={{ color: T.accent2 }}>def</span> <span style={{ color: T.text }}>philosophy</span>(self):{`\n`}
+{`        `}<span style={{ color: T.accent2 }}>return</span> <span style={{ color: T.accent }}>&quot;If I repeat it twice, I automate it.&quot;</span>
+              </pre>
+              <div style={{
+                padding: "12px 16px", borderTop: `1px solid ${T.line}`,
+                display: "flex", justifyContent: "space-between", color: T.dim, fontSize: 11,
+              }}>
+                <span>python 3.12 · 23 lines</span>
+                <span style={{ color: T.accent }}>✓ no warnings</span>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14 }}>
+              {["multi-agent", "workflow", "GTM", "LLM", "vector search", "embeddings", "CV", "python", "next.js"].map((t, i) => (
+                <span
+                  key={t}
+                  className="pf-chip pf-word-rise"
+                  style={{ animationDelay: `${0.7 + i * 0.05}s` }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <motion.div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ opacity: heroOpacity }}>
-
-        {/* ── Status bar ── */}
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center justify-between mb-11 module-card px-5 py-3 rounded-xl"
-        >
-          <div className="flex items-center gap-3">
-            <div className="status-dot-live" />
-            <span className="text-[11px] font-mono tracking-widest uppercase text-white/40">
-              {corpus.personal.role} | {corpus.personal.location}
-            </span>
-          </div>
-          <div className="hidden sm:flex items-center gap-4">
-            <span className="flex items-center gap-1.5 text-[10px] font-mono text-electric tracking-wider" style={{ textShadow: "0 0 8px rgba(0,255,136,0.4)" }}>
-              <Zap className="w-2.5 h-2.5" />
-              ONLINE
-            </span>
-            <span className="text-[10px] font-mono text-white/15 tracking-wider">v2.4.1</span>
-          </div>
-        </motion.div>
-
-        <div className="flex flex-col items-start text-left">
-
-          {/* ── Name ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-5"
-          >
-            <span className="text-sm font-mono text-[#00ff88]/45 tracking-widest uppercase glitch-text" data-text={`// ${corpus.personal.name}`}>
-              // {corpus.personal.name}
-            </span>
-          </motion.div>
-
-          {/* ── Headline ── */}
-          <motion.h1
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl sm:text-6xl md:text-[5.2rem] font-black tracking-tight leading-[1.02] mb-7 max-w-4xl"
-          >
-            <span className="text-white" style={{ textShadow: "0 0 60px rgba(255,255,255,0.04)" }}>
-              {corpus.hero.headline}
-            </span>
-            <br />
-            <span className="text-gradient-flow text-glow-cyan-pulse inline-block">
-              Agentic Workflows.
-            </span>
-          </motion.h1>
-
-          {/* ── Subtitle ── */}
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-white/38 max-w-xl font-light leading-relaxed mb-4"
-          >
-            {corpus.hero.subHeadline}
-          </motion.p>
-
-          {/* ── Terminal status — typewriter ── */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.58 }}
-            className="h-8 flex items-center mb-11"
-          >
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={statusIndex}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -7 }}
-                transition={{ duration: 0.35 }}
-                className="text-[13px] font-mono text-[#00ff88]/55"
-              >
-                <span className="text-[#00ff88]/25">$ </span>
-                {displayed}
-                <span className={`ml-0.5 text-[#00ff88]/35 ${done ? 'animate-pulse' : ''}`}>▌</span>
-              </motion.p>
-            </AnimatePresence>
-          </motion.div>
-
-          {/* ── CTA Buttons ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
-          >
-            <MagneticButton
-              onClick={() => scrollToSection("case-studies")}
-              className="btn-glow group flex items-center justify-center gap-2.5 px-8 py-3.5 text-[12px] font-mono tracking-widest uppercase font-bold text-[#040810] bg-[#00ff88] rounded-xl cursor-pointer"
-              style={{
-                boxShadow: "0 0 28px rgba(0,255,136,0.35), 0 0 60px rgba(0,255,136,0.12), inset 0 1px 0 rgba(255,255,255,0.35)",
-              }}
-            >
-              <Play className="w-3.5 h-3.5" />
-              Execute Pipeline
-              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </MagneticButton>
-
-            <MagneticLink
-              href={corpus.contact.calendlyLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-center gap-2.5 px-8 py-3.5 text-[12px] font-mono tracking-widest uppercase text-white/40 border border-white/[0.07] rounded-xl hover:text-[#00ff88] hover:border-[#00ff88]/22 hover:bg-[#00ff88]/[0.035] hover:shadow-[0_0_24px_rgba(0,255,136,0.1)] transition-all duration-300"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              Schedule Call
-            </MagneticLink>
-          </motion.div>
-        </div>
-
-        {/* ── Metrics dashboard ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.0, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16"
-        >
-          <div className="gradient-border-wrap">
-          <div className="module-card rounded-2xl p-6 sm:p-8"
-            style={{
-              borderColor: "transparent",
-            }}
-          >
-            <div className="flex items-center justify-between mb-5 relative z-10">
-              <div className="flex items-center gap-2.5 text-[11px] font-mono text-white/25 tracking-widest uppercase">
-                <Cpu className="w-3.5 h-3.5 text-[#00ff88]/40" />
-                <span>pipeline.metrics</span>
-              </div>
-              <div className="status-live" style={{ borderColor: "rgba(0,255,136,0.2)", background: "rgba(0,255,136,0.06)", color: "#00ff88" }}>
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" style={{ boxShadow: "0 0 6px #00ff88" }} />
-                <span>LIVE</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 relative z-10">
-              {corpus.metrics.map((metric, index) => {
-                const colors = ["#00e5ff", "#00ff88", "#a78bfa", "#ffb800"];
-                const c = colors[index];
-                return (
-                  <div key={index} className="group">
-                    <div className="text-2xl sm:text-3xl font-black text-white mb-1 tracking-tight flex items-baseline gap-1 font-mono">
-                      {metric.value}
-                      <span className="text-xs" style={{ color: c, textShadow: `0 0 8px ${c}` }}>↗</span>
-                    </div>
-                    <div className="text-[10px] sm:text-[11px] text-white/28 font-mono tracking-wider leading-relaxed">
-                      {metric.label}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Bottom trace accent */}
-            <div className="relative z-10 mt-6 pt-5 border-t border-white/[0.03] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" style={{ boxShadow: "0 0 4px #00ff88" }} />
-                <span className="text-[10px] font-mono text-white/15 tracking-widest">PRODUCTION SYSTEMS</span>
-              </div>
-              <span className="text-[10px] font-mono text-[#00ff88]/20 tracking-wider">ALL PIPELINES NOMINAL</span>
-            </div>
-          </div>
-          </div>
-        </motion.div>
-      </motion.div>
+      <style>{`
+        @media (max-width: 980px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }

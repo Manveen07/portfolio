@@ -2,43 +2,54 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 relative">
-      {/* Ambient glow */}
-      <div className="absolute w-[400px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%)", filter: "blur(100px)" }} />
-
-      <div className="relative z-10 text-center">
-        {/* Error code */}
-        <div className="text-[120px] sm:text-[160px] font-black text-white/[0.03] leading-none select-none">
+    <div style={{
+      minHeight: "80vh", display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center", padding: "0 16px", position: "relative",
+    }}>
+      <div style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: 520 }}>
+        <div style={{
+          fontFamily: "var(--font-sans), system-ui, sans-serif",
+          fontSize: "clamp(96px, 18vw, 160px)", fontWeight: 700,
+          color: "rgba(255,255,255,0.04)", lineHeight: 1, userSelect: "none",
+          letterSpacing: "-0.04em",
+        }}>
           404
         </div>
 
-        {/* Terminal message */}
-        <div className="code-surface rounded-xl p-6 max-w-md mx-auto -mt-10 mb-8">
-          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/[0.04]">
-            <div className="w-2 h-2 rounded-full bg-[#ff5f56]/60" />
-            <div className="w-2 h-2 rounded-full bg-[#ffbd2e]/60" />
-            <div className="w-2 h-2 rounded-full bg-[#27c93f]/60" />
-            <span className="ml-2 text-[10px] text-white/20 font-mono tracking-wider">error.log</span>
+        <div className="pf-card" style={{ marginTop: -40, padding: "20px 22px", textAlign: "left" }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 8,
+            paddingBottom: 10, marginBottom: 10,
+            borderBottom: "1px solid rgba(155,220,170,0.10)",
+          }}>
+            <span style={{ width: 8, height: 8, borderRadius: 9999, background: "#e07a6a" }} />
+            <span style={{ width: 8, height: 8, borderRadius: 9999, background: "#e3c178" }} />
+            <span style={{ width: 8, height: 8, borderRadius: 9999, background: "#7dd99a" }} />
+            <span style={{
+              marginLeft: 6, fontFamily: "var(--font-mono), monospace", fontSize: 10,
+              color: "#7d877a", letterSpacing: "0.08em", textTransform: "uppercase",
+            }}>error.log</span>
           </div>
-          <pre className="text-sm font-mono text-left">
-            <span className="text-[#00ff88]/50">$</span> <span className="text-white/40">locate page</span>{"\n"}
-            <span className="text-[#ff5f56]/70">ERROR</span> <span className="text-white/30">Route not found in pipeline.</span>{"\n"}
-            <span className="text-white/20">The requested resource has been</span>{"\n"}
-            <span className="text-white/20">decommissioned or never existed.</span>{"\n\n"}
-            <span className="text-[#ffb800]/50">hint:</span> <span className="text-white/25">try navigating back to /</span>
+          <pre style={{
+            margin: 0, fontFamily: "var(--font-mono), monospace", fontSize: 13,
+            lineHeight: 1.7, color: "#dfe4dc",
+          }}>
+<span style={{ color: "#7dd99a" }}>$</span> <span style={{ color: "#7d877a" }}>locate page</span>{"\n"}
+<span style={{ color: "#e07a6a" }}>ERROR</span> <span style={{ color: "#dfe4dc" }}>route not found in pipeline.</span>{"\n"}
+<span style={{ color: "#7d877a" }}>the requested resource has been</span>{"\n"}
+<span style={{ color: "#7d877a" }}>decommissioned or never existed.</span>{"\n\n"}
+<span style={{ color: "#e3c178" }}>hint:</span> <span style={{ color: "#7d877a" }}>try navigating back to /</span>
           </pre>
         </div>
 
-        {/* CTA */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2.5 px-6 py-3 text-[12px] font-mono tracking-widest uppercase font-bold text-[#040810] bg-[#00ff88] rounded-xl hover:shadow-[0_0_28px_rgba(0,255,136,0.35)] transition-all duration-300"
-        >
-          Return to Base
+        <Link href="/" className="pf-btn pf-btn-primary" style={{ marginTop: 28, display: "inline-flex" }}>
+          return to base <span>→</span>
         </Link>
 
-        <p className="text-[11px] font-mono text-white/15 mt-6 tracking-wider">
+        <p style={{
+          fontFamily: "var(--font-mono), monospace", fontSize: 11,
+          color: "#525a4e", marginTop: 24, letterSpacing: "0.08em",
+        }}>
           sys.status: pipeline rerouted
         </p>
       </div>

@@ -1,156 +1,170 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Briefcase, Target, Rocket, Trophy, MapPin, Calendar, GraduationCap } from "lucide-react";
-import { corpus } from "@/data/corpus";
-import TextReveal from "@/components/TextReveal";
+import { T } from "@/lib/tokens";
+import { useInView } from "@/lib/hooks";
+import { ROLES, EDUCATION } from "@/data/portfolio";
+
+function Reveal({ i = 0, children }: { i?: number; children: React.ReactNode }) {
+  const [ref] = useInView<HTMLDivElement>();
+  return <div ref={ref} className="pf-rev" data-i={i}>{children}</div>;
+}
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-24 sm:py-32 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true, margin: "-80px" }}
-          className="mb-14"
-        >
-          <div className="section-tag mb-5 w-fit">
-            <Briefcase className="w-3.5 h-3.5 text-[#00e5ff]" />
-            <span>execution.log</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-3">
-            Deployment <span className="text-gradient-cyan">History</span>
-          </h2>
-          <p className="text-white/35 font-light text-base sm:text-lg">
-            <TextReveal>Where I've shipped systems and left things better than I found them.</TextReveal>
-          </p>
-          <div className="flex items-center gap-2 mt-4">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" style={{ boxShadow: "0 0 6px #00ff88" }} />
-            <span className="text-[10px] font-mono text-[#00ff88]/40 tracking-widest uppercase">pipeline active · {corpus.experience.length} deployments logged</span>
-          </div>
-        </motion.div>
+    <section id="experience" style={{ position: "relative", padding: "120px 0" }}>
+      <div className="pf-wrap">
+        <div className="pf-sec-head">
+          <span className="num">// 06</span>
+          <span>execution.log — where this came from</span>
+          <span className="rule" />
+        </div>
 
-        {/* Timeline */}
-        <div className="relative max-w-4xl mx-auto">
-          {/* Pipeline line */}
-          <div className="absolute left-5 top-0 bottom-0 w-px hidden lg:block"
-            style={{ background: "linear-gradient(to bottom, #00e5ff30, #00e5ff10, transparent)" }} />
+        <div className="exp-grid" style={{
+          display: "grid", gridTemplateColumns: "minmax(0, 0.85fr) minmax(0, 2fr)", gap: 64, alignItems: "start",
+        }}>
+          <Reveal>
+            <h2 className="pf-h2">
+              Where this<br />
+              <span style={{ color: T.dim, fontStyle: "italic", fontWeight: 300 }}>came from.</span>
+            </h2>
+            <p style={{
+              marginTop: 24, fontFamily: T.sans, fontSize: 15, color: T.dim,
+              lineHeight: 1.7, maxWidth: 360,
+            }}>
+              Two recent engagements where I built and shipped the kind of
+              system I&rsquo;d build for you. Short timeline, real production code,
+              real ops on the other side.
+            </p>
+          </Reveal>
 
-          <div className="space-y-8">
-            {corpus.experience.map((exp, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                viewport={{ once: true, margin: "-60px" }}
-                className="relative"
-              >
-                {/* Pipeline node */}
-                <div className="absolute left-[14px] hidden lg:flex items-center justify-center" style={{ top: 28 }}>
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#00e5ff] relative" style={{ boxShadow: "0 0 8px #00e5ff40" }}>
-                    {index === 0 && (
-                      <div className="absolute inset-0 rounded-full bg-[#00e5ff] animate-ping opacity-20" />
+          <div style={{ position: "relative" }}>
+            <div style={{
+              position: "absolute", left: 11, top: 8, bottom: 8,
+              width: 1, background: T.line2,
+            }} />
+            {ROLES.map((r, i) => (
+              <Reveal key={r.co} i={i}>
+                <div style={{ position: "relative", paddingLeft: 44, marginBottom: i === ROLES.length - 1 ? 0 : 48 }}>
+                  <span style={{
+                    position: "absolute", left: 4, top: 6, width: 16, height: 16,
+                    borderRadius: 9999, background: T.ink,
+                    border: `1.5px solid ${i === 0 ? T.accent : T.line2}`,
+                    boxShadow: i === 0 ? `0 0 12px ${T.accent}` : "none",
+                  }}>
+                    {i === 0 && (
+                      <span
+                        className="pf-pulse"
+                        style={{
+                          position: "absolute", inset: 3, borderRadius: 9999,
+                          background: T.accent,
+                        }}
+                      />
                     )}
-                  </div>
-                </div>
+                  </span>
 
-                <div className="lg:ml-14">
-                  <div className="module-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-                    {/* Left accent */}
-                    <div className="absolute top-0 left-0 w-[2px] h-full rounded-l-2xl"
-                      style={{ background: "linear-gradient(to bottom, #00e5ff, #00e5ff40, transparent)" }} />
-
-                    <div className="pl-4">
-                      {/* Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-5">
-                        <div>
-                          <h3 className="text-xl font-bold text-white mb-0.5">{exp.role}</h3>
-                          <p className="text-[#00e5ff]/70 font-medium">{exp.company}</p>
-                          <div className="flex flex-wrap items-center gap-3 mt-2">
-                            <span className="flex items-center text-[11px] font-mono text-white/25 tracking-wider">
-                              <MapPin className="w-3 h-3 mr-1.5" />{exp.location}
-                            </span>
-                            <span className="flex items-center text-[11px] font-mono text-white/25 tracking-wider">
-                              <Calendar className="w-3 h-3 mr-1.5" />{exp.date}
-                            </span>
-                          </div>
+                  <div className="pf-card" style={{ padding: "24px 26px" }}>
+                    <div style={{
+                      display: "flex", alignItems: "baseline", justifyContent: "space-between",
+                      gap: 16, flexWrap: "wrap",
+                    }}>
+                      <div>
+                        <div style={{
+                          fontFamily: T.mono, fontSize: 10, color: T.accent,
+                          letterSpacing: "0.12em", textTransform: "uppercase",
+                        }}>
+                          {r.co}
                         </div>
+                        <div className="pf-h3" style={{ marginTop: 6 }}>{r.role}</div>
                       </div>
+                      <div style={{ textAlign: "right", fontFamily: T.mono, fontSize: 11, color: T.dim }}>
+                        <div>{r.span}</div>
+                        <div style={{ color: T.dim2, marginTop: 2 }}>{r.loc}</div>
+                      </div>
+                    </div>
 
-                      {/* Mission / Execution / Impact */}
-                      <div className="space-y-5">
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Target className="w-3.5 h-3.5 text-[#00e5ff]" />
-                            <h4 className="text-[11px] font-mono text-[#00e5ff] uppercase tracking-[0.15em] font-semibold">Mission</h4>
-                          </div>
-                          <p className="text-white/40 text-sm ml-6 leading-relaxed font-light">{exp.mission}</p>
-                        </div>
+                    <div style={{
+                      marginTop: 18, padding: "12px 14px",
+                      borderLeft: `2px solid ${T.accent}`, background: "rgba(125,217,154,0.03)",
+                      fontFamily: T.sans, fontSize: 14, color: T.text, lineHeight: 1.55,
+                    }}>
+                      <span style={{
+                        fontFamily: T.mono, fontSize: 10, color: T.accent,
+                        letterSpacing: "0.1em", textTransform: "uppercase", marginRight: 8,
+                      }}>mission</span>
+                      {r.mission}
+                    </div>
 
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Rocket className="w-3.5 h-3.5 text-[#a78bfa]" />
-                            <h4 className="text-[11px] font-mono text-[#a78bfa] uppercase tracking-[0.15em] font-semibold">Execution</h4>
-                          </div>
-                          <ul className="space-y-1.5 ml-6">
-                            {exp.execution.map((item, i) => (
-                              <li key={i} className="text-sm text-white/40 flex items-start leading-relaxed font-light">
-                                <span className="text-[#a78bfa]/50 mr-2.5 mt-0.5 text-xs">▸</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Trophy className="w-3.5 h-3.5 text-[#ffb800]" />
-                            <h4 className="text-[11px] font-mono text-[#ffb800] uppercase tracking-[0.15em] font-semibold">Impact</h4>
-                          </div>
-                          <ul className="space-y-1.5 ml-6">
-                            {exp.impact.map((item, i) => (
-                              <li key={i} className="text-sm text-white/50 flex items-start leading-relaxed">
-                                <span className="text-[#ffb800]/50 mr-2.5 mt-0.5 text-xs">✓</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                    <div className="exp-blocks" style={{
+                      display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, marginTop: 22,
+                    }}>
+                      <div>
+                        <div style={{
+                          fontFamily: T.mono, fontSize: 10, color: T.dim,
+                          letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 10,
+                        }}>execution</div>
+                        <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                          {r.execution.map((x, j) => (
+                            <li key={j} style={{
+                              fontFamily: T.sans, fontSize: 13, color: T.text,
+                              lineHeight: 1.6, marginBottom: 8, position: "relative", paddingLeft: 16,
+                            }}>
+                              <span style={{
+                                position: "absolute", left: 0, top: 8, width: 8, height: 1,
+                                background: T.accent2,
+                              }} />
+                              {x}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <div style={{
+                          fontFamily: T.mono, fontSize: 10, color: T.dim,
+                          letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 10,
+                        }}>impact</div>
+                        <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                          {r.impact.map((x, j) => (
+                            <li key={j} style={{
+                              fontFamily: T.sans, fontSize: 13, color: T.text,
+                              lineHeight: 1.6, marginBottom: 8, position: "relative", paddingLeft: 16,
+                            }}>
+                              <span style={{
+                                position: "absolute", left: 0, top: 7, width: 4, height: 4,
+                                borderRadius: 9999, background: T.accent,
+                              }} />
+                              {x}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
+
+            <div style={{
+              marginLeft: 44, marginTop: 28, padding: "14px 18px",
+              borderTop: `1px dashed ${T.line2}`, display: "flex",
+              alignItems: "baseline", justifyContent: "space-between", gap: 16,
+              fontFamily: T.mono, fontSize: 11, color: T.dim2,
+              letterSpacing: "0.06em", flexWrap: "wrap",
+            }}>
+              <span>
+                <span style={{ color: T.dim }}>edu:</span>{" "}
+                <span style={{ color: T.dim }}>{EDUCATION.degree} · {EDUCATION.school}</span>
+              </span>
+              <span>{EDUCATION.span}</span>
+            </div>
           </div>
         </div>
 
-        {/* Education */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true, margin: "-60px" }}
-          className="mt-14 max-w-4xl mx-auto"
-        >
-          <div className="section-tag mb-5 w-fit">
-            <GraduationCap className="w-3.5 h-3.5 text-[#00e5ff]" />
-            <span>credentials</span>
-          </div>
-          <div className="module-card rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h4 className="text-lg font-semibold text-white">{corpus.education.degree}</h4>
-              <p className="text-white/40">{corpus.education.institution}</p>
-              <p className="text-[11px] text-white/20 font-mono mt-1 tracking-wider">{corpus.education.duration}</p>
-            </div>
-            <div className="text-right">
-              <span className="text-2xl font-black text-gradient-cyan">GPA {corpus.education.gpa}</span>
-            </div>
-          </div>
-        </motion.div>
+        <style>{`
+          @media (max-width: 980px) {
+            .exp-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+            .exp-blocks { grid-template-columns: 1fr !important; gap: 18px !important; }
+          }
+        `}</style>
       </div>
     </section>
   );
