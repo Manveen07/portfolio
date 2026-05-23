@@ -98,21 +98,57 @@ function OpCard({ op }: { op: Op }) {
         ))}
       </div>
 
-      {op.link && (
-        <a
-          href={op.link}
-          target="_blank"
-          rel="noopener"
-          style={{
-            padding: "12px 22px", borderTop: `1px solid ${T.line}`,
-            fontFamily: T.mono, fontSize: 11, color: T.accent,
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            letterSpacing: "0.04em",
-          }}
-        >
-          <span>open source ↗</span>
-          <span style={{ color: T.dim }}>github.com</span>
-        </a>
+      {(op.link || op.demo) && (
+        <div style={{
+          borderTop: `1px solid ${T.line}`,
+          display: "grid",
+          gridTemplateColumns: op.link && op.demo ? "1fr 1px 1fr" : "1fr",
+          fontFamily: T.mono, fontSize: 11, letterSpacing: "0.04em",
+        }}>
+          {op.demo && (
+            <a
+              href={op.demo}
+              target="_blank"
+              rel="noopener"
+              style={{
+                padding: "12px 22px", color: T.accent,
+                display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10,
+                transition: "background .15s ease",
+              }}
+              onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(125,217,154,0.05)"; }}
+              onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <span
+                  className="pf-pulse"
+                  style={{ width: 6, height: 6, borderRadius: 9999, background: T.accent, boxShadow: `0 0 6px ${T.accent}` }}
+                />
+                live demo ↗
+              </span>
+              <span style={{ color: T.dim, fontSize: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {op.demo.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+              </span>
+            </a>
+          )}
+          {op.link && op.demo && <span style={{ background: T.line }} />}
+          {op.link && (
+            <a
+              href={op.link}
+              target="_blank"
+              rel="noopener"
+              style={{
+                padding: "12px 22px", color: T.accent2,
+                display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10,
+                transition: "background .15s ease",
+              }}
+              onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(63,176,112,0.05)"; }}
+              onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              <span>{"</> source"} ↗</span>
+              <span style={{ color: T.dim, fontSize: 10 }}>github.com</span>
+            </a>
+          )}
+        </div>
       )}
     </div>
   );

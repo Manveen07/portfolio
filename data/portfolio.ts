@@ -192,7 +192,8 @@ export type Op = {
   solution: string;
   stack: string[];
   impact: [string, string][];
-  link: string | null;
+  link: string | null;          // source / repo
+  demo?: string | null;         // live deployment, if public
 };
 
 export const OPS: Op[] = [
@@ -226,6 +227,7 @@ export const OPS: Op[] = [
       ["↑",        "pitch iteration"],
     ],
     link: "https://github.com/Manveen07/PresentAI",
+    demo: "https://present-ai-007.vercel.app/",
   },
   {
     tag: "OPS-003",
