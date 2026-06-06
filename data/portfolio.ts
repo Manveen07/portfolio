@@ -266,20 +266,20 @@ export const OPS: Op[] = [
   {
     tag: "OPS-005",
     role: "Builder — automation · multi-agent · LLM",
-    title: "AI Cold-Outbound Engine",
-    blurb: "Research-grounded cold email drafting. Parallel Claude Opus sub-agents research each lead across the open web, then draft a personalized email tied to what they actually found — not invented.",
-    challenge: "Personalized outbound is a quality-vs-volume trap. Hand-researched emails get replies but take 10–20 min/lead; templates scale but get ignored; a naive 'write me a cold email' LLM hallucinates the personalization — fake hooks worse than generic.",
-    solution: "Built a retrieve-then-generate engine. Claude Code dispatches parallel Opus sub-agents over TypeScript tool scripts (Serper, LinkedIn/profile data, site scraping, LeadMagic, Prospeo, SEC/public DBs), consolidates only verified facts, and drafts an email where every hook traces to a source. Addresses verified with MillionVerifier before anything is queued.",
+    title: "Cold Outbound, Grounded in Research",
+    blurb: "For each lead, parallel Opus sub-agents pull what they can find on the person and company across the open web. A drafter writes an email that only uses hooks the agents actually cited — anything outside the evidence gets cut. Internal: drafts go to a review queue, not the SMTP.",
+    challenge: "Cold email is a tradeoff. Hand-researched emails take 10–20 minutes per lead. Templates scale but get ignored. And an LLM handed a name and a LinkedIn URL invents details — fake hooks that read worse than generic. I wanted the volume of templates without the made-up parts.",
+    solution: "Claude Code orchestrates the run. Each sub-agent has TypeScript tool scripts — Serper, LinkedIn / profile data, site scraping, LeadMagic, Prospeo, and a few public-record sources. Findings get consolidated into a research bundle per lead, then the drafter writes off that bundle only — no recalling from the model's own knowledge. Addresses are verified with MillionVerifier before anything is queued.",
     stack: ["Claude Code", "Claude Opus", "TypeScript", "Serper", "LeadMagic", "Prospeo", "MillionVerifier", "Web Scraping"],
     impact: [
-      ["95.5%",          "faithfulness · 300-email eval"],
-      ["0",              "contradictions found"],
-      ["100%",           "judge ↔ human label agreement"],
+      ["95.5%",          "faithful claims · 300-email sample"],
+      ["0",              "contradictions in sample"],
+      ["100%",           "agreement on 20-email calibration"],
       ["evidence-bound", "no hook without a cited fact"],
     ],
     link: null,
     flag: "internal",
-    note: "Grounding measured by a read-only eval that scores every claim against its research evidence. The harness caught a real bug class (counting/naming beyond evidence) — now an explicit writing rule.",
+    note: "Faithfulness is scored by a separate read-only eval that checks every claim in the draft against the research bundle. The harness caught a failure mode I'd missed — counting and naming things the evidence didn't actually support — which is now an explicit writing rule.",
   },
 ];
 
