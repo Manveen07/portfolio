@@ -272,14 +272,14 @@ export const OPS: Op[] = [
     solution: "Built a retrieve-then-generate engine. Claude Code dispatches parallel Opus sub-agents over TypeScript tool scripts (Serper, LinkedIn/profile data, site scraping, LeadMagic, Prospeo, SEC/public DBs), consolidates only verified facts, and drafts an email where every hook traces to a source. Addresses verified with MillionVerifier before anything is queued.",
     stack: ["Claude Code", "Claude Opus", "TypeScript", "Serper", "LeadMagic", "Prospeo", "MillionVerifier", "Web Scraping"],
     impact: [
-      ["evidence-bound",     "no hook without a cited fact"],
-      ["retrieve → generate","facts handed, not recalled"],
-      ["parallel sub-agents","deep research per lead, cheap"],
-      ["human-in-the-loop",  "drafts to review queue, sender-gated"],
+      ["95.5%",          "faithfulness · 300-email eval"],
+      ["0",              "contradictions found"],
+      ["100%",           "judge ↔ human label agreement"],
+      ["evidence-bound", "no hook without a cited fact"],
     ],
     link: null,
     flag: "internal",
-    note: "Internal system — drafts for human review. No performance claims until measured under production sending.",
+    note: "Grounding measured by a read-only eval that scores every claim against its research evidence. The harness caught a real bug class (counting/naming beyond evidence) — now an explicit writing rule.",
   },
 ];
 
