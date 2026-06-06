@@ -12,12 +12,18 @@ function Reveal({ i = 0, children }: { i?: number; children: React.ReactNode }) 
 
 function ImpactValue({ text, delay = 0 }: { text: string; delay?: number }) {
   const { ref, value } = useScramble<HTMLDivElement>(text, 600 + delay);
+  // Long descriptive values (e.g. "evidence-bound") shrink to fit; short numeric
+  // values (e.g. "10h → 3h") stay punchy.
+  const long = text.length > 10;
   return (
     <div
       ref={ref}
       style={{
-        fontFamily: T.sans, fontSize: 18, color: T.accent, fontWeight: 500,
-        letterSpacing: "-0.01em", fontVariantNumeric: "tabular-nums",
+        fontFamily: T.sans, fontSize: long ? 14 : 18, color: T.accent,
+        fontWeight: long ? 500 : 500,
+        letterSpacing: long ? "0" : "-0.01em",
+        fontVariantNumeric: "tabular-nums",
+        lineHeight: 1.2,
       }}
     >
       {value}
@@ -45,10 +51,21 @@ function OpCard({ op }: { op: Op }) {
         <span style={{ color: T.accent, letterSpacing: "0.1em" }}>{op.tag}</span>
         <span style={{ width: 1, height: 12, background: T.line2 }} />
         <span style={{ color: T.dim, letterSpacing: "0.04em" }}>{op.role}</span>
-        <span style={{ marginLeft: "auto", color: T.accent2, display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span className="pf-pulse" style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent }} />
-          shipped
-        </span>
+        {op.flag ? (
+          <span style={{
+            marginLeft: "auto", color: T.warn, display: "inline-flex", alignItems: "center", gap: 6,
+            padding: "3px 8px", border: `1px solid ${T.warn}`, borderRadius: 2,
+            fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase",
+          }}>
+            <span className="pf-pulse" style={{ width: 5, height: 5, borderRadius: 9999, background: T.warn }} />
+            {op.flag}
+          </span>
+        ) : (
+          <span style={{ marginLeft: "auto", color: T.accent2, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <span className="pf-pulse" style={{ width: 5, height: 5, borderRadius: 9999, background: T.accent }} />
+            shipped
+          </span>
+        )}
       </div>
 
       <div style={{ padding: "26px 26px 0", flex: 1, display: "flex", flexDirection: "column" }}>
@@ -97,6 +114,18 @@ function OpCard({ op }: { op: Op }) {
           </div>
         ))}
       </div>
+
+      {op.note && (
+        <div style={{
+          padding: "12px 22px", borderTop: `1px dashed ${T.line2}`,
+          fontFamily: T.mono, fontSize: 11, color: T.dim,
+          lineHeight: 1.6, fontStyle: "italic",
+          display: "flex", gap: 10, alignItems: "flex-start",
+        }}>
+          <span style={{ color: T.warn, fontStyle: "normal", flex: "0 0 auto" }}>※</span>
+          <span>{op.note}</span>
+        </div>
+      )}
 
       {(op.link || op.demo) && (
         <div style={{

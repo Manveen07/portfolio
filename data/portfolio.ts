@@ -194,6 +194,8 @@ export type Op = {
   impact: [string, string][];
   link: string | null;          // source / repo
   demo?: string | null;         // live deployment, if public
+  flag?: string;                // optional status pill ("internal", "wip", etc)
+  note?: string;                // honesty footnote rendered below impact
 };
 
 export const OPS: Op[] = [
@@ -260,6 +262,24 @@ export const OPS: Op[] = [
       ["efficient", "video processing"],
     ],
     link: "https://github.com/Manveen07/AsanaBot",
+  },
+  {
+    tag: "OPS-005",
+    role: "Builder — automation · multi-agent · LLM",
+    title: "AI Cold-Outbound Engine",
+    blurb: "Research-grounded cold email drafting. Parallel Claude Opus sub-agents research each lead across the open web, then draft a personalized email tied to what they actually found — not invented.",
+    challenge: "Personalized outbound is a quality-vs-volume trap. Hand-researched emails get replies but take 10–20 min/lead; templates scale but get ignored; a naive 'write me a cold email' LLM hallucinates the personalization — fake hooks worse than generic.",
+    solution: "Built a retrieve-then-generate engine. Claude Code dispatches parallel Opus sub-agents over TypeScript tool scripts (Serper, LinkedIn/profile data, site scraping, LeadMagic, Prospeo, SEC/public DBs), consolidates only verified facts, and drafts an email where every hook traces to a source. Addresses verified with MillionVerifier before anything is queued.",
+    stack: ["Claude Code", "Claude Opus", "TypeScript", "Serper", "LeadMagic", "Prospeo", "MillionVerifier", "Web Scraping"],
+    impact: [
+      ["evidence-bound",     "no hook without a cited fact"],
+      ["retrieve → generate","facts handed, not recalled"],
+      ["parallel sub-agents","deep research per lead, cheap"],
+      ["human-in-the-loop",  "drafts to review queue, sender-gated"],
+    ],
+    link: null,
+    flag: "internal",
+    note: "Internal system — drafts for human review. No performance claims until measured under production sending.",
   },
 ];
 
