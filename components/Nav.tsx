@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useScrolled, useScrollSpy, useClock } from "@/lib/hooks";
 import { NAV_IDS, NAV_LABELS, NAV_VISIBLE, ME } from "@/data/portfolio";
 import { T } from "@/lib/tokens";
@@ -66,12 +67,17 @@ export default function Nav() {
   const clock = useClock();
   const hh = String(clock.getHours()).padStart(2, "0");
   const mn = String(clock.getMinutes()).padStart(2, "0");
+  const pathname = usePathname();
+  // On sub-routes (e.g. /writing/[slug]) the homepage anchors don't exist, so
+  // point them back to the homepage with the hash.
+  const onHome = pathname === "/";
+  const href = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 
   return (
     <nav className={`pf-nav ${scrolled ? "scrolled" : ""}`}>
       <div className="pf-nav-inner">
         <a
-          href="#top"
+          href={href("top")}
           onClick={() => window.dispatchEvent(new Event("pf-logo-click"))}
           style={{ display: "flex", alignItems: "center", gap: 12, padding: 0, cursor: "pointer" }}
         >
@@ -93,8 +99,8 @@ export default function Nav() {
           {NAV_VISIBLE.map((id, i) => (
             <a
               key={id}
-              href={`#${id}`}
-              className={`pf-nav-link ${active === id ? "active" : ""}`}
+              href={href(id)}
+              className={`pf-nav-link ${onHome && active === id ? "active" : ""}`}
             >
               <span className="pf-nav-bracket">[{String(i).padStart(2, "0")}]</span>
               {NAV_LABELS[id]}

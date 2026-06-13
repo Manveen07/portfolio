@@ -168,7 +168,7 @@ export const EDUCATION = {
   degree: "B.Tech, Computer Science",
   school: "Maharaja Surajmal Institute of Technology",
   span: "Nov 2022 – Aug 2026",
-  gpa: "8.7",
+  gpa: "8.6",
 };
 
 // ── Stack ───────────────────────────────────────────────────────────
