@@ -238,6 +238,7 @@ function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     ["g x", "go to agents"],
     ["g s", "go to stack"],
     ["g e", "go to logs (experience)"],
+    ["g b", "go to writing"],
     ["g c", "go to contact"],
     ["?", "this help"],
     ["↑↑↓↓←→←→ba", "god mode"],
@@ -435,6 +436,7 @@ export default function Easter() {
           x: "agents",
           s: "stack",
           e: "experience",
+          b: "writing",
           c: "contact",
         };
         const id = map[e.key.toLowerCase()];
@@ -452,7 +454,7 @@ export default function Easter() {
 
   const commands: Cmd[] = useMemo(() => {
     const chordOf = (id: (typeof NAV_IDS)[number]) =>
-      id === "top" ? "h" : id === "agents" ? "x" : id === "ops" ? "w" : id[0];
+      id === "top" ? "h" : id === "agents" ? "x" : id === "ops" ? "w" : id === "writing" ? "b" : id[0];
     const navCmds: Cmd[] = NAV_IDS.map((id) => ({
       id: `nav-${id}`,
       label: `goto.${NAV_LABELS[id]}`,

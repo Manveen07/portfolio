@@ -21,7 +21,7 @@ export const ME = {
 // ── Nav ──────────────────────────────────────────────────────────────
 export const NAV_IDS = [
   "top", "about", "pipeline", "ops", "agents",
-  "stack", "experience", "contact",
+  "stack", "experience", "writing", "contact",
 ] as const;
 
 export const NAV_LABELS: Record<(typeof NAV_IDS)[number], string> = {
@@ -32,11 +32,12 @@ export const NAV_LABELS: Record<(typeof NAV_IDS)[number], string> = {
   agents: "agents",
   stack: "stack",
   experience: "logs",
+  writing: "writing",
   contact: "contact",
 };
 
 export const NAV_VISIBLE: (typeof NAV_IDS)[number][] = [
-  "top", "about", "pipeline", "ops", "stack", "contact",
+  "top", "about", "pipeline", "ops", "writing", "contact",
 ];
 
 // ── Services (what I sell) ──────────────────────────────────────────

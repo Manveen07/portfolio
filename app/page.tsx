@@ -5,6 +5,7 @@ import Ops from "@/components/Ops";
 import Agents from "@/components/Agents";
 import Stack from "@/components/Stack";
 import Experience from "@/components/Experience";
+import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
       <Agents />
       <Stack />
       <Experience />
+      <Writing />
       <Contact />
     </>
   );

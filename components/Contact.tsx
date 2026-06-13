@@ -14,7 +14,7 @@ export default function Contact() {
     <section id="contact" style={{ position: "relative", padding: "140px 0 100px" }}>
       <div className="pf-wrap">
         <div className="pf-sec-head">
-          <span className="num">// 07</span>
+          <span className="num">// 08</span>
           <span>comms.open — start the engagement</span>
           <span className="rule" />
           <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: T.accent }}>
