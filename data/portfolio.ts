@@ -282,5 +282,23 @@ export const OPS: Op[] = [
     flag: "internal",
     note: "Faithfulness is scored by a separate read-only eval that checks every claim in the draft against the research bundle. The harness caught a failure mode I'd missed — counting and naming things the evidence didn't actually support — which is now an explicit writing rule.",
   },
+  {
+    tag: "OPS-006",
+    role: "Builder — scrapers · LLM classification · CI ops",
+    title: "Tender Radar — UK Public-Sector Tender Pipeline",
+    blurb: "Autonomous pipeline that finds UK public-sector tenders competitors never see — and turned them into a paying-client funnel. Two OCDS API clients plus a Playwright scraper for portal-only notices, LLM sector classification behind a golden-set eval, and per-client morning digests.",
+    challenge: "UK facilities firms (cleaning, security, HVAC, grounds) miss winnable public contracts because school, council and NHS tenders are scattered across central government feeds AND regional eSourcing portals (ProContract and similar) that standard alert tools never read. A missed notice is a missed £100k–£7m contract.",
+    solution: "Built a fully unattended daily pipeline: OCDS fetchers for Find a Tender and Contracts Finder plus a Playwright scraper for portal-side tenders the APIs don't carry; LLM classification of every notice into client sectors behind a golden-set eval suite; a leads database with cross-source dedupe, word-boundary sector rules and deadline verification; per-client YAML profiles rendering a morning digest with deadline countdowns and portal-exclusive flags; GitHub Actions daily run plus a weekly 60-day national sweep, an award-notice tracker for contract-expiry intelligence, push-race guards and 12 pytest tests.",
+    stack: ["Python 3.11", "Pydantic v2", "Playwright", "Gemini", "OCDS APIs", "pytest", "GitHub Actions", "uv / ruff"],
+    impact: [
+      ["7",     "sector verticals · all UK regions"],
+      ["78+",   "live verified tenders"],
+      ["100%",  "golden-set binary accuracy"],
+      ["0",     "manual steps · fetch → digest"],
+    ],
+    link: "https://github.com/Manveen07/tender-radar-showcase",
+    demo: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
+    note: "Production lessons: word-boundary sector matching, because \"guard\" inside \"safeguarding\" mistagged notices; an award-notice filter nearly killed a live £600k tender until the estimated-date case was fixed; keyword search endpoints silently ignore parameters for automated clients — only the OCDS bulk stream is trustworthy; CI push-races between the daily and weekly jobs lose data without rebase-retry guards.",
+  },
 ];
 
