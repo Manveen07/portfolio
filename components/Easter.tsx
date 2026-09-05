@@ -78,8 +78,8 @@ function Signal() {
           </linearGradient>
           <mask id="sig-cut">
             <rect width="900" height="500" fill="white" />
-            <g transform="translate(560,60) scale(1.15)">
-              <path fill="black" d="M 12 118 C 44 108, 68 112, 86 122 C 88 108, 92 100, 98 96 L 100 62 L 110 92 C 114 88, 126 88, 130 92 L 140 62 L 142 96 C 148 100, 152 108, 154 122 C 172 112, 196 108, 228 118 C 214 130, 206 144, 204 160 L 186 140 L 172 168 L 156 146 L 140 176 C 132 168, 126 172, 120 186 C 114 172, 108 168, 100 176 L 84 146 L 68 168 L 54 140 L 36 160 C 34 144, 26 130, 12 118 Z" />
+            <g transform="translate(506,102) scale(1.6)">
+              <path fill="black" d="M 120 36 L 114 34 L 110 14 L 104 36 C 90 42 66 44 44 36 C 30 32 16 26 6 20 C 10 44 20 66 34 82 L 52 60 C 60 74 70 86 82 90 L 98 66 C 108 80 116 94 120 106 C 124 94 132 80 142 66 L 158 90 C 170 86 180 74 188 60 L 206 82 C 220 66 230 44 234 20 C 224 26 210 32 196 36 C 174 44 150 42 136 36 L 130 14 L 126 34 L 120 36 Z" />
             </g>
           </mask>
           <filter id="sig-soft">
@@ -92,10 +92,12 @@ function Signal() {
         <path d="M 4 500 L 12 500 L 676 128 L 656 108 Z" fill="#cfe2ff" opacity="0.07" filter="url(#sig-soft)" />
 
         {/* the disc, with the silhouette cut out of the light */}
-        <g mask="url(#sig-cut)">
-          <circle cx="698" cy="198" r="150" fill="url(#sig-disc)" />
+        <g className="signal-disc" style={{ transformOrigin: "698px 198px" }}>
+          <g mask="url(#sig-cut)">
+            <circle cx="698" cy="198" r="150" fill="url(#sig-disc)" />
+          </g>
+          <circle cx="698" cy="198" r="150" fill="none" stroke="#9dc3ff" strokeOpacity="0.14" strokeWidth="1.5" />
         </g>
-        <circle cx="698" cy="198" r="150" fill="none" stroke="#9dc3ff" strokeOpacity="0.14" strokeWidth="1.5" />
       </svg>
     </div>
   );

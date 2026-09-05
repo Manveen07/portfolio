@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { NAV, ME } from "@/data/portfolio";
-import { useScrollSpy } from "@/lib/hooks";
+import { useScrollSpy, useScrolled } from "@/lib/hooks";
 
 const IDS = NAV.map((n) => n.id);
 
@@ -11,11 +11,12 @@ export default function Nav() {
   const onHome = pathname === "/";
   // Scroll-spy only means anything on the homepage; sub-routes link back.
   const active = useScrollSpy(onHome ? IDS : []);
+  const scrolled = useScrolled(24);
   const href = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 
   return (
     <div
-      className="panel on nav-bar"
+      className={`panel on nav-bar ${scrolled ? "scrolled" : ""}`}
       style={{
         margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0",
         padding: "clamp(14px, 1vw, 20px) clamp(20px, 1.6vw, 34px)",

@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import BootOverlay from "@/components/BootOverlay";
 import Easter from "@/components/Easter";
+import Ambient from "@/components/Ambient";
 
 const sans = Barlow({
   variable: "--font-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
         </div>
         <Easter />
+        <Ambient />
       </body>
     </html>
   );
