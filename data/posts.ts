@@ -117,7 +117,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        s: "Code: [github.com/Manveen07/new-10x-engineer](https://github.com/Manveen07/new-10x-engineer)",
+        s: "The code is in a private repo until leadlens goes live. The production system built on the same pattern is public: [tender-radar-showcase](https://github.com/Manveen07/tender-radar-showcase).",
       },
     ],
   },

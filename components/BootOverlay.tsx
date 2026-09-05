@@ -33,12 +33,15 @@ export default function BootOverlay() {
     }
     if (reduced || seen) return;
 
-    setDone(false);
     try {
       sessionStorage.setItem("pf-booted", "1");
     } catch {
       // non-fatal
     }
+
+    // Flip on the next frame, not synchronously inside the effect, so React
+    // paints the initial frame first and never cascades a render.
+    const start = requestAnimationFrame(() => setDone(false));
 
     const id = setInterval(() => {
       setShown((n) => {
@@ -49,6 +52,7 @@ export default function BootOverlay() {
     const t = setTimeout(() => setDone(true), 1600);
 
     return () => {
+      cancelAnimationFrame(start);
       clearInterval(id);
       clearTimeout(t);
     };

@@ -12,7 +12,7 @@
    The joke is the shape, not the property: no logos, no quoted dialogue.
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function Toast({ children, onDone }: { children: React.ReactNode; onDone: () => void }) {
   useEffect(() => {
@@ -105,6 +105,7 @@ function Signal() {
 
 export default function Easter() {
   const [night, setNight] = useState(false);
+  const nightRef = useRef(false);
   const [signal, setSignal] = useState(false);
   const [toast, setToast] = useState<React.ReactNode>(null);
 
@@ -131,9 +132,18 @@ export default function Easter() {
 
       if (typed.endsWith("batman")) {
         typed = "";
-        setNight((n) => !n);
+        nightRef.current = !nightRef.current;
+        setNight(nightRef.current);
         setSignal(true);
         setTimeout(() => setSignal(false), 6000);
+        if (nightRef.current) {
+          setToast(
+            <>
+              <b style={{ color: "#9dc3ff" }}>Night shift.</b> The systems on this page run at 3am
+              whether anyone is watching. Type it again for the lights.
+            </>,
+          );
+        }
       }
 
       if (typed.includes("unattended")) {
@@ -185,17 +195,8 @@ export default function Easter() {
 
   // Night shift paints through a root attribute; CSS owns the look.
   useEffect(() => {
-    if (night) {
-      document.documentElement.setAttribute("data-night", "1");
-      setToast(
-        <>
-          <b style={{ color: "#9dc3ff" }}>Night shift.</b> The systems on this page run at 3am
-          whether anyone is watching. Type it again for the lights.
-        </>,
-      );
-    } else {
-      document.documentElement.removeAttribute("data-night");
-    }
+    if (night) document.documentElement.setAttribute("data-night", "1");
+    else document.documentElement.removeAttribute("data-night");
   }, [night]);
 
   return (
