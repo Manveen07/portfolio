@@ -44,9 +44,10 @@ function Toast({ children, onDone }: { children: React.ReactNode; onDone: () => 
   );
 }
 
-/* The signal itself: a hard-edged spotlight that sweeps once, drawn
-   rather than imported — a circle, a beam, and a bat-shaped notch cut
-   from the middle. Original geometry. */
+/* The signal, built the way the animated series stages it: a searchlight
+   throws from off-screen at the lower left, the beam widens as it travels,
+   and the disc it lands on carries the silhouette as an absence of light
+   rather than a drawn object. Geometry written for this page. */
 function Signal() {
   return (
     <div
@@ -54,32 +55,47 @@ function Signal() {
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: 55,
+        zIndex: 0,
         pointerEvents: "none",
-        display: "grid",
-        placeItems: "start end",
-        padding: "clamp(40px, 8vh, 110px) clamp(24px, 6vw, 90px)",
         animation: "signal-in 7s ease-in-out both",
       }}
     >
-      <svg viewBox="0 0 240 240" width="min(22vmin, 168px)" height="min(22vmin, 168px)" style={{ filter: "drop-shadow(0 0 44px rgba(160,200,255,.35))", opacity: 0.85 }}>
+      <svg
+        viewBox="0 0 900 500"
+        preserveAspectRatio="xMaxYMin slice"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      >
         <defs>
-          <radialGradient id="beam">
-            <stop offset="0%" stopColor="#dbe9ff" stopOpacity="0.7" />
-            <stop offset="62%" stopColor="#9dc3ff" stopOpacity="0.34" />
+          <radialGradient id="sig-disc">
+            <stop offset="0%" stopColor="#f2f7ff" stopOpacity="0.55" />
+            <stop offset="52%" stopColor="#9dc3ff" stopOpacity="0.24" />
             <stop offset="100%" stopColor="#5b7fb8" stopOpacity="0" />
           </radialGradient>
-          <mask id="cut">
-            <rect width="240" height="240" fill="white" />
-            {/* wings, body, ears — one path, drawn for this page */}
-            <path
-              fill="black"
-              d="M120 96c4 0 7 4 8 9 6-4 10-11 10-19 4 6 6 13 6 20 14-11 30-16 48-14-8 5-13 12-15 21 11-4 21-3 30 3-12 1-21 7-27 17-5 9-13 15-23 17-7 2-13 0-17-5-4-5-8-8-12-8s-8 3-12 8c-4 5-10 7-17 5-10-2-18-8-23-17-6-10-15-16-27-17 9-6 19-7 30-3-2-9-7-16-15-21 18-2 34 3 48 14 0-7 2-14 6-20 0 8 4 15 10 19 1-5 4-9 8-9z"
-            />
+          <linearGradient id="sig-shaft" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stopColor="#9dc3ff" stopOpacity="0.20" />
+            <stop offset="55%" stopColor="#9dc3ff" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#9dc3ff" stopOpacity="0" />
+          </linearGradient>
+          <mask id="sig-cut">
+            <rect width="900" height="500" fill="white" />
+            <g transform="translate(560,60) scale(1.15)">
+              <path fill="black" d="M 12 118 C 44 108, 68 112, 86 122 C 88 108, 92 100, 98 96 L 100 62 L 110 92 C 114 88, 126 88, 130 92 L 140 62 L 142 96 C 148 100, 152 108, 154 122 C 172 112, 196 108, 228 118 C 214 130, 206 144, 204 160 L 186 140 L 172 168 L 156 146 L 140 176 C 132 168, 126 172, 120 186 C 114 172, 108 168, 100 176 L 84 146 L 68 168 L 54 140 L 36 160 C 34 144, 26 130, 12 118 Z" />
+            </g>
           </mask>
+          <filter id="sig-soft">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
         </defs>
-        <circle cx="120" cy="120" r="112" fill="url(#beam)" mask="url(#cut)" />
-        <circle cx="120" cy="120" r="112" fill="none" stroke="#9dc3ff" strokeOpacity="0.22" strokeWidth="1.5" />
+
+        {/* the shaft: narrow at the lamp, widening toward the disc */}
+        <path d="M 0 500 L 22 500 L 700 150 L 640 92 Z" fill="url(#sig-shaft)" filter="url(#sig-soft)" />
+        <path d="M 4 500 L 12 500 L 676 128 L 656 108 Z" fill="#cfe2ff" opacity="0.07" filter="url(#sig-soft)" />
+
+        {/* the disc, with the silhouette cut out of the light */}
+        <g mask="url(#sig-cut)">
+          <circle cx="698" cy="198" r="150" fill="url(#sig-disc)" />
+        </g>
+        <circle cx="698" cy="198" r="150" fill="none" stroke="#9dc3ff" strokeOpacity="0.14" strokeWidth="1.5" />
       </svg>
     </div>
   );
