@@ -5,17 +5,29 @@ import { ME } from "@/data/portfolio";
 /* Split-flap display: each character flips down like an airport board.
    Delays are computed so the two lines read left-to-right in sequence. */
 function Flap({ text, start, step = 0.04 }: { text: string; start: number; step?: number }) {
+  // Words are wrapped in nowrap spans so a line can only break between
+  // words, never between two flap characters ("AUTOMATIN / G").
+  let i = 0;
   return (
     <>
-      {[...text].map((ch, i) =>
-        ch === " " ? (
-          <span key={i}>&nbsp;</span>
-        ) : (
-          <span key={i} className="flap" style={{ animationDelay: `${(start + i * step).toFixed(2)}s` }}>
-            {ch}
+      {text.split(" ").map((word, w) => {
+        const chars = [...word].map((ch) => {
+          const delay = (start + i * step).toFixed(2);
+          i += 1;
+          return (
+            <span key={i} className="flap" style={{ animationDelay: `${delay}s` }}>
+              {ch}
+            </span>
+          );
+        });
+        i += 1; // the space
+        return (
+          <span key={w} style={{ whiteSpace: "nowrap" }}>
+            {chars}
+            {w < text.split(" ").length - 1 ? " " : null}
           </span>
-        ),
-      )}
+        );
+      })}
     </>
   );
 }

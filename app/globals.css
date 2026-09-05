@@ -485,6 +485,11 @@ section[id] { scroll-margin-top: 96px; }
   .h-sub  { font-size: 44px !important; }
 }
 @media (max-width: 620px) {
+  /* Labels never drop below the readable floor on a phone. */
+  .lbl, .engr, .chip { font-size: 11px !important; }
+  .serial { font-size: 10px; }
+  /* Proof links stack instead of leaving a tall gap between two wrapped rows. */
+  #proof .panel > div[style*="gap: 20px"] { flex-direction: column; gap: 0 !important; }
   .h-hero { font-size: 64px !important; padding: 0 12px !important; }
   .h-sub  { font-size: 32px !important; }
   .h-dispatch { font-size: 56px !important; }
@@ -495,6 +500,10 @@ section[id] { scroll-margin-top: 96px; }
   .hist i { width: 6px !important; }
   .panel { padding-left: 18px !important; padding-right: 18px !important; }
   .h-hero { letter-spacing: -0.03em !important; }
+}
+@media (max-width: 380px) {
+  .h-hero { font-size: min(64px, 17vw) !important; }
+  .h-sub  { font-size: min(32px, 8.6vw) !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
