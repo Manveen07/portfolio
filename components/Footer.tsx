@@ -20,6 +20,7 @@ export default function Footer() {
         {/* The serial plate hint. Typing the word anywhere on the page pays off. */}
         <span className="egg">
           S/N 0075-0342-07 · you read the serial plate. type the word unattended and I will know.
+          the panel also works nights, if you ask it by name.
         </span>
         <span className="engr">© 2026 {ME.name}</span>
       </footer>

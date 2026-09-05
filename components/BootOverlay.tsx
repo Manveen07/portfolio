@@ -12,6 +12,7 @@ const LINES: [string, string][] = [
   ["line 01 · tender radar", "running"],
   ["counters", "75 · 342 · 7"],
   ["mode", "unattended"],
+  ["night shift", "standing by"],
 ];
 
 export default function BootOverlay() {

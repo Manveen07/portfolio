@@ -441,18 +441,49 @@ section[id] { scroll-margin-top: 96px; }
 
 /* ── Easter eggs ──────────────────────────────────────────────────── */
 
-/* Konami code: the panel drops into maintenance. Every lamp red, belts
-   run backwards, the whole rig tilts a half-degree like a knocked rack. */
-:root[data-maintenance] .lamp,
-:root[data-maintenance] .lamp.on,
-:root[data-maintenance] .lamp.warn {
-  background: var(--red) !important;
-  box-shadow: 0 0 0 1px var(--bevel-hi), 0 0 14px rgba(255,77,61,0.75) !important;
+/* NIGHT SHIFT — typing "batman" cuts the lights. The panel goes cold
+   blue, the warm yellow drains out, lamps dim to standby, and a signal
+   sweeps once. Everything still readable: this is a mood, not a
+   blackout. Original geometry and colour, no borrowed marks. */
+:root[data-night] {
+  --yellow: #9dc3ff;
+  --green:  #6f8fbf;
+  --bg:     #0a0d14;
+  --panel:  #10151f;
+  --panel2: #151b27;
+  --bevel:  #1e2637;
+  --bevel-hi: #2c3852;
+  --text:   #dbe4f2;
+  --dim:    #7d8ba4;
+  --dim2:   #4c5772;
 }
-:root[data-maintenance] .belt { animation-direction: reverse; animation-duration: .6s; }
-:root[data-maintenance] .pf-page { transform: rotate(-0.5deg); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
-:root[data-maintenance] .seg { color: var(--red); text-shadow: 0 0 18px rgba(255,77,61,0.35); }
-:root[data-maintenance] .panel { border-color: rgba(255,77,61,0.35); }
+:root[data-night] body { transition: background-color .8s ease; }
+:root[data-night] .panel,
+:root[data-night] .seg,
+:root[data-night] .lamp,
+:root[data-night] .belt { transition: all .8s ease; }
+/* Lamps drop to standby — dim, not dead. */
+:root[data-night] .lamp.on,
+:root[data-night] .lamp.warn {
+  background: #3f5f8f;
+  box-shadow: 0 0 0 1px var(--bevel-hi), 0 0 10px rgba(157,195,255,0.45);
+}
+:root[data-night] .seg { text-shadow: 0 0 22px rgba(157,195,255,0.35); }
+:root[data-night] .belt {
+  background: repeating-linear-gradient(45deg, #9dc3ff 0 12px, #0a0d14 12px 24px);
+  animation-duration: 3.4s;   /* the night shift runs slower */
+}
+:root[data-night] .pf-vignette {
+  background: radial-gradient(ellipse 60% 55% at 50% 25%, transparent 40%, rgba(0,0,0,0.75) 100%);
+}
+
+/* The signal sweep: rises, holds, fades. Fires once per activation. */
+@keyframes signal-in {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.9); }
+  14%  { opacity: 1; transform: translateY(0) scale(1); }
+  72%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.04); }
+}
 
 /* Idle 90s: one lamp blinks SOS. Nobody sees this unless they walk away. */
 @keyframes sos {
@@ -465,6 +496,8 @@ section[id] { scroll-margin-top: 96px; }
   88%, 100%                           { opacity: 1; }
 }
 :root[data-idle] .lamp.boot { animation: sos 5s linear infinite; }
+/* On the night shift the idle blink slows to a patient watch-light. */
+:root[data-night][data-idle] .lamp.boot { animation: sos 9s linear infinite; }
 
 /* Run-history strip: never let 40 fixed-width bars push a panel wide. */
 .hist { min-width: 0; flex-wrap: nowrap; }
