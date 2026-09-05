@@ -439,7 +439,8 @@ section[id] { scroll-margin-top: 96px; }
   opacity: 0; transition: opacity .35s ease;
 }
 .panel:hover::before { opacity: 1; }
-.panel > * { position: relative; z-index: 1; }
+.panel > :not(.serial):not(.scan) { position: relative; z-index: 1; }
+.panel > .serial { z-index: 2; }
 :root[data-night] .panel::before {
   background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(157,195,255,0.06), transparent 60%);
 }

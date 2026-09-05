@@ -33,9 +33,9 @@ export default async function PostPage(
   if (!post) notFound();
 
   return (
-    <article style={{ padding: "48px 20px 80px" }}>
-      <div className="panel on" style={{ padding: "40px 44px", maxWidth: 920, margin: "0 auto" }}>
-        <span className="serial">P-04 · {post.slug.toUpperCase().slice(0, 18)}</span>
+    <article style={{ padding: "40px var(--gutter) 80px" }}>
+      <div className="panel on" style={{ padding: "clamp(28px, 3vw, 48px) clamp(22px, 3.4vw, 56px)", maxWidth: 960, margin: "0 auto" }}>
+        <span className="serial">P-04 · POST-{String(POSTS.findIndex((x) => x.slug === post.slug) + 1).padStart(2, "0")}</span>
 
         <Link href="/#writing" className="lbl" style={{ display: "inline-flex", gap: 8, marginBottom: 32 }}>
           ← all writing
