@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BAYS, type Bay } from "@/data/portfolio";
+import { BAYS, type Bay, TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 function BayLinks({ links }: { links: NonNullable<Bay["links"]> }) {
@@ -142,6 +142,7 @@ export default function Work() {
     >
       <div className="step">
         <span className="n">3</span>
+        <span className="tag"><span>{TAG.work}</span></span>
         <span className="t">Things I&rsquo;ve built</span>
         <span className="rule" />
         <span className="lbl">most proven first · every one links to something real</span>

@@ -18,13 +18,14 @@ export const ME = {
 } as const;
 
 // ── Nav (the five numbered steps) ────────────────────────────────────
-export const NAV: { id: string; label: string }[] = [
-  { id: "proof",   label: "1 · proof" },
-  { id: "about",   label: "2 · about" },
-  { id: "work",    label: "3 · work" },
-  { id: "writing", label: "4 · writing" },
-  { id: "contact", label: "5 · contact" },
+export const NAV: { id: string; label: string; tag: string }[] = [
+  { id: "proof",   label: "1 · proof",   tag: "Receipts." },
+  { id: "about",   label: "2 · about",   tag: "Origin story." },
+  { id: "work",    label: "3 · work",    tag: "The evidence." },
+  { id: "writing", label: "4 · writing", tag: "Field notes." },
+  { id: "contact", label: "5 · contact", tag: "The call." },
 ];
+export const TAG = Object.fromEntries(NAV.map((n) => [n.id, n.tag])) as Record<string, string>;
 
 // ── Live pipeline snapshot ───────────────────────────────────────────
 // Read from the GitHub Actions API + the job's own daily summary on

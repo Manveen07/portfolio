@@ -1,6 +1,6 @@
 "use client";
 
-import { ME, DOORS } from "@/data/portfolio";
+import { ME, DOORS, TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 export default function Contact() {
@@ -15,6 +15,7 @@ export default function Contact() {
     >
       <div className="step">
         <span className="n">5</span>
+        <span className="tag"><span>{TAG.contact}</span></span>
         <span className="t">Work with me</span>
         <span className="rule" />
       </div>

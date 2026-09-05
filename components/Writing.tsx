@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { POSTS } from "@/data/posts";
+import { TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 function fmtDate(iso: string) {
@@ -20,6 +21,7 @@ export default function Writing() {
     >
       <div className="step">
         <span className="n">4</span>
+        <span className="tag"><span>{TAG.writing}</span></span>
         <span className="t">How I think</span>
         <span className="rule" />
         <span className="lbl">

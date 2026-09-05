@@ -186,6 +186,31 @@ section[id] { scroll-margin-top: 96px; }
   font-weight: 700; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em;
 }
 .step .rule { flex-grow: 1; height: 1px; background: var(--bevel); min-width: 24px; }
+/* Comic-caption tag: a slanted yellow plate with black type, tilted a
+   degree like a sticker that was slapped on, with a hard offset shadow.
+   Names the beat in two words. Wobbles when poked. */
+.step .tag {
+  font-family: var(--font-cond), "Barlow Condensed", sans-serif;
+  font-weight: 800; font-style: italic; text-transform: uppercase;
+  font-size: clamp(13px, 1.05vw, 19px); letter-spacing: 0.08em; line-height: 1;
+  color: var(--bg); background: var(--yellow);
+  padding: 8px 16px 7px;
+  transform: skewX(-12deg) rotate(-1.5deg);
+  box-shadow: 3px 3px 0 #090a0c, 3px 3px 0 1px rgba(255,214,10,.35);
+  animation: settle .6s cubic-bezier(.2,.8,.2,1) .08s both;
+  cursor: default; user-select: none;
+  transition: transform .15s ease;
+}
+.step .tag > span { display: inline-block; transform: skewX(12deg); }
+@keyframes wobble {
+  0%, 100% { transform: skewX(-12deg) rotate(-1.5deg); }
+  25%      { transform: skewX(-12deg) rotate(2.5deg) translateY(-1px); }
+  50%      { transform: skewX(-12deg) rotate(-3deg); }
+  75%      { transform: skewX(-12deg) rotate(1deg); }
+}
+.step .tag:hover { animation: wobble .5s ease-in-out 1; }
+:root[data-night] .step .tag { background: #9dc3ff; box-shadow: 3px 3px 0 #090a0c, 3px 3px 0 1px rgba(157,195,255,.35); }
+@media (max-width: 620px) { .step .tag { font-size: 12px; padding: 6px 12px 5px; } }
 
 /* ── Motion vocabulary ────────────────────────────────────────────── */
 @keyframes flip {

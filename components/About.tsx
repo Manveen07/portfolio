@@ -1,6 +1,6 @@
 "use client";
 
-import { ROLES, EDUCATION, TOOLS, PLATES, ME } from "@/data/portfolio";
+import { ROLES, EDUCATION, TOOLS, PLATES, ME, TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 export default function About() {
@@ -15,6 +15,7 @@ export default function About() {
     >
       <div className="step">
         <span className="n">2</span>
+        <span className="tag"><span>{TAG.about}</span></span>
         <span className="t">What I do, and where I learned it</span>
         <span className="rule" />
       </div>

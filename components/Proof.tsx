@@ -1,6 +1,6 @@
 "use client";
 
-import { PIPELINE, RUN_HISTORY } from "@/data/portfolio";
+import { PIPELINE, RUN_HISTORY, TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 function fmt(iso: string) {
@@ -33,6 +33,7 @@ export default function Proof() {
     >
       <div className="step">
         <span className="n">1</span>
+        <span className="tag"><span>{TAG.proof}</span></span>
         <span className="t">Proof it runs</span>
         <span className="rule" />
         <span className="lbl">a real system, live since july 2026</span>
