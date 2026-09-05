@@ -37,7 +37,7 @@ function BayLinks({ links }: { links: NonNullable<Bay["links"]> }) {
 function BayCard({ bay }: { bay: Bay }) {
   return (
     <div
-      className="panel on bay"
+      className={`panel on bay ${bay.wide ? "bay-wide" : ""}`}
       style={{
         display: "flex",
         flexDirection: "column",
