@@ -78,7 +78,7 @@ function Signal() {
           </linearGradient>
           <mask id="sig-cut">
             <rect width="900" height="500" fill="white" />
-            <g transform="translate(506,102) scale(1.6)">
+            <g transform="translate(605,148) scale(0.78)">
               <path fill="black" d="M 120 36 L 114 34 L 110 14 L 104 36 C 90 42 66 44 44 36 C 30 32 16 26 6 20 C 10 44 20 66 34 82 L 52 60 C 60 74 70 86 82 90 L 98 66 C 108 80 116 94 120 106 C 124 94 132 80 142 66 L 158 90 C 170 86 180 74 188 60 L 206 82 C 220 66 230 44 234 20 C 224 26 210 32 196 36 C 174 44 150 42 136 36 L 130 14 L 126 34 L 120 36 Z" />
             </g>
           </mask>
