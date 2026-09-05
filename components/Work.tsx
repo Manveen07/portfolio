@@ -70,7 +70,7 @@ function BayCard({ bay }: { bay: Bay }) {
         }
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div className="cond h-bay" style={{ fontSize: 44, lineHeight: 0.9, fontWeight: 700 }}>
+          <div className="cond h-bay" style={{ lineHeight: 0.9, fontWeight: 700 }}>
             <span className="title">{bay.title}</span>
           </div>
           <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: "var(--text)" }}>{bay.lead}</p>
@@ -88,7 +88,7 @@ function BayCard({ bay }: { bay: Bay }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 16, alignContent: "start" }}>
             {bay.metrics.map(([n, l]) => (
               <div key={l}>
-                <div className="seg plain" style={{ fontSize: 48 }}>
+                <div className="seg plain seg-md">
                   {n}
                 </div>
                 <div className="lbl" style={{ marginTop: 6 }}>
@@ -113,7 +113,7 @@ function BayCard({ bay }: { bay: Bay }) {
         >
           {bay.metrics.map(([n, l]) => (
             <div key={l}>
-              <div className="seg plain" style={{ fontSize: 48 }}>
+              <div className="seg plain seg-md">
                 {n}
               </div>
               <div className="lbl" style={{ marginTop: 6 }}>
@@ -138,7 +138,7 @@ export default function Work() {
       id="work"
       ref={ref}
       className="rise"
-      style={{ padding: "40px 20px 8px", display: "flex", flexDirection: "column", gap: 20 }}
+      style={{ padding: "40px var(--gutter) 8px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
         <span className="n">3</span>
@@ -164,6 +164,7 @@ export default function Work() {
             style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }}
           />
           <div
+            className="monitor-caption"
             style={{
               position: "absolute",
               left: 24,
@@ -188,7 +189,7 @@ export default function Work() {
           style={{ padding: "28px 30px", display: "flex", flexDirection: "column", gap: 16, justifyContent: "center", animationDelay: ".1s" }}
         >
           <span className="serial">P-03 · CAPTION</span>
-          <div className="cond h-panel" style={{ fontSize: 56, lineHeight: 0.9, fontWeight: 700 }}>
+          <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
             Watch one
             <br />
             <span style={{ color: "var(--yellow)" }}>do the work.</span>

@@ -15,10 +15,10 @@ export default function Nav() {
 
   return (
     <div
-      className="panel on"
+      className="panel on nav-bar"
       style={{
-        margin: "20px 20px 0",
-        padding: "14px 24px",
+        margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0",
+        padding: "clamp(14px, 1vw, 20px) clamp(20px, 1.6vw, 34px)",
         display: "flex",
         alignItems: "center",
         gap: 20,
@@ -51,7 +51,7 @@ export default function Nav() {
         ))}
       </div>
       <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-        Book 30 min <span>→</span>
+        Book 20 min <span>→</span>
       </a>
     </div>
   );

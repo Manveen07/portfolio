@@ -3,10 +3,10 @@ import { ME } from "@/data/portfolio";
 export default function Footer() {
   return (
     <>
-      <div className="belt" style={{ margin: "0 20px" }} />
+      <div className="belt" style={{ margin: "0 var(--gutter)" }} />
       <footer
         style={{
-          padding: "16px 44px 28px",
+          padding: "16px clamp(28px, 3vw, 64px) 28px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",

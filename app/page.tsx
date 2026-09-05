@@ -9,13 +9,13 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <div className="belt" style={{ margin: "20px 20px 0" }} />
+      <div className="belt" style={{ margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0" }} />
       <Proof />
       <About />
-      <div className="belt" style={{ margin: "20px 20px 0" }} />
+      <div className="belt" style={{ margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0" }} />
       <Work />
       <Writing />
-      <div className="belt" style={{ margin: "20px 20px 0" }} />
+      <div className="belt" style={{ margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0" }} />
       <Contact />
     </>
   );

@@ -11,7 +11,7 @@ export default function Contact() {
       id="contact"
       ref={ref}
       className="rise"
-      style={{ padding: "40px 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}
+      style={{ padding: "40px var(--gutter) 20px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
         <span className="n">5</span>
@@ -26,8 +26,8 @@ export default function Contact() {
         >
           <div className="scan" />
           <span className="serial">P-05 · DISPATCH</span>
-          <div className="cond h-dispatch" style={{ fontSize: 132, lineHeight: 0.82, fontWeight: 800 }}>
-            Thirty minutes.
+          <div className="cond h-dispatch" style={{ lineHeight: 0.82, fontWeight: 800 }}>
+            Twenty minutes.
             <br />
             <span style={{ color: "var(--yellow)" }}>No slides, no fluff.</span>
           </div>
@@ -38,7 +38,7 @@ export default function Contact() {
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-              Book the 30 minutes <span>→</span>
+              Book the 20 minutes <span>→</span>
             </a>
             <a className="btn" href={`mailto:${ME.email}`}>
               {ME.email}

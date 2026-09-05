@@ -234,7 +234,7 @@ export const DOORS = [
     title: "Want the system built and looked after?",
     body: "A fixed-price build, then a monthly retainer to keep it running. Founders, agencies, sales teams.",
     links: [
-      { label: "book 30 min ↗", href: "https://calendly.com/manveen9650/30min" },
+      { label: "book 20 min ↗", href: "https://calendly.com/manveen9650/30min" },
       { label: "email ↗", href: "mailto:manveen9650@gmail.com" },
     ],
   },

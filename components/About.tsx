@@ -11,7 +11,7 @@ export default function About() {
       id="about"
       ref={ref}
       className="rise"
-      style={{ padding: "40px 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}
+      style={{ padding: "40px var(--gutter) 20px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
         <span className="n">2</span>
@@ -28,7 +28,7 @@ export default function About() {
           <span className="serial">P-02 · OPERATOR</span>
           <p
             className="cond h-panel"
-            style={{ margin: 0, fontSize: 56, lineHeight: 0.92, fontWeight: 700, letterSpacing: "-0.01em" }}
+            style={{ margin: 0, lineHeight: 0.92, fontWeight: 700, letterSpacing: "-0.01em" }}
           >
             I automate the repetitive work
             <br />
@@ -111,7 +111,7 @@ export default function About() {
               <div style={{ display: "flex", gap: 24, paddingTop: 6, flexWrap: "wrap" }}>
                 {r.metrics.map(([n, l]) => (
                   <div key={l}>
-                    <div className="seg plain" style={{ fontSize: 40 }}>
+                    <div className="seg plain seg-sm">
                       {n}
                     </div>
                     <div className="lbl" style={{ marginTop: 4 }}>

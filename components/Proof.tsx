@@ -29,7 +29,7 @@ export default function Proof() {
       id="proof"
       ref={ref}
       className="rise"
-      style={{ padding: "40px 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}
+      style={{ padding: "40px var(--gutter) 20px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
         <span className="n">1</span>
@@ -38,7 +38,7 @@ export default function Proof() {
         <span className="lbl">a real system, live since july 2026</span>
       </div>
 
-      <div style={{ padding: "0 28px" }}>
+      <div style={{ padding: "0 clamp(8px, 0.6vw, 16px)" }}>
         <p className="intro">
           This is a system I built for cleaning, security and facilities companies in the UK.{" "}
           <b>Every morning at 6:30 it wakes up on its own</b>, reads every new government contract

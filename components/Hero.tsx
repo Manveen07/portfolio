@@ -22,13 +22,12 @@ function Flap({ text, start, step = 0.04 }: { text: string; start: number; step?
 
 export default function Hero() {
   return (
-    <section id="top" style={{ padding: "72px 20px 28px", display: "flex", flexDirection: "column", gap: 24 }}>
+    <section id="top" style={{ padding: "72px var(--gutter) 28px", display: "flex", flexDirection: "column", gap: 24 }}>
       <h1
         className="cond flapwrap h-hero"
         style={{
           margin: 0,
-          padding: "0 22px",
-          fontSize: 212,
+          padding: "0 clamp(8px, 0.6vw, 16px)",
           lineHeight: 0.82,
           fontWeight: 800,
           letterSpacing: "-0.02em",
@@ -44,7 +43,7 @@ export default function Hero() {
       <div
         className="grid-split"
         style={{
-          padding: "0 28px",
+          padding: "0 clamp(8px, 0.6vw, 16px)",
           display: "grid",
           gridTemplateColumns: "minmax(0, 1fr) 520px",
           gap: 48,
@@ -69,7 +68,7 @@ export default function Hero() {
               See it working <span>↓</span>
             </a>
             <a className="btn" href={ME.calendly} target="_blank" rel="noopener">
-              Book 30 min
+              Book 20 min
             </a>
           </div>
         </div>

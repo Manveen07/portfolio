@@ -19,6 +19,10 @@
   --green:    #3ddc84;
   --red:      #ff4d3d;
 
+  /* One gutter for the header, belts and every section, so the page keeps
+     a consistent edge as it scales. */
+  --gutter: clamp(12px, 1.6vw, 40px);
+
   /* shadcn-style HSL tokens — kept so legacy utilities don't break */
   --background: 210 8% 7%;
   --foreground: 45 15% 88%;
@@ -48,8 +52,12 @@ body {
 
 ::selection { background: var(--yellow); color: var(--bg); }
 
-a { color: var(--text); text-decoration: none; }
+a { color: inherit; text-decoration: none; }
 a:hover { color: var(--yellow); }
+/* Anything carrying a role class owns its colour, even inside an <a>. */
+.engr { color: var(--dim2) !important; }
+.lbl  { color: var(--dim); }
+a .lbl:hover, a:hover .lbl { color: var(--yellow); }
 button { font-family: inherit; }
 
 /* ── Typography roles ─────────────────────────────────────────────── */
@@ -73,7 +81,7 @@ button { font-family: inherit; }
 .explain b { color: var(--yellow); font-weight: 500; }
 
 /* ── Layout primitives ────────────────────────────────────────────── */
-.pf-page { position: relative; z-index: 1; width: 100%; max-width: 1600px; margin: 0 auto; }
+.pf-page { position: relative; z-index: 1; width: 100%; max-width: 2100px; margin: 0 auto; }
 
 /* Film grain + vignette — depth, fixed so they never scroll away */
 .pf-grain {
@@ -131,6 +139,8 @@ section[id] { scroll-margin-top: 96px; }
   color: var(--yellow); text-shadow: 0 0 18px rgba(255,214,10,0.35);
 }
 .seg.plain { color: var(--text); text-shadow: none; }
+.seg.seg-md { font-size: clamp(40px, 3.4vw, 68px); }
+.seg.seg-sm { font-size: clamp(34px, 2.8vw, 56px); }
 
 /* ── Controls ─────────────────────────────────────────────────────── */
 .btn {
@@ -166,7 +176,7 @@ section[id] { scroll-margin-top: 96px; }
 .chip:hover { border-color: var(--yellow); color: var(--text); }
 
 /* ── Step rail ────────────────────────────────────────────────────── */
-.step { display: flex; align-items: center; gap: 14px; padding: 0 28px; flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: 14px; padding: 0 clamp(8px, 0.6vw, 16px); flex-wrap: wrap; }
 .step .n {
   font-family: var(--font-cond), "Barlow Condensed", sans-serif;
   font-weight: 800; font-size: 34px; color: var(--yellow); line-height: 1;
@@ -298,6 +308,99 @@ section[id] { scroll-margin-top: 96px; }
 .prose-link { color: var(--yellow); border-bottom: 1px solid rgba(255,214,10,0.35); }
 .prose-link:hover { border-bottom-color: var(--yellow); }
 
+
+/* ── Fluid type scale ─────────────────────────────────────────────────
+   Sizes track the viewport instead of sitting at one fixed pixel value,
+   so the page fills a large monitor and still fits a laptop. clamp()
+   floors keep the small end readable. */
+.h-hero     { font-size: clamp(64px, 13.5vw, 300px) !important; }
+.h-sub      { font-size: clamp(32px, 5vw, 104px) !important; }
+.h-dispatch { font-size: clamp(56px, 8.5vw, 180px) !important; }
+.h-panel    { font-size: clamp(34px, 3.8vw, 76px) !important; }
+.h-bay      { font-size: clamp(30px, 2.9vw, 60px) !important; }
+.seg        { font-size: clamp(52px, 5.4vw, 116px); }
+.intro      { font-size: clamp(16px, 1.15vw, 22px); max-width: 62ch; }
+.explain    { font-size: clamp(14px, 1vw, 19px); max-width: 40ch; }
+.step .n    { font-size: clamp(30px, 2.6vw, 52px); }
+.step .t    { font-size: clamp(20px, 1.7vw, 34px); }
+.lbl        { font-size: clamp(10px, 0.68vw, 13px); }
+.engr       { font-size: clamp(10px, 0.66vw, 13px); }
+.chip       { font-size: clamp(10px, 0.66vw, 13px); }
+.btn        { font-size: clamp(16px, 1.15vw, 22px); padding: clamp(13px, 0.95vw, 18px) clamp(20px, 1.5vw, 30px); }
+.key        { font-size: clamp(11px, 0.72vw, 14px); height: clamp(28px, 2vw, 38px); padding: 0 clamp(12px, 0.9vw, 18px); }
+
+/* Body copy inside panels tracks the same scale. */
+.panel p    { font-size: clamp(14px, 1vw, 19px); }
+.plate span:last-child { font-size: clamp(14px, 0.95vw, 18px) !important; }
+
+/* Wider gutters on large screens so full-width doesn't mean edge-to-edge. */
+
+
+/* ── Phone ────────────────────────────────────────────────────────────
+   Everything below 900px is a phone or a small tablet. Three rules
+   drive it: one column, thumb-sized targets, and no information that
+   only exists on hover. */
+@media (max-width: 900px) {
+  /* Hover-only affordances must not hide content on touch. */
+  .serial { color: var(--dim2); font-size: 9px; }
+  .bay .title { background-size: 100% 3px; }
+
+  /* Header becomes a two-row bar: identity, then the CTA full-width. */
+  .nav-bar { padding: 12px 16px !important; gap: 10px !important; }
+  .nav-bar .engr { width: 100%; order: 3; font-size: 9px; }
+  .nav-bar > a:first-of-type { min-height: 44px; align-items: center; }
+  .nav-bar .btn { width: 100%; justify-content: center; order: 4; }
+
+  /* Thumb targets: the WCAG floor is 44px. */
+  .btn { min-height: 48px; width: 100%; justify-content: center; }
+  .panel a.lbl, .panel a.engr { min-height: 44px; display: inline-flex; align-items: center; }
+  .chip { padding: 8px 12px; font-size: 12px; }
+
+  /* Run-history bars get wider so a finger can hit one. */
+  .hist { gap: 2px; }
+  .hist i { flex: 1 1 auto; min-width: 5px; }
+
+  /* Section rhythm tightens up. */
+  section { padding-top: 28px !important; padding-bottom: 12px !important; }
+  .step { gap: 10px; }
+  .step .rule { display: none; }
+}
+
+@media (max-width: 620px) {
+  /* Panels: less inner padding so copy gets the width. */
+  .panel { padding: 18px !important; }
+  .panel > div[style*="padding: 22px 24px"],
+  .panel > div[style*="padding: 20px 24px"],
+  .panel > div[style*="padding: 14px 24px"],
+  .panel > div[style*="padding: 16px 24px"],
+  .panel > div[style*="padding: 18px 24px"] {
+    padding-left: 0 !important; padding-right: 0 !important;
+  }
+  .panel a.lbl[style*="padding: 12px 24px"] { padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* Metric pairs stack rather than squeeze to two cramped columns. */
+  .panel div[style*="repeat(2, minmax(0, 1fr))"] { grid-template-columns: 1fr !important; gap: 18px !important; }
+
+  /* The video caption overlay was absolutely positioned into the frame;
+     on a phone it covers the demo. Put it under the video instead. */
+  .monitor-caption {
+    position: static !important;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  /* Footer: stack the three items instead of squeezing them onto a row. */
+  footer { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
+  .egg { color: var(--dim2); }   /* on touch there is no hover to reveal it */
+}
+
+/* Touch devices of any width: hover states never stick. */
+@media (hover: none) {
+  .serial { color: var(--dim2); }
+  .panel:hover { transform: none; box-shadow: inset 0 1px 0 var(--bevel-hi), 0 2px 0 #090a0c; }
+  .bay:hover { transform: none; }
+}
+
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 1240px) {
   .grid-live   { grid-template-columns: 1fr 1fr !important; }
@@ -308,8 +411,7 @@ section[id] { scroll-margin-top: 96px; }
   .grid-live, .grid-2 { grid-template-columns: 1fr !important; }
   .bay-wide { grid-column: span 1 !important; }
   .nav-keys { display: none !important; }
-  .step { padding: 0 16px; }
-  section { padding-left: 12px !important; padding-right: 12px !important; }
+  .step { padding: 0 4px; }
   .h-hero { font-size: 108px !important; }
   .h-sub  { font-size: 44px !important; }
 }
@@ -323,6 +425,7 @@ section[id] { scroll-margin-top: 96px; }
   .grid-3 { grid-template-columns: 1fr !important; }
   .hist i { width: 6px !important; }
   .panel { padding-left: 18px !important; padding-right: 18px !important; }
+  .h-hero { letter-spacing: -0.03em !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

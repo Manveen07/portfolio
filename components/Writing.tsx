@@ -16,7 +16,7 @@ export default function Writing() {
       id="writing"
       ref={ref}
       className="rise"
-      style={{ padding: "40px 20px 8px", display: "flex", flexDirection: "column", gap: 20 }}
+      style={{ padding: "40px var(--gutter) 8px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
         <span className="n">4</span>
@@ -46,7 +46,7 @@ export default function Writing() {
             <span className="mono" style={{ fontSize: 12, color: "var(--dim)" }}>
               {fmtDate(p.date)} · {p.readMins} min read
             </span>
-            <div className="cond h-bay" style={{ fontSize: 48, lineHeight: 0.92, fontWeight: 700, textTransform: "none" }}>
+            <div className="cond h-bay" style={{ lineHeight: 0.92, fontWeight: 700, textTransform: "none" }}>
               {p.cardTitle ?? p.title}
             </div>
             <p className="intro" style={{ fontSize: 15 }}>
