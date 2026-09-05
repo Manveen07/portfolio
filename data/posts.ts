@@ -12,6 +12,10 @@ export type Block =
 export type Post = {
   slug: string;
   title: string;
+  /** Plain-English title for the homepage card. Falls back to `title`. */
+  cardTitle?: string;
+  /** Plain-English summary for the homepage card. Falls back to `summary`. */
+  cardSummary?: string;
   date: string;       // ISO
   readMins: number;
   tags: string[];
@@ -23,6 +27,9 @@ export const POSTS: Post[] = [
   {
     slug: "schema-as-eval-spec",
     title: "Schema-as-eval-spec: killing LLM failure modes by construction (and catching my eval cheating)",
+    cardTitle: "How I caught my own AI test cheating, and why the lower score is the one I trust",
+    cardSummary:
+      "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem. This is what was wrong, how I fixed it, and why “fix the rules, not the prompt” works.",
     date: "2026-06-14",
     readMins: 7,
     tags: ["llm", "evals", "pydantic", "llm-as-judge"],

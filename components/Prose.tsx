@@ -65,14 +65,14 @@ function Inline({ s }: { s: string }) {
         if (tk.type === "code")
           return (
             <code key={k} style={{
-              fontFamily: T.mono, fontSize: "0.88em", color: T.accent,
-              background: "rgba(125,217,154,0.07)", padding: "1px 6px",
-              border: `1px solid ${T.line}`, borderRadius: 3,
+              fontFamily: T.mono, fontSize: "0.88em", color: T.yellow,
+              background: "rgba(255,214,10,0.07)", padding: "1px 6px",
+              border: `1px solid ${T.bevel}`, borderRadius: 3,
             }}>{tk.value}</code>
           );
         if (tk.type === "link")
           return (
-            <a key={k} href={tk.href} target="_blank" rel="noopener" className="pf-link" style={{ color: T.accent }}>
+            <a key={k} href={tk.href} target="_blank" rel="noopener" className="prose-link">
               {tk.value}
             </a>
           );
@@ -93,7 +93,7 @@ export default function Prose({ body }: { body: Block[] }) {
               letterSpacing: "-0.02em", marginTop: 48, marginBottom: 18,
               display: "flex", alignItems: "baseline", gap: 12,
             }}>
-              <span style={{ fontFamily: T.mono, fontSize: 13, color: T.accent }}>##</span>
+              <span style={{ fontFamily: T.mono, fontSize: 13, color: T.yellow }}>##</span>
               {b.s}
             </h2>
           );
@@ -108,9 +108,9 @@ export default function Prose({ body }: { body: Block[] }) {
           );
         if (b.t === "code")
           return (
-            <div key={i} className="pf-card" style={{ margin: "0 0 22px", overflow: "hidden" }}>
+            <div key={i} className="panel" style={{ margin: "0 0 22px", overflow: "hidden" }}>
               <div style={{
-                padding: "8px 14px", borderBottom: `1px solid ${T.line}`,
+                padding: "8px 14px", borderBottom: `1px solid ${T.bevel}`,
                 fontFamily: T.mono, fontSize: 10, color: T.dim2,
                 letterSpacing: "0.1em", textTransform: "uppercase",
               }}>{b.lang}</div>
@@ -124,7 +124,7 @@ export default function Prose({ body }: { body: Block[] }) {
           return (
             <blockquote key={i} style={{
               margin: "0 0 22px", padding: "16px 20px",
-              borderLeft: `2px solid ${T.accent}`, background: "rgba(125,217,154,0.03)",
+              borderLeft: `2px solid ${T.yellow}`, background: "rgba(255,214,10,0.03)",
               fontFamily: T.sans, fontSize: 15.5, fontStyle: "italic",
               color: T.text, lineHeight: 1.6,
             }}>
@@ -139,7 +139,7 @@ export default function Prose({ body }: { body: Block[] }) {
                   fontFamily: T.sans, fontSize: 16, lineHeight: 1.65, color: T.dim,
                   marginBottom: 10, position: "relative", paddingLeft: 20,
                 }}>
-                  <span style={{ position: "absolute", left: 0, top: 11, width: 10, height: 1, background: T.accent }} />
+                  <span style={{ position: "absolute", left: 0, top: 11, width: 10, height: 1, background: T.yellow }} />
                   <Inline s={it} />
                 </li>
               ))}
@@ -147,14 +147,14 @@ export default function Prose({ body }: { body: Block[] }) {
           );
         if (b.t === "table")
           return (
-            <div key={i} className="pf-card" style={{ margin: "0 0 22px", overflow: "auto" }}>
+            <div key={i} className="panel" style={{ margin: "0 0 22px", overflow: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 13 }}>
                 <thead>
                   <tr>
                     {b.head.map((h, k) => (
                       <th key={k} style={{
                         textAlign: "left", padding: "12px 16px",
-                        borderBottom: `1px solid ${T.line2}`,
+                        borderBottom: `1px solid ${T.bevelHi}`,
                         color: T.dim, fontWeight: 500, fontSize: 10,
                         letterSpacing: "0.1em", textTransform: "uppercase",
                       }}>{h}</th>
@@ -167,8 +167,8 @@ export default function Prose({ body }: { body: Block[] }) {
                       {row.map((cell, c) => (
                         <td key={c} style={{
                           padding: "12px 16px",
-                          borderBottom: r === b.rows.length - 1 ? "none" : `1px solid ${T.line}`,
-                          color: c === 0 ? T.accent : T.text,
+                          borderBottom: r === b.rows.length - 1 ? "none" : `1px solid ${T.bevel}`,
+                          color: c === 0 ? T.yellow : T.text,
                         }}>{cell}</td>
                       ))}
                     </tr>

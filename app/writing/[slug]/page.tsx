@@ -22,7 +22,7 @@ export async function generateMetadata(
 }
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
 export default async function PostPage(
@@ -33,55 +33,75 @@ export default async function PostPage(
   if (!post) notFound();
 
   return (
-    <article style={{ position: "relative", padding: "140px 0 100px" }}>
-      <div className="pf-wrap">
-        <Link
-          href="/#writing"
-          style={{
-            fontFamily: "var(--font-mono), monospace", fontSize: 12,
-            color: "#7d877a", display: "inline-flex", alignItems: "center", gap: 8,
-            marginBottom: 36,
-          }}
-          className="pf-link"
-        >
-          <span>←</span> cd ../writing
+    <article style={{ padding: "48px 20px 80px" }}>
+      <div className="panel on" style={{ padding: "40px 44px", maxWidth: 920, margin: "0 auto" }}>
+        <span className="serial">P-04 · {post.slug.toUpperCase().slice(0, 18)}</span>
+
+        <Link href="/#writing" className="lbl" style={{ display: "inline-flex", gap: 8, marginBottom: 32 }}>
+          ← all writing
         </Link>
 
-        <div style={{
-          fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "#525a4e",
-          letterSpacing: "0.06em", display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18,
-        }}>
-          <span style={{ color: "#7dd99a" }}>{fmtDate(post.date)}</span>
-          <span>·</span>
-          <span>{post.readMins} min read</span>
-          <span>·</span>
-          <span>{post.tags.map((t) => `#${t}`).join("  ")}</span>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18, alignItems: "center" }}>
+          <span className="lamp on" style={{ width: 10, height: 10 }} />
+          <span className="mono" style={{ fontSize: 12, color: "var(--dim)" }}>
+            {fmtDate(post.date)} · {post.readMins} min read
+          </span>
+          <span style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {post.tags.map((t) => (
+              <span key={t} className="chip">
+                {t}
+              </span>
+            ))}
+          </span>
         </div>
 
-        <h1 style={{
-          fontFamily: "var(--font-sans), system-ui, sans-serif",
-          fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 500, lineHeight: 1.05,
-          letterSpacing: "-0.03em", color: "#dfe4dc", margin: "0 0 24px", maxWidth: 820,
-        }}>
+        <h1
+          className="cond h-panel"
+          style={{
+            fontSize: "clamp(34px, 5vw, 60px)",
+            fontWeight: 700,
+            lineHeight: 0.95,
+            textTransform: "none",
+            color: "var(--text)",
+            margin: "0 0 22px",
+            maxWidth: 820,
+          }}
+        >
           {post.title}
         </h1>
 
-        <p style={{
-          fontFamily: "var(--font-sans), system-ui, sans-serif", fontSize: 19,
-          lineHeight: 1.55, color: "#7d877a", margin: "0 0 48px", maxWidth: 720,
-          paddingBottom: 32, borderBottom: "1px solid rgba(155,220,170,0.10)",
-        }}>
+        <p
+          className="intro"
+          style={{
+            fontSize: 18,
+            margin: "0 0 44px",
+            paddingBottom: 30,
+            borderBottom: "1px solid var(--bevel)",
+          }}
+        >
           {post.summary}
         </p>
 
         <Prose body={post.body} />
 
-        <div style={{
-          marginTop: 56, paddingTop: 28, borderTop: "1px solid rgba(155,220,170,0.10)",
-          display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap",
-        }}>
-          <Link href="/#writing" className="pf-btn">← all writing</Link>
-          <Link href="/#contact" className="pf-btn pf-btn-primary">work with me →</Link>
+        <div
+          style={{
+            marginTop: 52,
+            paddingTop: 28,
+            borderTop: "1px solid var(--bevel)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <Link href="/#writing" className="btn">
+            ← all writing
+          </Link>
+          <Link href="/#contact" className="btn go">
+            work with me <span>→</span>
+          </Link>
         </div>
       </div>
     </article>

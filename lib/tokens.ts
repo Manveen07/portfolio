@@ -1,21 +1,21 @@
-// Design tokens for the Terminal palette. Matches CSS variables in globals.css.
+// Design tokens for the Control Panel palette. Matches CSS variables in globals.css.
 // Import in components as: `import { T } from "@/lib/tokens"`.
 
 export const T = {
-  ink:     "#0a0d0c",
-  ink2:    "#0f1310",
-  card:    "#141813",
-  line:    "rgba(155,220,170,0.10)",
-  line2:   "rgba(155,220,170,0.22)",
-  text:    "#dfe4dc",
-  dim:     "#7d877a",
-  dim2:    "#525a4e",
-  accent:  "#7dd99a",
-  accent2: "#3fb070",
-  warn:    "#e3c178",
-  danger:  "#e07a6a",
-  mono:    'var(--font-mono), "JetBrains Mono", ui-monospace, monospace',
-  sans:    'var(--font-sans), "Space Grotesk", ui-sans-serif, system-ui, sans-serif',
+  bg:       "#0f1113",
+  panel:    "#171a1e",
+  panel2:   "#1d2126",
+  bevel:    "#2b3138",
+  bevelHi:  "#3a424b",
+  text:     "#e6e3dc",
+  dim:      "#8a9099",
+  dim2:     "#565c66",
+  yellow:   "#ffd60a",
+  green:    "#3ddc84",
+  red:      "#ff4d3d",
+  cond:     'var(--font-cond), "Barlow Condensed", "Arial Narrow", Impact, sans-serif',
+  sans:     'var(--font-sans), "Barlow", "Helvetica Neue", Arial, sans-serif',
+  mono:     'var(--font-mono), "IBM Plex Mono", "Courier New", ui-monospace, monospace',
 } as const;
 
 export type Tokens = typeof T;

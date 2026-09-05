@@ -1,535 +1,151 @@
 "use client";
 
-/* Easter eggs & power-user surface for the portfolio.
-   - Cmd/Ctrl+K (or `/`) opens a command palette to navigate sections / run actions.
-   - Vim-style chord: `g h`, `g a`, `g p`, `g w`, `g x`, `g s`, `g e`, `g c` for section jumps.
-   - `?` opens the shortcuts help.
-   - Konami code (↑↑↓↓←→←→ba) toggles "god mode" — a debug HUD.
-   - 7 clicks on the logo (handled here via window event "pf-logo-click") fires a secret. */
+/* Hidden extras. None of these announce themselves; all of them reward
+   someone who pokes at the page.
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { T } from "@/lib/tokens";
-import { ME, NAV_IDS, NAV_LABELS } from "@/data/portfolio";
+   1. Konami code            → "MAINTENANCE MODE": every lamp goes red, the
+                                belts reverse, the page tilts a half-degree.
+   2. Type "unattended"      → the footer serial-plate hint pays off.
+   3. Console greeting       → for the people who open devtools first.
+   4. Idle for 90s           → one lamp blinks the SOS pattern. That's it.
+   5. Tab away and back      → the title bar notices you left.
+*/
 
-type Cmd = {
-  id: string;
-  label: string;
-  hint: string;
-  kbd?: string;
-  run: () => void;
-};
+import { useEffect, useState } from "react";
 
-function scrollTo(id: string) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
+const KONAMI = [
+  "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+  "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+  "b", "a",
+];
 
-function useFps(active: boolean) {
-  const [fps, setFps] = useState(0);
+function Toast({ children, onDone }: { children: React.ReactNode; onDone: () => void }) {
   useEffect(() => {
-    if (!active) return;
-    let raf = 0;
-    let last = performance.now();
-    let frames = 0;
-    const tick = (t: number) => {
-      frames++;
-      if (t - last >= 1000) {
-        setFps(frames);
-        frames = 0;
-        last = t;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [active]);
-  return fps;
-}
-
-function GodModeHUD({ on }: { on: boolean }) {
-  const fps = useFps(on);
-  const [mem, setMem] = useState<string>("—");
-  useEffect(() => {
-    if (!on) return;
-    const id = setInterval(() => {
-      const p = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
-      if (p?.usedJSHeapSize) {
-        setMem(`${(p.usedJSHeapSize / 1024 / 1024).toFixed(1)} MB`);
-      }
-    }, 800);
-    return () => clearInterval(id);
-  }, [on]);
-
-  if (!on) return null;
-  return (
-    <div style={{
-      position: "fixed", left: 16, bottom: 16, zIndex: 60,
-      background: T.ink2, border: `1px solid ${T.accent}`,
-      padding: "10px 14px", fontFamily: T.mono, fontSize: 11,
-      color: T.accent, letterSpacing: "0.06em",
-      boxShadow: `0 0 24px rgba(125,217,154,0.18)`,
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span className="pf-pulse" style={{ width: 6, height: 6, borderRadius: 9999, background: T.accent }} />
-        <strong style={{ color: T.text, letterSpacing: "0.1em" }}>GOD MODE</strong>
-      </div>
-      <div style={{ marginTop: 8, color: T.dim, lineHeight: 1.65 }}>
-        fps <span style={{ color: T.text }}>{fps}</span>{"  "}·{"  "}
-        heap <span style={{ color: T.text }}>{mem}</span>
-      </div>
-      <div style={{ marginTop: 4, color: T.dim2, fontSize: 10 }}>
-        ↑↑↓↓←→←→ba — to disable
-      </div>
-    </div>
-  );
-}
-
-function Palette({
-  open, onClose, commands,
-}: {
-  open: boolean; onClose: () => void; commands: Cmd[];
-}) {
-  const [q, setQ] = useState("");
-  const [i, setI] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (open) {
-      setQ("");
-      setI(0);
-      setTimeout(() => inputRef.current?.focus(), 30);
-    }
-  }, [open]);
-
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    if (!needle) return commands;
-    return commands.filter((c) =>
-      (c.label + " " + c.hint).toLowerCase().includes(needle),
-    );
-  }, [q, commands]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { onClose(); return; }
-      if (e.key === "ArrowDown") { e.preventDefault(); setI((x) => Math.min(filtered.length - 1, x + 1)); return; }
-      if (e.key === "ArrowUp")   { e.preventDefault(); setI((x) => Math.max(0, x - 1)); return; }
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const cmd = filtered[i];
-        if (cmd) { cmd.run(); onClose(); }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, filtered, i, onClose]);
-
-  useEffect(() => { setI(0); }, [q]);
-
-  if (!open) return null;
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 80,
-        background: "rgba(10,13,12,0.72)", backdropFilter: "blur(6px)",
-        display: "flex", alignItems: "flex-start", justifyContent: "center",
-        paddingTop: "12vh",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="pf-card"
-        style={{ width: "min(640px, 92vw)", padding: 0, background: T.ink2 }}
-      >
-        <div style={{
-          display: "flex", alignItems: "center", gap: 10,
-          padding: "14px 18px", borderBottom: `1px solid ${T.line}`,
-        }}>
-          <span style={{ fontFamily: T.mono, fontSize: 12, color: T.accent }}>$</span>
-          <input
-            ref={inputRef}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="run a command — type a section, action, or 'open …'"
-            spellCheck={false}
-            style={{
-              flex: 1, background: "transparent", border: 0, outline: "none",
-              color: T.text, fontFamily: T.mono, fontSize: 14,
-            }}
-          />
-          <span style={{
-            fontFamily: T.mono, fontSize: 10, color: T.dim2,
-            padding: "3px 7px", border: `1px solid ${T.line2}`,
-          }}>
-            esc
-          </span>
-        </div>
-
-        <div style={{ maxHeight: 360, overflow: "auto", padding: "6px 0" }}>
-          {filtered.length === 0 && (
-            <div style={{
-              padding: "20px 18px", fontFamily: T.mono, fontSize: 12, color: T.dim,
-            }}>
-              <span style={{ color: T.warn }}>404</span> no command matches{" "}
-              <span style={{ color: T.text }}>{q}</span>
-            </div>
-          )}
-          {filtered.map((c, idx) => (
-            <div
-              key={c.id}
-              onMouseEnter={() => setI(idx)}
-              onClick={() => { c.run(); onClose(); }}
-              style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "10px 18px",
-                background: idx === i ? "rgba(125,217,154,0.06)" : "transparent",
-                borderLeft: `2px solid ${idx === i ? T.accent : "transparent"}`,
-                cursor: "pointer",
-              }}
-            >
-              <span style={{
-                fontFamily: T.mono, fontSize: 11, color: idx === i ? T.accent : T.dim2,
-                letterSpacing: "0.06em", minWidth: 22,
-              }}>
-                {idx === i ? "▸" : "·"}
-              </span>
-              <span style={{ fontFamily: T.sans, fontSize: 14, color: T.text }}>
-                {c.label}
-              </span>
-              <span style={{ fontFamily: T.mono, fontSize: 11, color: T.dim, marginLeft: 8 }}>
-                {c.hint}
-              </span>
-              {c.kbd && (
-                <span style={{
-                  marginLeft: "auto", fontFamily: T.mono, fontSize: 10, color: T.dim2,
-                  padding: "3px 7px", border: `1px solid ${T.line2}`,
-                }}>
-                  {c.kbd}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div style={{
-          padding: "10px 18px", borderTop: `1px solid ${T.line}`,
-          display: "flex", justifyContent: "space-between",
-          fontFamily: T.mono, fontSize: 10, color: T.dim2, letterSpacing: "0.08em",
-        }}>
-          <span>↑↓ navigate · ⏎ run · esc close</span>
-          <span>{filtered.length} command{filtered.length === 1 ? "" : "s"}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  if (!open) return null;
-  const rows: [string, string][] = [
-    ["⌘ K  /  Ctrl K  /  /", "command palette"],
-    ["g h", "go to system (top)"],
-    ["g a", "go to about"],
-    ["g p", "go to pipeline"],
-    ["g w", "go to work"],
-    ["g x", "go to agents"],
-    ["g s", "go to stack"],
-    ["g e", "go to logs (experience)"],
-    ["g b", "go to writing"],
-    ["g c", "go to contact"],
-    ["?", "this help"],
-    ["↑↑↓↓←→←→ba", "god mode"],
-  ];
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 80,
-        background: "rgba(10,13,12,0.72)", backdropFilter: "blur(6px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="pf-card"
-        style={{ width: "min(520px, 92vw)", padding: "28px 32px", background: T.ink2 }}
-      >
-        <div style={{
-          fontFamily: T.mono, fontSize: 11, color: T.dim,
-          letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14,
-        }}>
-          keyboard shortcuts
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {rows.map(([k, v]) => (
-            <div key={k} style={{
-              display: "flex", justifyContent: "space-between",
-              fontFamily: T.mono, fontSize: 12,
-            }}>
-              <span style={{
-                color: T.text, padding: "3px 8px", border: `1px solid ${T.line2}`,
-                background: T.ink, fontSize: 11,
-              }}>{k}</span>
-              <span style={{ color: T.dim }}>{v}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{
-          marginTop: 18, paddingTop: 14, borderTop: `1px solid ${T.line}`,
-          fontFamily: T.mono, fontSize: 10, color: T.dim2, textAlign: "right",
-        }}>
-          esc to close
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SecretToast({ message, onDone }: { message: string; onDone: () => void }) {
-  useEffect(() => {
-    const id = setTimeout(onDone, 3800);
-    return () => clearTimeout(id);
+    const t = setTimeout(onDone, 6000);
+    return () => clearTimeout(t);
   }, [onDone]);
   return (
-    <div style={{
-      position: "fixed", right: 20, bottom: 20, zIndex: 70,
-      background: T.ink2, border: `1px solid ${T.accent}`,
-      padding: "14px 18px", fontFamily: T.mono, fontSize: 12,
-      color: T.text, maxWidth: 320, boxShadow: `0 0 32px rgba(125,217,154,0.22)`,
-      animation: "fade-up .35s cubic-bezier(.22,1,.36,1) both",
-    }}>
-      <div style={{
-        fontSize: 10, color: T.accent, letterSpacing: "0.12em", marginBottom: 6,
-      }}>
-        EASTER_EGG_FOUND
-      </div>
-      {message}
+    <div
+      className="panel"
+      style={{
+        position: "fixed",
+        left: "50%",
+        bottom: 28,
+        transform: "translateX(-50%)",
+        zIndex: 60,
+        padding: "14px 20px",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        animation: "poweron .4s cubic-bezier(.2,.8,.2,1) both",
+        maxWidth: "min(92vw, 560px)",
+      }}
+    >
+      <span className="lamp warn pulse" />
+      <span className="mono" style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text)" }}>
+        {children}
+      </span>
     </div>
   );
 }
 
 export default function Easter() {
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
-  const [god, setGod] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [maintenance, setMaintenance] = useState(false);
+  const [toast, setToast] = useState<React.ReactNode>(null);
 
-  const konamiRef = useRef<string[]>([]);
-  const KONAMI = useMemo(
-    () => ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"],
-    [],
-  );
-
-  const chordRef = useRef<{ pending: boolean; t: number }>({ pending: false, t: 0 });
-  const logoClicksRef = useRef<{ n: number; t: number }>({ n: 0, t: 0 });
-
-  // Console banner — fires once on mount.
+  // 3. Console greeting.
   useEffect(() => {
-    const banner = [
-      `%c
-   __  __
-  |  \\/  | __ _ _ ____   _____  ___ _ __
-  | |\\/| |/ _\` | '_ \\ \\ / / _ \\/ _ \\ '_ \\
-  | |  | | (_| | | | \\ V /  __/  __/ | | |
-  |_|  |_|\\__,_|_| |_|\\_/ \\___|\\___|_| |_|
-
-`,
-      `color:${T.accent};font-family:monospace;font-size:11px;line-height:1`,
-    ];
-    // eslint-disable-next-line no-console
-    console.log(...banner);
-    // eslint-disable-next-line no-console
-    console.log(
-      `%cif you're reading this, you found the source.%c\n  hiring? → ${ME.email}\n  resume? → ${ME.calendly}\n  curious? → press ? on the page for shortcuts.`,
-      `color:${T.text};font-family:monospace;font-size:12px;font-weight:600`,
-      `color:${T.dim};font-family:monospace;font-size:11px;line-height:1.6`,
-    );
+    const y = "color:#ffd60a;font:700 13px/1.5 monospace";
+    const d = "color:#8a9099;font:400 12px/1.6 monospace";
+    console.log("%c ┌─ PANEL 01 ─────────────────────────────┐", y);
+    console.log("%c You opened the console. Of course you did.", d);
+    console.log("%c Everything on this page is a real number.", d);
+    console.log("%c The run history is read from GitHub Actions.", d);
+    console.log("%c ↑↑↓↓←→←→ B A does something.", d);
+    console.log("%c manveen9650@gmail.com", y);
+    console.log("%c └────────────────────────────────────────┘", y);
   }, []);
 
-  // Logo click counter — listens for window event dispatched by the Nav logo.
+  // 1 + 2. Key sequences.
   useEffect(() => {
-    const onClick = () => {
-      const now = Date.now();
-      const ref = logoClicksRef.current;
-      if (now - ref.t > 1400) ref.n = 0;
-      ref.n += 1;
-      ref.t = now;
-      if (ref.n >= 7) {
-        ref.n = 0;
-        setToast("manual mode disengaged. you've earned the keys to the pipeline.");
-      }
-    };
-    window.addEventListener("pf-logo-click", onClick);
-    return () => window.removeEventListener("pf-logo-click", onClick);
-  }, []);
+    let konami: string[] = [];
+    let typed = "";
 
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      const inField = target && /^(input|textarea|select)$/i.test(target.tagName);
-
-      // Cmd/Ctrl + K → palette
-      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
-        e.preventDefault();
-        setPaletteOpen((v) => !v);
-        return;
-      }
-
-      if (inField) return;
-
-      // `/` → palette
-      if (e.key === "/" && !paletteOpen) {
-        e.preventDefault();
-        setPaletteOpen(true);
-        return;
-      }
-      // `?` → help
-      if (e.key === "?") {
-        e.preventDefault();
-        setHelpOpen((v) => !v);
-        return;
-      }
-      // Esc closes overlays
-      if (e.key === "Escape") {
-        setPaletteOpen(false);
-        setHelpOpen(false);
-        return;
-      }
-
       // Konami
-      konamiRef.current.push(e.key);
-      if (konamiRef.current.length > KONAMI.length) konamiRef.current.shift();
-      if (konamiRef.current.length === KONAMI.length &&
-          konamiRef.current.every((k, idx) => k.toLowerCase() === KONAMI[idx].toLowerCase())) {
-        konamiRef.current = [];
-        setGod((v) => {
-          const next = !v;
-          setToast(next ? "god mode engaged. all sensors hot." : "god mode disengaged.");
-          return next;
-        });
-        return;
+      konami = [...konami, e.key].slice(-KONAMI.length);
+      if (konami.length === KONAMI.length && konami.every((k, i) => k.toLowerCase() === KONAMI[i].toLowerCase())) {
+        setMaintenance((m) => !m);
+        konami = [];
       }
 
-      // Vim-style chord: g + <letter>
-      const chord = chordRef.current;
-      const now = Date.now();
-      if (e.key === "g" && !chord.pending) {
-        chord.pending = true;
-        chord.t = now;
-        setTimeout(() => {
-          if (chordRef.current.pending && Date.now() - chordRef.current.t >= 700) {
-            chordRef.current.pending = false;
-          }
-        }, 750);
-        return;
-      }
-      if (chord.pending && now - chord.t < 700) {
-        chord.pending = false;
-        const map: Record<string, (typeof NAV_IDS)[number]> = {
-          h: "top",
-          a: "about",
-          p: "pipeline",
-          w: "ops",
-          x: "agents",
-          s: "stack",
-          e: "experience",
-          b: "writing",
-          c: "contact",
-        };
-        const id = map[e.key.toLowerCase()];
-        if (id) {
-          e.preventDefault();
-          scrollTo(id);
+      // "unattended"
+      if (e.key.length === 1) {
+        typed = (typed + e.key.toLowerCase()).slice(-12);
+        if (typed.includes("unattended")) {
+          typed = "";
+          setToast(
+            <>
+              You found the serial plate and typed the word. That is exactly the kind of
+              persistence I automate for.{" "}
+              <a href="mailto:manveen9650@gmail.com?subject=unattended" style={{ color: "var(--yellow)" }}>
+                Email me the word →
+              </a>
+            </>,
+          );
         }
-        return;
       }
     };
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [KONAMI, paletteOpen]);
-
-  const commands: Cmd[] = useMemo(() => {
-    const chordOf = (id: (typeof NAV_IDS)[number]) =>
-      id === "top" ? "h" : id === "agents" ? "x" : id === "ops" ? "w" : id === "writing" ? "b" : id[0];
-    const navCmds: Cmd[] = NAV_IDS.map((id) => ({
-      id: `nav-${id}`,
-      label: `goto.${NAV_LABELS[id]}`,
-      hint: `scroll to #${id}`,
-      kbd: `g ${chordOf(id)}`,
-      run: () => scrollTo(id),
-    }));
-    const action: Cmd[] = [
-      {
-        id: "act-email",
-        label: "exec.email",
-        hint: `mailto:${ME.email}`,
-        run: () => { window.location.href = `mailto:${ME.email}`; },
-      },
-      {
-        id: "act-calendly",
-        label: "exec.schedule",
-        hint: "open calendly · 30min",
-        run: () => window.open(ME.calendly, "_blank", "noopener"),
-      },
-      {
-        id: "act-resume",
-        label: "exec.resume",
-        hint: "open resume.pdf",
-        run: () => window.open(ME.resume, "_blank", "noopener"),
-      },
-      {
-        id: "act-github",
-        label: "open.github",
-        hint: "github.com/Manveen07",
-        run: () => window.open(ME.github, "_blank", "noopener"),
-      },
-      {
-        id: "act-linkedin",
-        label: "open.linkedin",
-        hint: "linkedin",
-        run: () => window.open(ME.linkedin, "_blank", "noopener"),
-      },
-      {
-        id: "act-god",
-        label: "sys.god_mode --toggle",
-        hint: "fps + heap HUD",
-        kbd: "↑↑↓↓…",
-        run: () => setGod((v) => {
-          const next = !v;
-          setToast(next ? "god mode engaged. all sensors hot." : "god mode disengaged.");
-          return next;
-        }),
-      },
-      {
-        id: "act-help",
-        label: "help.shortcuts",
-        hint: "list keyboard chords",
-        kbd: "?",
-        run: () => setHelpOpen(true),
-      },
-      {
-        id: "act-copy-email",
-        label: "clipboard.copy_email",
-        hint: ME.email,
-        run: async () => {
-          try { await navigator.clipboard.writeText(ME.email); setToast(`copied → ${ME.email}`); }
-          catch { setToast("clipboard blocked by browser"); }
-        },
-      },
-    ];
-    return [...navCmds, ...action];
   }, []);
 
-  return (
-    <>
-      <Palette open={paletteOpen} onClose={() => setPaletteOpen(false)} commands={commands} />
-      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
-      <GodModeHUD on={god} />
-      {toast && <SecretToast message={toast} onDone={() => setToast(null)} />}
-    </>
-  );
+  // 4. Idle → one lamp blinks SOS.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      clearTimeout(timer);
+      document.documentElement.removeAttribute("data-idle");
+      timer = setTimeout(() => document.documentElement.setAttribute("data-idle", "1"), 90000);
+    };
+    const events = ["pointermove", "keydown", "scroll", "pointerdown"] as const;
+    events.forEach((ev) => window.addEventListener(ev, arm, { passive: true }));
+    arm();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((ev) => window.removeEventListener(ev, arm));
+    };
+  }, []);
+
+  // 5. Title bar notices you left.
+  useEffect(() => {
+    const original = document.title;
+    const onVis = () => {
+      document.title = document.hidden ? "still running without you…" : original;
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      document.title = original;
+    };
+  }, []);
+
+  // Maintenance mode paints itself through a root attribute; CSS owns the look.
+  useEffect(() => {
+    if (maintenance) {
+      document.documentElement.setAttribute("data-maintenance", "1");
+      setToast(
+        <>
+          <b style={{ color: "var(--yellow)" }}>MAINTENANCE MODE.</b> Every lamp red, belts
+          reversed. This is what the panel looks like at 3am when something breaks. Press the code
+          again to bring it back up.
+        </>,
+      );
+    } else {
+      document.documentElement.removeAttribute("data-maintenance");
+    }
+  }, [maintenance]);
+
+  return toast ? <Toast onDone={() => setToast(null)}>{toast}</Toast> : null;
 }
