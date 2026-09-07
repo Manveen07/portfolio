@@ -1,6 +1,6 @@
 "use client";
 
-import { ME } from "@/data/portfolio";
+import { ME, HERO } from "@/data/portfolio";
 
 /* Split-flap display: each character flips down like an airport board.
    Delays are computed so the two lines read left-to-right in sequence. */
@@ -71,16 +71,14 @@ export default function Hero() {
 
         <div className="on" style={{ display: "flex", flexDirection: "column", gap: 16, animationDelay: "2.1s" }}>
           <p className="intro" style={{ fontSize: 18 }}>
-            I&rsquo;m Manveen. I build automation for sales and marketing teams:{" "}
-            <b>the systems that find leads, check them, add the missing data, and put them in your CRM</b>{" "}
-            without a person copying and pasting. Then I keep those systems running.
+            {HERO.tagline} <b>{HERO.promise}</b>
           </p>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             <a className="btn go" href="#proof">
               See it working <span>↓</span>
             </a>
             <a className="btn" href={ME.calendly} target="_blank" rel="noopener">
-              Book 20 min
+              Book a call
             </a>
           </div>
         </div>

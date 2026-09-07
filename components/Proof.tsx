@@ -1,6 +1,6 @@
 "use client";
 
-import { PIPELINE, RUN_HISTORY, TAG } from "@/data/portfolio";
+import { PIPELINE, RUN_HISTORY, QUOTE_PROOF, TAG } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 function fmt(iso: string) {
@@ -196,6 +196,44 @@ export default function Proof() {
           </svg>
           <div className="explain" style={{ marginTop: 0 }}>
             <b>Zero</b> manual steps from start to sent email.
+          </div>
+        </div>
+      </div>
+
+      {/* Second proof: quote intake, scored on real catalogs */}
+      <div className="grid-split" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.25fr)", gap: 12 }}>
+        <div className="panel on" style={{ padding: "22px 24px", display: "flex", flexDirection: "column", gap: 16, animationDelay: "2.7s" }}>
+          <span className="serial">P-01 · LINE-02 · QUOTE INTAKE</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span className="lamp on" />
+            <span className="engr" style={{ color: "var(--dim)" }}>Second proof · scored on {QUOTE_PROOF.catalogs} real catalogs · 6 Sep</span>
+          </div>
+          <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
+            Quote intake,
+            <br />
+            <span style={{ color: "var(--yellow)" }}>with its error rate.</span>
+          </div>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
+            I took real product catalogs from {QUOTE_PROOF.catalogs} distributors, wrote {QUOTE_PROOF.lines} customer
+            lines the messy way customers write them, plus trap lines that must not match, and scored the
+            system against the answer key.
+          </p>
+          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, paddingTop: 6, borderTop: "1px solid var(--bevel)" }}>
+            <div><div className="seg seg-md">{QUOTE_PROOF.wrong}</div><div className="lbl" style={{ marginTop: 6 }}>wrong quotes</div></div>
+            <div><div className="seg plain seg-md">{QUOTE_PROOF.quotedRight}</div><div className="lbl" style={{ marginTop: 6 }}>quoted right, with price</div></div>
+            <div><div className="seg plain seg-md">{QUOTE_PROOF.toPerson}</div><div className="lbl" style={{ marginTop: 6 }}>handed to a person</div></div>
+          </div>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--dim)", paddingTop: 12, borderTop: "1px solid var(--bevel)" }}>
+            {QUOTE_PROOF.worstCatalog}
+          </p>
+        </div>
+        <div className="panel on" style={{ padding: 10, overflow: "hidden", animationDelay: "2.8s" }}>
+          <span className="serial">P-01 · SCORER OUTPUT</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={QUOTE_PROOF.screenshot} alt={QUOTE_PROOF.screenshotAlt} style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }} />
+          <div className="monitor-caption" style={{ position: "absolute", left: 24, bottom: 24, display: "flex", gap: 10, alignItems: "center", background: "var(--panel)", border: "1px solid var(--bevel-hi)", padding: "8px 12px" }}>
+            <span className="lamp on" style={{ width: 10, height: 10 }} />
+            <span className="lbl" style={{ color: "var(--text)" }}>one catalog · 30 lines · public product data</span>
           </div>
         </div>
       </div>

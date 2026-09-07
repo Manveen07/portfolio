@@ -52,7 +52,7 @@ export default function Nav() {
         ))}
       </div>
       <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-        Book 20 min <span>→</span>
+        Book a call <span>→</span>
       </a>
     </div>
   );

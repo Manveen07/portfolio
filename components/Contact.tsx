@@ -14,7 +14,7 @@ export default function Contact() {
       style={{ padding: "40px var(--gutter) 20px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
-        <span className="n">5</span>
+        <span className="n">6</span>
         <span className="tag"><span>{TAG.contact}</span></span>
         <span className="t">Work with me</span>
         <span className="rule" />
@@ -26,7 +26,7 @@ export default function Contact() {
           style={{ padding: "44px 40px", display: "flex", flexDirection: "column", gap: 22, overflow: "hidden" }}
         >
           <div className="scan" />
-          <span className="serial">P-05 · DISPATCH</span>
+          <span className="serial">P-06 · DISPATCH</span>
           <div className="cond h-dispatch" style={{ lineHeight: 0.82, fontWeight: 800 }}>
             Twenty minutes.
             <br />
@@ -39,7 +39,7 @@ export default function Contact() {
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-              Book the 20 minutes <span>→</span>
+              Book the call <span>→</span>
             </a>
             <a className="btn" href={`mailto:${ME.email}`}>
               {ME.email}
@@ -48,7 +48,7 @@ export default function Contact() {
         </div>
 
         <div className="panel on" style={{ display: "flex", flexDirection: "column", animationDelay: ".1s" }}>
-          <span className="serial">P-05 · DOORS</span>
+          <span className="serial">P-06 · DOORS</span>
           {DOORS.map((d) => (
             <div
               key={d.kicker}

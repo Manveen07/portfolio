@@ -20,7 +20,7 @@ export default function Writing() {
       style={{ padding: "40px var(--gutter) 8px", display: "flex", flexDirection: "column", gap: 20 }}
     >
       <div className="step">
-        <span className="n">4</span>
+        <span className="n">5</span>
         <span className="tag"><span>{TAG.writing}</span></span>
         <span className="t">How I think</span>
         <span className="rule" />
@@ -32,8 +32,8 @@ export default function Writing() {
       <div className="grid-split" style={{ display: "grid", gridTemplateColumns: "300px minmax(0, 1fr)", gap: 12 }}>
         {/* Lead plate: what this section is for */}
         <div className="panel on" style={{ padding: "24px 26px", display: "flex", flexDirection: "column", gap: 16 }}>
-          <span className="serial">P-04 · NOTES</span>
-          <span className="engr">Line 04 · writing</span>
+          <span className="serial">P-05 · NOTES</span>
+          <span className="engr">Line 05 · writing</span>
           <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
             Notes from
             <br />
@@ -64,7 +64,7 @@ export default function Writing() {
                 animationDelay: `${0.1 + i * 0.1}s`,
               }}
             >
-              <span className="serial">P-04 · POST-{String(i + 1).padStart(2, "0")}</span>
+              <span className="serial">P-05 · POST-{String(i + 1).padStart(2, "0")}</span>
 
               <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
                 <span className="lbl" style={{ color: "var(--yellow)" }}>

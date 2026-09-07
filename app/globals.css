@@ -403,6 +403,10 @@ section[id] { scroll-margin-top: 96px; }
   }
   .panel a.lbl[style*="padding: 12px 24px"] { padding-left: 0 !important; padding-right: 0 !important; }
 
+  /* incident.log rows stack into a label/value list. */
+  .log-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+  .log-row .lbl:not(:first-child) { display: none; }
+
   /* Metric pairs stack rather than squeeze to two cramped columns. */
   .panel div[style*="repeat(2, minmax(0, 1fr))"] { grid-template-columns: 1fr !important; gap: 18px !important; }
 

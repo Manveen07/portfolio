@@ -29,19 +29,19 @@ const mono = IBM_Plex_Mono({
 });
 
 const DESCRIPTION =
-  "I build automation for sales and marketing teams: the systems that find leads, check them, add the missing data, and put them in your CRM. Then I keep them running.";
+  "I automate the work a business still does by hand between a customer's list and a confirmed order: quote intake, order parsing, document processing. Every build ships with its own error rate measured.";
 
 export const metadata: Metadata = {
-  title: "Manveen Singh | GTM automation engineer",
+  title: "Manveen Singh | automation engineer",
   description: DESCRIPTION,
   keywords: [
-    "GTM engineer", "GTM automation", "automation engineer",
+    "automation engineer", "quote intake automation", "order parsing", "document processing",
     "lead enrichment", "outbound automation", "Clay", "n8n", "Python",
   ],
   authors: [{ name: "Manveen Singh" }],
   metadataBase: new URL("https://manveen.me"),
   openGraph: {
-    title: "Manveen Singh | GTM automation engineer",
+    title: "Manveen Singh | automation engineer",
     description: "Automating the boring. Scaling the interesting.",
     type: "website",
     locale: "en_US",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Manveen Singh | GTM automation engineer",
+    title: "Manveen Singh | automation engineer",
     description: "Automating the boring. Scaling the interesting.",
   },
   robots: {

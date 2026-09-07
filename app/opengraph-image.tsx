@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Manveen Singh — GTM automation engineer";
+export const alt = "Manveen Singh — automation engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -42,7 +42,7 @@ export default async function Image() {
               }}
             />
             <div style={{ fontSize: 24, color: "#8a9099", letterSpacing: 3, textTransform: "uppercase" }}>
-              GTM automation engineer · Delhi · remote
+              automation engineer · Delhi · remote
             </div>
           </div>
 

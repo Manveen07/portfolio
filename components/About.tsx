@@ -1,6 +1,6 @@
 "use client";
 
-import { ROLES, EDUCATION, TOOLS, PLATES, ME, TAG } from "@/data/portfolio";
+import { ROLES, EDUCATION, TOOLS, TOOLS_DAYJOB, PLATES, ME, TAG, ABOUT } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 export default function About() {
@@ -31,20 +31,15 @@ export default function About() {
             className="cond h-panel"
             style={{ margin: 0, lineHeight: 0.92, fontWeight: 700, letterSpacing: "-0.01em" }}
           >
-            I automate the repetitive work
+            {ABOUT.line1}
             <br />
             <span style={{ color: "var(--yellow)" }}>
-              between &ldquo;we found a lead&rdquo; and &ldquo;we emailed them.&rdquo;
+              &ldquo;{ABOUT.quote1}&rdquo; {ABOUT.mid} &ldquo;{ABOUT.quote2}&rdquo;
             </span>
           </p>
-          <p className="intro">
-            Finding leads. Checking they are real. Adding the missing details. Scoring them. Putting
-            them in the CRM. Sending the first email. Telling a human only when something needs a
-            human.{" "}
-            <b>
-              I do this every day for a lead-generation company, and I build it for teams that want
-              it done once, properly.
-            </b>
+          <p className="intro">{ABOUT.body}</p>
+          <p className="intro" style={{ borderLeft: "2px solid var(--yellow)", paddingLeft: 16, color: "var(--text)" }}>
+            {ABOUT.bio}
           </p>
 
           <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
@@ -58,9 +53,17 @@ export default function About() {
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
             <span className="engr" style={{ marginRight: 8 }}>
-              Tools I use daily
+              I build with
             </span>
             {TOOLS.map((t) => (
+              <span key={t} className="chip">
+                {t}
+              </span>
+            ))}
+            <span className="engr" style={{ margin: "0 8px 0 14px" }}>
+              at the day job
+            </span>
+            {TOOLS_DAYJOB.map((t) => (
               <span key={t} className="chip">
                 {t}
               </span>
