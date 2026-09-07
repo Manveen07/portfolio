@@ -240,7 +240,7 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
         <div className="panel on" style={{ padding: 10, overflow: "hidden", animationDelay: "2.8s" }}>
           <span className="serial">P-01 · SCORER OUTPUT</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={QUOTE_PROOF.screenshot} alt={QUOTE_PROOF.screenshotAlt} style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }} />
+          <img src={QUOTE_PROOF.screenshot} alt={QUOTE_PROOF.screenshotAlt} loading="lazy" decoding="async" width={1040} height={950} style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }} />
           <div className="monitor-caption" style={{ position: "absolute", left: 24, bottom: 24, display: "flex", gap: 10, alignItems: "center", background: "var(--panel)", border: "1px solid var(--bevel-hi)", padding: "8px 12px" }}>
             <span className="lamp on" style={{ width: 10, height: 10 }} />
             <span className="lbl" style={{ color: "var(--text)" }}>one distributor · 30 lines · public product data</span>

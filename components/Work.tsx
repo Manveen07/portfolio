@@ -168,6 +168,7 @@ export default function Work() {
             muted
             loop
             playsInline
+            preload="metadata"
             style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }}
           />
           <div

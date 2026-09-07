@@ -68,7 +68,7 @@ export const QUOTE_PROOF = {
   trapsRefused: 20,
   wrong: 0,
   closing: "A wrong quote costs money. A flagged one costs thirty seconds.",
-  screenshot: "/quote-proof-equippers.jpg",
+  screenshot: "/quote-proof-equippers.webp",
   screenshotAlt: "Scorer output for one distributor: 30 customer lines, 26 quoted with price, 4 flagged for a person, 0 wrong",
 } as const;
 
