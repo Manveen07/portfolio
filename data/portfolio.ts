@@ -36,18 +36,13 @@ export const NAV: { id: string; label: string; tag: string }[] = [
 ];
 export const TAG = Object.fromEntries(NAV.map((n) => [n.id, n.tag])) as Record<string, string>;
 
-// ── Live pipeline snapshot ───────────────────────────────────────────
-// Read from the GitHub Actions API + the job's own daily summary on
-// 2026-09-04. These values are the fallback and the shape of the live data.
-export type RunDay = { date: string; ok: boolean };
+// ── Live pipeline: prose only. Numbers come from lib/pipeline.ts ─────
+// (GitHub at request time when GITHUB_TOKEN is set, else the committed
+// data/pipeline-snapshot.json — refresh it with `npm run refresh-snapshot`).
+import snapshot from "./pipeline-snapshot.json";
 
 export const PIPELINE = {
-  asOf: "2026-09-04",
-  lastRunUtc: "09:52 UTC",
-  totalRuns: 75,
-  firstRun: "3 July",
-  noticesRead: 342,
-  clientProfiles: 7,
+  firstRun: "3 July 2026",
   manualSteps: 0,
   outageNote:
     "It broke once, for about three weeks, when a data-format change silently killed the morning run. Fixed, and a failed run now leaves a visible trace. I leave the red stretch on the page because a system that never fails is a system nobody is watching.",
@@ -55,16 +50,8 @@ export const PIPELINE = {
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
 
-/** Last 40 scheduled runs: 15 failures (28 Jul → 11 Aug), then 25 successes. */
-export const RUN_HISTORY: RunDay[] = (() => {
-  const days: RunDay[] = [];
-  const start = Date.UTC(2026, 6, 28); // 28 July 2026
-  for (let i = 0; i < 40; i++) {
-    const d = new Date(start + i * 86400000);
-    days.push({ date: d.toISOString().slice(0, 10), ok: i >= 15 });
-  }
-  return days;
-})();
+/** Committed fallback figures, so static places (bay card, share image, boot) match the panel. */
+export const SNAPSHOT = snapshot;
 
 // ── Second proof: quote intake, scored ──────────────────────────────
 // The five distributor catalogs that publish part codes (Equippers, SideDish,
@@ -163,7 +150,7 @@ export const BAYS: Bay[] = [
       "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and emails a short list. Built alone, running unattended since July.",
     stack: ["python", "playwright", "gemini", "github actions"],
     metrics: [
-      ["75", "mornings run on its own"],
+      [String(snapshot.totalRuns), "mornings run on its own"],
       ["6 of 6", "on a small hand-checked set, still growing it"],
     ],
     links: [

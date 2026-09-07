@@ -1,6 +1,7 @@
 "use client";
 
-import { PIPELINE, RUN_HISTORY, QUOTE_PROOF, TAG } from "@/data/portfolio";
+import { PIPELINE, QUOTE_PROOF, TAG } from "@/data/portfolio";
+import { fmtRun, type PipelineData } from "@/lib/pipeline";
 import { useReveal } from "@/lib/hooks";
 
 function fmt(iso: string) {
@@ -20,9 +21,11 @@ function Odo({ value, delay }: { value: string | number; delay: number }) {
   );
 }
 
-export default function Proof() {
+export default function Proof({ pipe }: { pipe: PipelineData }) {
   const ref = useReveal<HTMLElement>();
+  const RUN_HISTORY = pipe.history;
   const last = RUN_HISTORY.length - 1;
+  const lastOk = pipe.lastRun.ok;
 
   return (
     <section
@@ -69,9 +72,10 @@ export default function Proof() {
           <span className="serial">P-01 · LINE-01 · S/N 0075</span>
 
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span className="lamp on pulse" />
+            <span className={`lamp ${lastOk ? "on" : "red"} pulse`} />
             <span className="engr" style={{ color: "var(--dim)" }}>
-              Running now · last run this morning, {PIPELINE.lastRunUtc}
+              {lastOk ? "Running" : "Last run failed"} · last run {fmtRun(pipe.lastRun.at)}
+              {pipe.live ? " · read live from GitHub" : ""}
             </span>
           </div>
 
@@ -87,10 +91,10 @@ export default function Proof() {
           >
             <div>
               <div className="seg">
-                <Odo value={PIPELINE.totalRuns} delay={2.5} />
+                <Odo value={pipe.totalRuns} delay={2.5} />
               </div>
               <div className="explain">
-                <b>{PIPELINE.totalRuns} mornings</b> it has run by itself since {PIPELINE.firstRun}.
+                <b>{pipe.totalRuns} mornings</b> it has run by itself since {PIPELINE.firstRun}.
               </div>
             </div>
 
@@ -98,7 +102,7 @@ export default function Proof() {
               <div className="hist" style={{ maxWidth: "100%", overflow: "hidden" }}>
                 {RUN_HISTORY.map((r, i) => (
                   <i
-                    key={r.date}
+                    key={`${r.date}-${i}`}
                     className={`${r.ok ? "" : "f"} ${i === last ? "last" : ""}`}
                     title={`${fmt(r.date)} · ${r.ok ? "ran" : "failed"}${i === last ? " · today" : ""}`}
                     style={{ animationDelay: `${(2.5 + i * 0.04).toFixed(2)}s` }}
@@ -106,7 +110,7 @@ export default function Proof() {
                 ))}
               </div>
               <span className="lbl" style={{ textAlign: "right", lineHeight: 1.6 }}>
-                one bar per morning, last 40 · green ran, red failed
+                one bar per morning, last {RUN_HISTORY.length} · green ran, red failed
                 <br />
                 hover a bar for its date
               </span>
@@ -145,10 +149,10 @@ export default function Proof() {
           <span className="engr">Contracts read</span>
           <div>
             <div className="seg plain">
-              <Odo value={PIPELINE.noticesRead} delay={2.7} />
+              <Odo value={pipe.noticesRead} delay={2.7} />
             </div>
             <div className="explain">
-              <b>{PIPELINE.noticesRead} contract notices</b> read and sorted so far. A person would
+              <b>{pipe.noticesRead} contract notices</b> read and sorted so far. A person would
               have opened each one.
             </div>
           </div>
@@ -163,10 +167,10 @@ export default function Proof() {
           <span className="engr">Companies served</span>
           <div>
             <div className="seg plain">
-              <Odo value={PIPELINE.clientProfiles} delay={2.9} />
+              <Odo value={pipe.clientProfiles} delay={2.9} />
             </div>
             <div className="explain">
-              <b>{PIPELINE.clientProfiles} companies</b> each get their own matches, in their own
+              <b>{pipe.clientProfiles} companies</b> each get their own matches, in their own
               sector and region.
             </div>
           </div>

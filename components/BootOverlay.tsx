@@ -5,12 +5,13 @@
    Auto-clears in ~1.6s; click to skip. Shown once per tab. */
 
 import { useEffect, useRef, useState } from "react";
+import { SNAPSHOT } from "@/data/portfolio";
 
 const LINES: [string, string][] = [
   ["power", "ok"],
   ["panel 01", "ok"],
   ["line 01 · tender radar", "running"],
-  ["counters", "75 · 342 · 7"],
+  ["counters", `${SNAPSHOT.totalRuns} · ${SNAPSHOT.noticesRead} · ${SNAPSHOT.clientProfiles}`],
   ["mode", "unattended"],
   ["night shift", "standing by"],
 ];

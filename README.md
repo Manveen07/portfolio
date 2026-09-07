@@ -147,3 +147,15 @@ Key CSS classes: `module-card`, `tech-chip`, `section-tag`, `code-surface`, `gli
 **Built with precision. Deployed with intent.**
 
 </div>
+
+## Live "proof it runs" numbers
+
+The proof panel shows the Tender Radar workflow's real run history. Two sources, same shape:
+
+- **Live** — set `GITHUB_TOKEN` (fine-grained PAT on `Manveen07/new-10x-engineer`, read-only
+  *Actions* + *Contents*). The page reads GitHub at request time, cached one hour, and says
+  "read live from GitHub" under the lamp. On Vercel: Project → Settings → Environment Variables.
+- **Snapshot** — without the token, `data/pipeline-snapshot.json` is used. Refresh it any time with
+  `npm run refresh-snapshot` (needs the `gh` CLI signed in), then commit.
+
+Everything else on the page is static data in `data/portfolio.ts`.

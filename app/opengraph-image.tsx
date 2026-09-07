@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import snapshot from "@/data/pipeline-snapshot.json";
 
 export const runtime = "edge";
 export const alt = "Manveen Singh — automation engineer";
@@ -75,11 +76,11 @@ export default async function Image() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div style={{ display: "flex", gap: 48 }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>75</div>
+              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>{snapshot.totalRuns}</div>
               <div style={{ fontSize: 18, color: "#8a9099", letterSpacing: 2 }}>MORNINGS UNATTENDED</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>342</div>
+              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>{snapshot.noticesRead}</div>
               <div style={{ fontSize: 18, color: "#8a9099", letterSpacing: 2 }}>CONTRACTS READ</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
