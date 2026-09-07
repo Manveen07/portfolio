@@ -20,9 +20,9 @@ export const ME = {
 // ── Hero ─────────────────────────────────────────────────────────────
 export const HERO = {
   tagline:
-    "I automate the work a business still does by hand between a customer's list and a confirmed order: quote intake, order parsing, document processing.",
+    "I build the piece of software a business is usually missing: the one that reads what customers send (lists, orders, forms) so a person doesn't have to retype it.",
   promise:
-    "Every build ships with its own error rate measured, so you know what it gets wrong before you trust it.",
+    "Every build comes with a test that shows how often it's right, so you know what it gets wrong before you trust it.",
 } as const;
 
 // ── Nav (the six numbered steps) ─────────────────────────────────────
@@ -50,7 +50,7 @@ export const PIPELINE = {
   clientProfiles: 7,
   manualSteps: 0,
   outageNote:
-    "It broke once, for about three weeks, when a settings change silently killed the morning run. Fixed, and a failed run now leaves a visible trace. I leave the red stretch on the page because a system that never fails is a system nobody is watching.",
+    "It broke once, for about three weeks, when a data-format change silently killed the morning run. Fixed, and a failed run now leaves a visible trace. I leave the red stretch on the page because a system that never fails is a system nobody is watching.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
@@ -67,17 +67,20 @@ export const RUN_HISTORY: RunDay[] = (() => {
 })();
 
 // ── Second proof: quote intake, scored ──────────────────────────────
-// Numbers are the sum of every scorer run in projects/quote-proof/out on
-// 2026-09-06, including the catalog where cleaning failed. Nothing excluded.
+// The five distributor catalogs that publish part codes (Equippers, SideDish,
+// GTP, Questar, Gehl): 140 lines = 120 real requests + 20 traps. Scorer runs
+// in projects/quote-proof/out, 2026-09-06. Same numbers as the outreach emails.
+// A sixth catalog had no part codes at all, so it was not a fair test and is
+// not counted. Every one of the 116 correct answers carries a price (checked).
 export const QUOTE_PROOF = {
-  lines: 175,
-  catalogs: 7,
-  quotedRight: 119,
+  catalogs: 5,
+  lines: 140,
+  realRequests: 120,
+  right: 116,
+  traps: 20,
+  trapsRefused: 20,
   wrong: 0,
-  toPerson: 56,
-  trapsCaught: 26,
-  couldHaveSolved: 30,
-  worstCatalog: "On one catalog the cleaning step failed and it handed 26 of 28 lines to a person rather than guess. That is the behaviour I want when it is unsure.",
+  closing: "A wrong quote costs money. A flagged one costs thirty seconds.",
   screenshot: "/quote-proof-equippers.jpg",
   screenshotAlt: "Scorer output for one distributor: 30 customer lines, 26 quoted with price, 4 flagged for a person, 0 wrong",
 } as const;
@@ -98,8 +101,7 @@ export const ROLES: Role[] = [
     span: "Nov 2025 → now",
     what: "A lead-generation company. I automated how leads get researched, enriched and pushed into the CRM.",
     metrics: [
-      ["−40%", "time spent researching leads"],
-      ["8h → 2h", "enrichment work per week"],
+      ["8h → 2h", "enrichment work per week, measured"],
     ],
   },
   {
@@ -162,7 +164,7 @@ export const BAYS: Bay[] = [
     stack: ["python", "playwright", "gemini", "github actions"],
     metrics: [
       ["75", "mornings run on its own"],
-      ["6 of 6", "right on the hand-checked test set"],
+      ["6 of 6", "on a small hand-checked set, still growing it"],
     ],
     links: [
       { label: "watch it work (3 min) ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
@@ -172,26 +174,27 @@ export const BAYS: Bay[] = [
   },
   {
     n: "02",
-    status: "scored on 7 real catalogs · sep 2026",
+    status: "tested on 5 real distributor catalogs · sep 2026",
     lamp: "on",
     title: "Quote intake for distributors",
-    lead: "Reads a customer's messy parts list, matches each line to the catalog, drafts the quote, and hands anything it is unsure of to a person.",
+    lead: "Reads the parts list a customer emails in, drafts the quote, and hands anything it is unsure of to a person instead of guessing.",
     detail:
-      "Distributors ask customers to \"send us your list\" and someone re-keys it before anyone can price it. This reads the list the way it arrives (SKU, manufacturer number, typo, dropped hyphen, \"2x\"), and every match it claims is re-checked against the catalog by code, so the AI cannot slip in a made-up part. On one catalog the cleaning step failed and it sent 26 of 28 lines to a person rather than guess.",
+      "Distributors ask customers to \"send us your list\" and someone types it into the system before anyone can send a price. Lists arrive messy: wrong codes, typos, \"2x\" instead of a quantity. This reads them as they arrive, and every match it claims is re-checked against the catalog by code, so the AI cannot slip in a made-up part.",
     stack: ["python", "pydantic", "gemini", "rapidfuzz"],
     metrics: [
-      ["0", "wrong quotes across 175 lines"],
-      ["119", "quoted right · 56 handed to a person"],
+      ["0", "wrong across 140 lines"],
+      ["116 of 120", "real requests right, with price"],
+      ["20 of 20", "made-up requests refused"],
     ],
   },
   {
     n: "03",
-    status: "finished · going live soon",
+    status: "finished · deploying sep 2026",
     lamp: "warn",
     title: "leadlens",
     lead: "Reads a job posting and tells you whether the “AI” role is real, dressed up, or a scam.",
     detail:
-      "I hand-checked 72 real postings first, then measured the AI against them. When it scored a suspiciously perfect 100%, I found my own test was leaking the answers, fixed it, and published the lower, honest score. Since then I have split that label in two; the follow-up post lands when the numbers are clean.",
+      "I hand-checked 72 real postings first, then measured the AI against them. When it scored a suspiciously perfect 100%, I found my own test was leaking the answers, fixed it, and published the lower, honest score.",
     stack: ["python", "gemini", "pydantic"],
     metrics: [
       ["82%", "of scams caught"],
@@ -241,22 +244,21 @@ export const BAYS: Bay[] = [
       "Pulls from several data sources, fills the gaps, checks the data, scores each lead, syncs to the CRM and posts a Slack alert when a good one lands. Enrichment used to be a person with a spreadsheet.",
     stack: ["python", "clay", "n8n", "crm apis"],
     metrics: [
-      ["8h → 2h", "enrichment work per week"],
-      ["+30–50%", "more qualified leads"],
+      ["8h → 2h", "enrichment work per week, measured"],
     ],
   },
   {
     n: "07",
     status: "internal tool",
     lamp: "warn",
-    title: "Research-grounded outreach",
-    lead: "Writes a personal cold email for each lead using only facts my research agents actually found.",
+    title: "Research-grounded writing",
+    lead: "Writes a short, factual email about a company using only what a research step actually found.",
     detail:
-      "AI left alone invents flattering details. Here, several agents research the person and company first, and the writer is only allowed to use what they found. A separate checker reads every email against the research.",
+      "AI left alone invents flattering details. Here, a research step runs first, the writer is only allowed to use what it found, and a separate checker reads every claim against the research.",
     stack: ["claude code", "typescript", "web research"],
     metrics: [
-      ["95.5%", "of claims checked true, across 300 emails"],
-      ["0", "made-up facts found in the sample"],
+      ["95.5%", "of claims checked true, 300-email sample"],
+      ["0", "made-up facts found"],
     ],
   },
 ];
@@ -268,9 +270,9 @@ export type Incident = { when: string; system: string; broke: string; changed: s
 
 export const INCIDENTS: Incident[] = [
   {
-    when: "2026-08",
+    when: "2026-07",
     system: "tender radar",
-    broke: "A settings change silently stopped the morning run. Nobody noticed for about three weeks.",
+    broke: "A data-format change silently stopped the morning run. Nobody noticed for about three weeks.",
     changed: "Fixed it. A failed run now leaves a visible trace instead of dying quietly.",
   },
   {

@@ -206,25 +206,31 @@ export default function Proof() {
           <span className="serial">P-01 · LINE-02 · QUOTE INTAKE</span>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span className="lamp on" />
-            <span className="engr" style={{ color: "var(--dim)" }}>Second proof · scored on {QUOTE_PROOF.catalogs} real catalogs · 6 Sep</span>
+            <span className="engr" style={{ color: "var(--dim)" }}>Second proof · tested on {QUOTE_PROOF.catalogs} real distributor catalogs</span>
           </div>
           <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
             Quote intake,
             <br />
-            <span style={{ color: "var(--yellow)" }}>with its error rate.</span>
+            <span style={{ color: "var(--yellow)" }}>tested honestly.</span>
           </div>
           <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
-            I took real product catalogs from {QUOTE_PROOF.catalogs} distributors, wrote {QUOTE_PROOF.lines} customer
-            lines the messy way customers write them, plus trap lines that must not match, and scored the
-            system against the answer key.
+            When a customer emails a distributor a list of parts, someone reads it and types it into the
+            system before anyone can send a price. Lists arrive messy: wrong codes, typos, &ldquo;2x&rdquo;
+            instead of a quantity. I built a tool that reads those lists and drafts the quote. When it
+            isn&rsquo;t sure, it hands the line to a person instead of guessing.
+          </p>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
+            To test it I took {QUOTE_PROOF.catalogs} real distributors&rsquo; product lists, wrote {QUOTE_PROOF.realRequests} requests
+            the way customers write them, and mixed in {QUOTE_PROOF.traps} that had no right answer, to see if
+            it would make one up.
           </p>
           <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, paddingTop: 6, borderTop: "1px solid var(--bevel)" }}>
-            <div><div className="seg seg-md">{QUOTE_PROOF.wrong}</div><div className="lbl" style={{ marginTop: 6 }}>wrong quotes</div></div>
-            <div><div className="seg plain seg-md">{QUOTE_PROOF.quotedRight}</div><div className="lbl" style={{ marginTop: 6 }}>quoted right, with price</div></div>
-            <div><div className="seg plain seg-md">{QUOTE_PROOF.toPerson}</div><div className="lbl" style={{ marginTop: 6 }}>handed to a person</div></div>
+            <div><div className="seg plain seg-md">{QUOTE_PROOF.right} of {QUOTE_PROOF.realRequests}</div><div className="lbl" style={{ marginTop: 6 }}>real requests: right</div></div>
+            <div><div className="seg plain seg-md">{QUOTE_PROOF.trapsRefused} of {QUOTE_PROOF.traps}</div><div className="lbl" style={{ marginTop: 6 }}>made-up ones: refused</div></div>
+            <div><div className="seg seg-md">{QUOTE_PROOF.wrong}</div><div className="lbl" style={{ marginTop: 6 }}>wrong answers</div></div>
           </div>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--dim)", paddingTop: 12, borderTop: "1px solid var(--bevel)" }}>
-            {QUOTE_PROOF.worstCatalog}
+          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: "var(--text)", paddingTop: 12, borderTop: "1px solid var(--bevel)" }}>
+            {QUOTE_PROOF.closing}
           </p>
         </div>
         <div className="panel on" style={{ padding: 10, overflow: "hidden", animationDelay: "2.8s" }}>
@@ -233,7 +239,7 @@ export default function Proof() {
           <img src={QUOTE_PROOF.screenshot} alt={QUOTE_PROOF.screenshotAlt} style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }} />
           <div className="monitor-caption" style={{ position: "absolute", left: 24, bottom: 24, display: "flex", gap: 10, alignItems: "center", background: "var(--panel)", border: "1px solid var(--bevel-hi)", padding: "8px 12px" }}>
             <span className="lamp on" style={{ width: 10, height: 10 }} />
-            <span className="lbl" style={{ color: "var(--text)" }}>one catalog · 30 lines · public product data</span>
+            <span className="lbl" style={{ color: "var(--text)" }}>one distributor · 30 lines · public product data</span>
           </div>
         </div>
       </div>

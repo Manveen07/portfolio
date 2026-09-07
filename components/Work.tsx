@@ -107,7 +107,7 @@ function BayCard({ bay }: { bay: Bay }) {
             padding: bay.links ? "18px 24px" : "18px 24px 22px",
             borderTop: "1px solid var(--bevel)",
             display: "grid",
-            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gridTemplateColumns: `repeat(${Math.min(bay.metrics.length, 3)}, minmax(0, 1fr))`,
             gap: 16,
           }}
         >
@@ -148,6 +148,12 @@ export default function Work() {
         <span className="lbl">most proven first · every one links to something real</span>
       </div>
 
+      <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+        {BAYS.map((b) => (
+          <BayCard key={b.n} bay={b} />
+        ))}
+      </div>
+
       {/* The one thing that moves: a demo of a system working */}
       <div
         className="grid-split"
@@ -180,7 +186,7 @@ export default function Work() {
           >
             <span className="lamp on pulse" style={{ width: 10, height: 10 }} />
             <span className="lbl" style={{ color: "var(--text)" }}>
-              10-second loop · demo data, not a real client
+              10-second loop · demo data
             </span>
           </div>
         </div>
@@ -197,16 +203,9 @@ export default function Work() {
           </div>
           <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--dim)" }}>
             A short video of an automated task board. The cursor you see is the system, not a
-            person. It picks up each job, handles it, and flags the one that needs a human. I made
-            75 of these videos in August, one per prospect, generated automatically.
+            person. It picks up each job, handles it, and flags the one that needs a human. Demo data.
           </p>
         </div>
-      </div>
-
-      <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-        {BAYS.map((b) => (
-          <BayCard key={b.n} bay={b} />
-        ))}
       </div>
     </section>
   );
