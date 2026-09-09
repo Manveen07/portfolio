@@ -53,25 +53,6 @@ export const PIPELINE = {
 /** Committed fallback figures, so static places (bay card, share image, boot) match the panel. */
 export const SNAPSHOT = snapshot;
 
-// ── Second proof: quote intake, scored ──────────────────────────────
-// The five distributor catalogs that publish part codes (Equippers, SideDish,
-// GTP, Questar, Gehl): 140 lines = 120 real requests + 20 traps. Scorer runs
-// in projects/quote-proof/out, 2026-09-06. Same numbers as the outreach emails.
-// A sixth catalog had no part codes at all, so it was not a fair test and is
-// not counted. Every one of the 116 correct answers carries a price (checked).
-export const QUOTE_PROOF = {
-  catalogs: 5,
-  lines: 140,
-  realRequests: 120,
-  right: 116,
-  traps: 20,
-  trapsRefused: 20,
-  wrong: 0,
-  closing: "A wrong quote costs money. A flagged one costs thirty seconds.",
-  screenshot: "/quote-proof-equippers.webp",
-  screenshotAlt: "Scorer output for one distributor: 30 customer lines, 26 quoted with price, 4 flagged for a person, 0 wrong",
-} as const;
-
 // ── Career ───────────────────────────────────────────────────────────
 export type Role = {
   co: string;
@@ -141,22 +122,6 @@ export type Bay = {
 export const BAYS: Bay[] = [
   {
     n: "01",
-    status: "tested on 5 real distributor catalogs · sep 2026",
-    lamp: "on",
-    title: "Quote intake for distributors",
-    lead: "Reads the parts list a customer emails in, drafts the quote, and hands anything it is unsure of to a person instead of guessing.",
-    detail:
-      "Distributors ask customers to \"send us your list\" and someone types it into the system before anyone can send a price. Lists arrive messy: wrong codes, typos, \"2x\" instead of a quantity. This reads them as they arrive, and every match it claims is re-checked against the catalog by code, so the AI cannot slip in a made-up part.",
-    stack: ["python", "pydantic", "gemini", "rapidfuzz"],
-    metrics: [
-      ["0", "wrong across 140 lines"],
-      ["116 of 120", "real requests right, with price"],
-      ["20 of 20", "made-up requests refused"],
-    ],
-    wide: true,
-  },
-  {
-    n: "02",
     status: "live · the system from step 1, every morning",
     lamp: "on",
     title: "Tender Radar",
@@ -172,9 +137,10 @@ export const BAYS: Bay[] = [
       { label: "watch it work (3 min) ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
       { label: "see the code ↗", href: "https://github.com/Manveen07/tender-radar-showcase" },
     ],
+    wide: true,
   },
   {
-    n: "03",
+    n: "02",
     status: "finished · deploying sep 2026",
     lamp: "warn",
     title: "leadlens",
@@ -189,7 +155,7 @@ export const BAYS: Bay[] = [
     links: [{ label: "read how I tested it →", href: "/writing/schema-as-eval-spec" }],
   },
   {
-    n: "04",
+    n: "03",
     status: "at caprae capital · 2025",
     lamp: "on",
     title: "Resume screening, automated",
@@ -203,7 +169,7 @@ export const BAYS: Bay[] = [
     ],
   },
   {
-    n: "05",
+    n: "04",
     status: "try it yourself",
     lamp: "on",
     title: "PresentAI",
@@ -221,7 +187,7 @@ export const BAYS: Bay[] = [
     ],
   },
   {
-    n: "06",
+    n: "05",
     status: "at precise leads · in use",
     lamp: "on",
     title: "Lead enrichment on autopilot",
@@ -234,7 +200,7 @@ export const BAYS: Bay[] = [
     ],
   },
   {
-    n: "07",
+    n: "06",
     status: "internal tool",
     lamp: "warn",
     title: "Research-grounded writing",
