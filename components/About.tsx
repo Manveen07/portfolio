@@ -1,6 +1,6 @@
 "use client";
 
-import { ROLES, EDUCATION, TOOLS, TOOLS_DAYJOB, PLATES, ME, TAG, ABOUT } from "@/data/portfolio";
+import { ROLES, EDUCATION, TOOLS_LINE, PLATES, ME, TAG, ABOUT } from "@/data/portfolio";
 import { useReveal } from "@/lib/hooks";
 
 export default function About() {
@@ -51,24 +51,10 @@ export default function About() {
             ))}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
-            <span className="engr" style={{ marginRight: 8 }}>
-              I build with
-            </span>
-            {TOOLS.map((t) => (
-              <span key={t} className="chip">
-                {t}
-              </span>
-            ))}
-            <span className="engr" style={{ margin: "0 8px 0 14px" }}>
-              at the day job
-            </span>
-            {TOOLS_DAYJOB.map((t) => (
-              <span key={t} className="chip">
-                {t}
-              </span>
-            ))}
-          </div>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
+            <span className="engr" style={{ marginRight: 10 }}>Tools</span>
+            {TOOLS_LINE}
+          </p>
         </div>
 
         {/* Career log */}

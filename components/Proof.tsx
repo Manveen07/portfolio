@@ -183,7 +183,7 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
         >
           <span className="serial">P-01 · MODE</span>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="engr">Human involved</span>
+            <span className="engr">Human needed</span>
             <span className="lamp warn pulse" />
           </div>
           <svg className="dial" viewBox="0 0 120 120" width="96" height="96" style={{ display: "block", alignSelf: "center" }}>

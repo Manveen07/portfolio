@@ -84,9 +84,9 @@ export type Role = {
 export const ROLES: Role[] = [
   {
     co: "Precise Leads",
-    role: "GTM automation engineer",
+    role: "GTM automation engineer (sales-tools automation)",
     span: "Nov 2025 → now",
-    what: "A lead-generation company. I automated how leads get researched, enriched and pushed into the CRM.",
+    what: "A company that finds sales leads for other businesses. I automated how each lead gets researched, filled in with missing details, and added to the customer database.",
     metrics: [
       ["8h → 2h", "enrichment work per week, measured"],
     ],
@@ -98,7 +98,6 @@ export const ROLES: Role[] = [
     what: "An investment firm. I built the system that reads resumes and ranks candidates for their recruiting team.",
     metrics: [
       ["10h → 3h", "resume screening per week"],
-      ["3×", "candidates processed"],
     ],
   },
 ];
@@ -112,12 +111,12 @@ export const ABOUT = {
   mid: "and",
   quote2: "we acted on it.",
   body: "Lists, orders, postings, tenders: the part a person re-keys because nothing reads it for them.",
-  bio: "I spent a year automating lead-gen for a sales-software company, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+  bio: "I spent a year automating lead-finding for a sales-software company, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
 } as const;
 
-// Engineering first, the day-job SaaS last. Same facts; the order says what I am.
-export const TOOLS = ["python", "pydantic", "postgres", "playwright", "github actions", "gemini", "claude code", "n8n"];
-export const TOOLS_DAYJOB = ["clay", "smartlead", "apollo", "hubspot"];
+// Three strangers read the page; all three said the list of tool names was noise.
+// It is one sentence now. Each project card still names its own tools, in context.
+export const TOOLS_LINE = "Mostly Python, plus whatever your business already runs on. Each project below names its tools.";
 
 export const PLATES: [string, string][] = [
   ["What you hand me", "A process your team repeats by hand every week, and the tools you already pay for."],
@@ -142,25 +141,6 @@ export type Bay = {
 export const BAYS: Bay[] = [
   {
     n: "01",
-    status: "live · the system from step 1",
-    lamp: "on",
-    title: "Tender Radar",
-    lead: "Finds government contracts for cleaning, security and facilities companies, every morning, on its own.",
-    detail:
-      "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and emails a short list. Built alone, running unattended since July.",
-    stack: ["python", "playwright", "gemini", "github actions"],
-    metrics: [
-      [String(snapshot.totalRuns), "mornings run on its own"],
-      ["6 of 6", "on a small hand-checked set, still growing it"],
-    ],
-    links: [
-      { label: "watch it work (3 min) ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
-      { label: "see the code ↗", href: "https://github.com/Manveen07/tender-radar-showcase" },
-    ],
-    wide: true,
-  },
-  {
-    n: "02",
     status: "tested on 5 real distributor catalogs · sep 2026",
     lamp: "on",
     title: "Quote intake for distributors",
@@ -172,6 +152,25 @@ export const BAYS: Bay[] = [
       ["0", "wrong across 140 lines"],
       ["116 of 120", "real requests right, with price"],
       ["20 of 20", "made-up requests refused"],
+    ],
+    wide: true,
+  },
+  {
+    n: "02",
+    status: "live · the system from step 1, every morning",
+    lamp: "on",
+    title: "Tender Radar",
+    lead: "Finds government contracts for cleaning, security and facilities companies, every morning, on its own.",
+    detail:
+      "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and emails a short list. Built alone, running unattended since July.",
+    stack: ["python", "playwright", "gemini", "github actions"],
+    metrics: [
+      [String(snapshot.totalRuns), "mornings run on its own"],
+      [String(snapshot.clientProfiles), "companies get their own list each morning"],
+    ],
+    links: [
+      { label: "watch it work (3 min) ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
+      { label: "see the code ↗", href: "https://github.com/Manveen07/tender-radar-showcase" },
     ],
   },
   {
@@ -299,7 +298,7 @@ export const DOORS = [
     lamp: "warn" as const,
     kicker: "If you run a business",
     title: "Want the system built and looked after?",
-    body: "First step is a fixed-scope pilot on a month of your real requests, measured the same way as the proof above, so you see the numbers before deciding anything. Then a monthly retainer to keep it running.",
+    body: "First step is a fixed-price pilot on a month of your real requests, quoted before any work starts. During it, every miss is logged and you see the list, not just a score. Then a monthly retainer to keep it running.",
     links: [
       { label: "book a call ↗", href: "https://calendly.com/manveen9650/30min" },
       { label: "email ↗", href: "mailto:manveen9650@gmail.com" },

@@ -37,7 +37,7 @@ export default function Nav() {
         </span>
       </a>
       <span className="engr">
-        {ME.role} · {ME.location} · remote
+        {ME.role} · {ME.location} · remote · open to full-time and contract
       </span>
       <span style={{ flexGrow: 1 }} />
       <div className="nav-keys" style={{ display: "flex", gap: 6 }}>

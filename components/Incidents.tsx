@@ -20,7 +20,7 @@ export default function Incidents() {
         <span className="tag"><span>{TAG.incidents}</span></span>
         <span className="t">What broke, and what changed</span>
         <span className="rule" />
-        <span className="lbl">{INCIDENTS.length} real entries · dates from commit history</span>
+        <span className="lbl">{INCIDENTS.length} real entries · dated from the projects' own records</span>
       </div>
 
       <div style={{ padding: "0 clamp(8px, 0.6vw, 16px)" }}>

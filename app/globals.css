@@ -420,7 +420,6 @@ section[id] { scroll-margin-top: 96px; }
 
   /* Footer: stack the three items instead of squeezing them onto a row. */
   footer { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
-  .egg { color: var(--dim2); }   /* on touch there is no hover to reveal it */
 }
 
 /* Touch devices of any width: hover states never stick. */
