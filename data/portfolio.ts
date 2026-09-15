@@ -253,7 +253,7 @@ export const DOORS = [
     lamp: "on" as const,
     kicker: "If you're hiring",
     title: "Need someone like this on the team?",
-    body: "Full-time or contract, remote. Everything above is the interview prep.",
+    body: "Open to full-time and contract, remote. Everything above is the interview prep.",
     links: [
       { label: "resume ↗", href: "/resume.pdf" },
       { label: "linkedin ↗", href: "https://linkedin.com/in/Manveen" },

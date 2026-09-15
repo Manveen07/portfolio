@@ -23,7 +23,7 @@ export default function Nav() {
         display: "flex",
         alignItems: "center",
         gap: 20,
-        flexWrap: "wrap",
+        flexWrap: "nowrap",
         animationDelay: ".1s",
         position: "sticky",
         top: 12,
@@ -36,8 +36,8 @@ export default function Nav() {
           {ME.name}
         </span>
       </a>
-      <span className="engr">
-        {ME.role} · {ME.location} · remote · open to full-time and contract
+      <span className="engr nav-role" style={{ minWidth: 0, flexShrink: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {ME.role} · {ME.location} · remote
       </span>
       <span style={{ flexGrow: 1 }} />
       <div className="nav-keys" style={{ display: "flex", gap: 6 }}>
