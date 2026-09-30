@@ -39,7 +39,7 @@ export default function Contact() {
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-              Book the call <span>→</span>
+              Book a call <span>→</span>
             </a>
             <a className="btn" href={`mailto:${ME.email}`}>
               {ME.email}

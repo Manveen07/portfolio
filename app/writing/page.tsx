@@ -4,7 +4,7 @@ import { POSTS } from "@/data/posts";
 
 export const metadata: Metadata = {
   title: "Writing | Manveen Singh",
-  description: "Notes from the bench: what I tried, what broke, what fixed it.",
+  description: "What I tried, what broke, what fixed it.",
 };
 
 function fmtDate(iso: string) {

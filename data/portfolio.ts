@@ -20,9 +20,9 @@ export const ME = {
 // ── Hero ─────────────────────────────────────────────────────────────
 export const HERO = {
   tagline:
-    "I build the piece of software a business is usually missing: the one that reads what customers send (lists, orders, forms) so a person doesn't have to retype it.",
+    "I build the software that reads what comes in (orders, resumes, notices) so nobody has to retype it.",
   promise:
-    "Every build comes with a test that shows how often it's right, so you know what it gets wrong before you trust it.",
+    "Every build ships with a test that shows how often it's right.",
 } as const;
 
 // ── Nav (the six numbered steps) ─────────────────────────────────────
@@ -31,7 +31,7 @@ export const NAV: { id: string; label: string; tag: string }[] = [
   { id: "about",     label: "2 · about",   tag: "Origin story." },
   { id: "work",      label: "3 · work",    tag: "The evidence." },
   { id: "incidents", label: "4 · log",     tag: "What broke." },
-  { id: "writing",   label: "5 · writing", tag: "Field notes." },
+  { id: "writing",   label: "5 · writing", tag: "In writing." },
   { id: "contact",   label: "6 · contact", tag: "The call." },
 ];
 export const TAG = Object.fromEntries(NAV.map((n) => [n.id, n.tag])) as Record<string, string>;

@@ -35,13 +35,13 @@ export default function Writing() {
           <span className="serial">P-05 · NOTES</span>
           <span className="engr">Line 05 · writing</span>
           <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
-            Notes from
+            What I
             <br />
-            <span style={{ color: "var(--yellow)" }}>the bench.</span>
+            <span style={{ color: "var(--yellow)" }}>learned.</span>
           </div>
           <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
-            What I tried, what broke, what fixed it. The parts a demo skips. Written so you do not
-            need to read code to follow it.
+            What I tried, what broke, what fixed it. Written so you do not need to read code to
+            follow it.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: "auto" }}>
             <span className="lamp on" />
