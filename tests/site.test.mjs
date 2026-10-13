@@ -60,3 +60,35 @@ test("the home page was built", () => {
 test("saved run numbers are no older than 13 Oct 2026", () => {
   assert.ok(snapshot.totalRuns >= 114, `snapshot says ${snapshot.totalRuns} runs`);
 });
+
+// ── Task 2: the costume is gone; paper, pen and fonts are in ───────────
+test("layout no longer renders the boot screen, grain or easter eggs", () => {
+  const html = markup("index.html");
+  for (const s of ["P-00", "POWER ON", "CLICK ANYWHERE", "pf-grain", "pf-vignette", "unattended and I will know", "S/N 0075-0342"]) {
+    assert.ok(!html.includes(s), `still contains "${s}"`);
+  }
+});
+
+test("pen marks hide only when JS can draw them, and never under reduced motion", () => {
+  assert.ok(read(".next/server/app/index.html").includes("pen-js"), "no pen-js bootstrap script");
+  const styles = css();
+  assert.match(styles, /\.pen-js \.pen:not\(\.in\)/);
+  assert.match(styles, /prefers-reduced-motion[^{]*\{[\s\S]*?stroke-dashoffset:0/);
+});
+
+test("fonts are Archivo and IBM Plex Mono, not the old Barlow set", () => {
+  const styles = css();
+  assert.match(styles, /Archivo/);
+  assert.match(styles, /IBM Plex Mono/);
+  assert.doesNotMatch(styles, /Barlow/);
+});
+
+test("header has Book a call; footer has recruiter links and the off-the-clock line", () => {
+  const html = markup("index.html");
+  assert.match(html, /<header[^>]*class="[^"]*\bhead\b[^"]*"[\s\S]*?calendly\.com\/manveen9650[\s\S]*?<\/header>/);
+  const foot = html.slice(html.lastIndexOf("<footer"));
+  for (const href of ["/resume.pdf", "linkedin.com/in/Manveen", "github.com/Manveen07", 'href="/writing"']) {
+    assert.ok(foot.includes(href), `footer missing ${href}`);
+  }
+  assert.match(text("index.html"), /Off the clock: Hunter x Hunter/);
+});

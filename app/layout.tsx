@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
-import { Barlow, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import BootOverlay from "@/components/BootOverlay";
-import Easter from "@/components/Easter";
-import Ambient from "@/components/Ambient";
 
-const sans = Barlow({
+const sans = Archivo({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-});
-
-const cond = Barlow_Condensed({
-  variable: "--font-cond",
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
+  weight: ["400", "600", "800", "900"],
   display: "swap",
 });
 
@@ -64,17 +54,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sans.variable} ${cond.variable} ${mono.variable} antialiased`} suppressHydrationWarning>
-        <div className="pf-grain" />
-        <div className="pf-vignette" />
-        <BootOverlay />
-        <div className="pf-page">
-          <Nav />
-          <main>{children}</main>
-          <Footer />
-        </div>
-        <Easter />
-        <Ambient />
+      <head>
+        {/* Lets CSS hide pen marks until they scroll into view. Without JS they stay drawn. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('pen-js')" }} />
+      </head>
+      <body className={`${sans.variable} ${mono.variable}`}>
+        <Nav />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

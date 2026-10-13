@@ -17,6 +17,9 @@ export const ME = {
   resume: "/resume.pdf",
 } as const;
 
+// ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
+export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
+
 // ── Hero ─────────────────────────────────────────────────────────────
 export const HERO = {
   tagline:
