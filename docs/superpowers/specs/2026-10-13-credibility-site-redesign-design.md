@@ -30,12 +30,13 @@ Someone called the current site AI slop. They were right about the look: a fake 
 | The "watch one do the work" demo video goes | It runs on demo data. Made-up data on a proof page undercuts everything else. |
 | "7 companies served" becomes "sorts for 7 trades" | Checked 13 Oct: the 7 rows in Tender Radar's daily summary are trades (catering, cleaning, electrical testing, grounds, pest, product cleaning, security), not companies. |
 | No claim that Tender Radar emails anyone | The current site says it emails each company a short list. The daily summary shows no digest sent for any trade, so the claim comes off unless I show evidence it's true. |
+| Count scheduled runs only (102, not 114) | Checked 13 Oct: 114 workflow runs = 102 scheduled (one per day, 4 Jul to 13 Oct) + 12 started by hand. "Mornings on its own" can only count the scheduled ones. |
 | "It broke once" becomes "its worst stretch" | GitHub shows it also failed on 3, 6, 13 and 19 July. The long outage (21 Jul to 11 Aug) is real. |
 
 ## 4. The page, top to bottom
 
 1. **Me.** Photo, name, the problem-first line (section 5a), the "how I pick problems" lines under it, time zone line (Delhi, works UK mornings and US evenings), one "Book a call" button.
-2. **Running right now: Tender Radar.** What it does in two plain sentences. The run count (114 as of 13 Oct, read live), a bar per morning for the last 40 runs, the 3-minute Loom, the code link. Its worst stretch (21 Jul to 11 Aug) in one plain sentence. "Sorts for 7 trades" and the notices-read count. A red-pen note on the number.
+2. **Running right now: Tender Radar.** What it does in two plain sentences. The count of scheduled runs, one per morning (102 from 4 Jul to 13 Oct; the 12 runs started by hand don't count), read live, a bar per morning for the last 40 runs, the 3-minute Loom, the code link. Its worst stretch (21 Jul to 11 Aug) in one plain sentence. "Sorts for 7 trades" and the notices-read count. A red-pen note on the number.
 3. **What people say.** Zackary's quote with name, title and company, and "full signed letter available on request" (the PDF is not published: it contains his email address). Then job history: Caprae (dates and title from the letter), Precise Leads as one line, B.Tech CS, MSIT Delhi, 2026.
 4. **Other work, three at most.** Resume screening at Caprae (10h to 3h a week), PresentAI (live, try it), leadlens (links to the post on how I tested it).
 5. **What broke.** The 4 real incidents, each with a red-pen "what I changed". Dated from the projects' own records, as now.
@@ -88,7 +89,7 @@ Words to avoid when describing the work: "better outcomes" (vague), "reduce manp
 - **Live chart:**
   - The site falls back to the snapshot saved on 7 Sep because the live GitHub read isn't working in production, so it shows "78 mornings, last run 7 Sep" while the job has actually run 114 times, most recently today.
   - Proper fix: a new fine-grained GitHub token (Actions: read, Contents: read on `Manveen07/new-10x-engineer`) saved as `GITHUB_TOKEN` in Vercel. I do this with step-by-step clicks.
-  - Meanwhile: `npm run refresh-snapshot` so the fallback reads 114.
+  - Meanwhile: `npm run refresh-snapshot` so the fallback reads the current scheduled-run count (102 on 13 Oct).
 
 ## 8. Checks before I see it
 

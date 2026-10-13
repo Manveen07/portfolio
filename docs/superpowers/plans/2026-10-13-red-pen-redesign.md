@@ -2166,7 +2166,7 @@ Create `docs/superpowers/specs/2026-10-13-claims.md` with this table, filling th
 
 | Claim on the page | Source | Check | Result |
 |---|---|---|---|
-| Run count, last run | GitHub Actions | `gh api "repos/Manveen07/new-10x-engineer/actions/workflows/tender-radar-daily.yml/runs?per_page=1" -q '.total_count, .workflow_runs[0].created_at, .workflow_runs[0].conclusion'` | |
+| Scheduled-run count, last run (one per morning; manual runs excluded) | GitHub Actions | `gh api "repos/Manveen07/new-10x-engineer/actions/workflows/tender-radar-daily.yml/runs?event=schedule&per_page=1" -q '.total_count, .workflow_runs[0].created_at, .workflow_runs[0].conclusion'` | |
 | Notices read | daily summary | `gh api repos/Manveen07/new-10x-engineer/contents/projects/tender-radar/reports/daily-summary.md -q .content \| base64 -d \| grep "Raw tender records"` | |
 | Sorts for 7 trades | daily summary profile table | same file, count rows under "Profile results" | |
 | Worst stretch 21 Jul to 11 Aug | GitHub Actions | `gh api "repos/Manveen07/new-10x-engineer/actions/workflows/tender-radar-daily.yml/runs?per_page=100&created=2026-07-01..2026-08-31" -q '.workflow_runs[] \| select(.conclusion!="success") \| .created_at[0:10]' \| sort` | |
@@ -2210,7 +2210,7 @@ git commit -m "audit: every claim on the page traced to a source" -m "Co-Authore
 
 - [ ] **Step 3: Push the branch (ask first).** On Manveen's yes: `git push -u origin redesign-red-pen`. Find the preview: `gh api "repos/Manveen07/portfolio/deployments?ref=redesign-red-pen" -q '.[0].id'`, then `gh api repos/Manveen07/portfolio/deployments/<id>/statuses -q '.[0].environment_url'`. If no deployment shows up within 5 minutes, Vercel isn't building branch previews: say so and continue with the local checks only.
 
-- [ ] **Step 4: Check the preview.** Open the preview URL in the preview panel (Vercel may ask Manveen to log in). Expected: the proof line says "Read live from GitHub." and the run count matches Task 13's GitHub number. Open `<preview>/opengraph-image`.
+- [ ] **Step 4: Check the preview.** Open the preview URL in the preview panel (Vercel may ask Manveen to log in). Expected: the proof line says "Read live from GitHub." and the run count matches Task 13's scheduled-run number from GitHub. Open `<preview>/opengraph-image`.
 
 - [ ] **Step 5: Merge (ask first).** On Manveen's yes:
 
