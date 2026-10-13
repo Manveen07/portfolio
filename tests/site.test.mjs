@@ -198,3 +198,29 @@ test("all four incidents are listed with what changed", () => {
   assert.match(t, /“guard” inside “safeguarding”/);
   assert.match(t, /Took my notes out, re-ran it, and published the lower number\./);
 });
+
+// ── Task 8: the whole home page follows the copy rules ─────────────────
+test("sections appear in the agreed order, with no writing section on the home page", () => {
+  const html = markup("index.html");
+  const at = ["top", "proof", "people", "work", "broke", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
+  assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
+  assert.ok(!html.includes('id="writing"'));
+});
+
+test("Book a call appears exactly three times: header, first screen, bottom", () => {
+  assert.equal(count(markup("index.html"), /calendly\.com\/manveen9650/), 3);
+});
+
+test("no dashes, banned words, slogans or 'honest' in the home page copy", () => {
+  const t = text("index.html");
+  assert.doesNotMatch(t, /[—–]/, "em or en dash");
+  assert.doesNotMatch(
+    t,
+    /\b(leverage|utilise|utilize|streamline|optimise|optimize|robust|seamless|cutting-edge|AI-powered|AI-driven|solutions?|honest(?:ly)?|transform)\b/i,
+  );
+});
+
+test("the pilot section opens with the 'is it a real problem' line", () => {
+  assert.match(text("index.html"), /If it isn't a real problem, I'll say so and we won't build it\./);
+});
