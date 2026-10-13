@@ -28,12 +28,14 @@ Someone called the current site AI slop. They were right about the look: a fake 
 | Precise Leads appears as one line of job history only | My 8 Oct rule keeps agency results out of freelance work. One line still answers "what does he do now?" |
 | The incident log stays, in a quieter form | Curious and obsessed is who I am; the failures written up are proof of that. |
 | The "watch one do the work" demo video goes | It runs on demo data. Made-up data on a proof page undercuts everything else. |
-| "7 companies served" becomes "set up for 7 companies" | The number counts profile rows in Tender Radar's settings, not paying clients. |
+| "7 companies served" becomes "sorts for 7 trades" | Checked 13 Oct: the 7 rows in Tender Radar's daily summary are trades (catering, cleaning, electrical testing, grounds, pest, product cleaning, security), not companies. |
+| No claim that Tender Radar emails anyone | The current site says it emails each company a short list. The daily summary shows no digest sent for any trade, so the claim comes off unless I show evidence it's true. |
+| "It broke once" becomes "its worst stretch" | GitHub shows it also failed on 3, 6, 13 and 19 July. The long outage (21 Jul to 11 Aug) is real. |
 
 ## 4. The page, top to bottom
 
 1. **Me.** Photo, name, the problem-first line (section 5a), the "how I pick problems" lines under it, time zone line (Delhi, works UK mornings and US evenings), one "Book a call" button.
-2. **Running right now: Tender Radar.** What it does in two plain sentences. The run count (114 as of 13 Oct, read live), a bar per morning for the last 40 runs, the 3-minute Loom, the code link. The July outage in one plain sentence. A red-pen note on the number.
+2. **Running right now: Tender Radar.** What it does in two plain sentences. The run count (114 as of 13 Oct, read live), a bar per morning for the last 40 runs, the 3-minute Loom, the code link. Its worst stretch (21 Jul to 11 Aug) in one plain sentence. "Sorts for 7 trades" and the notices-read count. A red-pen note on the number.
 3. **What people say.** Zackary's quote with name, title and company, and "full signed letter available on request" (the PDF is not published: it contains his email address). Then job history: Caprae (dates and title from the letter), Precise Leads as one line, B.Tech CS, MSIT Delhi, 2026.
 4. **Other work, three at most.** Resume screening at Caprae (10h to 3h a week), PresentAI (live, try it), leadlens (links to the post on how I tested it).
 5. **What broke.** The 4 real incidents, each with a red-pen "what I changed". Dated from the projects' own records, as now.
@@ -81,7 +83,7 @@ Words to avoid when describing the work: "better outcomes" (vague), "reduce manp
 
 - **Delete:** `components/BootOverlay.tsx`, `components/Ambient.tsx`, `components/Easter.tsx`, the costume CSS in `app/globals.css`, `public/operator-demo.mp4` and `public/operator-demo.jpg`.
 - **Rewrite:** `Hero`, `Proof`, `About` (becomes "what people say" plus job history), `Work`, `Incidents`, `Contact`, `Nav`, `Footer`, `app/page.tsx`, `app/layout.tsx` (fonts, metadata), `app/globals.css`, `app/not-found.tsx`, `app/opengraph-image.tsx`, the `/writing` pages' styling. `components/Writing.tsx` goes from the home page.
-- **Data (`data/portfolio.ts`):** Caprae dates and title; the quote; "set up for 7 companies"; the Precise Leads line; the "Right now" line; all copy rewritten per section 5.
+- **Data (`data/portfolio.ts`):** Caprae dates and title; the quote; "sorts for 7 trades"; the Precise Leads line; the "Right now" line; all copy rewritten per section 5.
 - **Metadata:** the description still mentions "quote intake" (dropped from the work in September) and the share text is the old slogan. Both rewritten.
 - **Live chart:**
   - The site falls back to the snapshot saved on 7 Sep because the live GitHub read isn't working in production, so it shows "78 mornings, last run 7 Sep" while the job has actually run 114 times, most recently today.
