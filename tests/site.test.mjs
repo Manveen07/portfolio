@@ -92,3 +92,7 @@ test("header has Book a call; footer has recruiter links and the off-the-clock l
   }
   assert.match(text("index.html"), /Off the clock: Hunter x Hunter/);
 });
+
+test("the pilot steps list keeps its numbers despite the CSS reset", () => {
+  assert.match(css(), /\.steps\{[^}]*list-style:decimal/);
+});

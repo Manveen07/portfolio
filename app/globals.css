@@ -144,7 +144,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .fix { margin: 4px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; color: var(--red); }
 
 /* ── How working with me goes ── */
-.steps { padding-left: 20px; margin: 0 0 22px; }
+.steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }
 .steps li { margin-bottom: 8px; }
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 0; }
 
