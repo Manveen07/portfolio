@@ -53,9 +53,11 @@ import snapshot from "./pipeline-snapshot.json";
 
 export const PIPELINE = {
   firstRun: "3 July 2026",
-  manualSteps: 0,
-  outageNote:
-    "It broke once, for about three weeks, when a data-format change silently killed the morning run. Fixed, and a failed run now leaves a visible trace. I leave the red stretch on the page because a system that never fails is a system nobody is watching.",
+  intro:
+    "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
+  penNote: "every bar is a morning nobody pressed a button",
+  outage:
+    "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change quietly stopped the morning run. Now a failed run leaves a visible trace.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
@@ -137,7 +139,7 @@ export const BAYS: Bay[] = [
     title: "Tender Radar",
     lead: "Finds government contracts for cleaning, security and facilities companies, every morning, on its own.",
     detail:
-      "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and emails a short list. Built alone, running unattended since July.",
+      "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and sorts them by trade. Built alone, running unattended since July.",
     stack: ["python", "playwright", "gemini", "github actions"],
     metrics: [
       [String(snapshot.totalRuns), "mornings run on its own"],

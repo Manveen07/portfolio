@@ -115,3 +115,28 @@ test("hero shows no empty photo frame while PHOTO is null", () => {
   assert.ok(hero, "no section#top");
   assert.ok(!hero.includes("<img"), "hero renders an <img> but PHOTO is null");
 });
+
+// ── Task 4: Tender Radar, with numbers a skeptic can check ─────────────
+test("proof shows the real run count, trades not companies, and no serial labels", () => {
+  const t = text("index.html");
+  assert.ok(t.includes(String(snapshot.totalRuns)), "run count missing");
+  assert.match(t, new RegExp(`It sorts for ${snapshot.clientProfiles} trades`));
+  assert.match(t, new RegExp(`has read ${snapshot.noticesRead} notices so far`));
+  assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
+  for (const s of ["Companies served", "companies served", "LINE-01", "S/N", "6:30", "broke once", "short list", "short email"]) {
+    assert.ok(!t.includes(s), `still says "${s}"`);
+  }
+});
+
+test("without a GitHub token the panel says the numbers are saved, not live", () => {
+  // Local builds have no GITHUB_TOKEN, so getPipeline() returns the snapshot.
+  const t = text("index.html");
+  assert.match(t, /Numbers saved \d{1,2} [A-Z][a-z]{2}, \d{2}:\d{2} UTC\./);
+  assert.doesNotMatch(t, /Read live from GitHub/);
+});
+
+test("one bar per saved run, failures marked red", () => {
+  const bars = markup("index.html").match(/<div[^>]*class="bars"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
+  assert.equal(count(bars, "<i"), snapshot.history.length);
+  assert.equal(count(bars, 'class="f"'), snapshot.history.filter((r) => !r.ok).length);
+});

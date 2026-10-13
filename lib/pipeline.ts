@@ -78,12 +78,4 @@ export async function getPipeline(): Promise<PipelineData> {
   }
 }
 
-/** "7 Sep, 10:39 UTC" from an ISO timestamp. Fixed month names so no locale
- *  renders "Sept" or moves the day. */
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-export function fmtRun(iso: string): string {
-  const d = new Date(iso);
-  const hh = String(d.getUTCHours()).padStart(2, "0");
-  const mm = String(d.getUTCMinutes()).padStart(2, "0");
-  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}, ${hh}:${mm} UTC`;
-}
+export { fmtRun } from "./runs";
