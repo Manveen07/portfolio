@@ -130,7 +130,10 @@ test("proof shows the real run count, trades not companies, and no serial labels
   assert.ok(countP.includes(`>${snapshot.totalRuns}<`), "circled run count missing");
   assert.match(t, /mornings it has run on its own since 4 July 2026\./);
   assert.match(t, new RegExp(`It sorts for ${snapshot.clientProfiles} trades`));
-  assert.match(t, new RegExp(`has read ${snapshot.noticesRead} notices so far`));
+  // Task 13: 431 is the daily summary's "Raw tender records" count, and the fetch step drops
+  // expired notices from that file, so it is notices on file, not a running total read.
+  assert.match(t, new RegExp(`has ${snapshot.noticesRead} notices on file`));
+  assert.doesNotMatch(t, /notices so far/);
   assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
   for (const s of ["Companies served", "companies served", "LINE-01", "S/N", "6:30", "broke once", "short list", "short email"]) {
     assert.ok(!t.includes(s), `still says "${s}"`);
@@ -261,4 +264,27 @@ test("share image and icon have the new look", () => {
   assert.match(og, /#f4f1ea/);
   assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);
   assert.ok(!built("app/favicon.ico"), "create-next-app favicon.ico still overrides the svg");
+});
+
+// ── Task 13: claims that failed the skeptic pass (docs/superpowers/specs/2026-10-13-claims.md) ──
+test("the Loom link states the video's real length (281 s per Loom's oEmbed, so under 5 minutes)", () => {
+  const t = text("index.html");
+  assert.match(t, /Watch it work \(under 5 min\)/);
+  assert.doesNotMatch(t, /\(3 min\)/);
+});
+
+test("PresentAI does not claim to be free: the live pricing page has a 3-a-month free plan and a paid plan with PowerPoint export", () => {
+  const t = text("index.html");
+  assert.doesNotMatch(t, /It's free/);
+  assert.match(t, /free plan/);
+  assert.match(t, /PowerPoint export is on the paid plan/);
+});
+
+test("the post's read time is in line with its length", () => {
+  const html = markup("writing/schema-as-eval-spec.html");
+  const article = html.match(/<article[\s\S]*?<\/article>/)?.[0] ?? "";
+  const plain = article.replace(/<[^>]+>/g, " ");
+  const words = plain.split(/\s+/).filter(Boolean).length;
+  const mins = Number(/(\d+)\s+min read/.exec(plain)?.[1]);
+  assert.ok(mins >= Math.floor(words / 260) && mins <= Math.ceil(words / 180), `says ${mins} min for ${words} words`);
 });

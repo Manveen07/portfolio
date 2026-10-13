@@ -106,7 +106,7 @@ export const WORK: WorkItem[] = [
     where: "My own project, live",
     lead: "Paste your notes, get a slide deck in under a minute.",
     detail:
-      "It works out the story first, then writes the slides and the speaker notes, and exports to PowerPoint. It's free, so you can try it right now.",
+      "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
     metrics: [
       ["2h → 15m", "to a first deck"],
       ["<60s", "for the first draft"],

@@ -34,11 +34,11 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
         </p>
       </Annotated>
       <p className="body">
-        It sorts for {pipe.clientProfiles} trades, from cleaning and security to pest control, and has read {pipe.noticesRead} notices so far.
+        It sorts for {pipe.clientProfiles} trades, from cleaning and security to pest control, and has {pipe.noticesRead} notices on file.
       </p>
       <p className="body">{PIPELINE.outage}</p>
       <p className="links">
-        <a href={PIPELINE.loom} target="_blank" rel="noopener">Watch it work (3 min) ↗</a>
+        <a href={PIPELINE.loom} target="_blank" rel="noopener">Watch it work (under 5 min) ↗</a>
         <a href={PIPELINE.repo} target="_blank" rel="noopener">See the code ↗</a>
       </p>
     </section>
