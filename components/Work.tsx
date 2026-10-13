@@ -4,12 +4,12 @@ import { WORK } from "@/data/portfolio";
 export default function Work() {
   return (
     <section id="work" className="wrap sec">
-      <p className="kicker">Other things I&apos;ve built</p>
+      <h2 className="kicker">Other things I&apos;ve built</h2>
       <div className="work">
         {WORK.map((w) => (
           <article key={w.title} className="card">
             <p className="small">{w.where}</p>
-            <h2 className="h3">{w.title}</h2>
+            <h3 className="h3">{w.title}</h3>
             <p className="body">
               <b>{w.lead}</b>
             </p>

@@ -11,7 +11,7 @@ function fmtMonth(ym: string) {
 export default function Incidents() {
   return (
     <section id="broke" className="wrap sec">
-      <p className="kicker">What broke</p>
+      <h2 className="kicker">What broke</h2>
       <p className="body">{BROKE_INTRO}</p>
       <ol className="broke">
         {INCIDENTS.map((x) => (

@@ -5,7 +5,7 @@ import { Underline } from "@/components/Pen";
 export default function About() {
   return (
     <section id="people" className="wrap sec">
-      <p className="kicker">What people say</p>
+      <h2 className="kicker">What people say</h2>
       <Annotated note={QUOTE.penNote}>
         <figure className="quote">
           <blockquote>
@@ -21,7 +21,7 @@ export default function About() {
           </figcaption>
         </figure>
       </Annotated>
-      <h2 className="h3">Where I&apos;ve done this</h2>
+      <h3 className="h3">Where I&apos;ve done this</h3>
       <ul className="roles">
         {ROLES.map((r) => (
           <li key={r.co}>

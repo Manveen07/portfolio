@@ -13,7 +13,7 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
   const failed = pipe.history.filter((r) => !r.ok).length;
   return (
     <section id="proof" className="wrap sec">
-      <p className="kicker">Running right now · Tender Radar</p>
+      <h2 className="kicker">Running right now · Tender Radar</h2>
       <p className="lede">{PIPELINE.intro}</p>
       <Annotated note={PIPELINE.penNote}>
         <p className="count">

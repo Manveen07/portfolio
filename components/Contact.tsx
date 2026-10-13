@@ -3,7 +3,7 @@ import { ME, PILOT } from "@/data/portfolio";
 export default function Contact() {
   return (
     <section id="contact" className="wrap sec">
-      <p className="kicker">How working with me goes</p>
+      <h2 className="kicker">How working with me goes</h2>
       <p className="lede">{PILOT.opener}</p>
       <ol className="steps">
         {PILOT.steps.map((s) => (

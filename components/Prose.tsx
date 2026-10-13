@@ -89,7 +89,7 @@ export default function Prose({ body }: { body: Block[] }) {
         if (b.t === "h2")
           return (
             <h2 key={i} style={{
-              fontFamily: T.sans, fontSize: 26, fontWeight: 500, color: T.ink,
+              fontFamily: T.sans, fontSize: 26, fontWeight: 600, color: T.ink,
               letterSpacing: "-0.02em", marginTop: 48, marginBottom: 18,
               display: "flex", alignItems: "baseline", gap: 12,
             }}>

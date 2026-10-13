@@ -253,6 +253,45 @@ test("the pilot section opens with the 'is it a real problem' line", () => {
   assert.match(text("index.html"), /If it isn't a real problem, I'll say so and we won't build it\./);
 });
 
+// ── Final review: a real heading outline ───────────────────────────────
+test("home page headings: one h1, an h2 per section, h3 for cards and job history", () => {
+  const html = markup("index.html");
+  assert.equal(count(html, /<h1[\s>]/), 1);
+  // React writes the apostrophe in "I've" as &#x27;; decode it before comparing.
+  const h2 = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((m) =>
+    m[1].replace(/<[^>]+>/g, "").replace(/&#x27;|&#39;/g, "'").trim(),
+  );
+  assert.deepEqual(h2, [
+    "Running right now · Tender Radar",
+    "What people say",
+    "Other things I've built",
+    "What broke",
+    "How working with me goes",
+  ]);
+  assert.equal(count(html, /<h3[\s>]/), 4);
+});
+
+test("a kicker that is now a heading still looks like a kicker", () => {
+  // Preflight resets heading size and weight; the .kicker rule must set the rest.
+  const rule = css().match(/\.kicker\{[^}]*\}/)?.[0] ?? "";
+  assert.match(rule, /font-size:12px/);
+  assert.match(rule, /text-transform:uppercase/);
+  assert.match(rule, /margin:0 0 14px/);
+  assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
+  // The kicker is an h2 now: it must be the element that carries the class.
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
+});
+
+test("post headings use a font weight that is loaded (Archivo ships 400, 600, 800, 900)", () => {
+  const html = markup("writing/schema-as-eval-spec.html");
+  const h2s = html.match(/<h2[^>]*>/g) ?? [];
+  assert.ok(h2s.length > 0, "no h2 in the post");
+  for (const tag of h2s) {
+    const w = Number(/font-weight:(\d+)/.exec(tag)?.[1]);
+    assert.ok([400, 600, 800, 900].includes(w), `h2 uses weight ${w}`);
+  }
+});
+
 // ── Task 9: writing pages, 404, metadata and share image match ─────────
 test("writing pages and 404 have no control-panel labels or dashes", () => {
   for (const page of ["writing.html", "writing/schema-as-eval-spec.html", "_not-found.html"]) {
