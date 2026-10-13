@@ -66,34 +66,31 @@ export const PIPELINE = {
 export const SNAPSHOT = snapshot;
 
 // ── Career ───────────────────────────────────────────────────────────
-export type Role = {
-  co: string;
-  role: string;
-  span: string;
-  what: string;
-  metrics: [string, string][];
-};
+export type Role = { co: string; role: string; span: string; what?: string };
 
+// Caprae dates and title come from the signed letter (11 Jan 2026).
+// Precise Leads is one line only: agency results stay off the freelance page.
 export const ROLES: Role[] = [
-  {
-    co: "Precise Leads",
-    role: "GTM automation engineer (sales-tools automation)",
-    span: "Nov 2025 → now",
-    what: "A company that finds sales leads for other businesses. I automated how each lead gets researched, filled in with missing details, and added to the customer database.",
-    metrics: [
-      ["8h → 2h", "enrichment work per week, measured"],
-    ],
-  },
+  { co: "Precise Leads", role: "GTM automation engineer", span: "Nov 2025 → now" },
   {
     co: "Caprae Capital Partners",
-    role: "AI / ML engineer (intern)",
-    span: "Jun → Dec 2025 · US, remote",
+    role: "Machine Learning Intern",
+    span: "Aug 2025 → Jan 2026 · US, remote",
     what: "An investment firm. I built the system that reads resumes and ranks candidates for their recruiting team.",
-    metrics: [
-      ["10h → 3h", "resume screening per week"],
-    ],
   },
 ];
+
+// ── What people say: verbatim from Zackary Beckham's signed letter (11 Jan 2026).
+// Never publish the letter PDF or the email address on it.
+export const QUOTE = {
+  before: "…produced clear and maintainable technical documentation, and ",
+  marked: "effectively communicated complex engineering concepts to non-technical stakeholders.",
+  name: "Zackary Beckham",
+  title: "Chief Operations Officer",
+  company: "Caprae Capital Partners",
+  source: "From a signed letter of recommendation, 11 Jan 2026. Full letter available on request.",
+  penNote: "the bit that matters if you don't write code",
+} as const;
 
 export const EDUCATION = "B.Tech Computer Science · MSIT Delhi · 2026";
 

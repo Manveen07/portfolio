@@ -1,136 +1,41 @@
-"use client";
-
-import { ROLES, EDUCATION, TOOLS_LINE, PLATES, ME, TAG, ABOUT } from "@/data/portfolio";
-import { useReveal } from "@/lib/hooks";
+import { QUOTE, ROLES, EDUCATION, ME } from "@/data/portfolio";
+import Annotated from "@/components/Annotated";
+import { Underline } from "@/components/Pen";
 
 export default function About() {
-  const ref = useReveal<HTMLElement>();
-
   return (
-    <section
-      id="about"
-      ref={ref}
-      className="rise"
-      style={{ padding: "40px var(--gutter) 20px", display: "flex", flexDirection: "column", gap: 20 }}
-    >
-      <div className="step">
-        <span className="n">2</span>
-        <span className="tag"><span>{TAG.about}</span></span>
-        <span className="t">What I do, and where I learned it</span>
-        <span className="rule" />
-      </div>
-
-      <div
-        className="grid-split"
-        style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.25fr) minmax(0, 1fr)", gap: 12 }}
-      >
-        {/* Operator statement */}
-        <div className="panel on" style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 22 }}>
-          <span className="serial">P-02 · OPERATOR</span>
-          <p
-            className="cond h-panel"
-            style={{ margin: 0, lineHeight: 0.92, fontWeight: 700, letterSpacing: "-0.01em" }}
-          >
-            {ABOUT.line1}
+    <section id="people" className="wrap sec">
+      <p className="kicker">What people say</p>
+      <Annotated note={QUOTE.penNote}>
+        <figure className="quote">
+          <blockquote>
+            <p>
+              “{QUOTE.before}
+              <Underline>{QUOTE.marked}</Underline>”
+            </p>
+          </blockquote>
+          <figcaption>
+            <b>{QUOTE.name}</b>, {QUOTE.title}, {QUOTE.company}
             <br />
-            <span style={{ color: "var(--yellow)" }}>
-              &ldquo;{ABOUT.quote1}&rdquo; {ABOUT.mid} &ldquo;{ABOUT.quote2}&rdquo;
-            </span>
-          </p>
-          <p className="intro">{ABOUT.body}</p>
-          <p className="intro" style={{ borderLeft: "2px solid var(--yellow)", paddingLeft: 16, color: "var(--text)" }}>
-            {ABOUT.bio}
-          </p>
-
-          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
-            {PLATES.map(([k, v]) => (
-              <div key={k} className="plate">
-                <span className="engr">{k}</span>
-                <span style={{ fontSize: 14, lineHeight: 1.55 }}>{v}</span>
-              </div>
-            ))}
-          </div>
-
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "var(--dim)" }}>
-            <span className="engr" style={{ marginRight: 10 }}>Tools</span>
-            {TOOLS_LINE}
-          </p>
-        </div>
-
-        {/* Career log */}
-        <div className="panel on" style={{ display: "flex", flexDirection: "column", animationDelay: ".1s" }}>
-          <span className="serial">P-02 · LOG</span>
-          <div
-            style={{
-              padding: "16px 24px",
-              borderBottom: "1px solid var(--bevel)",
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-            }}
-          >
-            <span className="lamp on pulse" />
-            <span className="engr" style={{ color: "var(--dim)" }}>
-              Where I&rsquo;ve done this
-            </span>
-          </div>
-
-          {ROLES.map((r) => (
-            <div
-              key={r.co}
-              style={{
-                padding: "20px 24px",
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
-                borderBottom: "1px solid var(--bevel)",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
-                <span className="cond" style={{ fontSize: 26, fontWeight: 700 }}>
-                  {r.co}
-                </span>
-                <span className="mono" style={{ fontSize: 11, color: "var(--dim)" }}>
-                  {r.span}
-                </span>
-              </div>
-              <span className="lbl" style={{ color: "var(--yellow)" }}>
-                {r.role}
-              </span>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--dim)" }}>{r.what}</p>
-              <div style={{ display: "flex", gap: 24, paddingTop: 6, flexWrap: "wrap" }}>
-                {r.metrics.map(([n, l]) => (
-                  <div key={l}>
-                    <div className="seg plain seg-sm">
-                      {n}
-                    </div>
-                    <div className="lbl" style={{ marginTop: 4 }}>
-                      {l}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          <div
-            style={{
-              padding: "14px 24px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 12,
-              marginTop: "auto",
-              flexWrap: "wrap",
-            }}
-          >
-            <span className="lbl">{EDUCATION}</span>
-            <a className="lbl" href={ME.resume} target="_blank" rel="noopener" style={{ color: "var(--yellow)" }}>
-              full resume ↗
-            </a>
-          </div>
-        </div>
-      </div>
+            <span className="small">{QUOTE.source}</span>
+          </figcaption>
+        </figure>
+      </Annotated>
+      <h2 className="h3">Where I&apos;ve done this</h2>
+      <ul className="roles">
+        {ROLES.map((r) => (
+          <li key={r.co}>
+            <p>
+              <b>{r.co}</b> · {r.role}
+            </p>
+            <p className="small">{r.span}</p>
+            {r.what && <p className="what">{r.what}</p>}
+          </li>
+        ))}
+      </ul>
+      <p className="small">
+        {EDUCATION} · <a className="link" href={ME.resume}>Full resume ↗</a>
+      </p>
     </section>
   );
 }

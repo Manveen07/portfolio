@@ -149,3 +149,22 @@ test("live and saved run numbers both count scheduled runs only", () => {
     assert.match(read(file), /runs\?event=schedule&per_page=40/, `${file} counts manual runs too`);
   }
 });
+
+// ── Task 5: what people say, and job history that matches the letter ───
+test("Zackary's quote has name, title and company, and no email address", () => {
+  const t = text("index.html");
+  assert.match(t, /and effectively communicated complex engineering concepts to non-technical stakeholders\./);
+  assert.match(t, /Zackary Beckham, Chief Operations Officer, Caprae Capital Partners/);
+  assert.match(t, /Full letter available on request\./);
+  assert.ok(!markup("index.html").toLowerCase().includes("zackary@"), "his email address is on the page");
+});
+
+test("Caprae dates and title follow the signed letter; Precise Leads is one line", () => {
+  const t = text("index.html");
+  assert.match(t, /Caprae Capital Partners · Machine Learning Intern/);
+  assert.match(t, /Aug 2025 → Jan 2026/);
+  assert.doesNotMatch(t, /Jun → Dec 2025/);
+  assert.match(t, /Precise Leads · GTM automation engineer/);
+  assert.doesNotMatch(t, /8h → 2h/);
+  assert.doesNotMatch(t, /origin story/i);
+});
