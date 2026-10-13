@@ -19,7 +19,7 @@ const gh = (endpoint, jq) =>
 
 const runs = JSON.parse(
   gh(
-    `repos/${REPO}/actions/workflows/tender-radar-daily.yml/runs?per_page=40`,
+    `repos/${REPO}/actions/workflows/tender-radar-daily.yml/runs?event=schedule&per_page=40`,
     "{total: .total_count, runs: [.workflow_runs[] | select(.conclusion != null) | {c: .conclusion, at: .created_at}]}",
   ),
 );

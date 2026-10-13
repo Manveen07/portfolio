@@ -41,7 +41,7 @@ export async function getPipeline(): Promise<PipelineData> {
 
   try {
     const [runsRes, sumRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=40`, opts),
+      fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?event=schedule&per_page=40`, opts),
       fetch(`https://api.github.com/repos/${REPO}/contents/${SUMMARY}`, opts),
     ]);
     if (!runsRes.ok || !sumRes.ok) return FALLBACK;

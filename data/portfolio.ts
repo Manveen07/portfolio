@@ -52,7 +52,7 @@ export const TAG = Object.fromEntries(NAV.map((n) => [n.id, n.tag])) as Record<s
 import snapshot from "./pipeline-snapshot.json";
 
 export const PIPELINE = {
-  firstRun: "3 July 2026",
+  firstRun: "4 July 2026",
   intro:
     "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
   penNote: "every bar is a morning nobody pressed a button",

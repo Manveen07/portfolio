@@ -58,7 +58,8 @@ test("the home page was built", () => {
 });
 
 test("saved run numbers are no older than 13 Oct 2026", () => {
-  assert.ok(snapshot.totalRuns >= 114, `snapshot says ${snapshot.totalRuns} runs`);
+  assert.ok(snapshot.totalRuns >= 102, `snapshot says ${snapshot.totalRuns} runs`);
+  assert.equal(new Set(snapshot.history.map((h) => h.date)).size, snapshot.history.length, "two runs on one date: manual runs are being counted");
 });
 
 // ── Task 2: the costume is gone; paper, pen and fonts are in ───────────
@@ -119,7 +120,9 @@ test("hero shows no empty photo frame while PHOTO is null", () => {
 // ── Task 4: Tender Radar, with numbers a skeptic can check ─────────────
 test("proof shows the real run count, trades not companies, and no serial labels", () => {
   const t = text("index.html");
-  assert.ok(t.includes(String(snapshot.totalRuns)), "run count missing");
+  const countP = markup("index.html").match(/<p class="count">([\s\S]*?)<\/p>/)?.[1] ?? "";
+  assert.ok(countP.includes(`>${snapshot.totalRuns}<`), "circled run count missing");
+  assert.match(t, /mornings it has run on its own since 4 July 2026\./);
   assert.match(t, new RegExp(`It sorts for ${snapshot.clientProfiles} trades`));
   assert.match(t, new RegExp(`has read ${snapshot.noticesRead} notices so far`));
   assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
