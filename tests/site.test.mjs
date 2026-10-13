@@ -129,13 +129,20 @@ test("proof shows the real run count, trades not companies, and no serial labels
   const t = text("index.html");
   const countP = markup("index.html").match(/<p class="count">([\s\S]*?)<\/p>/)?.[1] ?? "";
   assert.ok(countP.includes(`>${snapshot.totalRuns}<`), "circled run count missing");
-  assert.match(t, /mornings it has run on its own since 4 July 2026\./);
+  // Final review: 24 of the 102 scheduled mornings failed, so the count says "started", and the
+  // legend matches ("Black finished, red failed").
+  assert.match(t, /mornings it has started on its own since 4 July 2026\./);
+  assert.doesNotMatch(t, /it has run on its own/);
+  assert.match(t, /Black finished, red failed\./);
   assert.match(t, new RegExp(`It sorts for ${snapshot.clientProfiles} trades`));
   // Task 13: 431 is the daily summary's "Raw tender records" count, and the fetch step drops
   // expired notices from that file, so it is notices on file, not a running total read.
   assert.match(t, new RegExp(`has ${snapshot.noticesRead} notices on file`));
   assert.doesNotMatch(t, /notices so far/);
   assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
+  // The workflow has no alert step, so the page must not promise a "visible trace" (audit row 13).
+  assert.match(t, /when a data-format change broke the morning run and nothing told me\./);
+  assert.doesNotMatch(t, /visible trace/);
   for (const s of ["Companies served", "companies served", "LINE-01", "S/N", "6:30", "broke once", "short list", "short email"]) {
     assert.ok(!t.includes(s), `still says "${s}"`);
   }
@@ -185,9 +192,15 @@ test("work shows resume screening, PresentAI and leadlens only", () => {
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.equal(count(work, "<article"), 3);
   const t = text("index.html");
-  for (const s of ["Resume screening, automated", "PresentAI", "leadlens", "10h → 3h", "82%"]) {
+  for (const s of ["Resume screening, automated", "PresentAI", "leadlens", "10h → 3h", "9 of 11"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
+  // Final review: name what was measured, and say nothing the sources can't back.
+  assert.match(t, /9 of 11 dressed-up AI roles caught/);
+  assert.match(t, /I hand-checked 72 postings/);
+  assert.doesNotMatch(t, /72 real postings/);
+  assert.doesNotMatch(t, /82%/);
+  assert.match(t, /spending about ten hours a week reading resumes by hand/);
   for (const s of ["Lead enrichment on autopilot", "Research-grounded writing", "deploying sep 2026", "BAY-0", "watch one", "operator-demo"]) {
     assert.ok(!t.toLowerCase().includes(s.toLowerCase()) && !html.includes(s), `still has "${s}"`);
   }
@@ -204,6 +217,11 @@ test("all four incidents are listed with what changed", () => {
   assert.equal(count(broke, 'class="fix"'), 4);
   const t = text("index.html");
   assert.match(t, /When something I built breaks, I write it down\./);
+  // The project record has eight incidents and the page shows four, so it can't say "the list".
+  assert.match(t, /Here are four of them, and what I changed each time\./);
+  assert.doesNotMatch(t, /Here's the list/);
+  assert.match(t, /Nothing alerted me, so it stayed broken for about three weeks\./);
+  assert.match(t, /Every morning's result now shows on this page, red when it fails\./);
   assert.match(t, /Jul 2026 · tender radar/);
   assert.match(t, /“guard” inside “safeguarding”/);
   assert.match(t, /Took my notes out, re-ran it, and published the lower number\./);
@@ -263,6 +281,9 @@ test("share image and icon have the new look", () => {
   const og = read("app/opengraph-image.tsx");
   assert.doesNotMatch(og, /automating the boring|hazard|#ffd60a/i);
   assert.match(og, /#f4f1ea/);
+  // Same wording as the page: the count is mornings started, not mornings that worked.
+  assert.match(og, /mornings one system has started on its own/);
+  assert.doesNotMatch(og, /has run on its own/);
   assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);
   assert.ok(!built("app/favicon.ico"), "create-next-app favicon.ico still overrides the svg");
 });
@@ -279,6 +300,16 @@ test("PresentAI does not claim to be free: the live pricing page has a 3-a-month
   assert.doesNotMatch(t, /It's free/);
   assert.match(t, /free plan/);
   assert.match(t, /PowerPoint export is on the paid plan/);
+});
+
+test("PresentAI card: the live app takes a typed prompt, the public repo has no Python, one timing figure", () => {
+  const t = text("index.html");
+  assert.match(t, /Type a prompt, get a slide deck in under a minute\./);
+  assert.doesNotMatch(t, /Paste your notes/);
+  assert.match(t, /built with next\.js, postgres(?!,)/);
+  assert.doesNotMatch(t, /python-pptx/);
+  assert.match(t, /<60s for the first draft/);
+  assert.doesNotMatch(t, /2h → 15m/);
 });
 
 test("the post's read time is in line with its length", () => {

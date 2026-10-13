@@ -43,7 +43,7 @@ export const PIPELINE = {
     "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
   penNote: "every bar is a morning nobody pressed a button",
   outage:
-    "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change quietly stopped the morning run. Now a failed run leaves a visible trace.",
+    "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change broke the morning run and nothing told me.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
@@ -94,7 +94,7 @@ export const WORK: WorkItem[] = [
     where: "At Caprae Capital Partners",
     lead: "Reads incoming resumes, ranks the candidates, and books the interviews.",
     detail:
-      "A recruiting team was spending most of a day a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
+      "A recruiting team was spending about ten hours a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
     metrics: [
       ["10h → 3h", "screening per week"],
       ["5 → 1.5", "days to a shortlist"],
@@ -104,14 +104,11 @@ export const WORK: WorkItem[] = [
   {
     title: "PresentAI",
     where: "My own project, live",
-    lead: "Paste your notes, get a slide deck in under a minute.",
+    lead: "Type a prompt, get a slide deck in under a minute.",
     detail:
       "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
-    metrics: [
-      ["2h → 15m", "to a first deck"],
-      ["<60s", "for the first draft"],
-    ],
-    stack: ["next.js", "postgres", "python-pptx"],
+    metrics: [["<60s", "for the first draft"]],
+    stack: ["next.js", "postgres"],
     links: [
       { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
       { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
@@ -122,9 +119,9 @@ export const WORK: WorkItem[] = [
     where: "My own project",
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
     detail:
-      "I hand-checked 72 real postings, then measured it against them. It scored a perfect 100%, which was the problem: my own notes were leaking the answers into the test. I took them out and published the lower score.",
+      "I hand-checked 72 postings, then measured it against them. It scored a perfect 100%, which was the problem: my own notes were leaking the answers into the test. I took them out and published the lower score.",
     metrics: [
-      ["82%", "of scams caught"],
+      ["9 of 11", "dressed-up AI roles caught"],
       ["0", "real jobs wrongly flagged"],
     ],
     stack: ["python", "gemini", "pydantic"],
@@ -135,7 +132,7 @@ export const WORK: WorkItem[] = [
 // ── What broke ───────────────────────────────────────────────────────
 // Real entries only. Dates from the projects' own records. Newest first. Add
 // one whenever something real breaks; never pad it.
-export const BROKE_INTRO = "When something I built breaks, I write it down. Here's the list, and what I changed each time.";
+export const BROKE_INTRO = "When something I built breaks, I write it down. Here are four of them, and what I changed each time.";
 
 export type Incident = { when: string; system: string; broke: string; changed: string };
 
@@ -149,8 +146,8 @@ export const INCIDENTS: Incident[] = [
   {
     when: "2026-07",
     system: "tender radar",
-    broke: "A data-format change silently stopped the morning run. Nobody noticed for about three weeks.",
-    changed: "Fixed it. A failed run now leaves a visible trace instead of dying quietly.",
+    broke: "A data-format change broke the morning run. Nothing alerted me, so it stayed broken for about three weeks.",
+    changed: "Fixed it. Every morning's result now shows on this page, red when it fails.",
   },
   {
     when: "2026-07",

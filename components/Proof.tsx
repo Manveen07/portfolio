@@ -19,18 +19,18 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
         <p className="count">
           <Circle>{pipe.totalRuns}</Circle>
         </p>
-        <p className="body">mornings it has run on its own since {PIPELINE.firstRun}.</p>
+        <p className="body">mornings it has started on its own since {PIPELINE.firstRun}.</p>
         <div
           className="bars"
           role="img"
-          aria-label={`Last ${pipe.history.length} mornings: ${pipe.history.length - failed} ran, ${failed} failed`}
+          aria-label={`Last ${pipe.history.length} days: ${pipe.history.length - failed} finished, ${failed} failed`}
         >
           {pipe.history.map((r, i) => (
-            <i key={`${r.date}-${i}`} className={r.ok ? undefined : "f"} title={`${fmtDay(r.date)}: ${r.ok ? "ran" : "failed"}`} />
+            <i key={`${r.date}-${i}`} className={r.ok ? undefined : "f"} title={`${fmtDay(r.date)}: ${r.ok ? "finished" : "failed"}`} />
           ))}
         </div>
         <p className="small">
-          One bar per morning, last {pipe.history.length}. Black ran, red failed. {runLine(pipe.lastRun, pipe.live, pipe.asOf)}
+          One bar per day, last {pipe.history.length}. Black finished, red failed. {runLine(pipe.lastRun, pipe.live, pipe.asOf)}
         </p>
       </Annotated>
       <p className="body">

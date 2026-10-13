@@ -46,7 +46,7 @@ export default async function Image() {
             >
               {snapshot.totalRuns}
             </div>
-            <div style={{ display: "flex", fontSize: 26, color: "#5a5750" }}>mornings one system has run on its own</div>
+            <div style={{ display: "flex", fontSize: 26, color: "#5a5750" }}>mornings one system has started on its own</div>
           </div>
           <div style={{ display: "flex", fontSize: 26, color: "#c4161c" }}>manveen.me</div>
         </div>
