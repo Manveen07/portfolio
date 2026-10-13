@@ -35,7 +35,7 @@ Someone called the current site AI slop. They were right about the look: a fake 
 
 ## 4. The page, top to bottom
 
-1. **Me.** Photo, name, the problem-first line (section 5a), the "how I pick problems" lines under it, time zone line (Delhi, works UK mornings and US evenings), one "Book a call" button.
+1. **Me.** Photo, name, the problem-first line (section 5a), the "how I pick problems" lines under it, time zone line (Delhi; UK working hours are my afternoon and evening, US East Coast mornings my evening), one "Book a call" button.
 2. **Running right now: Tender Radar.** What it does in two plain sentences. The count of scheduled runs, one per morning (102 from 4 Jul to 13 Oct; the 12 runs started by hand don't count), read live, a bar per morning for the last 40 runs, the 3-minute Loom, the code link. Its worst stretch (21 Jul to 11 Aug) in one plain sentence. "Sorts for 7 trades" and the notices-read count. A red-pen note on the number.
 3. **What people say.** Zackary's quote with name, title and company, and "full signed letter available on request" (the PDF is not published: it contains his email address). Then job history: Caprae (dates and title from the letter), Precise Leads as one line, B.Tech CS, MSIT Delhi, 2026.
 4. **Other work, three at most.** Resume screening at Caprae (10h to 3h a week), PresentAI (live, try it), leadlens (links to the post on how I tested it).

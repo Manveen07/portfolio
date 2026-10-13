@@ -671,7 +671,7 @@ test("hero leads with the problem and drops the slogan", () => {
   assert.match(t, /nerd word for this: deterministic\. Same input, same result, every time\./);
   assert.match(t, /I don't automate things that aren't anyone's problem\./);
   assert.match(t, /That's why they're not automatic yet, and that's why they're problems\./);
-  assert.match(t, /My mornings overlap the UK, my evenings the US\./);
+  assert.match(t, /UK working hours are my afternoon and evening, US mornings my evening\./);
   assert.doesNotMatch(t, /automating the boring/i);
   assert.doesNotMatch(t, /scaling the interesting/i);
 });
@@ -693,7 +693,7 @@ Expected: the 2 new tests FAIL (first on "Your tools don't talk").
 In `data/portfolio.ts`, change the `hours` line inside `ME` to:
 
 ```ts
-  hours: "Delhi, India. My mornings overlap the UK, my evenings the US.",
+  hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
 ```
 
 Replace the whole `// ── Hero ──` block (`export const HERO = { ... } as const;`) with:
@@ -1492,7 +1492,7 @@ export const ME = {
   name: "Manveen Singh",
   role: "automation engineer",
   location: "Delhi, India",
-  hours: "Delhi, India. My mornings overlap the UK, my evenings the US.",
+  hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
   linkedin: "https://linkedin.com/in/Manveen",
