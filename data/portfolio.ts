@@ -8,7 +8,7 @@ export const ME = {
   name: "Manveen Singh",
   role: "automation engineer",
   location: "Delhi, India",
-  hours: "Delhi, India. My mornings overlap the UK, my evenings the US.",
+  hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
   linkedin: "https://linkedin.com/in/Manveen",
