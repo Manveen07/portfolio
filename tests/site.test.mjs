@@ -77,6 +77,12 @@ test("pen marks hide only when JS can draw them, and never under reduced motion"
   assert.match(styles, /prefers-reduced-motion[^{]*\{[\s\S]*?stroke-dashoffset:0/);
 });
 
+test("an undrawn pen circle leaves no stray dot (dash gap is longer than the path)", () => {
+  // pathLength is 1. With dasharray "1" and dashoffset 1, the next dash starts exactly at the
+  // path end and the round cap paints a dot. A gap of 2 pushes that dash past the end.
+  assert.match(css(), /\.pen path\{[^}]*stroke-dasharray:1 2[;}]/);
+});
+
 test("fonts are Archivo and IBM Plex Mono, not the old Barlow set", () => {
   const styles = css();
   assert.match(styles, /Archivo/);

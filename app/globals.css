@@ -97,7 +97,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
   stroke: var(--red);
   stroke-width: 1.6;
   stroke-linecap: round;
-  stroke-dasharray: 1;
+  stroke-dasharray: 1 2;  /* gap longer than the path (pathLength 1): no round-cap dot at the end while hidden */
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 0.9s cubic-bezier(0.6, 0.1, 0.3, 1) 0.15s;
 }
