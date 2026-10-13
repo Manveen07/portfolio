@@ -96,3 +96,22 @@ test("header has Book a call; footer has recruiter links and the off-the-clock l
 test("the pilot steps list keeps its numbers despite the CSS reset", () => {
   assert.match(css(), /\.steps\{[^}]*list-style:decimal/);
 });
+
+// ── Task 3: the hero says the problem first, in Manveen's words ────────
+test("hero leads with the problem and drops the slogan", () => {
+  const t = text("index.html");
+  assert.match(t, /Your tools don't talk to each other, so someone on your team copies things between them\./);
+  assert.match(t, /I connect them so it happens on its own, the same way every time\./);
+  assert.match(t, /nerd word for this: deterministic\. Same input, same result, every time\./);
+  assert.match(t, /I don't automate things that aren't anyone's problem\./);
+  assert.match(t, /That's why they're not automatic yet, and that's why they're problems\./);
+  assert.match(t, /My mornings overlap the UK, my evenings the US\./);
+  assert.doesNotMatch(t, /automating the boring/i);
+  assert.doesNotMatch(t, /scaling the interesting/i);
+});
+
+test("hero shows no empty photo frame while PHOTO is null", () => {
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(hero, "no section#top");
+  assert.ok(!hero.includes("<img"), "hero renders an <img> but PHOTO is null");
+});

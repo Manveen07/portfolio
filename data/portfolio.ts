@@ -9,7 +9,7 @@ export const ME = {
   name: "Manveen Singh",
   role: "automation engineer",
   location: "Delhi, India",
-  hours: "remote · mornings overlap the UK, evenings the US",
+  hours: "Delhi, India. My mornings overlap the UK, my evenings the US.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
   linkedin: "https://linkedin.com/in/Manveen",
@@ -20,13 +20,20 @@ export const ME = {
 // ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
 export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
 
-// ── Hero ─────────────────────────────────────────────────────────────
+// ── Hero: Manveen's own words (spec 5a), keep the phrasing ──────────
 export const HERO = {
-  tagline:
-    "I build the software that reads what comes in (orders, resumes, notices) so nobody has to retype it.",
-  promise:
-    "Every build ships with a test that shows how often it's right.",
+  headline: "Your tools don't talk to each other, so someone on your team copies things between them.",
+  answer: "I connect them so it happens on its own,",
+  marked: "the same way every time.",
+  nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
+  how: [
+    "I start with the problem that wastes the most of your time. I don't automate things that aren't anyone's problem.",
+    "The ones worth fixing are usually messy. That's why they're not automatic yet, and that's why they're problems.",
+  ],
 } as const;
+
+/** Path under /public plus its pixel size, or null until Manveen sends a photo (Task 12). */
+export const PHOTO: { src: string; alt: string; width: number; height: number } | null = null;
 
 // ── Nav (the six numbered steps) ─────────────────────────────────────
 export const NAV: { id: string; label: string; tag: string }[] = [
