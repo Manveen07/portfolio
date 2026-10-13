@@ -25,10 +25,10 @@ export default async function Image() {
       >
         <div style={{ display: "flex", fontSize: 28, fontWeight: 700 }}>Manveen Singh</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 64, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
             Your tools don&apos;t talk to each other.
           </div>
-          <div style={{ display: "flex", fontSize: 64, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
             I connect them so it happens on its own.
           </div>
         </div>
