@@ -224,3 +224,35 @@ test("no dashes, banned words, slogans or 'honest' in the home page copy", () =>
 test("the pilot section opens with the 'is it a real problem' line", () => {
   assert.match(text("index.html"), /If it isn't a real problem, I'll say so and we won't build it\./);
 });
+
+// ── Task 9: writing pages, 404, metadata and share image match ─────────
+test("writing pages and 404 have no control-panel labels or dashes", () => {
+  for (const page of ["writing.html", "writing/schema-as-eval-spec.html", "_not-found.html"]) {
+    const html = markup(page);
+    for (const s of ["P-05", "P-XX", "back to the panel", "Back to the panel", "panel on"]) {
+      assert.ok(!html.includes(s), `${page} still has "${s}"`);
+    }
+    assert.doesNotMatch(text(page), /[—–]/, `${page} has a dash`);
+  }
+});
+
+test("the post links to the pilot section, which exists", () => {
+  assert.ok(markup("writing/schema-as-eval-spec.html").includes('href="/#contact"'));
+  assert.ok(markup("index.html").includes('id="contact"'));
+});
+
+test("meta description and share text are current", () => {
+  const head = read(".next/server/app/index.html").match(/<head[\s\S]*?<\/head>/)[0];
+  const desc = head.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "";
+  assert.match(desc, /copy-paste work between them happens on its own/);
+  assert.doesNotMatch(head, /quote intake/i);
+  assert.doesNotMatch(head, /automating the boring/i);
+});
+
+test("share image and icon have the new look", () => {
+  const og = read("app/opengraph-image.tsx");
+  assert.doesNotMatch(og, /automating the boring|hazard|#ffd60a/i);
+  assert.match(og, /#f4f1ea/);
+  assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);
+  assert.ok(!built("app/favicon.ico"), "create-next-app favicon.ico still overrides the svg");
+});

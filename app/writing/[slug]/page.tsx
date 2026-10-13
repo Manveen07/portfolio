@@ -8,9 +8,7 @@ export function generateStaticParams() {
   return POSTS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata(
-  { params }: { params: Promise<{ slug: string }> },
-): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return { title: "Not found" };
@@ -25,85 +23,32 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
-export default async function PostPage(
-  { params }: { params: Promise<{ slug: string }> },
-) {
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) notFound();
 
   return (
-    <article style={{ padding: "40px var(--gutter) 80px" }}>
-      <div className="panel on" style={{ padding: "clamp(28px, 3vw, 48px) clamp(22px, 3.4vw, 56px)", maxWidth: 960, margin: "0 auto" }}>
-        <span className="serial">P-05 · POST-{String(POSTS.findIndex((x) => x.slug === post.slug) + 1).padStart(2, "0")}</span>
-
-        <Link href="/#writing" className="lbl" style={{ display: "inline-flex", gap: 8, marginBottom: 32 }}>
+    <article className="wrap sec hero">
+      <p className="small">
+        <Link href="/writing" className="link">
           ← all writing
         </Link>
-
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18, alignItems: "center" }}>
-          <span className="lamp on" style={{ width: 10, height: 10 }} />
-          <span className="mono" style={{ fontSize: 12, color: "var(--dim)" }}>
-            {fmtDate(post.date)} · {post.readMins} min read
-          </span>
-          <span style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {post.tags.map((t) => (
-              <span key={t} className="chip">
-                {t}
-              </span>
-            ))}
-          </span>
-        </div>
-
-        <h1
-          className="cond h-panel"
-          style={{
-            fontSize: "clamp(34px, 5vw, 60px)",
-            fontWeight: 700,
-            lineHeight: 0.95,
-            textTransform: "none",
-            color: "var(--text)",
-            margin: "0 0 22px",
-            maxWidth: 820,
-          }}
-        >
-          {post.title}
-        </h1>
-
-        <p
-          className="intro"
-          style={{
-            fontSize: 18,
-            margin: "0 0 44px",
-            paddingBottom: 30,
-            borderBottom: "1px solid var(--bevel)",
-          }}
-        >
-          {post.summary}
-        </p>
-
-        <Prose body={post.body} />
-
-        <div
-          style={{
-            marginTop: 52,
-            paddingTop: 28,
-            borderTop: "1px solid var(--bevel)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 16,
-            flexWrap: "wrap",
-          }}
-        >
-          <Link href="/#writing" className="btn">
-            ← all writing
-          </Link>
-          <Link href="/#contact" className="btn go">
-            work with me <span>→</span>
-          </Link>
-        </div>
-      </div>
+      </p>
+      <p className="small">
+        {fmtDate(post.date)} · {post.readMins} min read · {post.tags.join(", ")}
+      </p>
+      <h1>{post.title}</h1>
+      <p className="lede">{post.summary}</p>
+      <Prose body={post.body} />
+      <p className="cta-row" style={{ marginTop: 48 }}>
+        <Link href="/writing" className="link">
+          ← all writing
+        </Link>
+        <Link href="/#contact" className="btn">
+          Work with me
+        </Link>
+      </p>
     </article>
   );
 }

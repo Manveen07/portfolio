@@ -18,31 +18,25 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const TITLE = "Manveen Singh | automation engineer";
 const DESCRIPTION =
-  "I automate the work a business still does by hand between a customer's list and a confirmed order: quote intake, order parsing, document processing. Every build ships with its own error rate measured.";
+  "Manveen Singh connects the tools a business already uses, so the copy-paste work between them happens on its own, the same way every time.";
 
 export const metadata: Metadata = {
-  title: "Manveen Singh | automation engineer",
+  title: TITLE,
   description: DESCRIPTION,
-  keywords: [
-    "automation engineer", "quote intake automation", "order parsing", "document processing",
-    "lead enrichment", "outbound automation", "Clay", "n8n", "Python",
-  ],
+  keywords: ["automation engineer", "workflow automation", "data entry automation", "Python", "Manveen Singh"],
   authors: [{ name: "Manveen Singh" }],
   metadataBase: new URL("https://manveen.me"),
   openGraph: {
-    title: "Manveen Singh | automation engineer",
-    description: "Automating the boring. Scaling the interesting.",
+    title: TITLE,
+    description: DESCRIPTION,
     type: "website",
     locale: "en_US",
     url: "https://manveen.me",
     siteName: "Manveen Singh",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Manveen Singh | automation engineer",
-    description: "Automating the boring. Scaling the interesting.",
-  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
   robots: {
     index: true,
     follow: true,
