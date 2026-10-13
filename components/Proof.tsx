@@ -1,13 +1,8 @@
 import { PIPELINE } from "@/data/portfolio";
 import type { PipelineData } from "@/lib/pipeline";
-import { runLine } from "@/lib/runs";
+import { fmtDay, runLine } from "@/lib/runs";
 import Annotated from "@/components/Annotated";
 import { Circle } from "@/components/Pen";
-
-/** "7 Sep" for a bar's hover title. */
-function fmtDay(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
-}
 
 export default function Proof({ pipe }: { pipe: PipelineData }) {
   const failed = pipe.history.filter((r) => !r.ok).length;

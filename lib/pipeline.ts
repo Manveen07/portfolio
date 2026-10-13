@@ -9,8 +9,10 @@
 // Either way the shape is the same, so the component never knows which.
 
 import snapshot from "@/data/pipeline-snapshot.json";
+import { summarizeRuns } from "./runs";
+import type { RunDay, RunsResponse } from "./runs";
 
-export type RunDay = { date: string; ok: boolean };
+export type { RunDay };
 
 export type PipelineData = {
   asOf: string;            // ISO timestamp the numbers were read
@@ -46,20 +48,10 @@ export async function getPipeline(): Promise<PipelineData> {
     ]);
     if (!runsRes.ok || !sumRes.ok) return FALLBACK;
 
-    const runs = (await runsRes.json()) as {
-      total_count: number;
-      workflow_runs: { conclusion: string | null; created_at: string }[];
-    };
+    const summary = summarizeRuns((await runsRes.json()) as RunsResponse);
+    if (!summary) return FALLBACK;
     const sum = (await sumRes.json()) as { content: string };
     const md = Buffer.from(sum.content, "base64").toString("utf8");
-
-    // Only finished runs count; an in-progress one has no conclusion yet.
-    const finished = runs.workflow_runs.filter((r) => r.conclusion);
-    if (!finished.length) return FALLBACK;
-
-    const history: RunDay[] = finished
-      .map((r) => ({ date: r.created_at.slice(0, 10), ok: r.conclusion === "success" }))
-      .reverse();
 
     const notices = Number(/Raw tender records[^\d]*(\d+)/.exec(md)?.[1] ?? FALLBACK.noticesRead);
     const profiles = (md.match(/^\| [a-z-]+ \|/gm) ?? []).length || FALLBACK.clientProfiles;
@@ -67,15 +59,11 @@ export async function getPipeline(): Promise<PipelineData> {
     return {
       asOf: new Date().toISOString(),
       live: true,
-      totalRuns: runs.total_count,
-      lastRun: { at: finished[0].created_at, ok: finished[0].conclusion === "success" },
+      ...summary,
       noticesRead: notices,
       clientProfiles: profiles,
-      history,
     };
   } catch {
     return FALLBACK;
   }
 }
-
-export { fmtRun } from "./runs";

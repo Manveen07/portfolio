@@ -159,6 +159,10 @@ test("one bar per saved run, failures marked red", () => {
   const bars = markup("index.html").match(/<div[^>]*class="bars"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
   assert.equal(count(bars, "<i"), snapshot.history.length);
   assert.equal(count(bars, 'class="f"'), snapshot.history.filter((r) => !r.ok).length);
+  // Hover titles use fixed month names ("7 Sep", never "7 Sept") and the legend's word, "finished".
+  const titles = [...bars.matchAll(/title="([^"]*)"/g)].map((m) => m[1]);
+  assert.equal(titles.length, snapshot.history.length);
+  for (const title of titles) assert.match(title, /^\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec): (?:finished|failed)$/);
 });
 
 test("live and saved run numbers both count scheduled runs only", () => {
