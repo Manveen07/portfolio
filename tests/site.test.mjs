@@ -57,7 +57,7 @@ test("the home page was built", () => {
   assert.ok(markup("index.html").length > 1000);
 });
 
-test("saved run numbers are no older than 13 Oct 2026", () => {
+test("saved run numbers are current, one run per morning", () => {
   assert.ok(snapshot.totalRuns >= 102, `snapshot says ${snapshot.totalRuns} runs`);
   assert.equal(new Set(snapshot.history.map((h) => h.date)).size, snapshot.history.length, "two runs on one date: manual runs are being counted");
 });
@@ -142,4 +142,10 @@ test("one bar per saved run, failures marked red", () => {
   const bars = markup("index.html").match(/<div[^>]*class="bars"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
   assert.equal(count(bars, "<i"), snapshot.history.length);
   assert.equal(count(bars, 'class="f"'), snapshot.history.filter((r) => !r.ok).length);
+});
+
+test("live and saved run numbers both count scheduled runs only", () => {
+  for (const file of ["lib/pipeline.ts", "scripts/refresh-snapshot.mjs"]) {
+    assert.match(read(file), /runs\?event=schedule&per_page=40/, `${file} counts manual runs too`);
+  }
 });
