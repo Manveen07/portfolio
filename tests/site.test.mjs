@@ -187,3 +187,14 @@ test("the leadlens card links to a post that was built", () => {
   assert.ok(markup("index.html").includes('href="/writing/schema-as-eval-spec"'));
   assert.ok(built(".next/server/app/writing/schema-as-eval-spec.html"));
 });
+
+// ── Task 7: what broke, quieter ────────────────────────────────────────
+test("all four incidents are listed with what changed", () => {
+  const broke = markup("index.html").match(/<section[^>]*id="broke"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.equal(count(broke, 'class="fix"'), 4);
+  const t = text("index.html");
+  assert.match(t, /When something I built breaks, I write it down\./);
+  assert.match(t, /Jul 2026 · tender radar/);
+  assert.match(t, /“guard” inside “safeguarding”/);
+  assert.match(t, /Took my notes out, re-ran it, and published the lower number\./);
+});

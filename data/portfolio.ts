@@ -280,6 +280,8 @@ export const BAYS: Bay[] = [
 // ── incident.log ─────────────────────────────────────────────────────
 // Real entries only. Dates from commit history. Add one whenever something
 // real breaks; never pad it.
+export const BROKE_INTRO = "When something I built breaks, I write it down. Here's the list, and what I changed each time.";
+
 export type Incident = { when: string; system: string; broke: string; changed: string };
 
 export const INCIDENTS: Incident[] = [
@@ -305,7 +307,7 @@ export const INCIDENTS: Incident[] = [
     when: "2026-06",
     system: "leadlens",
     broke: "My own notes leaked the answers into the test, so the judge scored a perfect 100%.",
-    changed: "Stripped them, re-ran, published the lower honest number.",
+    changed: "Took my notes out, re-ran it, and published the lower number.",
   },
 ];
 
