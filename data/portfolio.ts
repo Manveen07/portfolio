@@ -204,9 +204,7 @@ export const BAYS: Bay[] = [
     detail:
       "Pulls from several data sources, fills the gaps, checks the data, scores each lead, syncs to the CRM and posts a Slack alert when a good one lands. Enrichment used to be a person with a spreadsheet.",
     stack: ["python", "clay", "n8n", "crm apis"],
-    metrics: [
-      ["8h → 2h", "enrichment work per week, measured"],
-    ],
+    metrics: [],
   },
   {
     n: "06",
