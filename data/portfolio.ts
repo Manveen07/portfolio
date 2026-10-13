@@ -114,6 +114,61 @@ export const PLATES: [string, string][] = [
   ["How I keep it honest", "I test every AI step against hand-checked examples before it touches real data, and I report the real score, not the flattering one."],
 ];
 
+// ── Other work: three cards. Tender Radar has its own section above. ──
+export type WorkItem = {
+  title: string;
+  where: string;
+  lead: string;
+  detail: string;
+  metrics: [string, string][];
+  stack: string[];
+  links?: { label: string; href: string }[];
+};
+
+export const WORK: WorkItem[] = [
+  {
+    title: "Resume screening, automated",
+    where: "At Caprae Capital Partners",
+    lead: "Reads incoming resumes, ranks the candidates, and books the interviews.",
+    detail:
+      "A recruiting team was spending most of a day a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
+    metrics: [
+      ["10h → 3h", "screening per week"],
+      ["5 → 1.5", "days to a shortlist"],
+    ],
+    stack: ["python", "embeddings", "slack"],
+  },
+  {
+    title: "PresentAI",
+    where: "My own project, live",
+    lead: "Paste your notes, get a slide deck in under a minute.",
+    detail:
+      "It works out the story first, then writes the slides and the speaker notes, and exports to PowerPoint. It's free, so you can try it right now.",
+    metrics: [
+      ["2h → 15m", "to a first deck"],
+      ["<60s", "for the first draft"],
+    ],
+    stack: ["next.js", "postgres", "python-pptx"],
+    links: [
+      { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
+      { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
+    ],
+  },
+  {
+    title: "leadlens",
+    where: "My own project",
+    lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
+    detail:
+      "I hand-checked 72 real postings, then measured it against them. It scored a perfect 100%, which was the problem: my own notes were leaking the answers into the test. I took them out and published the lower score.",
+    metrics: [
+      ["82%", "of scams caught"],
+      ["0", "real jobs wrongly flagged"],
+    ],
+    stack: ["python", "gemini", "pydantic"],
+    links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
+  },
+];
+
 // ── Work bays ────────────────────────────────────────────────────────
 export type Bay = {
   n: string;

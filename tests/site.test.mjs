@@ -168,3 +168,22 @@ test("Caprae dates and title follow the signed letter; Precise Leads is one line
   assert.doesNotMatch(t, /8h → 2h/);
   assert.doesNotMatch(t, /origin story/i);
 });
+
+// ── Task 6: three projects, no stale, agency or demo-data cards ────────
+test("work shows resume screening, PresentAI and leadlens only", () => {
+  const html = markup("index.html");
+  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.equal(count(work, "<article"), 3);
+  const t = text("index.html");
+  for (const s of ["Resume screening, automated", "PresentAI", "leadlens", "10h → 3h", "82%"]) {
+    assert.ok(t.includes(s), `missing "${s}"`);
+  }
+  for (const s of ["Lead enrichment on autopilot", "Research-grounded writing", "deploying sep 2026", "BAY-0", "watch one", "operator-demo"]) {
+    assert.ok(!t.toLowerCase().includes(s.toLowerCase()) && !html.includes(s), `still has "${s}"`);
+  }
+});
+
+test("the leadlens card links to a post that was built", () => {
+  assert.ok(markup("index.html").includes('href="/writing/schema-as-eval-spec"'));
+  assert.ok(built(".next/server/app/writing/schema-as-eval-spec.html"));
+});
