@@ -121,28 +121,19 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
   .pen-js .pen:not(.in) .pen-under { background-size: 100% 2px; }
 }
 
-/* ── What people say ── */
+/* ── The quote (rendered inside Work, after the Caprae card) ── */
 .quote { margin: 0 0 28px; }
 .quote blockquote { margin: 0; font-size: 20px; line-height: 1.45; }
 .quote blockquote p { margin: 0; }
 .quote figcaption { margin-top: 10px; font-size: 15px; }
-.roles { list-style: none; padding: 0; margin: 0 0 12px; }
-.roles li { padding: 12px 0; border-bottom: 1px dashed var(--rule); }
-.roles p { margin: 0; }
-.roles .what { margin-top: 6px; }
 
 /* ── Work ── */
-.work { display: grid; gap: 18px; }
-.card { background: var(--wash); padding: 20px 22px; }
+.card { background: var(--wash); padding: 20px 22px; margin: 0 0 18px; }
+.card .small + .small { margin-top: -6px; } /* where line and role line read as one block */
 .metrics { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 14px 0 8px; }
 .metrics dt { font-size: 28px; font-weight: 800; line-height: 1.1; }
 .metrics dd { margin: 0; font-size: 13.5px; color: var(--dim); }
 .stack { margin: 6px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
-
-/* ── What broke ── */
-.broke { list-style: none; padding: 0; margin: 8px 0 0; }
-.broke li { padding: 14px 0; border-bottom: 1px dashed var(--rule); }
-.fix { margin: 4px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; color: var(--red); }
 
 /* ── How working with me goes ── */
 .steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }

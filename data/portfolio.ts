@@ -48,23 +48,9 @@ export const PIPELINE = {
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
 
-// ── Career ───────────────────────────────────────────────────────────
-export type Role = { co: string; role: string; span: string; what?: string };
-
-// Caprae dates and title come from the signed letter (11 Jan 2026).
-// Precise Leads is one line only: agency results stay off the freelance page.
-export const ROLES: Role[] = [
-  { co: "Precise Leads", role: "GTM automation engineer", span: "Nov 2025 → now" },
-  {
-    co: "Caprae Capital Partners",
-    role: "Machine Learning Intern",
-    span: "Aug 2025 → Jan 2026 · US, remote",
-    what: "An investment firm. I built the system that reads resumes and ranks candidates for their recruiting team.",
-  },
-];
-
 // ── What people say: verbatim from Zackary Beckham's signed letter (11 Jan 2026).
-// Never publish the letter PDF or the email address on it.
+// Never publish the letter PDF or the email address on it. It renders in the Work
+// section, as a block right after the card marked `quote: true`.
 export const QUOTE = {
   before: "…produced clear and maintainable technical documentation, and ",
   marked: "effectively communicated complex engineering concepts to non-technical stakeholders.",
@@ -75,7 +61,9 @@ export const QUOTE = {
   penNote: "the bit that matters if you don't write code",
 } as const;
 
-export const EDUCATION = "B.Tech Computer Science · MSIT Delhi · 2026";
+// The last line of the Work section. Precise Leads is one line only: agency results
+// stay off the freelance page.
+export const NOW_LINE = "Now: GTM automation engineer at Precise Leads, since Nov 2025. B.Tech Computer Science, MSIT Delhi, 2026.";
 
 // ── Other work: three cards. Tender Radar has its own section above. ──
 export type WorkItem = {
@@ -86,12 +74,19 @@ export type WorkItem = {
   metrics: [string, string][];
   stack: string[];
   links?: { label: string; href: string }[];
+  /** A line under `where`, for a card that is a job (title, dates, place). */
+  role?: string;
+  /** Zackary's quote renders as a block right after this card. */
+  quote?: true;
 };
 
 export const WORK: WorkItem[] = [
   {
     title: "Resume screening, automated",
     where: "At Caprae Capital Partners",
+    // Title and dates come from the signed letter (11 Jan 2026); "US, remote" from the resume.
+    role: "Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote",
+    quote: true,
     lead: "Reads incoming resumes, ranks the candidates, and books the interviews.",
     detail:
       "A recruiting team was spending about ten hours a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
@@ -126,40 +121,6 @@ export const WORK: WorkItem[] = [
     ],
     stack: ["python", "gemini", "pydantic"],
     links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
-  },
-];
-
-// ── What broke ───────────────────────────────────────────────────────
-// Real entries only. Dates from the projects' own records. Newest first. Add
-// one whenever something real breaks; never pad it.
-export const BROKE_INTRO = "When something I built breaks, I write it down. Here are four of them, and what I changed each time.";
-
-export type Incident = { when: string; system: string; broke: string; changed: string };
-
-export const INCIDENTS: Incident[] = [
-  {
-    when: "2026-08",
-    system: "demo pipeline",
-    broke: "Rendering videos in parallel cut one down to 39 seconds over an 80-second narration.",
-    changed: "One at a time now, with a length check before anything is sent.",
-  },
-  {
-    when: "2026-07",
-    system: "tender radar",
-    broke: "A data-format change broke the morning run. Nothing alerted me, so it stayed broken for about three weeks.",
-    changed: "Fixed it. The last 40 runs now show on this page, red when one fails.",
-  },
-  {
-    when: "2026-07",
-    system: "tender radar",
-    broke: "Short keywords matched inside longer words (“guard” inside “safeguarding”), so the wrong tenders got tagged.",
-    changed: "Whole-word matching. Those exact cases live in the test set now.",
-  },
-  {
-    when: "2026-06",
-    system: "leadlens",
-    broke: "My own notes leaked the answers into the test, so the judge scored a perfect 100%.",
-    changed: "Took my notes out, re-ran it, and published the lower number.",
   },
 ];
 

@@ -182,10 +182,11 @@ test("Zackary's quote has name, title and company, and no email address", () => 
 
 test("Caprae dates and title follow the signed letter; Precise Leads is one line", () => {
   const t = text("index.html");
-  assert.match(t, /Caprae Capital Partners · Machine Learning Intern/);
+  // The role moved onto the Caprae card: company on one line, title and dates on the next.
+  assert.match(t, /At Caprae Capital Partners Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote/);
   assert.match(t, /Aug 2025 → Jan 2026/);
   assert.doesNotMatch(t, /Jun → Dec 2025/);
-  assert.match(t, /Precise Leads · GTM automation engineer/);
+  assert.match(t, /Now: GTM automation engineer at Precise Leads, since Nov 2025\./);
   assert.doesNotMatch(t, /8h → 2h/);
   assert.doesNotMatch(t, /origin story/i);
 });
@@ -215,29 +216,71 @@ test("the leadlens card links to a post that was built", () => {
   assert.ok(built(".next/server/app/writing/schema-as-eval-spec.html"));
 });
 
-// ── Task 7: what broke, quieter ────────────────────────────────────────
-test("all four incidents are listed with what changed", () => {
-  const broke = markup("index.html").match(/<section[^>]*id="broke"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.equal(count(broke, 'class="fix"'), 4);
+// ── Show the machine, Task 0: four sections; the quote follows the Caprae card ──
+test("the Caprae card has the company line, then the role line, and no card gets a role it doesn't have", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(work, "no section#work");
+  assert.match(
+    work,
+    /<article class="card"><p class="small">At Caprae Capital Partners<\/p><p class="small">Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote<\/p><h3 class="h3">Resume screening, automated<\/h3>/,
+  );
+  // PresentAI and leadlens keep their single "where" line.
+  assert.match(work, /<article class="card"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
+  assert.match(work, /<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+});
+
+test("the quote follows the Caprae card as a block of the Work section, with its margin note", () => {
+  const html = markup("index.html");
+  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(work, "no section#work");
+  assert.equal(count(html, '<figure class="quote">'), 1, "the quote is not on the page exactly once");
+  assert.equal(count(work, '<figure class="quote">'), 1, "the quote is not in the Work section");
+  // Cards and the quote block are direct children of the section, so `.wrap > .annotated`
+  // gives the quote its margin column. A wrapper div around the cards would stop that.
+  assert.ok(!work.includes('<div class="work"'), "cards are still wrapped in a .work div");
+  const firstCardEnd = work.indexOf("</article>");
+  const quoteAt = work.indexOf('<figure class="quote">');
+  const secondCardAt = work.indexOf("<article", firstCardEnd);
+  assert.ok(work.slice(0, firstCardEnd).includes("Resume screening, automated"), "the first card is not the Caprae card");
+  assert.ok(firstCardEnd < quoteAt && quoteAt < secondCardAt, "the quote is not between the Caprae card and the next card");
+  assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
+  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><article/);
+  assert.match(text("index.html"), /the bit that matters if you don't write code/);
+  // The red underline is on the marked words.
+  assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
+});
+
+test("the Work section ends with the Now line and the resume link, and keeps 18px between cards", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(
+    text("index.html"),
+    /Now: GTM automation engineer at Precise Leads, since Nov 2025\. B\.Tech Computer Science, MSIT Delhi, 2026\. Full resume ↗/,
+  );
+  assert.match(work, /<a class="link" href="\/resume\.pdf">Full resume ↗<\/a><\/p><\/section>$/);
+  assert.match(css(), /\.card\{[^}]*margin:0 0 18px/);
+});
+
+test("the people and incident sections are gone, with their copy", () => {
+  const html = markup("index.html");
+  assert.ok(!html.includes('id="people"') && !html.includes('id="broke"'));
   const t = text("index.html");
-  assert.match(t, /When something I built breaks, I write it down\./);
-  // The project record has eight incidents and the page shows four, so it can't say "the list".
-  assert.match(t, /Here are four of them, and what I changed each time\./);
-  assert.doesNotMatch(t, /Here's the list/);
-  assert.match(t, /Nothing alerted me, so it stayed broken for about three weeks\./);
-  assert.match(t, /The last 40 runs now show on this page, red when one fails\./);
-  assert.match(t, /Jul 2026 · tender radar/);
-  assert.match(t, /“guard” inside “safeguarding”/);
-  assert.match(t, /Took my notes out, re-ran it, and published the lower number\./);
+  for (const s of ["What people say", "What broke", "Where I've done this", "When something I built breaks", "Here are four of them", "The last 40 runs now show on this page", "An investment firm"]) {
+    assert.ok(!t.includes(s), `still says "${s}"`);
+  }
+  // The two failure stories that stay: the outage inside the Tender Radar section, and leadlens.
+  assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
+  assert.match(t, /my own notes were leaking the answers into the test/);
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
-test("sections appear in the agreed order, with no writing section on the home page", () => {
+test("sections appear in the agreed order: four, and no writing section on the home page", () => {
   const html = markup("index.html");
-  const at = ["top", "proof", "people", "work", "broke", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  const at = ["top", "proof", "work", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
   assert.ok(!html.includes('id="writing"'));
+  assert.ok(!html.includes('id="people"') && !html.includes('id="broke"'), "a removed section is back");
+  assert.equal(count(html, /<section[\s>]/), 4, "the home page does not have exactly four sections");
 });
 
 test("Book a call appears exactly three times: header, first screen, bottom", () => {
@@ -267,12 +310,10 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   );
   assert.deepEqual(h2, [
     "Running right now · Tender Radar",
-    "What people say",
-    "Other things I've built",
-    "What broke",
+    "Work, and who vouches for it",
     "How working with me goes",
   ]);
-  assert.equal(count(html, /<h3[\s>]/), 4);
+  assert.equal(count(html, /<h3[\s>]/), 3);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -283,7 +324,7 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.match(rule, /margin:0 0 14px/);
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
-  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 3);
 });
 
 test("post headings use a font weight that is loaded (Archivo ships 400, 600, 800, 900)", () => {
@@ -392,8 +433,8 @@ test("verdict 3a: the proof note sits with the bars, below the run count", () =>
 
 test("verdict 3b: only the quote's note drops one line on wide screens", () => {
   const html = markup("index.html");
-  const people = html.match(/<section[^>]*id="people"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(people, /<aside class="note note-drop">/);
+  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(work, /<aside class="note note-drop">/);
   assert.equal(count(html, 'class="note note-drop"'), 1, "other notes were dropped too");
   assert.ok(count(html, /<aside class="note">/) >= 2, "the hero and proof notes lost their plain class");
   // One blockquote line is 20px x 1.45 = 29px, added to the usual 10px margin. The minifier may fold the calc to 39px.
