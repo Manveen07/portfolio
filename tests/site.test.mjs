@@ -434,7 +434,8 @@ test("verdict 3a: the proof note sits with the bars, below the run count", () =>
   const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.ok(proof, "no section#proof");
   const countAt = proof.indexOf('class="count"');
-  const annotatedAt = proof.indexOf('class="annotated"');
+  // The Tender Radar sketch has its own annotated block above the count; the bars' block is the last one.
+  const annotatedAt = proof.lastIndexOf('class="annotated"');
   assert.ok(countAt !== -1 && annotatedAt !== -1, "count or annotated block missing");
   assert.ok(countAt < annotatedAt, "the circled count is still inside the annotated block");
   const annotated = proof.slice(annotatedAt, proof.indexOf("</aside>", annotatedAt));
@@ -472,4 +473,33 @@ test("verdict 4: the share card loads Archivo from real static TTF files", () =>
 test("saved snapshot has the Tender Radar verdict counts", () => {
   for (const k of ["checks", "bid", "maybe"]) assert.ok(Number.isInteger(snapshot[k]) && snapshot[k] >= 0, `snapshot.${k} missing`);
   assert.ok(snapshot.checks > snapshot.bid + snapshot.maybe, "checks must exceed bid + maybe");
+});
+
+// ── Show the machine, Task 2: the Tender Radar sketch ─────────────────
+test("Tender Radar sketch shows the saved numbers in both layouts", () => {
+  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const sketch = proof.match(/<div[^>]*class="sketch[^"]*"[^>]*role="img"[\s\S]*?<\/div>/)?.[0] ?? "";
+  assert.ok(sketch, "no sketch in the proof section");
+  assert.match(sketch, /aria-label="[^"]*checked for \d+ trades[^"]*"/);
+  assert.match(sketch, /aria-label="3 public tender sites feed my script every morning\./);
+  for (const v of ["sketch-wide", "sketch-tall"]) assert.ok(proof.includes(v), `missing ${v}`);
+  const comma = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  // Each string is in the wide SVG, the tall SVG and the sketch's aria-label.
+  for (const s of [`${snapshot.maybe} worth a look`, `${snapshot.bid} worth bidding`, `out of ${comma(snapshot.checks)} checks`]) {
+    assert.equal(count(proof, s), 3, `"${s}" should appear once per layout and once in the aria-label`);
+  }
+  assert.match(text("index.html"), /every number here comes from the same run as the bars below/);
+});
+
+test("Tender Radar sketch draws only the sources the daily run really reads", () => {
+  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
+  for (const s of ["Find a Tender", "Contracts Finder", "ProContract"]) assert.equal(count(proof, `>${s}<`), 2, `${s}: one box per layout`);
+  for (const s of ["Public Contracts Scotland", "Sell2Wales"]) assert.ok(!proof.includes(s), `${s} returns 403 every morning, so it must not be drawn`);
+});
+
+test("sketch red marks hide only under pen-js and never under reduced motion", () => {
+  const styles = css();
+  assert.match(styles, /\.pen-js \.sketch:not\(\.in\) \.mark\{stroke-dashoffset:1/);
+  assert.match(styles, /prefers-reduced-motion[^{]*\{[\s\S]*?\.sketch:not\(\.in\) \.mark\{stroke-dashoffset:0/);
+  assert.match(styles, /@media \(min-width:640px\)\{[^}]*\.sketch-tall\{display:none/);
 });

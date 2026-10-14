@@ -3,6 +3,7 @@ import type { PipelineData } from "@/lib/pipeline";
 import { fmtDay, runLine } from "@/lib/runs";
 import Annotated from "@/components/Annotated";
 import { Circle } from "@/components/Pen";
+import RadarSketch from "@/components/sketches/RadarSketch";
 
 export default function Proof({ pipe }: { pipe: PipelineData }) {
   const failed = pipe.history.filter((r) => !r.ok).length;
@@ -10,6 +11,9 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
     <section id="proof" className="wrap sec">
       <h2 className="kicker">Running right now · Tender Radar</h2>
       <p className="lede">{PIPELINE.intro}</p>
+      <Annotated note={PIPELINE.sketchNote}>
+        <RadarSketch trades={pipe.clientProfiles} checks={pipe.checks} bid={pipe.bid} maybe={pipe.maybe} />
+      </Annotated>
       <p className="count">
         <Circle>{pipe.totalRuns}</Circle>
       </p>

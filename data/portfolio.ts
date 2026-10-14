@@ -42,6 +42,7 @@ export const PIPELINE = {
   intro:
     "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
   penNote: "every bar is a morning nobody pressed a button",
+  sketchNote: "every number here comes from the same run as the bars below",
   outage:
     "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change broke the morning run and nothing told me.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",

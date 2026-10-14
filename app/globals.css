@@ -127,6 +127,32 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .quote blockquote p { margin: 0; }
 .quote figcaption { margin-top: 10px; font-size: 15px; }
 
+/* ── Hand-drawn sketches ──
+   Two SVGs per sketch: tall below 640px, wide from 640px up. Only the red .mark paths animate. */
+.sketch { margin: 14px 0 18px; }
+.sketch svg { width: 100%; height: auto; overflow: visible; }
+.sketch text { font-family: var(--font-mono), "IBM Plex Mono", monospace; fill: var(--ink); }
+.sketch .dim { fill: var(--dim); }
+.sketch .red { fill: var(--red); }
+.sketch .ink { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sketch .mark {
+  fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round;
+  stroke-dasharray: 1 2;  /* gap longer than the path (pathLength 1): no round-cap dot at the end while hidden */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.6, 0.1, 0.3, 1) 0.15s;
+}
+.pen-js .sketch:not(.in) .mark { stroke-dashoffset: 1; }
+.sketch-tall { display: block; }
+.sketch-wide { display: none; }
+@media (min-width: 640px) {
+  .sketch-tall { display: none; }
+  .sketch-wide { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sketch .mark { transition: none; }
+  .pen-js .sketch:not(.in) .mark { stroke-dashoffset: 0; }
+}
+
 /* ── Work ── */
 .card { background: var(--wash); padding: 20px 22px; margin: 0 0 18px; }
 .card .small + .small { margin-top: -6px; } /* where line and role line read as one block */

@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fmtDay, fmtRun, parseVerdicts, runLine, summarizeRuns } from "../lib/runs.ts";
+import { fmtCount, fmtDay, fmtRun, parseVerdicts, runLine, summarizeRuns } from "../lib/runs.ts";
 
 test("fmtRun uses fixed month names in UTC", () => {
   assert.equal(fmtRun("2026-09-07T10:39:34Z"), "7 Sep, 10:39 UTC");
@@ -82,6 +82,12 @@ const SUMMARY_FIXTURE = [
 
 test("parseVerdicts sums classified, bid and maybe across trades", () => {
   assert.deepEqual(parseVerdicts(SUMMARY_FIXTURE), { checks: 1770, bid: 6, maybe: 32 });
+});
+
+test("fmtCount puts commas in thousands and leaves small numbers alone", () => {
+  assert.equal(fmtCount(3671), "3,671");
+  assert.equal(fmtCount(64), "64");
+  assert.equal(fmtCount(1000000), "1,000,000");
 });
 
 test("parseVerdicts returns null when the table is missing or malformed", () => {

@@ -66,6 +66,11 @@ export function parseVerdicts(md: string): { checks: number; bid: number; maybe:
   return rows ? { checks, bid, maybe } : null;
 }
 
+/** 3671 → "3,671". Fixed format, no locale. */
+export function fmtCount(n: number): string {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 /** The line under the bars: when it last ran, whether that worked, and where the numbers come from. */
 export function runLine(lastRun: LastRun, live: boolean, asOf: string): string {
   const when = fmtRun(lastRun.at);
