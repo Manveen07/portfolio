@@ -571,3 +571,14 @@ test("scorecard and screenshot styles: ink grid, thin rule border, no shadow", (
   assert.match(styles, /\.shot\{[^}]*border:1px solid var\(--rule\)/);
   assert.doesNotMatch(styles.match(/\.shot\{[^}]*\}/)?.[0] ?? "", /shadow|filter|blur/);
 });
+
+// ── Show the machine, Task 4: the problem, drawn ──────────────────────
+test("hero has the problem sketch in both layouts, between the headline and the answer", () => {
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(hero, /aria-label="An order arrives by email, someone retypes it into your system\. I connect the two directly\."/);
+  assert.ok(hero.indexOf("<h1") < hero.indexOf('class="sketch"') && hero.indexOf('class="sketch"') < hero.indexOf('class="lede"'));
+  // "someone retypes it" is in the wide SVG, the tall SVG and the sketch's aria-label; the red label is in the two SVGs only.
+  assert.equal(count(hero, "someone retypes it"), 3);
+  assert.equal(count(hero, "I connect these two directly"), 2);
+  for (const v of ["sketch-wide", "sketch-tall"]) assert.ok(hero.includes(v), `missing ${v}`);
+});
