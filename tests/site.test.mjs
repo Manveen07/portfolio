@@ -363,3 +363,15 @@ test("the post's read time is in line with its length", () => {
   const mins = Number(/(\d+)\s+min read/.exec(plain)?.[1]);
   assert.ok(mins >= Math.floor(words / 260) && mins <= Math.ceil(words / 180), `says ${mins} min for ${words} words`);
 });
+
+// ── Design verdicts (docs/superpowers/specs/2026-10-14-design-verdicts.md) ──
+test("verdict 2: post headings have no ## marker and match the site's 800 weight", () => {
+  const html = markup("writing/schema-as-eval-spec.html");
+  assert.doesNotMatch(html, />##</);
+  const h2s = html.match(/<h2[^>]*>/g) ?? [];
+  assert.ok(h2s.length > 0, "no h2 in the post");
+  for (const tag of h2s) {
+    assert.match(tag, /font-weight:800/, `post h2 is not weight 800: ${tag}`);
+    assert.doesNotMatch(tag, /display:flex/, `post h2 is still a flex row: ${tag}`);
+  }
+});
