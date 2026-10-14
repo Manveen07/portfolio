@@ -22,7 +22,7 @@ export default function Work() {
             <p className="body">
               <b>{w.lead}</b>
             </p>
-            <p className="body">{w.detail}</p>
+            {w.detail && <p className="body">{w.detail}</p>}
             {w.scorecard && <Scorecard s={w.scorecard} />}
             {w.shot && (
               <Image

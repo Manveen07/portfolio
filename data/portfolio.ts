@@ -72,7 +72,8 @@ export type WorkItem = {
   title: string;
   where: string;
   lead: string;
-  detail: string;
+  /** Optional: leadlens has none, its scorecard and margin note tell the story. */
+  detail?: string;
   metrics: [string, string][];
   stack: string[];
   links?: { label: string; href: string }[];
@@ -108,8 +109,7 @@ export const WORK: WorkItem[] = [
     title: "leadlens",
     where: "My own project",
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
-    detail:
-      "I hand-checked 72 postings, then measured it against them. It scored a perfect 100%, which was the problem: my own notes were leaking the answers into the test. I took them out and published the lower score.",
+    // No detail paragraph: the scorecard caption and the margin note say it (claims rows 41, 42, 45).
     // The scorecard replaces the two metric lines. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
     metrics: [],
     scorecard: {

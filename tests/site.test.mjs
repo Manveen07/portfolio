@@ -203,7 +203,8 @@ test("work shows resume screening, leadlens and PresentAI only", () => {
   // Final review: name what was measured, and say nothing the sources can't back.
   // (Show the machine, Task 3: the two metric lines became the scorecard, so "9 of 11 ..." is gone.)
   assert.doesNotMatch(t, /9 of 11/);
-  assert.match(t, /I hand-checked 72 postings/);
+  // The scorecard caption now says what was measured ("I hand-checked 72 postings" was cut with the detail paragraph).
+  assert.match(t, /Out of 72 postings I checked by hand:/);
   assert.doesNotMatch(t, /72 real postings/);
   assert.doesNotMatch(t, /82%/);
   assert.match(t, /spending about ten hours a week reading resumes by hand/);
@@ -284,7 +285,8 @@ test("the people and incident sections are gone, with their copy", () => {
   }
   // The two failure stories that stay: the outage inside the Tender Radar section, and leadlens.
   assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
-  assert.match(t, /my own notes were leaking the answers into the test/);
+  // (Told once, in the leadlens margin note; the card's detail paragraph that said it first is gone.)
+  assert.match(t, /my own notes leaked the answers/);
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
@@ -519,12 +521,20 @@ test("leadlens shows its real scorecard with the false alarms circled", () => {
   assert.match(text("index.html"), /it once scored 100%, because my own notes leaked the answers\. This is the score after I took them out\./);
 });
 
-test("the scorecard sits in the leadlens card, after the detail, and replaces the two metric lines", () => {
+test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, no metric lines", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   // The leadlens card is wrapped in its own annotated block, directly under the section.
   assert.match(work, /<div class="annotated"><div><article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
   const card = work.match(/<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
-  assert.ok(card.indexOf("I hand-checked 72 postings") < card.indexOf('class="scorecard"'), "the scorecard is not after the detail paragraph");
+  // The story is told once, in the margin note. The old detail paragraph (and its "I hand-checked 72 postings") is gone.
+  assert.doesNotMatch(text("index.html"), /It scored a perfect 100%, which was the problem/);
+  assert.ok(!card.includes("I hand-checked 72 postings"), "the old detail paragraph is still in the card");
+  // The only <p class="body"> in the card is the lead line, so nothing sits between it and the scorecard.
+  assert.equal(count(card, '<p class="body">'), 1, "leadlens has a body paragraph besides its lead line");
+  const order = ["Reads a job posting", "<table", "<caption>", "</table>", "class=\"stack\"", "class=\"links\""].map((s) => card.indexOf(s));
+  assert.ok(order.every((i) => i >= 0), `a piece of the card is missing: ${order}`);
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "the card is not lead, table (caption first), stack, link");
+  assert.match(card, /<\/b><\/p><table class="scorecard"><caption>/, "something sits between the lead line and the scorecard");
   assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
   for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
   // The note belongs to the card, outside the article, in the margin column.
