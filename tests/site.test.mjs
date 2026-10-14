@@ -225,7 +225,7 @@ test("all four incidents are listed with what changed", () => {
   assert.match(t, /Here are four of them, and what I changed each time\./);
   assert.doesNotMatch(t, /Here's the list/);
   assert.match(t, /Nothing alerted me, so it stayed broken for about three weeks\./);
-  assert.match(t, /Every morning's result now shows on this page, red when it fails\./);
+  assert.match(t, /The last 40 runs now show on this page, red when one fails\./);
   assert.match(t, /Jul 2026 · tender radar/);
   assert.match(t, /“guard” inside “safeguarding”/);
   assert.match(t, /Took my notes out, re-ran it, and published the lower number\./);

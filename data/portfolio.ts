@@ -147,7 +147,7 @@ export const INCIDENTS: Incident[] = [
     when: "2026-07",
     system: "tender radar",
     broke: "A data-format change broke the morning run. Nothing alerted me, so it stayed broken for about three weeks.",
-    changed: "Fixed it. Every morning's result now shows on this page, red when it fails.",
+    changed: "Fixed it. The last 40 runs now show on this page, red when one fails.",
   },
   {
     when: "2026-07",

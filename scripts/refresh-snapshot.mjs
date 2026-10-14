@@ -20,7 +20,7 @@ const gh = (endpoint, jq) =>
 const runs = JSON.parse(
   gh(
     `repos/${REPO}/actions/workflows/tender-radar-daily.yml/runs?event=schedule&per_page=40`,
-    "{total: .total_count, runs: [.workflow_runs[] | select(.conclusion != null) | {c: .conclusion, at: .created_at}]}",
+    "{total: .total_count, unfinished: ([.workflow_runs[] | select(.conclusion == null)] | length), runs: [.workflow_runs[] | select(.conclusion != null) | {c: .conclusion, at: .created_at}]}",
   ),
 );
 const md = Buffer.from(
@@ -33,7 +33,8 @@ const profiles = (md.match(/^\| [a-z-]+ \|/gm) ?? []).length;
 
 const snapshot = {
   asOf: new Date().toISOString(),
-  totalRuns: runs.total,
+  // Same rule as summarizeRuns in lib/runs.ts: a run still in progress isn't counted yet.
+  totalRuns: runs.total - runs.unfinished,
   lastRun: { at: runs.runs[0].at, ok: runs.runs[0].c === "success" },
   noticesRead: notices,
   clientProfiles: profiles,
