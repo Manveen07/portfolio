@@ -18,7 +18,7 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
   return (
     <Sketch label={label}>
       {/* viewBox starts at y 30: with three source boxes nothing is drawn above y 38, so no blank band over the sketch */}
-      <svg className="sketch-wide" viewBox="0 30 690 200" aria-hidden="true" fontSize="11">
+      <svg className="sketch-wide" viewBox="0 30 690 200" aria-hidden="true" fontSize="12">
         {SOURCES.map((s, i) => {
           const y = 48 + i * 38; // three boxes, centred on the script box (y 70 to 130)
           return (
