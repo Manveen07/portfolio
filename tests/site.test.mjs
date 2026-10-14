@@ -400,3 +400,16 @@ test("verdict 3b: only the quote's note drops one line on wide screens", () => {
   assert.match(css(), /\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/);
   assert.match(css(), /@media \(min-width:1000px\)\{[^@]*\.note-drop\{/, "the drop rule is not inside the 1000px media block");
 });
+
+test("verdict 4: the share card loads Archivo from real static TTF files", () => {
+  const og = read("app/opengraph-image.tsx");
+  assert.match(og, /Archivo-ExtraBold\.ttf/);
+  assert.match(og, /Archivo-Regular\.ttf/);
+  assert.match(og, /fontFamily: "Archivo"/);
+  assert.match(og, /export const runtime = "edge"/);
+  for (const file of ["app/Archivo-ExtraBold.ttf", "app/Archivo-Regular.ttf"]) {
+    assert.ok(built(file), `${file} is missing`);
+    const head = readFileSync(path.join(root, file)).subarray(0, 4);
+    assert.deepEqual([...head], [0x00, 0x01, 0x00, 0x00], `${file} is not a TrueType font`);
+  }
+});

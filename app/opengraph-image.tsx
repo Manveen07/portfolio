@@ -8,6 +8,11 @@ export const contentType = "image/png";
 
 // The card people see when manveen.me is pasted into an email, Slack or LinkedIn.
 export default async function Image() {
+  // Static TTFs from the Archivo project (OFL): next/og cannot read woff2 or variable fonts.
+  const [bold, regular] = await Promise.all([
+    fetch(new URL("./Archivo-ExtraBold.ttf", import.meta.url)).then((r) => r.arrayBuffer()),
+    fetch(new URL("./Archivo-Regular.ttf", import.meta.url)).then((r) => r.arrayBuffer()),
+  ]);
   return new ImageResponse(
     (
       <div
@@ -20,7 +25,7 @@ export default async function Image() {
           background: "#f4f1ea",
           color: "#1d1d1d",
           padding: 72,
-          fontFamily: "sans-serif",
+          fontFamily: "Archivo",
         }}
       >
         <div style={{ display: "flex", fontSize: 28, fontWeight: 700 }}>Manveen Singh</div>
@@ -52,6 +57,12 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        { name: "Archivo", data: bold, weight: 800, style: "normal" },
+        { name: "Archivo", data: regular, weight: 400, style: "normal" },
+      ],
+    },
   );
 }
