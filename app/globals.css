@@ -142,7 +142,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
   transition: stroke-dashoffset 0.9s cubic-bezier(0.6, 0.1, 0.3, 1) 0.15s;
 }
 .pen-js .sketch:not(.in) .mark { stroke-dashoffset: 1; }
-.sketch-tall { display: block; }
+.sketch-tall { display: block; max-width: 420px; }  /* between 480 and 639px it would otherwise scale to the full column, with 20px+ text */
 .sketch-wide { display: none; }
 @media (min-width: 640px) {
   .sketch-tall { display: none; }

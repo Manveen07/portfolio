@@ -582,3 +582,9 @@ test("hero has the problem sketch in both layouts, between the headline and the 
   assert.equal(count(hero, "I connect these two directly"), 2);
   for (const v of ["sketch-wide", "sketch-tall"]) assert.ok(hero.includes(v), `missing ${v}`);
 });
+
+test("tall sketches stop growing at 420px, and the wide ones are not capped", () => {
+  const styles = css();
+  assert.match(styles, /\.sketch-tall\{[^}]*max-width:420px/);
+  assert.doesNotMatch(styles.match(/\.sketch-wide\{[^}]*\}/)?.[0] ?? "", /max-width/);
+});
