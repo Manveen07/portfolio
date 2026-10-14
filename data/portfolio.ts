@@ -65,7 +65,8 @@ export const QUOTE = {
 // stay off the freelance page.
 export const NOW_LINE = "Now: GTM automation engineer at Precise Leads, since Nov 2025. B.Tech Computer Science, MSIT Delhi, 2026.";
 
-// ── Other work: three cards. Tender Radar has its own section above. ──
+// ── Work: leads with the Caprae card and its quote, then leadlens, then PresentAI (spec 3.9).
+// Order matters; tests/site.test.mjs pins it. Tender Radar has its own section above.
 export type WorkItem = {
   title: string;
   where: string;
@@ -97,19 +98,6 @@ export const WORK: WorkItem[] = [
     stack: ["python", "embeddings", "slack"],
   },
   {
-    title: "PresentAI",
-    where: "My own project, live",
-    lead: "Type a prompt, get a slide deck in under a minute.",
-    detail:
-      "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
-    metrics: [["<60s", "for the first draft"]],
-    stack: ["next.js", "postgres"],
-    links: [
-      { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
-      { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
-    ],
-  },
-  {
     title: "leadlens",
     where: "My own project",
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
@@ -121,6 +109,19 @@ export const WORK: WorkItem[] = [
     ],
     stack: ["python", "gemini", "pydantic"],
     links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
+  },
+  {
+    title: "PresentAI",
+    where: "My own project, live",
+    lead: "Type a prompt, get a slide deck in under a minute.",
+    detail:
+      "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
+    metrics: [["<60s", "for the first draft"]],
+    stack: ["next.js", "postgres"],
+    links: [
+      { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
+      { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
+    ],
   },
 ];
 

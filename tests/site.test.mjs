@@ -192,12 +192,12 @@ test("Caprae dates and title follow the signed letter; Precise Leads is one line
 });
 
 // ── Task 6: three projects, no stale, agency or demo-data cards ────────
-test("work shows resume screening, PresentAI and leadlens only", () => {
+test("work shows resume screening, leadlens and PresentAI only", () => {
   const html = markup("index.html");
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.equal(count(work, "<article"), 3);
   const t = text("index.html");
-  for (const s of ["Resume screening, automated", "PresentAI", "leadlens", "10h → 3h", "9 of 11"]) {
+  for (const s of ["Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 of 11"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   // Final review: name what was measured, and say nothing the sources can't back.
@@ -217,6 +217,19 @@ test("the leadlens card links to a post that was built", () => {
 });
 
 // ── Show the machine, Task 0: four sections; the quote follows the Caprae card ──
+test("work runs Caprae, then the quote, then leadlens, then PresentAI (spec 3.9)", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(work, "no section#work");
+  const titles = [...work.matchAll(/<h3 class="h3">([^<]*)<\/h3>/g)].map((m) => m[1]);
+  assert.deepEqual(titles, ["Resume screening, automated", "leadlens", "PresentAI"]);
+  const at = (s) => work.indexOf(s);
+  const quoteAt = at('<figure class="quote">');
+  assert.ok(quoteAt > 0, "no quote in the Work section");
+  assert.ok(at("Resume screening, automated") < quoteAt, "the quote comes before the Caprae card");
+  assert.ok(quoteAt < at(">leadlens<"), "the quote is not between the Caprae card and leadlens");
+  assert.ok(at(">leadlens<") < at(">PresentAI<"), "PresentAI comes before leadlens");
+});
+
 test("the Caprae card has the company line, then the role line, and no card gets a role it doesn't have", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.ok(work, "no section#work");
@@ -224,9 +237,9 @@ test("the Caprae card has the company line, then the role line, and no card gets
     work,
     /<article class="card"><p class="small">At Caprae Capital Partners<\/p><p class="small">Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote<\/p><h3 class="h3">Resume screening, automated<\/h3>/,
   );
-  // PresentAI and leadlens keep their single "where" line.
-  assert.match(work, /<article class="card"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
+  // leadlens and PresentAI keep their single "where" line.
   assert.match(work, /<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+  assert.match(work, /<article class="card"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
 });
 
 test("the quote follows the Caprae card as a block of the Work section, with its margin note", () => {
