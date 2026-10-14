@@ -31,8 +31,13 @@ export const HERO = {
   ],
 } as const;
 
-/** Path under /public plus its pixel size, or null until Manveen sends a photo (Task 12). */
-export const PHOTO: { src: string; alt: string; width: number; height: number } | null = null;
+/** Path under /public plus its pixel size. Set to null to hide the photo. */
+export const PHOTO: { src: string; alt: string; width: number; height: number } | null = {
+  src: "/me.jpg",
+  alt: "Manveen Singh",
+  width: 264,
+  height: 330,
+};
 
 // ── Tender Radar: prose only. Numbers come from lib/pipeline.ts ──────
 // (GitHub at request time when GITHUB_TOKEN is set, else the committed

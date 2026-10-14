@@ -118,10 +118,10 @@ test("hero leads with the problem and drops the slogan", () => {
   assert.doesNotMatch(t, /scaling the interesting/i);
 });
 
-test("hero shows no empty photo frame while PHOTO is null", () => {
+test("hero shows Manveen's photo", () => {
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0];
   assert.ok(hero, "no section#top");
-  assert.ok(!hero.includes("<img"), "hero renders an <img> but PHOTO is null");
+  assert.match(hero, /<img[^>]*alt="Manveen Singh"/);
 });
 
 // ── Task 4: Tender Radar, with numbers a skeptic can check ─────────────
