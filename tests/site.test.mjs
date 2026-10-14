@@ -375,3 +375,28 @@ test("verdict 2: post headings have no ## marker and match the site's 800 weight
     assert.doesNotMatch(tag, /display:flex/, `post h2 is still a flex row: ${tag}`);
   }
 });
+
+test("verdict 3a: the proof note sits with the bars, below the run count", () => {
+  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(proof, "no section#proof");
+  const countAt = proof.indexOf('class="count"');
+  const annotatedAt = proof.indexOf('class="annotated"');
+  assert.ok(countAt !== -1 && annotatedAt !== -1, "count or annotated block missing");
+  assert.ok(countAt < annotatedAt, "the circled count is still inside the annotated block");
+  const annotated = proof.slice(annotatedAt, proof.indexOf("</aside>", annotatedAt));
+  assert.ok(annotated.includes('class="bars"'), "the bars are not inside the annotated block");
+  assert.ok(annotated.includes("Black finished, red failed"), "the bar caption is not inside the annotated block");
+  assert.ok(!annotated.includes('class="count"'), "the count is still inside the annotated block");
+  assert.ok(proof.indexOf("mornings it has started on its own") < annotatedAt, "the count line is still inside the annotated block");
+});
+
+test("verdict 3b: only the quote's note drops one line on wide screens", () => {
+  const html = markup("index.html");
+  const people = html.match(/<section[^>]*id="people"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(people, /<aside class="note note-drop">/);
+  assert.equal(count(html, 'class="note note-drop"'), 1, "other notes were dropped too");
+  assert.ok(count(html, /<aside class="note">/) >= 2, "the hero and proof notes lost their plain class");
+  // One blockquote line is 20px x 1.45 = 29px, added to the usual 10px margin. The minifier may fold the calc to 39px.
+  assert.match(css(), /\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/);
+  assert.match(css(), /@media \(min-width:1000px\)\{[^@]*\.note-drop\{/, "the drop rule is not inside the 1000px media block");
+});

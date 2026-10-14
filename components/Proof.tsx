@@ -10,11 +10,11 @@ export default function Proof({ pipe }: { pipe: PipelineData }) {
     <section id="proof" className="wrap sec">
       <h2 className="kicker">Running right now · Tender Radar</h2>
       <p className="lede">{PIPELINE.intro}</p>
+      <p className="count">
+        <Circle>{pipe.totalRuns}</Circle>
+      </p>
+      <p className="body">mornings it has started on its own since {PIPELINE.firstRun}.</p>
       <Annotated note={PIPELINE.penNote}>
-        <p className="count">
-          <Circle>{pipe.totalRuns}</Circle>
-        </p>
-        <p className="body">mornings it has started on its own since {PIPELINE.firstRun}.</p>
         <div
           className="bars"
           role="img"

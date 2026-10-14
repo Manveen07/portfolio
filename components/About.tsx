@@ -6,7 +6,7 @@ export default function About() {
   return (
     <section id="people" className="wrap sec">
       <h2 className="kicker">What people say</h2>
-      <Annotated note={QUOTE.penNote}>
+      <Annotated note={QUOTE.penNote} drop>
         <figure className="quote">
           <blockquote>
             <p>
