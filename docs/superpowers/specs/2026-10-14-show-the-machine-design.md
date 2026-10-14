@@ -14,7 +14,7 @@ Every addition must pass all of these. The final review checks each one.
 2. **Looks hand-made.** Sketch boxes and arrows are slightly uneven hand-drawn paths, never perfect rectangles or icon-library shapes. Pen marks stay red, notes stay in the mono "handwriting".
 3. **Banned (the AI-template look):** gradients, glass or blur effects, drop shadows on cards, emoji or icon sets, stock illustrations, logo strips, testimonial carousels, animated number counters, typewriter text, particle or cursor effects, a "features" grid of identical cards with icons, gradient or glowing buttons, any fake or placeholder data.
 4. **Sounds like him.** Notes are short, plain, a bit nerdy, never salesy; spec section 5 copy rules apply (no dashes, no banned words, contractions). New lines go through the humanizer and Manveen's read-aloud in the voice pass.
-5. **One idea per section.** At most two red marks or notes per section, as before.
+5. **One idea per section.** At most two margin notes per section; red pen marks only on the thing a note or sentence points at.
 6. **Quiet motion only.** The only motion is a pen mark drawing itself once. Off under reduced motion; visible without JS.
 
 ## 3. What gets added
@@ -44,13 +44,45 @@ Replaces the card's two metric lines. A 2×2 grid, ink lines, big numbers:
 Margin note: `it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.`
 
 ### 3.3 PresentAI: a real screenshot
-A screenshot of the live app (`present-ai-007.vercel.app`), 640px wide, real colours, thin `--rule` border, `alt="PresentAI's home page"`. Margin note: `the live app. The free plan makes 3 decks a month.` If the public page is only a login wall, skip the screenshot and list "a screenshot of a deck it made" as a needs-Manveen input; never mock one up.
+A screenshot of the live app (`present-ai-007.vercel.app`), 640px wide, real colours, thin `--rule` border, `alt="PresentAI's home page"`. No margin note (the section already has two; the free-plan detail is in the card text). If the public page is only a login wall, skip the screenshot and list "a screenshot of a deck it made" as a needs-Manveen input; never mock one up.
 
 ### 3.4 Resume screening
 Unchanged: text only. It's Caprae's internal system; nothing honest to show.
 
 ### 3.5 Photo
 Plan Task 12 with Manveen's choice (14 Oct): `IMG_7795`, cropped 4:5 head and shoulders, natural colour, 264px wide. Not the AI-edited `bg_removed_profile_image.png`.
+
+### 3.6 Hero sketch: the problem, drawn (added 14 Oct, approved from mockup)
+Between the H1 and the lede, a small sketch of the headline itself:
+- Three boxes left to right: `an order comes in` / `by email` → `someone retypes it` / `every single time` → `your system` / `(CRM, sheet, ERP)`.
+- Red pen: an X across the middle box, and a red arc from the first box to the third with an arrowhead, labelled above it in red mono `I connect these two directly`.
+- The X and the arc draw once when scrolled into view.
+- Tall version below 640px (boxes stacked, the red line runs down the side).
+- Decorative explanation of the sentence above it: `role="img"` with `aria-label="An order arrives by email, someone retypes it into your system. I connect the two directly."`
+
+### 3.7 Pilot timeline (added 14 Oct, approved from mockup)
+In "How working with me goes", replacing the visible numbered list (the `<ol>` stays in the DOM, visually hidden, for screen readers):
+- A hand-drawn horizontal line with four dots. Labels: `1 · a call` / `you tell me what` / `wastes the most time` / `not a real problem?` / `I'll say so`; `2 · a fixed quote` / `before any work` / `starts`; `3 · a month, for real` / `on your actual requests` / `every miss logged,` / `you see the list`; `4 · you decide` / `keep it: a monthly` / `fee, I look after it`.
+- Red circle around `every miss logged, you see the list`. Margin note: `you see every miss, not just a score`.
+- Tall version below 640px (vertical line, steps stacked).
+- The lede above it (`On the first call you tell me what wastes the most time. If it isn't a real problem, I'll say so and we won't build it.`) stays as is.
+
+### 3.8 Hand-drawn dividers (added 14 Oct)
+Section top borders become a slightly uneven pencil line (an SVG background in `--rule` colour, about 1.4px stroke) instead of a straight 1px line. Same spacing.
+
+With 3.1, that makes three drawings on the page: the problem, the machine, the offer. No fourth: past three it reads as a theme, not an explanation.
+
+### 3.9 Four sections only (Manveen, 14 Oct, chosen from two outlines)
+The home page has exactly four sections, in this order:
+1. **You** (`#top`): photo, headline, problem sketch, the how-I-pick-problems lines, hours line, Book a call.
+2. **The machine** (`#proof`): Tender Radar sketch, circled count, bars, the outage told inline, links.
+3. **Work, and who vouches for it** (`#work`, kicker `Work, and who vouches for it`): the Caprae card (resume screening) carries Zackary's quote with its red underline and margin note `the bit that matters if you don't write code`, and its role line `Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote`; then leadlens (scorecard and its note); then PresentAI (screenshot, no note). The section ends with one small line: `Now: GTM automation engineer at Precise Leads, since Nov 2025. B.Tech Computer Science, MSIT Delhi, 2026. Full resume ↗`.
+4. **How we start** (`#contact`, kicker stays `How working with me goes`): lede, pilot timeline, Book a call, email.
+
+Removed: the separate "What people say" section (folded into the Caprae card) and the "What broke" section and its data. The two best failure stories stay where they happened (the Tender Radar outage line, the leadlens note). This supersedes the earlier spec's decision to keep the incident log as its own section.
+
+### 3.10 Versions instead of questions (Manveen, 14 Oct)
+Where a taste call is still open after building, render two or three real built versions as screenshots side by side for Manveen to pick from. Don't ask in text.
 
 ## 4. Out of scope
 Crossed-out "marked-up draft" lines (direction B), clickable per-day run history (direction C), new copy beyond the strings above, any animation beyond pen marks drawing once, changes to the hero words.
