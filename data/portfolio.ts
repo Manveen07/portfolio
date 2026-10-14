@@ -149,4 +149,7 @@ export const PILOT = {
     "The pilot runs on a month of your real requests. Every miss gets logged, and you see the list, not just a score.",
     "If you keep it, a monthly fee covers me looking after it.",
   ],
+  note: "you see every miss, not just a score",
+  sketchLabel:
+    "A call about what wastes your time, then a fixed quote, then a month on your real requests with every miss logged, then you decide whether to keep it.",
 } as const;

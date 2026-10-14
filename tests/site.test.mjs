@@ -588,3 +588,17 @@ test("tall sketches stop growing at 420px, and the wide ones are not capped", ()
   assert.match(styles, /\.sketch-tall\{[^}]*max-width:420px/);
   assert.doesNotMatch(styles.match(/\.sketch-wide\{[^}]*\}/)?.[0] ?? "", /max-width/);
 });
+
+// ── Show the machine, Task 5: the offer, drawn ────────────────────────
+test("pilot timeline is drawn, the steps list stays for screen readers", () => {
+  const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(c, /<ol class="steps sr-only">/);
+  assert.match(c, /class="sketch"[^>]*role="img"/);
+  // Each step title is in the wide SVG and the tall SVG. "every miss logged," is also in the sketch's aria-label, so 3.
+  for (const s of ["1 · a call", "2 · a fixed quote", "3 · a month, for real", "4 · you decide"]) {
+    assert.equal(count(c, s), 2, `"${s}" once per layout`);
+  }
+  assert.equal(count(c, "every miss logged,"), 3, `"every miss logged," in both layouts and the aria-label`);
+  assert.match(text("index.html"), /you see every miss, not just a score/);
+  assert.match(css(), /\.sr-only\{/);
+});
