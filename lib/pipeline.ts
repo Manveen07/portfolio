@@ -9,7 +9,7 @@
 // Either way the shape is the same, so the component never knows which.
 
 import snapshot from "@/data/pipeline-snapshot.json";
-import { summarizeRuns } from "./runs";
+import { parseVerdicts, summarizeRuns } from "./runs";
 import type { RunDay, RunsResponse } from "./runs";
 
 export type { RunDay };
@@ -21,6 +21,9 @@ export type PipelineData = {
   lastRun: { at: string; ok: boolean };
   noticesRead: number;
   clientProfiles: number;
+  checks: number;          // notices classified, summed over every trade
+  bid: number;             // verdicts: worth bidding on
+  maybe: number;           // verdicts: worth a look
   history: RunDay[];       // oldest → newest, up to 40
 };
 
@@ -55,6 +58,7 @@ export async function getPipeline(): Promise<PipelineData> {
 
     const notices = Number(/Raw tender records[^\d]*(\d+)/.exec(md)?.[1] ?? FALLBACK.noticesRead);
     const profiles = (md.match(/^\| [a-z-]+ \|/gm) ?? []).length || FALLBACK.clientProfiles;
+    const verdicts = parseVerdicts(md) ?? { checks: FALLBACK.checks, bid: FALLBACK.bid, maybe: FALLBACK.maybe };
 
     return {
       asOf: new Date().toISOString(),
@@ -62,6 +66,7 @@ export async function getPipeline(): Promise<PipelineData> {
       ...summary,
       noticesRead: notices,
       clientProfiles: profiles,
+      ...verdicts,
     };
   } catch {
     return FALLBACK;

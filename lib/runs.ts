@@ -43,6 +43,29 @@ export function fmtRun(iso: string): string {
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}, ${hh}:${mm} UTC`;
 }
 
+/** Totals across the "Profile results" table of the Tender Radar daily summary:
+ *  checks = sum of Classified (one check per notice per trade), bid and maybe = the
+ *  classifier's verdict counts. Null if the table is missing or any cell isn't a number,
+ *  so callers fall back to saved numbers instead of showing zeros. */
+export function parseVerdicts(md: string): { checks: number; bid: number; maybe: number } | null {
+  const lines = md.split("\n");
+  const head = lines.findIndex((l) => /^\|\s*Profile\s*\|/.test(l));
+  if (head < 0) return null;
+  const cols = lines[head].split("|").map((c) => c.trim());
+  const at = (name: string) => cols.indexOf(name);
+  const [ci, bi, mi] = [at("Classified"), at("Bid"), at("Maybe")];
+  if (ci < 0 || bi < 0 || mi < 0) return null;
+  let checks = 0, bid = 0, maybe = 0, rows = 0;
+  for (const line of lines.slice(head + 2)) {
+    if (!line.startsWith("|")) break;
+    const cells = line.split("|").map((c) => c.trim());
+    const nums = [cells[ci], cells[bi], cells[mi]].map((c) => (/^\d+$/.test(c ?? "") ? Number(c) : NaN));
+    if (nums.some(Number.isNaN)) return null;
+    checks += nums[0]; bid += nums[1]; maybe += nums[2]; rows += 1;
+  }
+  return rows ? { checks, bid, maybe } : null;
+}
+
 /** The line under the bars: when it last ran, whether that worked, and where the numbers come from. */
 export function runLine(lastRun: LastRun, live: boolean, asOf: string): string {
   const when = fmtRun(lastRun.at);

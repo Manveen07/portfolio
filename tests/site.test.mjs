@@ -467,3 +467,9 @@ test("verdict 4: the share card loads Archivo from real static TTF files", () =>
     assert.deepEqual([...head], [0x00, 0x01, 0x00, 0x00], `${file} is not a TrueType font`);
   }
 });
+
+// ── Show the machine, Task 1: verdict counts are saved ────────────────
+test("saved snapshot has the Tender Radar verdict counts", () => {
+  for (const k of ["checks", "bid", "maybe"]) assert.ok(Number.isInteger(snapshot[k]) && snapshot[k] >= 0, `snapshot.${k} missing`);
+  assert.ok(snapshot.checks > snapshot.bid + snapshot.maybe, "checks must exceed bid + maybe");
+});

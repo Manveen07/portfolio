@@ -3,7 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fmtDay, fmtRun, runLine, summarizeRuns } from "../lib/runs.ts";
+import { fmtDay, fmtRun, parseVerdicts, runLine, summarizeRuns } from "../lib/runs.ts";
 
 test("fmtRun uses fixed month names in UTC", () => {
   assert.equal(fmtRun("2026-09-07T10:39:34Z"), "7 Sep, 10:39 UTC");
@@ -68,4 +68,23 @@ test("saved numbers say when they were saved", () => {
     runLine({ at: "2026-10-13T12:53:46Z", ok: true }, false, "2026-10-13T18:00:00Z"),
     "Last run: 13 Oct, 12:53 UTC. Numbers saved 13 Oct, 18:00 UTC.",
   );
+});
+
+const SUMMARY_FIXTURE = [
+  "## Profile results",
+  "",
+  "| Profile | Classified | Bid | Maybe | Skip | Unsent matches | Expiries / unseen | Latest digest |",
+  "|---|---:|---:|---:|---:|---:|---:|---|",
+  "| catering | 584 | 1 | 7 | 576 | 1 | 0 / 0 | `x` |",
+  "| cleaning | 593 | 2 | 20 | 571 | 2 | 2 / 0 | `x` |",
+  "| security | 593 | 3 | 5 | 585 | 1 | 0 / 0 | `x` |",
+].join("\n");
+
+test("parseVerdicts sums classified, bid and maybe across trades", () => {
+  assert.deepEqual(parseVerdicts(SUMMARY_FIXTURE), { checks: 1770, bid: 6, maybe: 32 });
+});
+
+test("parseVerdicts returns null when the table is missing or malformed", () => {
+  assert.equal(parseVerdicts("# Tender Radar Daily Summary\n\nno table today"), null);
+  assert.equal(parseVerdicts("| Profile | Classified |\n|---|---:|\n| cleaning | lots |"), null);
 });
