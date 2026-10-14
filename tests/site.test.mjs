@@ -457,7 +457,7 @@ test("verdict 3b: only the quote's note drops one line on wide screens", () => {
   assert.ok(count(html, /<aside class="note">/) >= 2, "the hero and proof notes lost their plain class");
   // One blockquote line is 20px x 1.45 = 29px, added to the usual 10px margin. The minifier may fold the calc to 39px.
   assert.match(css(), /\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/);
-  assert.match(css(), /@media \(min-width:1000px\)\{[^@]*\.note-drop\{/, "the drop rule is not inside the 1000px media block");
+  assert.match(css(), /@media \(min-width:1000px\)\{(?:[^{}]+\{[^{}]*\})*\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/, "the drop rule is not inside the 1000px media block");
 });
 
 test("verdict 4: the share card loads Archivo from real static TTF files", () => {
@@ -601,4 +601,13 @@ test("pilot timeline is drawn, the steps list stays for screen readers", () => {
   assert.equal(count(c, "every miss logged,"), 3, `"every miss logged," in both layouts and the aria-label`);
   assert.match(text("index.html"), /you see every miss, not just a score/);
   assert.match(css(), /\.sr-only\{/);
+});
+
+// ── Show the machine, Task 6: hand-drawn dividers ─────────────────────
+test("sections are divided by a hand-drawn pencil line, not a straight border", () => {
+  const rule = css().match(/\.sec\{[^}]*\}/)?.[0] ?? "";
+  assert.match(rule, /background-image:url\("?data:image\/svg\+xml/);
+  assert.doesNotMatch(rule, /border-top:1px solid/);
+  // .hero is a .sec too, so it must switch the pencil line off.
+  assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /background-image:none/);
 });

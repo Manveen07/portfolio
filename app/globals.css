@@ -33,8 +33,8 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-off
 .wrap { width: 100%; max-width: calc(var(--col) + var(--note) + 48px + 40px); margin: 0 auto; padding-left: 20px; padding-right: 20px; }
 .wrap > * { max-width: var(--col); }
 .wrap > .annotated { max-width: none; }
-.sec { padding-top: 56px; padding-bottom: 56px; border-top: 1px solid var(--rule); }
-.hero { border-top: 0; padding-top: 24px; }
+.sec { padding-top: 56px; padding-bottom: 56px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
+.hero { border-top: 0; background-image: none; padding-top: 24px; }
 
 .annotated { display: grid; grid-template-columns: minmax(0, var(--col)); }
 .note {
@@ -80,7 +80,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 22px; padding-bottom: 22px; }
 .head-name { font-weight: 800; text-decoration: none; }
 .head-cta { color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.foot { padding-top: 32px; padding-bottom: 48px; border-top: 1px solid var(--rule); }
+.foot { padding-top: 32px; padding-bottom: 48px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 .photo { display: block; width: 132px; height: auto; margin: 0 0 22px; border: 1px solid var(--rule); }
 
