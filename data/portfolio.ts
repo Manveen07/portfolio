@@ -80,6 +80,12 @@ export type WorkItem = {
   role?: string;
   /** Zackary's quote renders as a block right after this card. */
   quote?: true;
+  /** A real 2x2 score (spec 3.2). Counts are against hand labels; see claims row 43. */
+  scorecard?: { caught: number; missed: number; falseAlarms: number; leftAlone: number; caption: string };
+  /** A real screenshot under /public (spec 3.3), with its true pixel size. */
+  shot?: { src: string; alt: string; width: number; height: number };
+  /** A red margin note beside the card (wide screens) or under it (phones). The section allows two. */
+  note?: string;
 };
 
 export const WORK: WorkItem[] = [
@@ -104,10 +110,16 @@ export const WORK: WorkItem[] = [
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
     detail:
       "I hand-checked 72 postings, then measured it against them. It scored a perfect 100%, which was the problem: my own notes were leaking the answers into the test. I took them out and published the lower score.",
-    metrics: [
-      ["9 of 11", "dressed-up AI roles caught"],
-      ["0", "real jobs wrongly flagged"],
-    ],
+    // The scorecard replaces the two metric lines. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+    metrics: [],
+    scorecard: {
+      caught: 9,
+      missed: 2,
+      falseAlarms: 0,
+      leftAlone: 61,
+      caption: "Out of 72 postings I checked by hand:",
+    },
+    note: "it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.",
     stack: ["python", "gemini", "pydantic"],
     links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
   },
@@ -118,6 +130,8 @@ export const WORK: WorkItem[] = [
     detail:
       "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
     metrics: [["<60s", "for the first draft"]],
+    // Captured from the live site 14 Oct 2026 (headless Chrome, 1280x800, scaled to 640 wide).
+    shot: { src: "/work/presentai.png", alt: "PresentAI's home page", width: 640, height: 400 },
     stack: ["next.js", "postgres"],
     links: [
       { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },

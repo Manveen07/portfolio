@@ -197,11 +197,12 @@ test("work shows resume screening, leadlens and PresentAI only", () => {
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.equal(count(work, "<article"), 3);
   const t = text("index.html");
-  for (const s of ["Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 of 11"]) {
+  for (const s of ["Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   // Final review: name what was measured, and say nothing the sources can't back.
-  assert.match(t, /9 of 11 dressed-up AI roles caught/);
+  // (Show the machine, Task 3: the two metric lines became the scorecard, so "9 of 11 ..." is gone.)
+  assert.doesNotMatch(t, /9 of 11/);
   assert.match(t, /I hand-checked 72 postings/);
   assert.doesNotMatch(t, /72 real postings/);
   assert.doesNotMatch(t, /82%/);
@@ -257,7 +258,8 @@ test("the quote follows the Caprae card as a block of the Work section, with its
   assert.ok(work.slice(0, firstCardEnd).includes("Resume screening, automated"), "the first card is not the Caprae card");
   assert.ok(firstCardEnd < quoteAt && quoteAt < secondCardAt, "the quote is not between the Caprae card and the next card");
   assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
-  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><article/);
+  // The next card is leadlens, which has a note of its own, so it opens with its own annotated block.
+  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><div class="annotated"><div><article/);
   assert.match(text("index.html"), /the bit that matters if you don't write code/);
   // The red underline is on the marked words.
   assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
@@ -502,4 +504,60 @@ test("sketch red marks hide only under pen-js and never under reduced motion", (
   assert.match(styles, /\.pen-js \.sketch:not\(\.in\) \.mark\{stroke-dashoffset:1/);
   assert.match(styles, /prefers-reduced-motion[^{]*\{[\s\S]*?\.sketch:not\(\.in\) \.mark\{stroke-dashoffset:0/);
   assert.match(styles, /@media \(min-width:640px\)\{[^}]*\.sketch-tall\{display:none/);
+});
+
+// ── Show the machine, Task 3: real artifacts on the work cards ────────
+test("leadlens shows its real scorecard with the false alarms circled", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const card = work.match(/<table[^>]*class="scorecard"[\s\S]*?<\/table>/)?.[0] ?? "";
+  assert.ok(card, "no scorecard");
+  const t = card.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  for (const s of ["9 caught", "2 missed", "0 false alarms", "61 left alone"]) assert.ok(t.includes(s), `missing "${s}"`);
+  assert.ok(card.includes("pen-circle"), "0 false alarms should be circled");
+  assert.equal(count(card, "pen-circle"), 1, "only the false alarms are circled");
+  assert.match(text("index.html"), /Out of 72 postings I checked by hand:/);
+  assert.match(text("index.html"), /it once scored 100%, because my own notes leaked the answers\. This is the score after I took them out\./);
+});
+
+test("the scorecard sits in the leadlens card, after the detail, and replaces the two metric lines", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  // The leadlens card is wrapped in its own annotated block, directly under the section.
+  assert.match(work, /<div class="annotated"><div><article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+  const card = work.match(/<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
+  assert.ok(card.indexOf("I hand-checked 72 postings") < card.indexOf('class="scorecard"'), "the scorecard is not after the detail paragraph");
+  assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
+  for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
+  // The note belongs to the card, outside the article, in the margin column.
+  assert.match(work, /<\/article><\/div><aside class="note">it once scored 100%[^<]*<\/aside><\/div>/);
+});
+
+test("the work section has two margin notes (the quote's and leadlens's) and PresentAI has none", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.equal(count(work, /<aside class="note/), 2, "the Work section should have exactly two margin notes");
+  assert.ok(work.lastIndexOf("<aside") < work.indexOf(">PresentAI<"), "PresentAI has a margin note");
+});
+
+test("PresentAI card shows a real screenshot of the live app", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const card = work.match(/<article class="card"><p class="small">My own project, live<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  // React writes the apostrophe in an attribute as &#x27;.
+  assert.match(card, /<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"/);
+  assert.ok(built("public/work/presentai.png"));
+  // The width and height on the tag are the file's real size (PNG header: width and height are big-endian 32-bit at byte 16 and 20).
+  const png = readFileSync(path.join(root, "public/work/presentai.png"));
+  assert.deepEqual([...png.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], "presentai.png is not a PNG");
+  const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+  assert.equal(w, 640, "the screenshot is not 640px wide");
+  assert.match(card, new RegExp(`<img[^>]*width="${w}"`));
+  assert.match(card, new RegExp(`<img[^>]*height="${h}"`));
+});
+
+test("scorecard and screenshot styles: ink grid, thin rule border, no shadow", () => {
+  const styles = css();
+  assert.match(styles, /\.scorecard\{[^}]*border-collapse:collapse/);
+  assert.match(styles, /\.scorecard td\{[^}]*border:1\.5px solid var\(--ink\)/);
+  assert.match(styles, /\.scorecard b\{[^}]*font-size:26px[^}]*font-weight:800/);
+  assert.match(styles, /\.scorecard caption\{[^}]*caption-side:top/);
+  assert.match(styles, /\.shot\{[^}]*border:1px solid var\(--rule\)/);
+  assert.doesNotMatch(styles.match(/\.shot\{[^}]*\}/)?.[0] ?? "", /shadow|filter|blur/);
 });

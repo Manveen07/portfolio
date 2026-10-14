@@ -160,6 +160,14 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .metrics dt { font-size: 28px; font-weight: 800; line-height: 1.1; }
 .metrics dd { margin: 0; font-size: 13.5px; color: var(--dim); }
 .stack { margin: 6px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
+/* leadlens scorecard: a real 2x2 table, ink lines, big number over a mono label */
+.scorecard { border-collapse: collapse; margin: 10px 0; width: 100%; max-width: 300px; } /* wide enough that the caption stays on one line on desktop */
+.scorecard td { border: 1.5px solid var(--ink); padding: 8px 14px; text-align: center; font-family: var(--font-mono), monospace; font-size: 12px; }
+.scorecard b { display: block; font-family: var(--font-sans), Archivo, sans-serif; font-size: 26px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
+.scorecard caption { caption-side: top; text-align: left; margin-bottom: 8px; font-size: 15px; }
+.scorecard .pen-circle svg { left: -10px; top: -5px; width: calc(100% + 20px); height: calc(100% + 10px); } /* a tighter loop, so it stays clear of the label under the number */
+/* PresentAI screenshot: a thin rule border, no shadow */
+.shot { display: block; width: 100%; height: auto; border: 1px solid var(--rule); margin: 14px 0 8px; }
 
 /* ── How working with me goes ── */
 .steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }
