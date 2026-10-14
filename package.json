@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "refresh-snapshot": "node --experimental-strip-types scripts/refresh-snapshot.mjs",
-    "test": "node --experimental-strip-types --test tests/site.test.mjs tests/runs.test.mjs"
+    "test": "node --experimental-strip-types --test tests/site.test.mjs tests/runs.test.mjs tests/reveal.test.mjs"
   },
   "dependencies": {
     "next": "16.1.6",
