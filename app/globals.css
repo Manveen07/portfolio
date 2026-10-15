@@ -10,7 +10,8 @@
   --dim:   #5a5750;
   --rule:  #d9d3c5;
   --red:   #c4161c;
-  --col:   640px;  /* reading column */
+  --col:   720px;  /* reading column (660px beside the rail from 1100px) */
+  --rail:  190px;  /* left rail from 1100px: the photo and each section's label */
   /* the wobbly pencil line above each section and the footer; used by .sec and .foot */
   --divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
@@ -22,8 +23,8 @@ body {
   color: var(--ink);
   background: var(--paper);
   font-family: var(--font-sans), Archivo, "Helvetica Neue", Arial, sans-serif;
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 19px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
@@ -38,10 +39,10 @@ a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
 /* A red note sits right under the block it points at, at every width, no wider than a scribble. */
 .note {
-  max-width: 420px;
+  max-width: 460px;
   margin: 4px 0 14px;
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
-  font-size: 12.5px;
+  font-size: 13.5px;
   line-height: 1.4;
   color: var(--red);
   transform: rotate(-1.5deg);
@@ -51,10 +52,10 @@ a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
 /* ── Type ── */
 h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
-h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; margin-bottom: 18px; }
+h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; margin-bottom: 18px; }
 .h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 800; line-height: 1.15; margin-bottom: 14px; }
 .h3 { font-size: 21px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
-.lede { font-size: 20px; line-height: 1.45; margin: 0 0 14px; }
+.lede { font-size: 23px; line-height: 1.45; margin: 0 0 14px; }
 .body { margin: 0 0 12px; }
 .small { font-size: 14px; color: var(--dim); margin: 0 0 10px; }
 .kicker {
@@ -79,16 +80,32 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .head-cta { font-weight: 600; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
-/* Photo and headline share one block inside the column: stacked on phones, side by side from 720px
-   (the h1 gets the column minus the photo and a 28px gap; both tops on the same line). */
+/* Photo and headline share one block: stacked on phones, side by side from 720px (both tops on the
+   same line), and from 1100px the photo moves to the rail. */
 .hero-head { margin-bottom: 18px; }
 .hero-head h1 { margin-bottom: 0; }
-/* Photo and screenshot edges: neutral black at 10%, inset 1px, so no beige fringe shows on the picture. */
-.photo { display: block; width: 132px; height: auto; margin: 0 0 22px; outline: 1px solid oklch(0 0 0 / 0.1); outline-offset: -1px; }
+/* The photo is printed onto the paper (grey, multiplied into the page colour, a slight tilt) so it
+   reads as part of the page, not a framed form photo. 176px is as large as the 264px-wide file stays sharp. */
+.photo { display: block; width: 176px; height: auto; margin: 0 0 22px; filter: grayscale(1) contrast(1.08); mix-blend-mode: multiply; transform: rotate(-1.5deg); }
 @media (min-width: 720px) {
-  .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 132px; column-gap: 28px; align-items: start; }
+  .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 176px; column-gap: 36px; align-items: start; }
   .photo { grid-column: 2; grid-row: 1; margin: 0; }
   .hero-head h1 { grid-column: 1; grid-row: 1; }
+}
+/* From 1100px a single column leaves both sides of a laptop screen empty, so each section becomes
+   two columns: a rail on the left (the section's label, pinned as you scroll; the photo in the hero)
+   and the reading column beside it. Rail, gap and column together stay centred on the page.
+   This block comes after the base h1, photo and hero-head rules so it overrides them. */
+@media (min-width: 1100px) {
+  :root { --col: 660px; }
+  h1 { font-size: clamp(34px, 4.2vw, 56px); }
+  .wrap { max-width: calc(var(--rail) + 60px + var(--col) + 40px); }
+  .sec { display: grid; grid-template-columns: var(--rail) minmax(0, var(--col)); column-gap: 60px; align-items: start; }
+  .sec > * { grid-column: 2; }
+  .sec > .kicker { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 28px; margin-top: 10px; }
+  .hero-head { display: contents; }
+  .hero .photo { grid-column: 1; grid-row: 1 / span 60; margin: 6px 0 0; }
+  .hero-head h1 { grid-column: 2; margin-bottom: 22px; }
 }
 
 /* ── Proof ── */

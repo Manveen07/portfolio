@@ -236,7 +236,7 @@ test("work shows lead research, resume screening, leadlens and PresentAI only", 
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.equal(count(work, "<article"), 4);
   const t = text("index.html");
-  for (const s of ["Lead research, automated", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
+  for (const s of ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   // Final review: name what was measured, and say nothing the sources can't back.
@@ -263,13 +263,13 @@ test("work runs Jobs (Precise Leads, Caprae, the quote), then Built on my own (l
   assert.ok(work, "no section#work");
   assert.match(work, /<h2 class="kicker">Work, and who vouches for it<\/h2>/, "the section lost its kicker");
   const titles = [...work.matchAll(/<h3 class="h3">([^<]*)<\/h3>/g)].map((m) => m[1]);
-  assert.deepEqual(titles, ["Lead research, automated", "Resume screening, automated", "leadlens", "PresentAI"]);
+  assert.deepEqual(titles, ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI"]);
   const at = (s) => work.indexOf(s);
   const quoteAt = at('<figure class="quote">');
   assert.ok(quoteAt > 0, "no quote in the Work section");
   const order = [
     '<p class="group">Jobs</p>',
-    ">Lead research, automated<",
+    ">Outbound, built end to end<",
     ">Resume screening, automated<",
     '<figure class="quote">',
     '<p class="group">Built on my own</p>',
@@ -284,18 +284,21 @@ test("work runs Jobs (Precise Leads, Caprae, the quote), then Built on my own (l
   assert.match(label, /font-family:var\(--font-mono\)/, "the group labels are not mono");
 });
 
-test("the Precise Leads entry: meta, title, plain text, one metric, stack; no note and no link", () => {
+test("the Precise Leads entry: meta, title, plain text, two metrics, stack; no note and no link", () => {
+  // Rewritten 15 Oct from Manveen's own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
   assert.ok(entry, "no Precise Leads entry");
-  assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Lead research, automated<\/h3>/);
-  assert.match(entry, /<p class="body">Finds warm leads, researches them, and drafts emails that only say what the research found\.<\/p>/);
+  assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Outbound, built end to end<\/h3>/);
+  assert.match(entry, /<p class="body">Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found\.<\/p>/);
   assert.match(
     entry,
-    /<p class="body">One tool watches Slack communities as messages come in, picks out people who look like buyers, and passes the warm ones to the sales team\. Another researches each lead across the web, LinkedIn and company data and drafts a personal email from what it found\. A second model checks each claim in the draft against the research before it goes anywhere\.<\/p>/,
+    /<p class="body">I built the agency(?:'|&#x27;)s outbound pipeline\. One run sorted 34,044 companies in four days, and every yes came with a quote from the company(?:'|&#x27;)s own website\. Each draft is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before anything goes out\. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client(?:'|&#x27;)s sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team\.<\/p>/,
   );
   assert.match(entry, /<dt>0<\/dt><dd>contradicted claims in 300 drafted emails<\/dd>/);
-  assert.match(entry, /<p class="stack">built with (?:<!-- -->)?python, n8n, clay<\/p>/);
+  assert.match(entry, /<dt>34,044<\/dt><dd>companies sorted in four days<\/dd>/);
+  assert.match(entry, /<p class="stack">built with (?:<!-- -->)?python, typescript, clay, smartlead, n8n<\/p>/);
+  assert.doesNotMatch(entry, /Lead research, automated|watches Slack communities as messages come in/);
   assert.doesNotMatch(entry, /<a /, "the Precise Leads entry has a link");
   // No note: it is not inside an annotated block.
   assert.match(work, /<p class="group">Jobs<\/p><article class="entry"><p class="small">At Precise Leads/);
@@ -376,24 +379,49 @@ test("the hero answers its headline first, then shows the week", () => {
   const story = hero.indexOf("I spent a year automating");
   assert.ok(lede > 0 && sketch > 0 && story > 0, `a hero piece is missing: ${[lede, sketch, story]}`);
   assert.ok(hero.indexOf("</h1>") < lede && lede < sketch && sketch < story, "the hero is not h1, lede, week sketch, story");
+  // Manveen, 15 Oct: Precise Leads is an outbound agency, not a sales-software company.
+  assert.match(hero, /I spent a year automating lead-finding for an outbound agency, got good at it/);
+  assert.doesNotMatch(hero, /sales-software/);
+});
+
+test("from 1100px the page is a side rail (photo, section labels) beside the reading column", () => {
+  // Manveen picked version B on 15 Oct: a lone 640px column left both sides of a laptop screen empty.
+  const styles = css();
+  const wide = mediaBlocks(styles, "1100px").join("\n");
+  assert.ok(wide, "no 1100px block");
+  assert.match(wide, /\.wrap\{max-width:calc\(var\(--rail\) \+ 60px \+ var\(--col\) \+ 40px\)\}/);
+  const sec = wide.match(/\.sec\{[^}]*\}/)?.[0] ?? "";
+  assert.match(sec, /display:grid/);
+  // The minifier drops the space before minmax.
+  assert.match(sec, /grid-template-columns:var\(--rail\)\s?minmax\(0,\s?var\(--col\)\)/);
+  assert.match(wide, /\.sec>\*\{grid-(?:column:2|column-start:2)/);
+  assert.match(wide, /\.sec>\.kicker\{[^}]*grid-(?:column:1|area:1\/1)[^}]*position:sticky/);
+  assert.match(wide, /\.hero-head\{display:contents\}/);
+  assert.match(wide, /\.hero \.photo\{[^}]*grid-(?:column:1|area:1\/1)/);
+  assert.match(styles, /--rail:190px/);
+  // Below 1100px it stays the single centred column.
+  assert.match(outsideMedia(styles), /\.wrap\{[^}]*max-width:calc\(var\(--col\) \+ 40px\)/);
 });
 
 test("the photo sits inside the column beside the h1 from 720px, above it below that, never positioned", () => {
   const styles = css();
   const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
   assert.ok(base, "no .photo rule");
-  assert.match(base, /width:132px/);
-  // Polish pass: a neutral black outline inset by 1px, not a tinted border (no coloured fringe on the photo).
-  assert.match(base, /outline:1px solid/);
-  assert.match(base, /outline-offset:-1px/);
-  assert.doesNotMatch(base, /border:/);
+  assert.match(base, /width:176px/);
+  // Manveen, 15 Oct: printed onto the paper (grey, multiplied, a slight tilt), not a framed form photo.
+  // 176px is as large as the 264px-wide file stays sharp at 1.5x.
+  // The minifier writes grayscale(1) as grayscale().
+  assert.match(base, /filter:grayscale\(1?\)/);
+  assert.match(base, /mix-blend-mode:multiply/);
+  assert.match(base, /rotate\(-1\.5deg\)/);
+  assert.doesNotMatch(base, /border:|outline:1px/);
   for (const rule of styles.match(/\.photo\{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /position:(?:absolute|fixed)/, "the photo is positioned against layout constants");
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   // Photo, then h1, in one head block: stacked on a phone, side by side from 720px.
   assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><h1>/);
   const mid = mediaBlocks(styles, "720px").join("\n");
   assert.match(mid, /\.hero-head\{[^}]*display:grid/);
-  assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 132px/);
+  assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 176px/);
   // The minifier folds grid-column 2 / grid-row 1 into grid-area:1/2.
   assert.match(mid, /\.photo\{[^}]*grid-(?:column:2|area:1\/2)/);
 });
@@ -572,8 +600,11 @@ test("claims and README follow the new hero and the Precise Leads entry", () => 
   assert.match(claims, /Every week has a job that's the same clicks, in the same order\./);
   assert.match(claims, /his own words approved 15 Oct/);
   assert.match(claims, /Precise Leads, Nov\. 2025 to Present/);
-  assert.match(claims, /0 contradicted claims across 300 emails/);
-  assert.match(claims, /Slack communities/);
+  // The Precise Leads rows now cite his own repos, not only the old resume.
+  assert.match(claims, /SHOWCASE-300-REPORT\.md/);
+  assert.match(claims, /universe-to-people-at-scale\.md/);
+  assert.match(claims, /Outbound, built end to end/);
+  assert.match(claims, /an outbound agency/);
   const readme = read("README.md");
   assert.doesNotMatch(readme, /copy-paste work between them|talk to each other/);
   assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);

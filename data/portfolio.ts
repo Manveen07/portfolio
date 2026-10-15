@@ -26,7 +26,7 @@ export const HERO = {
   marked: "the same way every time.",
   nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
   how: [
-    "I spent a year automating lead-finding for a sales-software company, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+    "I spent a year automating lead-finding for an outbound agency, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
   ],
 } as const;
 
@@ -95,15 +95,19 @@ export type WorkItem = {
 
 export const JOBS: WorkItem[] = [
   {
-    title: "Lead research, automated",
+    title: "Outbound, built end to end",
     where: "At Precise Leads",
-    // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"); claims rows 77 to 80.
+    // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"). The rest was rewritten
+    // 15 Oct from his own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
     role: "GTM automation engineer · Nov 2025 → now · remote",
-    lead: "Finds warm leads, researches them, and drafts emails that only say what the research found.",
+    lead: "Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found.",
     detail:
-      "One tool watches Slack communities as messages come in, picks out people who look like buyers, and passes the warm ones to the sales team. Another researches each lead across the web, LinkedIn and company data and drafts a personal email from what it found. A second model checks each claim in the draft against the research before it goes anywhere.",
-    metrics: [["0", "contradicted claims in 300 drafted emails"]],
-    stack: ["python", "n8n", "clay"],
+      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and every yes came with a quote from the company's own website. Each draft is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before anything goes out. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
+    metrics: [
+      ["0", "contradicted claims in 300 drafted emails"],
+      ["34,044", "companies sorted in four days"],
+    ],
+    stack: ["python", "typescript", "clay", "smartlead", "n8n"],
   },
   {
     title: "Resume screening, automated",
