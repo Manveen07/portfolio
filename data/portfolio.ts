@@ -26,8 +26,7 @@ export const HERO = {
   marked: "the same way every time.",
   nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
   how: [
-    "I start with the problem that wastes the most of your time. I don't automate things that aren't anyone's problem.",
-    "The ones worth fixing are usually messy. That's why they're not automatic yet, and that's why they're problems.",
+    "I spent a year automating lead-finding for a sales-software company, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
   ],
 } as const;
 

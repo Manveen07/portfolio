@@ -141,8 +141,9 @@ test("hero leads with the weekly job and drops the slogan", () => {
   assert.doesNotMatch(t, /talk to each other|copies things between/);
   assert.doesNotMatch(hero, /class="btn"/, "the hero still has a button");
   assert.match(t, /nerd word for this: deterministic\. Same input, same result, every time\./);
-  assert.match(t, /I don't automate things that aren't anyone's problem\./);
-  assert.match(t, /That's why they're not automatic yet, and that's why they're problems\./);
+  // Manveen's pick, 15 Oct: headline A with version C's story in place of the two old paragraphs.
+  assert.match(t, /nobody measures whether the automation is right\. So now I build the thing, and the test for the thing\./);
+  assert.doesNotMatch(t, /I don't automate things that aren't anyone's problem\./);
   assert.match(t, /UK working hours are my afternoon and evening, US mornings my evening\./);
   assert.doesNotMatch(t, /my mornings overlap the UK/i);
   assert.doesNotMatch(t, /automating the boring/i);
