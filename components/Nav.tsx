@@ -1,59 +1,15 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import { NAV, ME } from "@/data/portfolio";
-import { useScrollSpy, useScrolled } from "@/lib/hooks";
-
-const IDS = NAV.map((n) => n.id);
+import Link from "next/link";
+import { ME } from "@/data/portfolio";
 
 export default function Nav() {
-  const pathname = usePathname();
-  const onHome = pathname === "/";
-  // Scroll-spy only means anything on the homepage; sub-routes link back.
-  const active = useScrollSpy(onHome ? IDS : []);
-  const scrolled = useScrolled(24);
-  const href = (id: string) => (onHome ? `#${id}` : `/#${id}`);
-
   return (
-    <div
-      className={`panel on nav-bar ${scrolled ? "scrolled" : ""}`}
-      style={{
-        margin: "clamp(16px, 1.4vw, 28px) var(--gutter) 0",
-        padding: "clamp(14px, 1vw, 20px) clamp(20px, 1.6vw, 34px)",
-        display: "flex",
-        alignItems: "center",
-        gap: 20,
-        flexWrap: "nowrap",
-        animationDelay: ".1s",
-        position: "sticky",
-        top: 12,
-        zIndex: 20,
-      }}
-    >
-      <a href={onHome ? "#top" : "/"} style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <span className="lamp on boot" />
-        <span className="cond" style={{ fontSize: 22, fontWeight: 700 }}>
-          {ME.name}
-        </span>
+    <header className="wrap head">
+      <Link href="/" className="head-name">
+        {ME.name}
+      </Link>
+      <a className="head-cta" href={`mailto:${ME.email}`}>
+        Write to me
       </a>
-      <span className="engr nav-role" style={{ minWidth: 0, flexShrink: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-        {ME.role} · {ME.location} · remote
-      </span>
-      <span style={{ flexGrow: 1 }} />
-      <div className="nav-keys" style={{ display: "flex", gap: 6 }}>
-        {NAV.map((n) => (
-          <a
-            key={n.id}
-            href={href(n.id)}
-            className={`key ${onHome && active === n.id ? "active" : ""}`}
-          >
-            {n.label}
-          </a>
-        ))}
-      </div>
-      <a className="btn go" href={ME.calendly} target="_blank" rel="noopener">
-        Book a call <span>→</span>
-      </a>
-    </div>
+    </header>
   );
 }

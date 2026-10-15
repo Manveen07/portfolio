@@ -1,12 +1,20 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import snapshot from "@/data/pipeline-snapshot.json";
 
-export const runtime = "edge";
-export const alt = "Manveen Singh — automation engineer";
+export const alt = "Manveen Singh, automation engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// The card people see when manveen.me is pasted into an email, Slack or LinkedIn.
 export default async function Image() {
+  // Static TTFs from the Archivo project (OFL): next/og cannot read woff2 or variable fonts.
+  // Read from disk on the Node runtime (the edge bundle with both fonts was close to Vercel's Hobby limit).
+  const [bold, regular] = await Promise.all([
+    readFile(join(process.cwd(), "app/Archivo-ExtraBold.ttf")),
+    readFile(join(process.cwd(), "app/Archivo-Regular.ttf")),
+  ]);
   return new ImageResponse(
     (
       <div
@@ -16,82 +24,47 @@ export default async function Image() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0f1113",
-          padding: 64,
-          fontFamily: "sans-serif",
+          background: "#f4f1ea",
+          color: "#1d1d1d",
+          padding: 72,
+          fontFamily: "Archivo",
         }}
       >
-        {/* hazard belt */}
-        <div
-          style={{
-            display: "flex",
-            height: 10,
-            background:
-              "repeating-linear-gradient(45deg, #ffd60a 0 12px, #0f1113 12px 24px)",
-          }}
-        />
-
+        <div style={{ display: "flex", fontSize: 28, fontWeight: 800 }}>Manveen Singh</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28 }}>
+          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            Every week has a job that&apos;s
+          </div>
+          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            the same clicks, in the same order.
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
             <div
               style={{
                 display: "flex",
-                width: 18,
-                height: 18,
-                borderRadius: 9,
-                background: "#3ddc84",
+                padding: "6px 26px",
+                border: "4px solid #c4161c",
+                borderRadius: "50%",
+                fontSize: 52,
+                fontWeight: 800,
               }}
-            />
-            <div style={{ fontSize: 24, color: "#8a9099", letterSpacing: 3, textTransform: "uppercase" }}>
-              automation engineer · Delhi · remote
+            >
+              {snapshot.totalRuns}
             </div>
+            <div style={{ display: "flex", fontSize: 26, color: "#5a5750" }}>mornings one system has started on its own</div>
           </div>
-
-          <div
-            style={{
-              display: "flex",
-              fontSize: 104,
-              fontWeight: 800,
-              color: "#e6e3dc",
-              lineHeight: 1,
-              letterSpacing: -3,
-            }}
-          >
-            Automating the boring.
-          </div>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 104,
-              fontWeight: 800,
-              color: "#ffd60a",
-              lineHeight: 1.05,
-              letterSpacing: -3,
-            }}
-          >
-            Scaling the interesting.
-          </div>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div style={{ display: "flex", gap: 48 }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>{snapshot.totalRuns}</div>
-              <div style={{ fontSize: 18, color: "#8a9099", letterSpacing: 2 }}>MORNINGS UNATTENDED</div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>{snapshot.noticesRead}</div>
-              <div style={{ fontSize: 18, color: "#8a9099", letterSpacing: 2 }}>CONTRACTS READ</div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 56, fontWeight: 800, color: "#e6e3dc" }}>0</div>
-              <div style={{ fontSize: 18, color: "#8a9099", letterSpacing: 2 }}>MANUAL STEPS</div>
-            </div>
-          </div>
-          <div style={{ fontSize: 24, color: "#ffd60a" }}>manveen.me</div>
+          <div style={{ display: "flex", fontSize: 26, color: "#c4161c" }}>manveen.me</div>
         </div>
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        { name: "Archivo", data: bold, weight: 800, style: "normal" },
+        { name: "Archivo", data: regular, weight: 400, style: "normal" },
+      ],
+    },
   );
 }

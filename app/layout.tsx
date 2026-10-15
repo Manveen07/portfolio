@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
-import { Barlow, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import BootOverlay from "@/components/BootOverlay";
-import Easter from "@/components/Easter";
-import Ambient from "@/components/Ambient";
 
-const sans = Barlow({
+const sans = Archivo({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-});
-
-const cond = Barlow_Condensed({
-  variable: "--font-cond",
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
+  weight: ["400", "600", "800", "900"],
   display: "swap",
 });
 
@@ -28,31 +18,25 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const DESCRIPTION =
-  "I automate the work a business still does by hand between a customer's list and a confirmed order: quote intake, order parsing, document processing. Every build ships with its own error rate measured.";
+const TITLE = "Manveen Singh | automation engineer";
+// The hero's own two sentences (version A, approved 15 Oct).
+const DESCRIPTION = "Every week has a job that's the same clicks, in the same order. I make it run by itself, the same way every time.";
 
 export const metadata: Metadata = {
-  title: "Manveen Singh | automation engineer",
+  title: TITLE,
   description: DESCRIPTION,
-  keywords: [
-    "automation engineer", "quote intake automation", "order parsing", "document processing",
-    "lead enrichment", "outbound automation", "Clay", "n8n", "Python",
-  ],
+  keywords: ["automation engineer", "workflow automation", "data entry automation", "Python", "Manveen Singh"],
   authors: [{ name: "Manveen Singh" }],
   metadataBase: new URL("https://manveen.me"),
   openGraph: {
-    title: "Manveen Singh | automation engineer",
-    description: "Automating the boring. Scaling the interesting.",
+    title: TITLE,
+    description: DESCRIPTION,
     type: "website",
     locale: "en_US",
     url: "https://manveen.me",
     siteName: "Manveen Singh",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Manveen Singh | automation engineer",
-    description: "Automating the boring. Scaling the interesting.",
-  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
   robots: {
     index: true,
     follow: true,
@@ -64,17 +48,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sans.variable} ${cond.variable} ${mono.variable} antialiased`} suppressHydrationWarning>
-        <div className="pf-grain" />
-        <div className="pf-vignette" />
-        <BootOverlay />
-        <div className="pf-page">
-          <Nav />
-          <main>{children}</main>
-          <Footer />
-        </div>
-        <Easter />
-        <Ambient />
+      <head>
+        {/* Lets CSS hide pen marks until they scroll into view. Without JS they stay drawn. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('pen-js')" }} />
+      </head>
+      <body className={`${sans.variable} ${mono.variable}`}>
+        <Nav />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

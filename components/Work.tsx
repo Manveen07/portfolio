@@ -1,213 +1,104 @@
-"use client";
-
+import { Fragment } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { BAYS, type Bay, TAG } from "@/data/portfolio";
-import { useReveal } from "@/lib/hooks";
+import { JOBS, OWN_WORK, QUOTE, NOW_LINE, ME, type WorkItem } from "@/data/portfolio";
+import Annotated from "@/components/Annotated";
+import { Underline } from "@/components/Pen";
+import Scorecard from "@/components/Scorecard";
 
-function BayLinks({ links }: { links: NonNullable<Bay["links"]> }) {
+/** One entry, on the paper: meta lines, bold title, plain text, then whatever it carries. */
+function Entry({ w }: { w: WorkItem }) {
   return (
-    <div
-      style={{
-        borderTop: "1px solid var(--bevel)",
-        display: "grid",
-        gridTemplateColumns: links.length > 1 ? "1fr 1fr" : "1fr",
-        marginTop: "auto",
-      }}
-    >
-      {links.map((l, i) => {
-        const style = {
-          padding: "12px 24px",
-          color: "var(--yellow)",
-          borderRight: i < links.length - 1 ? "1px solid var(--bevel)" : undefined,
-        } as const;
-        return l.href.startsWith("/") ? (
-          <Link key={l.href} className="lbl" href={l.href} style={style}>
-            {l.label}
-          </Link>
-        ) : (
-          <a key={l.href} className="lbl" href={l.href} target="_blank" rel="noopener" style={style}>
-            {l.label}
-          </a>
-        );
-      })}
-    </div>
-  );
-}
-
-function BayCard({ bay }: { bay: Bay }) {
-  return (
-    <div
-      className={`panel on bay ${bay.wide ? "bay-wide" : ""}`}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        ...(bay.wide ? { gridColumn: "span 2" } : {}),
-      }}
-    >
-      <span className="serial">P-03 · BAY-{bay.n}</span>
-
-      <div
-        style={{
-          padding: "14px 24px",
-          borderBottom: "1px solid var(--bevel)",
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-        }}
-      >
-        <span className={`lamp ${bay.lamp} ${bay.lamp === "on" && bay.wide ? "pulse" : ""}`} />
-        <span className="engr" style={{ color: "var(--dim)" }}>
-          {bay.n} · {bay.status}
-        </span>
-      </div>
-
-      <div
-        className={bay.wide ? "grid-bayfeat" : undefined}
-        style={
-          bay.wide
-            ? { padding: "22px 24px 0", display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: 32 }
-            : { padding: "22px 24px 0", display: "flex", flexDirection: "column", gap: 12 }
-        }
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div className="cond h-bay" style={{ lineHeight: 0.9, fontWeight: 700 }}>
-            <span className="title">{bay.title}</span>
-          </div>
-          <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: "var(--text)" }}>{bay.lead}</p>
-          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.55, color: "var(--dim)" }}>{bay.detail}</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {bay.stack.map((s) => (
-              <span key={s} className="chip">
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {bay.wide && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 16, alignContent: "start" }}>
-            {bay.metrics.map(([n, l]) => (
-              <div key={l}>
-                <div className="seg plain seg-md">
-                  {n}
-                </div>
-                <div className="lbl" style={{ marginTop: 6 }}>
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {!bay.wide && (
-        <div
-          style={{
-            marginTop: 20,
-            padding: bay.links ? "18px 24px" : "18px 24px 22px",
-            borderTop: "1px solid var(--bevel)",
-            display: "grid",
-            gridTemplateColumns: `repeat(${Math.min(bay.metrics.length, 3)}, minmax(0, 1fr))`,
-            gap: 16,
-          }}
-        >
-          {bay.metrics.map(([n, l]) => (
-            <div key={l}>
-              <div className="seg plain seg-md">
-                {n}
-              </div>
-              <div className="lbl" style={{ marginTop: 6 }}>
-                {l}
-              </div>
+    <article className="entry">
+      <p className="small">{w.where}</p>
+      {w.role && <p className="small">{w.role}</p>}
+      <h3 className="h3">{w.title}</h3>
+      <p className="body">{w.lead}</p>
+      {w.detail && <p className="body">{w.detail}</p>}
+      {w.scorecard && <Scorecard s={w.scorecard} />}
+      {w.shot && (
+        <Image className="shot" src={w.shot.src} alt={w.shot.alt} width={w.shot.width} height={w.shot.height} sizes="280px" />
+      )}
+      {w.metrics.length > 0 && (
+        <dl className="metrics">
+          {w.metrics.map(([n, label]) => (
+            <div key={label}>
+              <dt>{n}</dt>
+              <dd>{label}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       )}
-
-      {bay.wide && <div style={{ marginTop: 20 }} />}
-      {bay.links && <BayLinks links={bay.links} />}
-    </div>
+      <p className="stack">built with {w.stack.join(", ")}</p>
+      {w.links && (
+        <p className="links">
+          {w.links.map((l) =>
+            l.href.startsWith("/") ? (
+              <Link key={l.href} href={l.href}>
+                {l.label}
+              </Link>
+            ) : (
+              <a key={l.href} href={l.href} target="_blank" rel="noopener">
+                {l.label}
+              </a>
+            ),
+          )}
+        </p>
+      )}
+    </article>
   );
 }
 
-export default function Work() {
-  const ref = useReveal<HTMLElement>();
-
+/** A group: its mono label, then its entries with a pencil tick between them. An entry with a note
+    gets an annotated block; the entry marked `quote` is followed by Zackary's quote and its note. */
+function Group({ label, items }: { label: string; items: WorkItem[] }) {
   return (
-    <section
-      id="work"
-      ref={ref}
-      className="rise"
-      style={{ padding: "40px var(--gutter) 8px", display: "flex", flexDirection: "column", gap: 20 }}
-    >
-      <div className="step">
-        <span className="n">3</span>
-        <span className="tag"><span>{TAG.work}</span></span>
-        <span className="t">Things I&rsquo;ve built</span>
-        <span className="rule" />
-        <span className="lbl">most proven first · every one links to something real</span>
-      </div>
+    <>
+      <p className="group">{label}</p>
+      {items.map((w, i) => (
+        <Fragment key={w.title}>
+          {i > 0 && <hr className="tick" />}
+          {w.note ? (
+            <Annotated note={w.note}>
+              <Entry w={w} />
+            </Annotated>
+          ) : (
+            <Entry w={w} />
+          )}
+          {w.quote && (
+            <Annotated note={QUOTE.penNote}>
+              <figure className="quote">
+                <blockquote>
+                  <p>
+                    &ldquo;{QUOTE.before}
+                    <Underline>{QUOTE.marked}</Underline>&rdquo;
+                  </p>
+                </blockquote>
+                <figcaption>
+                  <b>{QUOTE.name}</b>, {QUOTE.title}, {QUOTE.company}
+                  <br />
+                  <span className="small">{QUOTE.source}</span>
+                </figcaption>
+              </figure>
+            </Annotated>
+          )}
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
-      <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-        {BAYS.map((b) => (
-          <BayCard key={b.n} bay={b} />
-        ))}
-      </div>
-
-      {/* The one thing that moves: a demo of a system working */}
-      <div
-        className="grid-split"
-        style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.35fr) minmax(0, 1fr)", gap: 12 }}
-      >
-        <div className="panel on" style={{ padding: 10, overflow: "hidden" }}>
-          <span className="serial">P-03 · MONITOR</span>
-          <video
-            src="/operator-demo.mp4"
-            poster="/operator-demo.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            style={{ display: "block", width: "100%", height: "auto", border: "1px solid var(--bevel)" }}
-          />
-          <div
-            className="monitor-caption"
-            style={{
-              position: "absolute",
-              left: 24,
-              bottom: 24,
-              display: "flex",
-              gap: 10,
-              alignItems: "center",
-              background: "var(--panel)",
-              border: "1px solid var(--bevel-hi)",
-              padding: "8px 12px",
-            }}
-          >
-            <span className="lamp on pulse" style={{ width: 10, height: 10 }} />
-            <span className="lbl" style={{ color: "var(--text)" }}>
-              10-second loop · demo data
-            </span>
-          </div>
-        </div>
-
-        <div
-          className="panel on"
-          style={{ padding: "28px 30px", display: "flex", flexDirection: "column", gap: 16, justifyContent: "center", animationDelay: ".1s" }}
-        >
-          <span className="serial">P-03 · CAPTION</span>
-          <div className="cond h-panel" style={{ lineHeight: 0.9, fontWeight: 700 }}>
-            Watch one
-            <br />
-            <span style={{ color: "var(--yellow)" }}>do the work.</span>
-          </div>
-          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: "var(--dim)" }}>
-            A short video of an automated task board. The cursor you see is the system, not a
-            person. It picks up each job, handles it, and flags the one that needs a human. Demo data.
-          </p>
-        </div>
-      </div>
+// Groups, entries and the quote are direct children of the section, all on the column's left edge.
+// The section allows two margin notes: the quote's and leadlens's.
+export default function Work() {
+  return (
+    <section id="work" className="wrap sec">
+      <h2 className="kicker">Work, and who vouches for it</h2>
+      <Group label="Jobs" items={JOBS} />
+      <Group label="Built on my own" items={OWN_WORK} />
+      <p className="small now">
+        {NOW_LINE} <a className="link" href={ME.resume}>Full resume ↗</a>
+      </p>
     </section>
   );
 }

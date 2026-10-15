@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#0f1113"/>
-  <rect x="4" y="4" width="24" height="24" fill="none" stroke="#2b3138" stroke-width="1.5"/>
-  <circle cx="16" cy="16" r="6" fill="#ffd60a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#f4f1ea"/>
+  <text x="32" y="45" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" text-anchor="middle" fill="#1d1d1d">M</text>
+  <ellipse cx="32" cy="32" rx="27" ry="21" fill="none" stroke="#c4161c" stroke-width="4" transform="rotate(-8 32 32)"/>
 </svg>

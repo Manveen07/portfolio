@@ -12,6 +12,7 @@ import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { parseVerdicts } from "../lib/runs.ts";
 
 const REPO = "Manveen07/new-10x-engineer";
 const gh = (endpoint, jq) =>
@@ -19,8 +20,8 @@ const gh = (endpoint, jq) =>
 
 const runs = JSON.parse(
   gh(
-    `repos/${REPO}/actions/workflows/tender-radar-daily.yml/runs?per_page=40`,
-    "{total: .total_count, runs: [.workflow_runs[] | select(.conclusion != null) | {c: .conclusion, at: .created_at}]}",
+    `repos/${REPO}/actions/workflows/tender-radar-daily.yml/runs?event=schedule&per_page=40`,
+    "{total: .total_count, unfinished: ([.workflow_runs[] | select(.conclusion == null)] | length), runs: [.workflow_runs[] | select(.conclusion != null) | {c: .conclusion, at: .created_at}]}",
   ),
 );
 const md = Buffer.from(
@@ -30,13 +31,19 @@ const md = Buffer.from(
 
 const notices = Number(/Raw tender records[^\d]*(\d+)/.exec(md)?.[1]);
 const profiles = (md.match(/^\| [a-z-]+ \|/gm) ?? []).length;
+const verdicts = parseVerdicts(md);
+if (!verdicts) throw new Error("daily summary table did not parse");
 
 const snapshot = {
   asOf: new Date().toISOString(),
-  totalRuns: runs.total,
+  // Same rule as summarizeRuns in lib/runs.ts: a run still in progress isn't counted yet.
+  totalRuns: runs.total - runs.unfinished,
   lastRun: { at: runs.runs[0].at, ok: runs.runs[0].c === "success" },
   noticesRead: notices,
   clientProfiles: profiles,
+  checks: verdicts.checks,
+  bid: verdicts.bid,
+  maybe: verdicts.maybe,
   history: runs.runs.map((r) => ({ date: r.at.slice(0, 10), ok: r.c === "success" })).reverse(),
 };
 
@@ -47,5 +54,5 @@ const ok = snapshot.history.filter((h) => h.ok).length;
 console.log(
   `wrote ${path.relative(process.cwd(), out)}: ${snapshot.totalRuns} runs total, ` +
     `last ${snapshot.lastRun.at} (${snapshot.lastRun.ok ? "ok" : "failed"}), ` +
-    `${notices} notices, ${profiles} profiles, window ${ok}/${snapshot.history.length} ok`,
+    `${notices} notices, ${profiles} profiles, ${snapshot.checks} checks, ${snapshot.bid} bid, ${snapshot.maybe} maybe, window ${ok}/${snapshot.history.length} ok`,
 );

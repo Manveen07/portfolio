@@ -31,7 +31,7 @@ export const POSTS: Post[] = [
     cardSummary:
       "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem. This is what was wrong, how I fixed it, and why “fix the rules, not the prompt” works.",
     date: "2026-06-14",
-    readMins: 7,
+    readMins: 5,
     tags: ["llm", "evals", "pydantic", "llm-as-judge"],
     summary:
       "I built an LLM job-posting classifier, fixed three failure modes by changing the output schema instead of the prompt, then discovered my own evaluation was leaking the answer. The second part taught me more than the first.",

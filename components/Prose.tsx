@@ -1,6 +1,6 @@
 "use client";
 
-/* Renders a Post body (Block[]) in the terminal aesthetic.
+/* Renders a Post body (Block[]) in red pen on paper.
    Inline syntax: **bold**, *italic*, `code`, [text](url). */
 
 import { T } from "@/lib/tokens";
@@ -59,15 +59,15 @@ function Inline({ s }: { s: string }) {
     <>
       {tokens.map((tk, k) => {
         if (tk.type === "bold")
-          return <strong key={k} style={{ color: T.text, fontWeight: 600 }}>{tk.value}</strong>;
+          return <strong key={k} style={{ color: T.ink, fontWeight: 600 }}>{tk.value}</strong>;
         if (tk.type === "italic")
           return <em key={k} style={{ color: T.dim, fontStyle: "italic" }}>{tk.value}</em>;
         if (tk.type === "code")
           return (
             <code key={k} style={{
-              fontFamily: T.mono, fontSize: "0.88em", color: T.yellow,
-              background: "rgba(255,214,10,0.07)", padding: "1px 6px",
-              border: `1px solid ${T.bevel}`, borderRadius: 3,
+              fontFamily: T.mono, fontSize: "0.88em", color: T.red,
+              background: "rgba(196,22,28,0.06)", padding: "1px 6px",
+              border: `1px solid ${T.rule}`, borderRadius: 3,
             }}>{tk.value}</code>
           );
         if (tk.type === "link")
@@ -84,16 +84,14 @@ function Inline({ s }: { s: string }) {
 
 export default function Prose({ body }: { body: Block[] }) {
   return (
-    <div style={{ maxWidth: 720 }}>
+    <div style={{ maxWidth: "var(--col)" }}>
       {body.map((b, i) => {
         if (b.t === "h2")
           return (
             <h2 key={i} style={{
-              fontFamily: T.sans, fontSize: 26, fontWeight: 500, color: T.text,
+              fontFamily: T.sans, fontSize: 26, fontWeight: 800, color: T.ink,
               letterSpacing: "-0.02em", marginTop: 48, marginBottom: 18,
-              display: "flex", alignItems: "baseline", gap: 12,
             }}>
-              <span style={{ fontFamily: T.mono, fontSize: 13, color: T.yellow }}>##</span>
               {b.s}
             </h2>
           );
@@ -108,15 +106,15 @@ export default function Prose({ body }: { body: Block[] }) {
           );
         if (b.t === "code")
           return (
-            <div key={i} className="panel" style={{ margin: "0 0 22px", overflow: "hidden" }}>
+            <div key={i} className="box" style={{ margin: "0 0 22px", overflow: "hidden" }}>
               <div style={{
-                padding: "8px 14px", borderBottom: `1px solid ${T.bevel}`,
-                fontFamily: T.mono, fontSize: 10, color: T.dim2,
+                padding: "8px 14px", borderBottom: `1px solid ${T.rule}`,
+                fontFamily: T.mono, fontSize: 10, color: T.dim,
                 letterSpacing: "0.1em", textTransform: "uppercase",
               }}>{b.lang}</div>
               <pre style={{
                 margin: 0, padding: "16px 18px", overflow: "auto",
-                fontFamily: T.mono, fontSize: 13, lineHeight: 1.6, color: T.text,
+                fontFamily: T.mono, fontSize: 13, lineHeight: 1.6, color: T.ink,
               }}>{b.s}</pre>
             </div>
           );
@@ -124,9 +122,9 @@ export default function Prose({ body }: { body: Block[] }) {
           return (
             <blockquote key={i} style={{
               margin: "0 0 22px", padding: "16px 20px",
-              borderLeft: `2px solid ${T.yellow}`, background: "rgba(255,214,10,0.03)",
+              borderLeft: `2px solid ${T.red}`, background: "rgba(196,22,28,0.04)",
               fontFamily: T.sans, fontSize: 15.5, fontStyle: "italic",
-              color: T.text, lineHeight: 1.6,
+              color: T.ink, lineHeight: 1.6,
             }}>
               <Inline s={b.s} />
             </blockquote>
@@ -139,7 +137,7 @@ export default function Prose({ body }: { body: Block[] }) {
                   fontFamily: T.sans, fontSize: 16, lineHeight: 1.65, color: T.dim,
                   marginBottom: 10, position: "relative", paddingLeft: 20,
                 }}>
-                  <span style={{ position: "absolute", left: 0, top: 11, width: 10, height: 1, background: T.yellow }} />
+                  <span style={{ position: "absolute", left: 0, top: 11, width: 10, height: 1, background: T.red }} />
                   <Inline s={it} />
                 </li>
               ))}
@@ -147,14 +145,14 @@ export default function Prose({ body }: { body: Block[] }) {
           );
         if (b.t === "table")
           return (
-            <div key={i} className="panel" style={{ margin: "0 0 22px", overflow: "auto" }}>
+            <div key={i} className="box" style={{ margin: "0 0 22px", overflow: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: T.mono, fontSize: 13 }}>
                 <thead>
                   <tr>
                     {b.head.map((h, k) => (
                       <th key={k} style={{
                         textAlign: "left", padding: "12px 16px",
-                        borderBottom: `1px solid ${T.bevelHi}`,
+                        borderBottom: `1px solid ${T.rule}`,
                         color: T.dim, fontWeight: 500, fontSize: 10,
                         letterSpacing: "0.1em", textTransform: "uppercase",
                       }}>{h}</th>
@@ -167,8 +165,8 @@ export default function Prose({ body }: { body: Block[] }) {
                       {row.map((cell, c) => (
                         <td key={c} style={{
                           padding: "12px 16px",
-                          borderBottom: r === b.rows.length - 1 ? "none" : `1px solid ${T.bevel}`,
-                          color: c === 0 ? T.yellow : T.text,
+                          borderBottom: r === b.rows.length - 1 ? "none" : `1px solid ${T.rule}`,
+                          color: c === 0 ? T.red : T.ink,
                         }}>{cell}</td>
                       ))}
                     </tr>

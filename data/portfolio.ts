@@ -1,15 +1,14 @@
-// All copy & structural data for the portfolio sections.
-// Edit values here and the relevant components re-render with new content.
-//
-// Every figure on this site is real and sourced. See CONTENT-PACK-2026-09-04.md
-// in the repo root for where each number comes from.
+// All copy for the home page. Components read from here; edit words here.
+// Rules for every string: spec section 5 (no dashes, no sales words, Manveen's
+// own phrasing where spec 5a has it). Every figure needs a source: see
+// docs/superpowers/specs/2026-10-13-claims.md.
 
 // ── Identity ─────────────────────────────────────────────────────────
 export const ME = {
   name: "Manveen Singh",
   role: "automation engineer",
   location: "Delhi, India",
-  hours: "remote · mornings overlap the UK, evenings the US",
+  hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
   linkedin: "https://linkedin.com/in/Manveen",
@@ -17,257 +16,165 @@ export const ME = {
   resume: "/resume.pdf",
 } as const;
 
-// ── Hero ─────────────────────────────────────────────────────────────
+// ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
+export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
+
+// ── Hero: Manveen's own words (approved 15 Oct, version A), keep the phrasing ──
 export const HERO = {
-  tagline:
-    "I build the software that reads what comes in (orders, resumes, notices) so nobody has to retype it.",
-  promise:
-    "Every build ships with a test that shows how often it's right.",
+  headline: "Every week has a job that's the same clicks, in the same order.",
+  answer: "I make it run by itself,",
+  marked: "the same way every time.",
+  nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
+  how: [
+    "I spent a year automating lead-finding for an outbound agency, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+  ],
 } as const;
 
-// ── Nav (the six numbered steps) ─────────────────────────────────────
-export const NAV: { id: string; label: string; tag: string }[] = [
-  { id: "proof",     label: "1 · proof",   tag: "Receipts." },
-  { id: "about",     label: "2 · about",   tag: "Origin story." },
-  { id: "work",      label: "3 · work",    tag: "The evidence." },
-  { id: "incidents", label: "4 · log",     tag: "What broke." },
-  { id: "writing",   label: "5 · writing", tag: "In writing." },
-  { id: "contact",   label: "6 · contact", tag: "The call." },
-];
-export const TAG = Object.fromEntries(NAV.map((n) => [n.id, n.tag])) as Record<string, string>;
+/** Path under /public plus its pixel size. Set to null to hide the photo. */
+export const PHOTO: { src: string; alt: string; width: number; height: number } | null = {
+  src: "/me.jpg",
+  alt: "Manveen Singh",
+  width: 264,
+  height: 330,
+};
 
-// ── Live pipeline: prose only. Numbers come from lib/pipeline.ts ─────
+// ── Tender Radar: prose only. Numbers come from lib/pipeline.ts ──────
 // (GitHub at request time when GITHUB_TOKEN is set, else the committed
-// data/pipeline-snapshot.json — refresh it with `npm run refresh-snapshot`).
-import snapshot from "./pipeline-snapshot.json";
-
+// data/pipeline-snapshot.json; refresh it with `npm run refresh-snapshot`).
 export const PIPELINE = {
-  firstRun: "3 July 2026",
-  manualSteps: 0,
-  outageNote:
-    "It broke once, for about three weeks, when a data-format change silently killed the morning run. Fixed, and a failed run now leaves a visible trace. I leave the red stretch on the page because a system that never fails is a system nobody is watching.",
+  firstRun: "4 July 2026",
+  intro:
+    "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
+  penNote: "every bar is a morning nobody pressed a button",
+  sketchNote: "every number here comes from the same run as the bars below",
+  outage:
+    "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change broke the morning run and nothing told me.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
 
-/** Committed fallback figures, so static places (bay card, share image, boot) match the panel. */
-export const SNAPSHOT = snapshot;
-
-// ── Career ───────────────────────────────────────────────────────────
-export type Role = {
-  co: string;
-  role: string;
-  span: string;
-  what: string;
-  metrics: [string, string][];
-};
-
-export const ROLES: Role[] = [
-  {
-    co: "Precise Leads",
-    role: "GTM automation engineer (sales-tools automation)",
-    span: "Nov 2025 → now",
-    what: "A company that finds sales leads for other businesses. I automated how each lead gets researched, filled in with missing details, and added to the customer database.",
-    metrics: [
-      ["8h → 2h", "enrichment work per week, measured"],
-    ],
-  },
-  {
-    co: "Caprae Capital Partners",
-    role: "AI / ML engineer (intern)",
-    span: "Jun → Dec 2025 · US, remote",
-    what: "An investment firm. I built the system that reads resumes and ranks candidates for their recruiting team.",
-    metrics: [
-      ["10h → 3h", "resume screening per week"],
-    ],
-  },
-];
-
-export const EDUCATION = "B.Tech Computer Science · MSIT Delhi · 2026";
-
-// ── About copy ───────────────────────────────────────────────────────
-export const ABOUT = {
-  line1: "I automate the repetitive step between",
-  quote1: "a customer sent us something",
-  mid: "and",
-  quote2: "we acted on it.",
-  body: "Lists, orders, postings, tenders: the part a person re-keys because nothing reads it for them.",
-  bio: "I spent a year automating lead-finding for a sales-software company, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+// ── What people say: verbatim from Zackary Beckham's signed letter (11 Jan 2026).
+// Never publish the letter PDF or the email address on it. It renders in the Work
+// section, as a block right after the card marked `quote: true`.
+export const QUOTE = {
+  before: "…produced clear and maintainable technical documentation, and ",
+  marked: "effectively communicated complex engineering concepts to non-technical stakeholders.",
+  name: "Zackary Beckham",
+  title: "Chief Operations Officer",
+  company: "Caprae Capital Partners",
+  source: "From a signed letter of recommendation, 11 Jan 2026. Full letter available on request.",
+  penNote: "the bit that matters if you don't write code",
 } as const;
 
-// Three strangers read the page; all three said the list of tool names was noise.
-// It is one sentence now. Each project card still names its own tools, in context.
-export const TOOLS_LINE = "Mostly Python, plus whatever your business already runs on. Each project below names its tools.";
+// The last line of the Work section, before the resume link.
+export const NOW_LINE = "B.Tech Computer Science, MSIT Delhi, 2026.";
 
-export const PLATES: [string, string][] = [
-  ["What you hand me", "A process your team repeats by hand every week, and the tools you already pay for."],
-  ["What you get back", "A system that does it on its own, documentation a new hire can read, and me on call to keep it running."],
-  ["How I keep it honest", "I test every AI step against hand-checked examples before it touches real data, and I report the real score, not the flattering one."],
-];
-
-// ── Work bays ────────────────────────────────────────────────────────
-export type Bay = {
-  n: string;
-  status: string;
-  lamp: "on" | "warn";
+// ── Work: two groups. Jobs, newest first (Precise Leads, then Caprae and its quote), then
+// Built on my own (leadlens, then PresentAI). Order matters; tests/site.test.mjs pins it.
+// Tender Radar has its own section above.
+export type WorkItem = {
   title: string;
+  where: string;
   lead: string;
-  detail: string;
-  stack: string[];
+  /** Optional: leadlens has none, its scorecard and margin note tell the story. */
+  detail?: string;
   metrics: [string, string][];
+  stack: string[];
   links?: { label: string; href: string }[];
-  wide?: boolean;
+  /** A line under `where`, for a card that is a job (title, dates, place). */
+  role?: string;
+  /** Zackary's quote renders as a block right after this card. */
+  quote?: true;
+  /** A real 2x2 score (spec 3.2). Counts are against hand labels; see claims row 43. */
+  scorecard?: { caught: number; missed: number; falseAlarms: number; leftAlone: number; caption: string };
+  /** A real screenshot under /public (spec 3.3), with its true pixel size. */
+  shot?: { src: string; alt: string; width: number; height: number };
+  /** A red margin note beside the card (wide screens) or under it (phones). The section allows two. */
+  note?: string;
 };
 
-export const BAYS: Bay[] = [
+export const JOBS: WorkItem[] = [
   {
-    n: "01",
-    status: "live · the system from step 1, every morning",
-    lamp: "on",
-    title: "Tender Radar",
-    lead: "Finds government contracts for cleaning, security and facilities companies, every morning, on its own.",
+    title: "Outbound, built end to end",
+    where: "At Precise Leads",
+    // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"). The rest was rewritten
+    // 15 Oct from his own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
+    role: "GTM automation engineer · Nov 2025 → now · remote",
+    lead: "Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found.",
     detail:
-      "Government contract notices are spread across several websites that alert tools don't read. This pulls from all of them, uses AI to decide which fit each company, checks the deadline is real, and emails a short list. Built alone, running unattended since July.",
-    stack: ["python", "playwright", "gemini", "github actions"],
+      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and every yes came with a quote from the company's own website. Each draft is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before anything goes out. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
     metrics: [
-      [String(snapshot.totalRuns), "mornings run on its own"],
-      [String(snapshot.clientProfiles), "companies get their own list each morning"],
+      ["0", "contradicted claims in 300 drafted emails"],
+      ["34,044", "companies sorted in four days"],
     ],
-    links: [
-      { label: "watch it work (3 min) ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
-      { label: "see the code ↗", href: "https://github.com/Manveen07/tender-radar-showcase" },
-    ],
-    wide: true,
+    stack: ["python", "typescript", "clay", "smartlead", "n8n"],
   },
   {
-    n: "02",
-    status: "finished · deploying sep 2026",
-    lamp: "warn",
-    title: "leadlens",
-    lead: "Reads a job posting and tells you whether the “AI” role is real, dressed up, or a scam.",
-    detail:
-      "I hand-checked 72 real postings first, then measured the AI against them. When it scored a suspiciously perfect 100%, I found my own test was leaking the answers, fixed it, and published the lower, honest score.",
-    stack: ["python", "gemini", "pydantic"],
-    metrics: [
-      ["82%", "of scams caught"],
-      ["0", "real jobs wrongly flagged"],
-    ],
-    links: [{ label: "read how I tested it →", href: "/writing/schema-as-eval-spec" }],
-  },
-  {
-    n: "03",
-    status: "at caprae capital · 2025",
-    lamp: "on",
     title: "Resume screening, automated",
+    where: "At Caprae Capital Partners",
+    // Title and dates come from the signed letter (11 Jan 2026); "US, remote" from the resume.
+    role: "Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote",
+    quote: true,
     lead: "Reads incoming resumes, ranks the candidates, and books the interviews.",
     detail:
-      "Built for a recruiting team spending most of a day a week reading resumes by hand. The system reads them, scores them against the role, writes the shortlist and schedules the calls.",
-    stack: ["python", "embeddings", "slack"],
+      "A recruiting team was spending about ten hours a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
     metrics: [
       ["10h → 3h", "screening per week"],
       ["5 → 1.5", "days to a shortlist"],
     ],
+    stack: ["python", "embeddings", "slack"],
+  },
+];
+
+export const OWN_WORK: WorkItem[] = [
+  {
+    title: "leadlens",
+    where: "My own project",
+    lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
+    // No detail paragraph: the scorecard caption and the margin note say it (claims rows 41, 42, 45).
+    // The scorecard replaces the two metric lines. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+    metrics: [],
+    scorecard: {
+      caught: 9,
+      missed: 2,
+      falseAlarms: 0,
+      leftAlone: 61,
+      caption: "Out of 72 postings I checked by hand:",
+    },
+    note: "it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.",
+    stack: ["python", "gemini", "pydantic"],
+    links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
   },
   {
-    n: "04",
-    status: "try it yourself",
-    lamp: "on",
     title: "PresentAI",
-    lead: "Paste your notes, get a slide deck in under a minute.",
+    where: "My own project, live",
+    lead: "Type a prompt, get a slide deck in under a minute.",
     detail:
-      "Structures the story, writes the slides and speaker notes, exports to PowerPoint. Live, free to try.",
-    stack: ["next.js", "postgres", "python-pptx"],
-    metrics: [
-      ["2h → 15m", "to a first deck"],
-      ["<60s", "for the first draft"],
-    ],
+      "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
+    metrics: [["<60s", "for the first draft"]],
+    // Captured from the live site 14 Oct 2026 (headless Chrome, 1280x800, scaled to 640 wide).
+    shot: { src: "/work/presentai.png", alt: "PresentAI's home page", width: 640, height: 400 },
+    stack: ["next.js", "postgres"],
     links: [
-      { label: "try it ↗", href: "https://present-ai-007.vercel.app/" },
-      { label: "see the code ↗", href: "https://github.com/Manveen07/PresentAI" },
-    ],
-  },
-  {
-    n: "05",
-    status: "at precise leads · in use",
-    lamp: "on",
-    title: "Lead enrichment on autopilot",
-    lead: "Turns a raw list of names into CRM-ready leads with emails, company details and a score, automatically.",
-    detail:
-      "Pulls from several data sources, fills the gaps, checks the data, scores each lead, syncs to the CRM and posts a Slack alert when a good one lands. Enrichment used to be a person with a spreadsheet.",
-    stack: ["python", "clay", "n8n", "crm apis"],
-    metrics: [
-      ["8h → 2h", "enrichment work per week, measured"],
-    ],
-  },
-  {
-    n: "06",
-    status: "internal tool",
-    lamp: "warn",
-    title: "Research-grounded writing",
-    lead: "Writes a short, factual email about a company using only what a research step actually found.",
-    detail:
-      "AI left alone invents flattering details. Here, a research step runs first, the writer is only allowed to use what it found, and a separate checker reads every claim against the research.",
-    stack: ["claude code", "typescript", "web research"],
-    metrics: [
-      ["95.5%", "of claims checked true, 300-email sample"],
-      ["0", "made-up facts found"],
+      { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
+      { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
     ],
   },
 ];
 
-// ── incident.log ─────────────────────────────────────────────────────
-// Real entries only. Dates from commit history. Add one whenever something
-// real breaks; never pad it.
-export type Incident = { when: string; system: string; broke: string; changed: string };
-
-export const INCIDENTS: Incident[] = [
-  {
-    when: "2026-07",
-    system: "tender radar",
-    broke: "A data-format change silently stopped the morning run. Nobody noticed for about three weeks.",
-    changed: "Fixed it. A failed run now leaves a visible trace instead of dying quietly.",
-  },
-  {
-    when: "2026-08",
-    system: "demo pipeline",
-    broke: "Rendering videos in parallel cut one down to 39 seconds over an 80-second narration.",
-    changed: "One at a time now, with a length check before anything is sent.",
-  },
-  {
-    when: "2026-07",
-    system: "tender radar",
-    broke: "Short keywords matched inside longer words (“guard” inside “safeguarding”), so the wrong tenders got tagged.",
-    changed: "Whole-word matching. Those exact cases live in the test set now.",
-  },
-  {
-    when: "2026-06",
-    system: "leadlens",
-    broke: "My own notes leaked the answers into the test, so the judge scored a perfect 100%.",
-    changed: "Stripped them, re-ran, published the lower honest number.",
-  },
-];
-
-// ── Contact doors ────────────────────────────────────────────────────
-export const DOORS = [
-  {
-    lamp: "on" as const,
-    kicker: "If you're hiring",
-    title: "Need someone like this on the team?",
-    body: "Open to full-time and contract, remote. Everything above is the interview prep.",
-    links: [
-      { label: "resume ↗", href: "/resume.pdf" },
-      { label: "linkedin ↗", href: "https://linkedin.com/in/Manveen" },
-      { label: "github ↗", href: "https://github.com/Manveen07" },
-    ],
-  },
-  {
-    lamp: "warn" as const,
-    kicker: "If you run a business",
-    title: "Want the system built and looked after?",
-    body: "First step is a fixed-price pilot on a month of your real requests, quoted before any work starts. During it, every miss is logged and you see the list, not just a score. Then a monthly retainer to keep it running.",
-    links: [
-      { label: "book a call ↗", href: "https://calendly.com/manveen9650/30min" },
-      { label: "email ↗", href: "mailto:manveen9650@gmail.com" },
-    ],
-  },
-];
+// ── How working with me goes ─────────────────────────────────────────
+export const PILOT = {
+  opener:
+    "On the first call you tell me what wastes the most time. If it isn't a real problem, I'll say so and we won't build it.",
+  steps: [
+    "If it is, I quote a fixed price for a pilot before any work starts.",
+    "The pilot runs on a month of your real requests. Every miss gets logged, and you see the list, not just a score.",
+    "If you keep it, a monthly fee covers me looking after it.",
+  ],
+  note: "you see every miss, not just a score",
+  // The section's end: no button, just the address and, small, the calendar (one Calendly link on the page).
+  ask: "Tell me one task you repeat every week. I'll reply within a day and say whether it can run by itself.",
+  calendar: "or pick a time on my calendar",
+  sketchLabel:
+    "A call about what wastes your time, then a fixed quote, then a month on your real requests with every miss logged, then you decide whether to keep it.",
+} as const;
