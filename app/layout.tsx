@@ -19,8 +19,8 @@ const mono = IBM_Plex_Mono({
 });
 
 const TITLE = "Manveen Singh | automation engineer";
-const DESCRIPTION =
-  "Manveen Singh connects the tools a business already uses, so the copy-paste work between them happens on its own, the same way every time.";
+// The hero's own two sentences (version A, approved 15 Oct).
+const DESCRIPTION = "Every week has a job that's the same clicks, in the same order. I make it run by itself, the same way every time.";
 
 export const metadata: Metadata = {
   title: TITLE,

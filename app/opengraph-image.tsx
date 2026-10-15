@@ -32,11 +32,11 @@ export default async function Image() {
       >
         <div style={{ display: "flex", fontSize: 28, fontWeight: 800 }}>Manveen Singh</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
-            Your tools don&apos;t talk to each other.
+          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            Every week has a job that&apos;s
           </div>
-          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
-            I connect them so it happens on its own.
+          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            the same clicks, in the same order.
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

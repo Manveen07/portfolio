@@ -524,7 +524,9 @@ test("the post links to the pilot section, which exists", () => {
 test("meta description and share text are current", () => {
   const head = read(".next/server/app/index.html").match(/<head[\s\S]*?<\/head>/)[0];
   const desc = head.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "";
-  assert.match(desc, /copy-paste work between them happens on its own/);
+  // Layout pass item 5: the head says what the hero says.
+  assert.match(desc, /^Every week has a job that(?:'|&#x27;)s the same clicks, in the same order\. I make it run by itself, the same way every time\.$/);
+  assert.doesNotMatch(head, /talk to each other|copies things between|copy-paste work between/);
   assert.doesNotMatch(head, /quote intake/i);
   assert.doesNotMatch(head, /automating the boring/i);
 });
@@ -536,6 +538,24 @@ test("share image and icon have the new look", () => {
   // Same wording as the page: the count is mornings started, not mornings that worked.
   assert.match(og, /mornings one system has started on its own/);
   assert.doesNotMatch(og, /has run on its own/);
+  // Layout pass item 5: the card carries hero A's headline, the circled count and the red URL.
+  assert.match(og, /Every week has a job that(?:&apos;|')s\s/);
+  assert.match(og, /the same clicks, in the same order\./);
+  assert.doesNotMatch(og, /talk to each other|I connect them/);
+  assert.match(og, /\{snapshot\.totalRuns\}/);
+  assert.match(og, /border: "4px solid #c4161c"/);
+  assert.match(og, /color: "#c4161c" \}\}>manveen\.me/);
+});
+
+test("claims and README follow the new hero and the Precise Leads entry", () => {
+  const claims = read("docs/superpowers/specs/2026-10-13-claims.md");
+  assert.match(claims, /Every week has a job that's the same clicks, in the same order\./);
+  assert.match(claims, /his own words approved 15 Oct/);
+  assert.match(claims, /Precise Leads, Nov\. 2025 to Present/);
+  assert.match(claims, /0 contradicted claims across 300 emails/);
+  assert.match(claims, /Slack communities/);
+  const readme = read("README.md");
+  assert.doesNotMatch(readme, /copy-paste work between them|talk to each other/);
   assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);
   assert.ok(!built("app/favicon.ico"), "create-next-app favicon.ico still overrides the svg");
 });

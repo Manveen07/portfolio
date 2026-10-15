@@ -1,6 +1,6 @@
 # manveen.me
 
-The site of Manveen Singh, an automation engineer in Delhi, written for business owners. It says what he builds (connecting the tools a business already uses, so the copy-paste work between them happens on its own), shows the Tender Radar running every morning with its real numbers, and ends with his email address and a small link to his calendar.
+The site of Manveen Singh, an automation engineer in Delhi, written for business owners. It says what he builds (the weekly job that is the same clicks in the same order, made to run by itself), shows the Tender Radar running every morning with its real numbers, lists his two jobs and his own projects, and ends with his email address and a small link to his calendar.
 
 Next.js 16 (app router), React 19 and TypeScript, with plain CSS in `app/globals.css`.
 
