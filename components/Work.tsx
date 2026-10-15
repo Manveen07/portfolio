@@ -59,14 +59,14 @@ function Group({ label, items }: { label: string; items: WorkItem[] }) {
         <Fragment key={w.title}>
           {i > 0 && <hr className="tick" />}
           {w.note ? (
-            <Annotated note={w.note} drop={w.scorecard ? "scorecard" : undefined}>
+            <Annotated note={w.note}>
               <Entry w={w} />
             </Annotated>
           ) : (
             <Entry w={w} />
           )}
           {w.quote && (
-            <Annotated note={QUOTE.penNote} drop="line">
+            <Annotated note={QUOTE.penNote}>
               <figure className="quote">
                 <blockquote>
                   <p>

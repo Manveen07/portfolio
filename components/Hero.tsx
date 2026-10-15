@@ -13,12 +13,12 @@ export default function Hero() {
         )}
         <h1>{HERO.headline}</h1>
       </div>
-      <WeekSketch />
       <Annotated note={HERO.nerdNote}>
         <p className="lede">
           {HERO.answer} <Underline>{HERO.marked}</Underline>
         </p>
       </Annotated>
+      <WeekSketch />
       {HERO.how.map((line) => (
         <p key={line} className="body">
           {line}

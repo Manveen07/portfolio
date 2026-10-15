@@ -330,7 +330,7 @@ test("the quote follows the Caprae card as a block of the Work section, with its
   assert.ok(capraeEnd < quoteAt && quoteAt < nextCardAt, "the quote is not between the Caprae entry and the next entry");
   assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
   // The quote closes the Jobs group; leadlens opens Built on my own, with a note of its own, so its own annotated block.
-  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><div class="annotated"><div><article/);
+  assert.match(work, /<\/figure><\/div><aside class="note">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><div class="annotated"><div><article/);
   assert.match(text("index.html"), /the bit that matters if you don't write code/);
   // The red underline is on the marked words.
   assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
@@ -358,16 +358,24 @@ test("one reading column, centred: header, sections and footer share its width a
   assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
 });
 
-test("margin notes hang outside the centred column from 1200px up, and sit under their block below that", () => {
+test("red notes stay inside the centred column at every width, under the block they point at", () => {
+  // Centring pass (15 Oct): notes hanging in the right margin made the page lean right. Nothing leaves the column now.
   const styles = css();
-  const wide = mediaBlocks(styles, "1200px").join("\n");
-  const ann = wide.match(/\.annotated\{[^}]*\}/)?.[0] ?? "";
-  assert.match(ann, /grid-template-columns:minmax\(0,\s?var\(--col\)\)\s?var\(--note\)/);
-  // The note column grows out to the right, so the content column keeps the column's width and left edge.
-  assert.match(ann, /margin-right:calc\(-1 ?\* ?\(var\(--note\) \+ 48px\)\)/);
-  assert.match(wide, /\.note:{1,2}before\{content:"← "\}/);
-  // Below 1200px the note keeps its up arrow and stays in the flow.
+  assert.equal(mediaBlocks(styles, "1200px").length, 0, "a 1200px block still moves notes into the margin");
+  assert.doesNotMatch(styles, /--note:/, "the margin-note column width is still defined");
+  assert.doesNotMatch(styles, /content:"← "/, "a note still points left from the margin");
   assert.match(outsideMedia(styles), /\.note:{1,2}before\{content:"↑ "\}/);
+  const ann = styles.match(/\.annotated\{[^}]*\}/)?.[0] ?? "";
+  assert.doesNotMatch(ann, /margin-right/, "the annotated block still grows out of the column");
+});
+
+test("the hero answers its headline first, then shows the week", () => {
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const lede = hero.indexOf('class="lede"');
+  const sketch = hero.indexOf('class="sketch');
+  const story = hero.indexOf("I spent a year automating");
+  assert.ok(lede > 0 && sketch > 0 && story > 0, `a hero piece is missing: ${[lede, sketch, story]}`);
+  assert.ok(hero.indexOf("</h1>") < lede && lede < sketch && sketch < story, "the hero is not h1, lede, week sketch, story");
 });
 
 test("the photo sits inside the column beside the h1 from 720px, above it below that, never positioned", () => {
@@ -621,15 +629,11 @@ test("verdict 3a: the proof note sits with the bars, below the run count", () =>
   assert.ok(proof.indexOf("mornings it has started on its own") < annotatedAt, "the count line is still inside the annotated block");
 });
 
-test("verdict 3b: only the quote's note drops one line on wide screens", () => {
+test("every note is a plain note: the margin offsets (note-drop, note-score) are gone", () => {
   const html = markup("index.html");
-  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(work, /<aside class="note note-drop">/);
-  assert.equal(count(html, 'class="note note-drop"'), 1, "other notes were dropped too");
-  assert.ok(count(html, /<aside class="note">/) >= 2, "the hero and proof notes lost their plain class");
-  // One blockquote line is 20px x 1.45 = 29px, added to the usual 10px margin. The minifier may fold the calc to 39px.
-  assert.match(css(), /\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/);
-  assert.match(css(), /@media \(min-width:1200px\)\{(?:[^{}]+\{[^{}]*\})*\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/, "the drop rule is not inside the 1200px media block");
+  assert.ok(count(html, /<aside class="note">/) >= 5, "a note lost its plain class");
+  assert.doesNotMatch(html, /note-(?:drop|score)/);
+  assert.doesNotMatch(css(), /\.note-(?:drop|score)/);
 });
 
 test("verdict 4: the share card loads Archivo from real static TTF files", () => {
@@ -724,8 +728,8 @@ test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, 
   assert.match(card, /scam\.<\/p><table class="scorecard"><caption>/, "something sits between the lead line and the scorecard");
   assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
   for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
-  // The note belongs to the card, outside the article, in the margin column.
-  assert.match(work, /<\/article><\/div><aside class="note note-score">it once scored 100%[^<]*<\/aside><\/div>/);
+  // The note belongs to the card, outside the article, under it.
+  assert.match(work, /<\/article><\/div><aside class="note">it once scored 100%[^<]*<\/aside><\/div>/);
 });
 
 test("the work section has two margin notes (the quote's and leadlens's) and PresentAI has none", () => {
@@ -766,7 +770,7 @@ test("hero has the week sketch: one SVG, five crossed-out days, a bracket and it
     hero,
     /role="img" aria-label="A week of the same task: Monday to Friday, copy, paste, double-check, crossed out in red\. Runs on its own now\."/,
   );
-  assert.ok(hero.indexOf("<h1") < hero.indexOf('class="sketch"') && hero.indexOf('class="sketch"') < hero.indexOf('class="lede"'));
+  // Order (h1, lede, sketch, story) is checked in "the hero answers its headline first".
   const svgs = hero.match(/<svg[\s\S]*?<\/svg>/g) ?? [];
   assert.equal(svgs.length, 1, "the week sketch should be one SVG");
   const svg = svgs[0];
@@ -864,19 +868,6 @@ test("a summary that cannot be parsed sends the live path back to the whole save
 });
 
 // ── Final fix wave, item 4: the leadlens note points at its scorecard ──
-test("the leadlens note sits level with its scorecard on wide screens, and phones are unchanged", () => {
-  const html = markup("index.html");
-  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(work, /<aside class="note note-score">it once scored 100%/);
-  assert.equal(count(html, 'class="note note-score"'), 1, "only the leadlens note drops to its scorecard");
-  // The scorecard starts a fixed distance below the top of the leadlens entry (measured at 1280, 1440 and 1920:
-  // the column is 640px at every width from 1200px up, where notes go to the margin).
-  const wide = mediaBlocks(css(), "1200px").join("\n");
-  assert.match(wide, /\.note-score\{margin-top:(?:calc\(10px \+ \d+px\)|\d+px)\}/, "no .note-score rule inside the 1200px media block");
-  // On a phone the note stays under the card with its up arrow, so no rule outside the media block mentions it.
-  assert.doesNotMatch(outsideMedia(css()), /note-score/, "phones get the drop too");
-});
-
 // ── Final fix wave, item 5: even spacing on the tall pilot timeline ───
 test("the tall pilot timeline has an even gap before each step and no blank tail", () => {
   const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
