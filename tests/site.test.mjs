@@ -217,24 +217,25 @@ test("Zackary's quote has name, title and company, and no email address", () => 
   assert.ok(!markup("index.html").toLowerCase().includes("zackary@"), "his email address is on the page");
 });
 
-test("Caprae dates and title follow the signed letter; Precise Leads is one line", () => {
+test("Caprae dates and title follow the signed letter; Precise Leads is a job entry, not a Now line", () => {
   const t = text("index.html");
   // The role moved onto the Caprae card: company on one line, title and dates on the next.
   assert.match(t, /At Caprae Capital Partners Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote/);
   assert.match(t, /Aug 2025 → Jan 2026/);
   assert.doesNotMatch(t, /Jun → Dec 2025/);
-  assert.match(t, /Now: GTM automation engineer at Precise Leads, since Nov 2025\./);
+  assert.doesNotMatch(t, /Now: GTM automation engineer/);
+  assert.match(t, /At Precise Leads GTM automation engineer · Nov 2025 → now · remote/);
   assert.doesNotMatch(t, /8h → 2h/);
   assert.doesNotMatch(t, /origin story/i);
 });
 
 // ── Task 6: three projects, no stale, agency or demo-data cards ────────
-test("work shows resume screening, leadlens and PresentAI only", () => {
+test("work shows lead research, resume screening, leadlens and PresentAI only", () => {
   const html = markup("index.html");
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.equal(count(work, "<article"), 3);
+  assert.equal(count(work, "<article"), 4);
   const t = text("index.html");
-  for (const s of ["Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
+  for (const s of ["Lead research, automated", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   // Final review: name what was measured, and say nothing the sources can't back.
@@ -256,17 +257,47 @@ test("the leadlens card links to a post that was built", () => {
 });
 
 // ── Show the machine, Task 0: four sections; the quote follows the Caprae card ──
-test("work runs Caprae, then the quote, then leadlens, then PresentAI (spec 3.9)", () => {
+test("work runs Jobs (Precise Leads, Caprae, the quote), then Built on my own (leadlens, PresentAI)", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.ok(work, "no section#work");
+  assert.match(work, /<h2 class="kicker">Work, and who vouches for it<\/h2>/, "the section lost its kicker");
   const titles = [...work.matchAll(/<h3 class="h3">([^<]*)<\/h3>/g)].map((m) => m[1]);
-  assert.deepEqual(titles, ["Resume screening, automated", "leadlens", "PresentAI"]);
+  assert.deepEqual(titles, ["Lead research, automated", "Resume screening, automated", "leadlens", "PresentAI"]);
   const at = (s) => work.indexOf(s);
   const quoteAt = at('<figure class="quote">');
   assert.ok(quoteAt > 0, "no quote in the Work section");
-  assert.ok(at("Resume screening, automated") < quoteAt, "the quote comes before the Caprae card");
-  assert.ok(quoteAt < at(">leadlens<"), "the quote is not between the Caprae card and leadlens");
-  assert.ok(at(">leadlens<") < at(">PresentAI<"), "PresentAI comes before leadlens");
+  const order = [
+    '<p class="group">Jobs</p>',
+    ">Lead research, automated<",
+    ">Resume screening, automated<",
+    '<figure class="quote">',
+    '<p class="group">Built on my own</p>',
+    ">leadlens<",
+    ">PresentAI<",
+  ].map(at);
+  assert.ok(order.every((i) => i >= 0), `a piece is missing: ${order}`);
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "the Work section is out of order");
+  // One pencil tick inside each group, between its two entries.
+  assert.equal(count(work, '<hr class="tick"/>'), 2);
+  const label = css().match(/\.group\{[^}]*\}/)?.[0] ?? "";
+  assert.match(label, /font-family:var\(--font-mono\)/, "the group labels are not mono");
+});
+
+test("the Precise Leads entry: meta, title, plain text, one metric, stack; no note and no link", () => {
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  assert.ok(entry, "no Precise Leads entry");
+  assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Lead research, automated<\/h3>/);
+  assert.match(entry, /<p class="body">Finds warm leads, researches them, and drafts emails that only say what the research found\.<\/p>/);
+  assert.match(
+    entry,
+    /<p class="body">One tool watches Slack communities as messages come in, picks out people who look like buyers, and passes the warm ones to the sales team\. Another researches each lead across the web, LinkedIn and company data and drafts a personal email from what it found\. A second model checks each claim in the draft against the research before it goes anywhere\.<\/p>/,
+  );
+  assert.match(entry, /<dt>0<\/dt><dd>contradicted claims in 300 drafted emails<\/dd>/);
+  assert.match(entry, /<p class="stack">built with (?:<!-- -->)?python, n8n, clay<\/p>/);
+  assert.doesNotMatch(entry, /<a /, "the Precise Leads entry has a link");
+  // No note: it is not inside an annotated block.
+  assert.match(work, /<p class="group">Jobs<\/p><article class="entry"><p class="small">At Precise Leads/);
 });
 
 test("the Caprae card has the company line, then the role line, and no card gets a role it doesn't have", () => {
@@ -290,14 +321,15 @@ test("the quote follows the Caprae card as a block of the Work section, with its
   // Cards and the quote block are direct children of the section, so `.wrap > .annotated`
   // gives the quote its margin column. A wrapper div around the cards would stop that.
   assert.ok(!work.includes('<div class="work"'), "cards are still wrapped in a .work div");
-  const firstCardEnd = work.indexOf("</article>");
+  const capraeAt = work.indexOf(">Resume screening, automated<");
+  const capraeEnd = work.indexOf("</article>", capraeAt);
   const quoteAt = work.indexOf('<figure class="quote">');
-  const secondCardAt = work.indexOf("<article", firstCardEnd);
-  assert.ok(work.slice(0, firstCardEnd).includes("Resume screening, automated"), "the first card is not the Caprae card");
-  assert.ok(firstCardEnd < quoteAt && quoteAt < secondCardAt, "the quote is not between the Caprae card and the next card");
+  const nextCardAt = work.indexOf("<article", capraeEnd);
+  assert.ok(capraeAt > 0, "no Caprae entry");
+  assert.ok(capraeEnd < quoteAt && quoteAt < nextCardAt, "the quote is not between the Caprae entry and the next entry");
   assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
-  // The next entry is leadlens, after a pencil tick; it has a note of its own, so it opens with its own annotated block.
-  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><hr class="tick"\/><div class="annotated"><div><article/);
+  // The quote closes the Jobs group; leadlens opens Built on my own, with a note of its own, so its own annotated block.
+  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><div class="annotated"><div><article/);
   assert.match(text("index.html"), /the bit that matters if you don't write code/);
   // The red underline is on the marked words.
   assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
@@ -305,11 +337,7 @@ test("the quote follows the Caprae card as a block of the Work section, with its
 
 test("the Work section ends with the Now line and the resume link", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(
-    text("index.html"),
-    /Now: GTM automation engineer at Precise Leads, since Nov 2025\. B\.Tech Computer Science, MSIT Delhi, 2026\. Full resume ↗/,
-  );
-  assert.match(work, /<a class="link" href="\/resume\.pdf">Full resume ↗<\/a><\/p><\/section>$/);
+  assert.match(work, /<p class="small now">B\.Tech Computer Science, MSIT Delhi, 2026\.(?:<!-- -->)? <a class="link" href="\/resume\.pdf">Full resume ↗<\/a><\/p><\/section>$/);
 });
 
 // ── Layout pass (15 Oct), item 1: one centred column, entries on the paper ──
@@ -453,7 +481,7 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
     "Work, and who vouches for it",
     "How working with me goes",
   ]);
-  assert.equal(count(html, /<h3[\s>]/), 3);
+  assert.equal(count(html, /<h3[\s>]/), 4);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {

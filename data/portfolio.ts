@@ -67,12 +67,12 @@ export const QUOTE = {
   penNote: "the bit that matters if you don't write code",
 } as const;
 
-// The last line of the Work section. Precise Leads is one line only: agency results
-// stay off the freelance page.
-export const NOW_LINE = "Now: GTM automation engineer at Precise Leads, since Nov 2025. B.Tech Computer Science, MSIT Delhi, 2026.";
+// The last line of the Work section, before the resume link.
+export const NOW_LINE = "B.Tech Computer Science, MSIT Delhi, 2026.";
 
-// ── Work: leads with the Caprae card and its quote, then leadlens, then PresentAI (spec 3.9).
-// Order matters; tests/site.test.mjs pins it. Tender Radar has its own section above.
+// ── Work: two groups. Jobs, newest first (Precise Leads, then Caprae and its quote), then
+// Built on my own (leadlens, then PresentAI). Order matters; tests/site.test.mjs pins it.
+// Tender Radar has its own section above.
 export type WorkItem = {
   title: string;
   where: string;
@@ -94,7 +94,18 @@ export type WorkItem = {
   note?: string;
 };
 
-export const WORK: WorkItem[] = [
+export const JOBS: WorkItem[] = [
+  {
+    title: "Lead research, automated",
+    where: "At Precise Leads",
+    // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"); claims rows 77 to 80.
+    role: "GTM automation engineer · Nov 2025 → now · remote",
+    lead: "Finds warm leads, researches them, and drafts emails that only say what the research found.",
+    detail:
+      "One tool watches Slack communities as messages come in, picks out people who look like buyers, and passes the warm ones to the sales team. Another researches each lead across the web, LinkedIn and company data and drafts a personal email from what it found. A second model checks each claim in the draft against the research before it goes anywhere.",
+    metrics: [["0", "contradicted claims in 300 drafted emails"]],
+    stack: ["python", "n8n", "clay"],
+  },
   {
     title: "Resume screening, automated",
     where: "At Caprae Capital Partners",
@@ -110,6 +121,9 @@ export const WORK: WorkItem[] = [
     ],
     stack: ["python", "embeddings", "slack"],
   },
+];
+
+export const OWN_WORK: WorkItem[] = [
   {
     title: "leadlens",
     where: "My own project",

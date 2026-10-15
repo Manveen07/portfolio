@@ -172,6 +172,10 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 
 /* ── Work: entries sit on the paper, one short pencil stroke between them ── */
 .entry { margin: 0; }
+/* The two group labels ("Jobs", "Built on my own"): small mono, like a label pencilled above a list. */
+.group { margin: 72px 0 18px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; color: var(--ink); }
+.kicker + .group { margin-top: 26px; }
+.now { margin-top: 48px; }
 .entry .small + .small { margin-top: -6px; } /* where line and role line read as one block */
 .tick { width: 80px; height: 8px; margin: 40px 0 34px; border: 0; background-image: var(--divider); background-repeat: no-repeat; background-size: 80px 8px; }
 .metrics { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 14px 0 8px; }
