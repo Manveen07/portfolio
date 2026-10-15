@@ -49,6 +49,26 @@ const count = (haystack, needle) => {
   return (haystack.match(re) ?? []).length;
 };
 
+/** The inside of every `@media (min-width:Npx){...}` block in the built CSS, found by matching braces. */
+const mediaBlocks = (styles, query) => {
+  const out = [];
+  const head = `@media (min-width:${query}){`;
+  for (let at = styles.indexOf(head); at !== -1; at = styles.indexOf(head, at + 1)) {
+    let depth = 1;
+    let i = at + head.length;
+    for (; i < styles.length && depth > 0; i++) depth += styles[i] === "{" ? 1 : styles[i] === "}" ? -1 : 0;
+    out.push(styles.slice(at + head.length, i - 1));
+  }
+  return out;
+};
+
+/** The built CSS with every min-width media block cut out: the rules that apply on a phone. */
+const outsideMedia = (styles) => {
+  let rest = styles;
+  for (const px of ["640px", "1000px"]) for (const block of mediaBlocks(styles, px)) rest = rest.replace(`@media (min-width:${px}){${block}}`, "");
+  return rest;
+};
+
 const snapshot = JSON.parse(read("data/pipeline-snapshot.json"));
 
 // ── Task 1: the build exists and the saved run numbers are current ─────
@@ -625,4 +645,27 @@ test("sections are divided by a hand-drawn pencil line, not a straight border", 
   assert.doesNotMatch(rule, /border-top:1px solid/);
   // .hero is a .sec too, so it must switch the pencil line off.
   assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /background-image:none/);
+});
+
+// ── Final fix wave, item 1: the photo sits beside the headline on wide screens (Manveen's pick B, 15 Oct) ──
+test("the photo stays above the headline on phones and sits in the margin from 1000px up", () => {
+  const styles = css();
+  // On a phone it is an ordinary block above the h1 (DOM order is photo, then h1).
+  const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(base, "no .photo rule");
+  assert.doesNotMatch(base, /position:(?:absolute|fixed)/, "the photo is positioned outside the 1000px media block");
+  assert.match(base, /width:132px/);
+  assert.match(base, /border:1px solid var\(--rule\)/);
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(hero.indexOf("<img") !== -1 && hero.indexOf("<img") < hero.indexOf("<h1"), "the photo is not before the h1 in the page");
+  // From 1000px it leaves the flow and sits in the note column, level with the h1 (.hero padding-top 24px).
+  const wide = mediaBlocks(styles, "1000px").join("\n");
+  assert.match(wide, /\.hero\{[^}]*position:relative/, "the hero is not the photo's positioning box");
+  const photo = wide.match(/\.photo\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(photo, "no .photo rule inside the 1000px media block");
+  assert.match(photo, /position:absolute/);
+  assert.match(photo, /top:24px/, "the photo's top is not the hero's 24px padding, so it would not line up with the h1");
+  assert.match(photo, /left:calc\((?:20px \+ var\(--col\) \+ 48px|68px \+ var\(--col\))\)/, "the photo is not in the note column");
+  assert.match(photo, /margin:0(?:[;}])/, "the 22px bottom margin is still on the wide photo");
+  assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /padding-top:24px/);
 });

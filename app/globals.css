@@ -83,6 +83,13 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 .photo { display: block; width: 132px; height: auto; margin: 0 0 22px; border: 1px solid var(--rule); }
+@media (min-width: 1000px) {
+  /* The photo leaves the flow and sits in the note column beside the headline. top is the hero's own
+     padding-top (24px), so it lines up with the h1; left is the start of the note column
+     (wrap padding 20px + reading column + the 48px gap). Below 1000px it stays above the headline. */
+  .hero { position: relative; }
+  .photo { position: absolute; top: 24px; left: calc(20px + var(--col) + 48px); margin: 0; }
+}
 
 /* ── Proof ── */
 .count { font-size: 64px; font-weight: 900; line-height: 1; margin: 18px 0 10px; }
