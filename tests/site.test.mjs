@@ -507,6 +507,15 @@ test("Tender Radar sketch draws only the sources the daily run really reads", ()
   for (const s of ["Public Contracts Scotland", "Sell2Wales"]) assert.ok(!proof.includes(s), `${s} returns 403 every morning, so it must not be drawn`);
 });
 
+test("Tender Radar tall sketch text stays readable on a 320px phone", () => {
+  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const tall = proof.match(/<svg[^>]*class="sketch-tall"[^>]*>/)?.[0] ?? "";
+  assert.ok(tall, "no tall sketch in the proof section");
+  // The tall SVG is 320 units wide and shows about 280px wide at a 320 viewport, so 11 gave 9.6px text.
+  const size = Number(/font-size="(\d+(?:\.\d+)?)"/.exec(tall)?.[1]);
+  assert.ok(size >= 12, `tall radar sketch font-size is ${size}, under 12 (about 10.5px at 320)`);
+});
+
 test("sketch red marks hide only under pen-js and never under reduced motion", () => {
   const styles = css();
   assert.match(styles, /\.pen-js \.sketch:not\(\.in\) \.mark\{stroke-dashoffset:1/);

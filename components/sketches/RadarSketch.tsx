@@ -44,7 +44,7 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
         <text x="452" y="198" className="red">{under}</text>
         <text x="452" y="214" className="red">worth bidding on.</text>
       </svg>
-      <svg className="sketch-tall" viewBox="0 0 320 400" aria-hidden="true" fontSize="11">
+      <svg className="sketch-tall" viewBox="0 0 320 400" aria-hidden="true" fontSize="13">
         {SOURCES.map((s, i) => {
           const y = 8 + i * 34; // three boxes stacked above the script box
           return (
@@ -57,11 +57,11 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
         })}
         <path className="ink" d="M240 56 C244 90 200 110 150 134" />
         <path className="ink" d="M158 126 L149 135 L161 139" />
-        <path className="ink" d="M40 142 L250 140 L252 196 L41 198 Z" />
+        <path className="ink" d="M40 142 L250 140 L252 202 L41 204 Z" />
         <text x="52" y="162">my script</text>
         <text x="52" y="178" className="dim">every morning,</text>
-        <text x="52" y="192" className="dim">no one presses go</text>
-        <path className="ink" d="M145 202 C146 214 144 224 145 236" />
+        <text x="52" y="193" className="dim">no one presses go</text>
+        <path className="ink" d="M145 208 C146 218 144 226 145 236" />
         <path className="ink" d="M139 229 L145 238 L151 229" />
         <path className="ink" d="M20 242 L300 240 L301 352 L21 354 Z" />
         <text x="32" y="264">each notice, checked</text>
