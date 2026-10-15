@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#f4f1ea"/>
-  <text x="32" y="45" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800" text-anchor="middle" fill="#1d1d1d">M</text>
-  <ellipse cx="32" cy="32" rx="27" ry="21" fill="none" stroke="#c4161c" stroke-width="4" transform="rotate(-8 32 32)"/>
+  <rect width="64" height="64" rx="6" fill="#f4f1ea"/>
+  <!-- The M is Archivo ExtraBold's own outline (font units), scaled and centred: a favicon cannot load web fonts. -->
+  <path transform="translate(12.8 46.4) scale(0.042)" fill="#1d1d1d" d="M75 0L75 -687L336 -687L419 -381Q424 -364 431 -337Q438 -310 445 -280Q452 -250 457 -226L465 -226Q471 -254 481 -298.5Q491 -343 501 -382L585 -687L839 -687L839 0L665 0L665 -293Q665 -335 665.5 -379.5Q666 -424 667 -459.5Q668 -495 668 -512L660 -512Q657 -497 650.5 -468.5Q644 -440 636.5 -409.5Q629 -379 623 -357L523 0L379 0L278 -357Q272 -377 265.5 -405Q259 -433 252.5 -461.5Q246 -490 242 -511L234 -511Q235 -485 236 -447.5Q237 -410 237.5 -369.5Q238 -329 238 -293L238 0L75 0Z"/>
+  <!-- A red pen loop, the same hand as the circles on the page: uneven, and it overshoots where it started. -->
+  <path fill="none" stroke="#c4161c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M6.5 35 C4.5 14 24 4.5 43 6.5 C60 8.5 62.5 33 53 46 C42 60 12 58 7.5 40 C7 37.5 7.4 34 8.6 31"/>
 </svg>

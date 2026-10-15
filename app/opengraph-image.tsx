@@ -55,7 +55,13 @@ export default async function Image() {
             </div>
             <div style={{ display: "flex", fontSize: 26, color: "#5a5750" }}>mornings one system has started on its own</div>
           </div>
-          <div style={{ display: "flex", fontSize: 26, color: "#c4161c" }}>manveen.me</div>
+          {/* The domain reads like the underlined words on the page: ink text, a hand-drawn red line under it. */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <div style={{ display: "flex", fontSize: 28, fontWeight: 800, color: "#1d1d1d" }}>manveen.me</div>
+            <svg width="184" height="14" viewBox="0 0 184 14" style={{ marginTop: 2 }}>
+              <path d="M3 8 C34 5 72 10 106 7 S158 5 181 8" fill="none" stroke="#c4161c" strokeWidth="4" strokeLinecap="round" />
+            </svg>
+          </div>
         </div>
       </div>
     ),

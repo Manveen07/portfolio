@@ -603,7 +603,11 @@ test("share image and icon have the new look", () => {
   assert.doesNotMatch(og, /talk to each other|I connect them/);
   assert.match(og, /\{snapshot\.totalRuns\}/);
   assert.match(og, /border: "4px solid #c4161c"/);
-  assert.match(og, /color: "#c4161c" \}\}>manveen\.me/);
+  // 15 Oct: the domain reads like the underlined words on the page: ink text, a hand-drawn red line under it.
+  const domain = og.slice(og.indexOf(">manveen.me<") - 400, og.indexOf(">manveen.me<") + 700);
+  assert.match(domain, /color: "#1d1d1d"[^>]*>manveen\.me</, "the domain is not in ink");
+  assert.match(domain, /<svg[\s\S]*?<path[^>]*stroke="#c4161c"[^>]*strokeLinecap="round"/, "no pen underline under the domain");
+  assert.doesNotMatch(domain, /<line|<rect/, "the underline is a straight rule, not a pen stroke");
 });
 
 test("claims and README follow the new hero and the Precise Leads entry", () => {
@@ -619,6 +623,13 @@ test("claims and README follow the new hero and the Precise Leads entry", () => 
   const readme = read("README.md");
   assert.doesNotMatch(readme, /copy-paste work between them|talk to each other/);
   assert.doesNotMatch(read("public/favicon.svg"), /#ffd60a/);
+  // 15 Oct: the favicon matches the page. The M is Archivo ExtraBold drawn as a path (a favicon can't load
+  // web fonts, so <text> would fall back to Arial); the loop is a pen stroke, not a perfect ellipse.
+  const fav = read("public/favicon.svg");
+  assert.doesNotMatch(fav, /<text|<ellipse|<circle/, "the favicon still uses a font or a perfect shape");
+  assert.match(fav, /<path[^>]*fill="#1d1d1d"[^>]*d="M75 0L75 -687/, "the M is not the Archivo ExtraBold outline");
+  assert.match(fav, /<path[^>]*fill="none"[^>]*stroke="#c4161c"[^>]*stroke-linecap="round"[^>]*d="M[^"]*C/, "no hand-drawn red loop");
+  assert.match(fav, /fill="#f4f1ea"/, "the paper background is gone");
   assert.ok(!built("app/favicon.ico"), "create-next-app favicon.ico still overrides the svg");
 });
 
