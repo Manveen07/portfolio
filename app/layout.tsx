@@ -1,21 +1,38 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
-const sans = Archivo({
+// The fonts live in app/fonts (Google's own Latin files, OFL; see app/fonts/README.md), so a build never
+// depends on Google's font server. On 15 Oct a Vercel build failed when that server did not deliver Archivo.
+// next/font/local names each family after its variable, hence these names. The Arial fallbacks (for
+// characters the fonts lack, like →) use Google's exact scaling, declared in globals.css, so nothing moves.
+// One variable file serves every weight. It is declared at exactly the four weights Google's own CSS declared
+// (400, 600, 800, 900), not as a 400 to 900 range: <b> asks for 700, and with these four the browser rounds
+// it to 800, as it always has. A range would draw a true, thinner 700. (Font loader values must be literals.)
+const Archivo = localFont({
+  src: [
+    { path: "./fonts/archivo-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/archivo-latin.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/archivo-latin.woff2", weight: "800", style: "normal" },
+    { path: "./fonts/archivo-latin.woff2", weight: "900", style: "normal" },
+  ],
   variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "600", "800", "900"],
   display: "swap",
+  adjustFontFallback: false,
+  fallback: ["Archivo Fallback"],
 });
 
-const mono = IBM_Plex_Mono({
+const IBMPlexMono = localFont({
+  src: [
+    { path: "./fonts/plex-mono-400-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/plex-mono-500-latin.woff2", weight: "500", style: "normal" },
+  ],
   variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
+  adjustFontFallback: false,
+  fallback: ["IBM Plex Mono Fallback"],
 });
 
 const TITLE = "Manveen Singh | automation engineer";
@@ -52,7 +69,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Lets CSS hide pen marks until they scroll into view. Without JS they stay drawn. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('pen-js')" }} />
       </head>
-      <body className={`${sans.variable} ${mono.variable}`}>
+      <body className={`${Archivo.variable} ${IBMPlexMono.variable}`}>
         <Nav />
         <main>{children}</main>
         <Footer />

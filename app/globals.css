@@ -16,6 +16,11 @@
   --divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
+/* Arial, scaled to Archivo's and Plex Mono's proportions, for characters the fonts lack (the arrows) and
+   for the moment before they load. Google's exact values, as next/font/google produced them. */
+@font-face { font-family: "Archivo Fallback"; src: local("Arial"); ascent-override: 88.96%; descent-override: 21.28%; line-gap-override: 0%; size-adjust: 98.7%; }
+@font-face { font-family: "IBM Plex Mono Fallback"; src: local("Arial"); ascent-override: 76.16%; descent-override: 20.43%; line-gap-override: 0%; size-adjust: 134.59%; }
+
 * { box-sizing: border-box; }
 html { background: var(--paper); scroll-behavior: smooth; }
 body {
