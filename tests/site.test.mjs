@@ -481,6 +481,16 @@ test("no black buttons anywhere: the 404 and post pages end with plain links too
   assert.match(markup("writing/schema-as-eval-spec.html"), /<a class="link" href="\/#contact">Write to me<\/a>/);
 });
 
+test("a post fills the side rail too: back link and date sit in the rail, the title stays readable", () => {
+  // Release check, 15 Oct: the post left the rail empty, so its text sat pushed to the right.
+  const html = markup("writing/schema-as-eval-spec.html");
+  assert.match(html, /<article class="wrap sec hero post"><div class="post-meta"><p class="small"><a class="link" href="\/writing">← all writing<\/a><\/p><p class="small">14 June 2026/);
+  const wide = mediaBlocks(css(), "1100px").join("\n");
+  assert.match(wide, /\.sec>\.post-meta\{[^}]*grid-(?:column:1|area:1\/1)[^}]*position:sticky/);
+  // A long post title is a heading, not a poster: at most 44px.
+  assert.match(css(), /\.post h1\{font-size:clamp\(30px,\s?3\.4vw,\s?44px\)/);
+});
+
 test("the contact section ends with the one-task line, the email address, then the calendar link", () => {
   const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
   const at = (s) => c.indexOf(s);

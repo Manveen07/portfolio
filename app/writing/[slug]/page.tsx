@@ -29,15 +29,18 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   if (!post) notFound();
 
   return (
-    <article className="wrap sec hero">
-      <p className="small">
-        <Link href="/writing" className="link">
-          ← all writing
-        </Link>
-      </p>
-      <p className="small">
-        {fmtDate(post.date)} · {post.readMins} min read · {post.tags.join(", ")}
-      </p>
+    <article className="wrap sec hero post">
+      {/* Back link and date: in the side rail from 1100px, above the title below that. */}
+      <div className="post-meta">
+        <p className="small">
+          <Link className="link" href="/writing">
+            ← all writing
+          </Link>
+        </p>
+        <p className="small">
+          {fmtDate(post.date)} · {post.readMins} min read · {post.tags.join(", ")}
+        </p>
+      </div>
       <h1>{post.title}</h1>
       <p className="lede">{post.summary}</p>
       <Prose body={post.body} />
