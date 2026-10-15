@@ -711,3 +711,28 @@ test("the leadlens note sits level with its scorecard on wide screens, and phone
   // On a phone the note stays under the card with its up arrow, so no rule outside the media block mentions it.
   assert.doesNotMatch(outsideMedia(css()), /note-score/, "phones get the drop too");
 });
+
+// ── Final fix wave, item 5: even spacing on the tall pilot timeline ───
+test("the tall pilot timeline has an even gap before each step and no blank tail", () => {
+  const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const tall = c.match(/<svg[^>]*class="sketch-tall"[\s\S]*?<\/svg>/)?.[0] ?? "";
+  assert.ok(tall, "no tall pilot sketch");
+  const texts = [...tall.matchAll(/<text ([^>]*)>([^<]*)<\/text>/g)].map((m) => ({
+    y: Number(/ y="([\d.]+)"/.exec(" " + m[1])?.[1]),
+    title: /font-weight="500"/.test(m[1]),
+  }));
+  const titles = texts.filter((t) => t.title).map((t) => t.y);
+  assert.equal(titles.length, 4, "four step titles");
+  // Gap before step k+1 = its title's baseline minus the baseline of step k's last line.
+  const gaps = [0, 1, 2].map((k) => titles[k + 1] - Math.max(...texts.filter((t) => t.y > titles[k] && t.y < titles[k + 1]).map((t) => t.y)));
+  assert.ok(Math.max(...gaps) - Math.min(...gaps) <= 10, `gaps before steps 2, 3 and 4 are ${gaps.join(", ")}: uneven`);
+  // Each dot sits on its title's line, 4 units above the baseline.
+  const dots = [...tall.matchAll(/<circle [^>]*cy="([\d.]+)"/g)].map((m) => Number(m[1]));
+  assert.deepEqual(dots, titles.map((y) => y - 4), "a dot is not level with its title");
+  // The line stops a step's height below the last dot, and the sketch ends just under the last text.
+  const lineEnd = Number(/class="ink" d="[^"]* ([\d.]+)"/.exec(tall)?.[1]);
+  const lastText = Math.max(...texts.map((t) => t.y));
+  assert.ok(lineEnd > lastText && lineEnd - dots[3] <= 60, `the line ends at ${lineEnd}, last dot at ${dots[3]}`);
+  const viewH = Number(/viewBox="0 0 300 ([\d.]+)"/.exec(tall)?.[1]);
+  assert.ok(viewH - lastText <= 30, `${viewH - lastText} units of blank under the last line`);
+});

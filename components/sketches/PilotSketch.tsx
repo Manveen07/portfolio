@@ -35,12 +35,12 @@ export default function PilotSketch({ label }: { label: string }) {
         <text x="535" y="66">keep it: a monthly</text>
         <text x="535" y="80">fee, I look after it</text>
       </svg>
-      <svg className="sketch-tall" viewBox="0 0 300 380" aria-hidden="true" fontSize="12">
-        <path className="ink" d="M16 12 C14 120 18 240 16 368" />
+      <svg className="sketch-tall" viewBox="0 0 300 356" aria-hidden="true" fontSize="12">
+        <path className="ink" d="M16 12 C14 112 18 224 16 344" />
         <circle cx="16" cy="20" r="5" fill="#1d1d1d" />
         <circle cx="16" cy="124" r="5" fill="#1d1d1d" />
         <circle cx="16" cy="204" r="5" fill="#1d1d1d" />
-        <circle cx="16" cy="320" r="5" fill="#1d1d1d" />
+        <circle cx="16" cy="296" r="5" fill="#1d1d1d" />
 
         <text x="34" y="24" fontWeight="500">1 · a call</text>
         <text x="34" y="42">you tell me what</text>
@@ -58,9 +58,9 @@ export default function PilotSketch({ label }: { label: string }) {
         <text x="34" y="260">you see the list</text>
         <path className="mark" pathLength={1} d="M26 266 C23 254 24 241 37 234 C70 232 130 233.5 168 234 C180 235 183 246 182 254 C181 264 170 270 150 270.5 C110 272 55 271 36 267 C29 265 27 263 29 258" />
 
-        <text x="34" y="324" fontWeight="500">4 · you decide</text>
-        <text x="34" y="342">keep it: a monthly</text>
-        <text x="34" y="358">fee, I look after it</text>
+        <text x="34" y="300" fontWeight="500">4 · you decide</text>
+        <text x="34" y="318">keep it: a monthly</text>
+        <text x="34" y="334">fee, I look after it</text>
       </svg>
     </Sketch>
   );
