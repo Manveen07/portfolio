@@ -45,8 +45,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <Link href="/writing" className="link">
           ← all writing
         </Link>
-        <Link href="/#contact" className="btn">
-          Work with me
+        <Link className="link" href="/#contact">
+          Write to me
         </Link>
       </p>
     </article>

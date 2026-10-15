@@ -383,7 +383,10 @@ test("the photo sits inside the column beside the h1 from 720px, above it below 
   const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
   assert.ok(base, "no .photo rule");
   assert.match(base, /width:132px/);
-  assert.match(base, /border:1px solid var\(--rule\)/);
+  // Polish pass: a neutral black outline inset by 1px, not a tinted border (no coloured fringe on the photo).
+  assert.match(base, /outline:1px solid/);
+  assert.match(base, /outline-offset:-1px/);
+  assert.doesNotMatch(base, /border:/);
   for (const rule of styles.match(/\.photo\{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /position:(?:absolute|fixed)/, "the photo is positioned against layout constants");
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   // Photo, then h1, in one head block: stacked on a phone, side by side from 720px.
@@ -437,8 +440,16 @@ test("one Calendly link on the home page, at the bottom, and no buttons", () => 
   const html = markup("index.html");
   assert.equal(count(html, /calendly\.com\/manveen9650/), 1);
   assert.doesNotMatch(text("index.html"), /Book a 30-minute call|Book a call/);
-  // (.btn stays in the CSS: the 404 page and the post page still use it.)
   assert.doesNotMatch(html, /class="btn"/);
+});
+
+test("no black buttons anywhere: the 404 and post pages end with plain links too", () => {
+  for (const page of ["_not-found.html", "writing/schema-as-eval-spec.html"]) {
+    assert.doesNotMatch(markup(page), /class="btn"/, `${page} still has a button`);
+  }
+  assert.doesNotMatch(css(), /\.btn[{:]/, "the .btn style is still in the CSS");
+  assert.match(markup("_not-found.html"), /<a class="link" href="\/">Back to the home page<\/a>/);
+  assert.match(markup("writing/schema-as-eval-spec.html"), /<a class="link" href="\/#contact">Write to me<\/a>/);
 });
 
 test("the contact section ends with the one-task line, the email address, then the calendar link", () => {
@@ -759,8 +770,29 @@ test("scorecard and screenshot styles: ink grid, thin rule border, no shadow", (
   assert.match(styles, /\.scorecard td\{[^}]*border:1\.5px solid var\(--ink\)/);
   assert.match(styles, /\.scorecard b\{[^}]*font-size:26px[^}]*font-weight:800/);
   assert.match(styles, /\.scorecard caption\{[^}]*caption-side:top/);
-  assert.match(styles, /\.shot\{[^}]*border:1px solid var\(--rule\)/);
-  assert.doesNotMatch(styles.match(/\.shot\{[^}]*\}/)?.[0] ?? "", /shadow|filter|blur/);
+  const shot = styles.match(/\.shot\{[^}]*\}/)?.[0] ?? "";
+  assert.match(shot, /outline:1px solid/);
+  assert.match(shot, /outline-offset:-1px/);
+  assert.doesNotMatch(shot, /border:|shadow|filter|blur/);
+});
+
+test("hover colours apply only on pointers that can hover, so a tap never leaves a link red", () => {
+  let rest = css();
+  const head = "@media (hover:hover){";
+  for (let at = rest.indexOf(head); at !== -1; at = rest.indexOf(head)) {
+    let depth = 1;
+    let i = at + head.length;
+    for (; i < rest.length && depth > 0; i++) depth += rest[i] === "{" ? 1 : rest[i] === "}" ? -1 : 0;
+    rest = rest.slice(0, at) + rest.slice(i);
+  }
+  assert.doesNotMatch(rest, /:hover/, "a :hover rule sits outside @media (hover: hover)");
+  assert.match(css(), /@media \(hover:hover\)\{[^@]*\.link:hover/);
+});
+
+test("the pilot timeline's dots take the ink colour from CSS, not a hard-coded hex", () => {
+  const src = read("components/sketches/PilotSketch.tsx");
+  assert.doesNotMatch(src, /(?:fill|stroke)="#/);
+  assert.match(css(), /\.sketch \.dot\{[^}]*fill:var\(--ink\)/);
 });
 
 // ── Show the machine, Task 4: the problem, drawn ──────────────────────
@@ -844,7 +876,7 @@ test("the PresentAI screenshot shows as a 280px thumbnail, left-aligned, and the
   const shot = css().match(/\.shot\{[^}]*\}/)?.[0] ?? "";
   assert.match(shot, /(?:^|[{;])width:280px/, "the screenshot is not 280px wide");
   assert.match(shot, /max-width:100%/, "a narrow phone card would push the thumbnail out");
-  assert.match(shot, /border:1px solid var\(--rule\)/);
+  assert.match(shot, /outline:1px solid/);
   assert.doesNotMatch(shot, /margin:[^;}]*auto/, "the thumbnail is centred, not left-aligned");
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const img = work.match(/<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"[^>]*>/)?.[0] ?? "";

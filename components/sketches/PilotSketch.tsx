@@ -13,10 +13,10 @@ export default function PilotSketch({ label }: { label: string }) {
           circle's left half moved 10 units with its text. Each dot is 12 right of its column's text. */}
       <svg className="sketch-wide" viewBox="0 0 690 130" aria-hidden="true" fontSize="13">
         <path className="ink" d="M10 40 C160 37 300 43 450 39 S640 40 680 41" />
-        <circle cx="20" cy="40" r="5" fill="#1d1d1d" />
-        <circle cx="190" cy="40" r="5" fill="#1d1d1d" />
-        <circle cx="342" cy="40" r="5" fill="#1d1d1d" />
-        <circle cx="537" cy="40" r="5" fill="#1d1d1d" />
+        <circle cx="20" cy="40" r="5" className="dot" />
+        <circle cx="190" cy="40" r="5" className="dot" />
+        <circle cx="342" cy="40" r="5" className="dot" />
+        <circle cx="537" cy="40" r="5" className="dot" />
 
         <text x="8" y="22" fontWeight="500">1 · a call</text>
         <text x="8" y="66">you tell me what</text>
@@ -40,10 +40,10 @@ export default function PilotSketch({ label }: { label: string }) {
       </svg>
       <svg className="sketch-tall" viewBox="0 0 300 356" aria-hidden="true" fontSize="12">
         <path className="ink" d="M16 12 C14 112 18 224 16 344" />
-        <circle cx="16" cy="20" r="5" fill="#1d1d1d" />
-        <circle cx="16" cy="124" r="5" fill="#1d1d1d" />
-        <circle cx="16" cy="204" r="5" fill="#1d1d1d" />
-        <circle cx="16" cy="296" r="5" fill="#1d1d1d" />
+        <circle cx="16" cy="20" r="5" className="dot" />
+        <circle cx="16" cy="124" r="5" className="dot" />
+        <circle cx="16" cy="204" r="5" className="dot" />
+        <circle cx="16" cy="296" r="5" className="dot" />
 
         <text x="34" y="24" fontWeight="500">1 · a call</text>
         <text x="34" y="42">you tell me what</text>

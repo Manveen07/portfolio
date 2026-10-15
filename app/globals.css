@@ -28,7 +28,7 @@ body {
 }
 a { color: inherit; }
 ::selection { background: var(--red); color: var(--paper); }
-a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
 /* ── Layout: one reading column, centred at every width. Header, sections, dividers, notes and footer
    all stay inside it: nothing hangs in the margins, so the page is as centred as the column. ── */
@@ -66,23 +66,25 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
   color: var(--dim);
 }
 .link, .links a { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
-.link:hover, .links a:hover { color: var(--red); }
 .links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 14px 0 0; font-weight: 600; font-size: 15px; }
-.btn { display: inline-block; background: var(--ink); color: var(--paper); font-weight: 600; padding: 12px 18px; text-decoration: none; }
-.btn:hover { background: var(--red); }
+/* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
+   would otherwise stay red, as if it were selected. */
+@media (hover: hover) {
+  .link:hover, .links a:hover, .head-cta:hover, .mail:hover, .post-list a:hover .h3 { color: var(--red); }
+}
 
 /* ── Header and footer ── */
 .head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 22px; padding-bottom: 22px; }
 .head-name { font-weight: 800; text-decoration: none; }
 .head-cta { font-weight: 600; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
-.head-cta:hover { color: var(--red); }
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 /* Photo and headline share one block inside the column: stacked on phones, side by side from 720px
    (the h1 gets the column minus the photo and a 28px gap; both tops on the same line). */
 .hero-head { margin-bottom: 18px; }
 .hero-head h1 { margin-bottom: 0; }
-.photo { display: block; width: 132px; height: auto; margin: 0 0 22px; border: 1px solid var(--rule); }
+/* Photo and screenshot edges: neutral black at 10%, inset 1px, so no beige fringe shows on the picture. */
+.photo { display: block; width: 132px; height: auto; margin: 0 0 22px; outline: 1px solid oklch(0 0 0 / 0.1); outline-offset: -1px; }
 @media (min-width: 720px) {
   .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 132px; column-gap: 28px; align-items: start; }
   .photo { grid-column: 2; grid-row: 1; margin: 0; }
@@ -139,6 +141,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .sketch text { font-family: var(--font-mono), "IBM Plex Mono", monospace; fill: var(--ink); }
 .sketch .dim { fill: var(--dim); }
 .sketch .red { fill: var(--red); }
+.sketch .dot { fill: var(--ink); }
 .sketch .ink { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sketch .mark {
   fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round;
@@ -177,9 +180,9 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .scorecard b { display: block; font-family: var(--font-sans), Archivo, sans-serif; font-size: 26px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
 .scorecard caption { caption-side: top; text-align: left; margin-bottom: 8px; font-size: 15px; }
 .scorecard .pen-circle svg { left: -10px; top: -5px; width: calc(100% + 20px); height: calc(100% + 10px); } /* a tighter loop, so it stays clear of the label under the number */
-/* PresentAI screenshot: a framed thumbnail, left-aligned, thin rule border, no shadow. The file is 640px wide;
+/* PresentAI screenshot: a thumbnail, left-aligned, the same edge as the photo, no shadow. The file is 640px wide;
    it shows at 280px (Manveen's pick, 15 Oct), and max-width keeps it inside a narrow phone card. */
-.shot { display: block; width: 280px; max-width: 100%; height: auto; border: 1px solid var(--rule); margin: 14px 0 8px; }
+.shot { display: block; width: 280px; max-width: 100%; height: auto; outline: 1px solid oklch(0 0 0 / 0.1); outline-offset: -1px; margin: 14px 0 8px; }
 
 /* ── How working with me goes ── */
 .steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }
@@ -191,7 +194,6 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .ask { margin-top: 28px; }
 .mail-line { margin: 4px 0 10px; }
 .mail { font-size: 24px; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
-.mail:hover { color: var(--red); }
 
 /* ── Writing ── */
 .box { border: 1px solid var(--rule); background: var(--wash); }
@@ -200,4 +202,3 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .post-list { list-style: none; padding: 0; margin: 0; }
 .post-list li { padding: 18px 0; border-bottom: 1px dashed var(--rule); }
 .post-list a { text-decoration: none; }
-.post-list a:hover .h3 { color: var(--red); }

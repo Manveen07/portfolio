@@ -6,9 +6,11 @@ export default function NotFound() {
       <p className="kicker">404</p>
       <h1>Nothing here.</h1>
       <p className="lede">This page doesn&apos;t exist, or it used to and I took it down.</p>
-      <Link className="btn" href="/">
-        Back to the home page
-      </Link>
+      <p className="body">
+        <Link className="link" href="/">
+          Back to the home page
+        </Link>
+      </p>
     </section>
   );
 }
