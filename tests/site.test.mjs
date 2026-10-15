@@ -686,3 +686,14 @@ test("the PresentAI screenshot shows as a 280px thumbnail, left-aligned, and the
   assert.match(img, /width="640"/);
   assert.match(img, /height="400"/);
 });
+
+// ── Final fix wave, item 3: one run per page ───────────────────────────
+test("a summary that cannot be parsed sends the live path back to the whole saved run", () => {
+  // The sketch's note says every number comes from the same run as the bars. Saved verdicts under
+  // live run data, still labelled "Read live from GitHub", would break that. (lib/pipeline.ts imports
+  // through the @/ alias, which plain Node cannot load, so this reads the source.)
+  const src = read("lib/pipeline.ts");
+  assert.match(src, /const verdicts = parseVerdicts\(md\);\s*if \(!verdicts\) return FALLBACK;/);
+  assert.doesNotMatch(src, /parseVerdicts\(md\)\s*\?\?/, "a null parse is still patched with saved totals");
+  assert.doesNotMatch(src, /checks: FALLBACK\.checks/);
+});

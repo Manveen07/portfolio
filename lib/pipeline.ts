@@ -58,7 +58,10 @@ export async function getPipeline(): Promise<PipelineData> {
 
     const notices = Number(/Raw tender records[^\d]*(\d+)/.exec(md)?.[1] ?? FALLBACK.noticesRead);
     const profiles = (md.match(/^\| [a-z-]+ \|/gm) ?? []).length || FALLBACK.clientProfiles;
-    const verdicts = parseVerdicts(md) ?? { checks: FALLBACK.checks, bid: FALLBACK.bid, maybe: FALLBACK.maybe };
+    // A summary that cannot be parsed sends the whole page back to the saved run: saved verdicts
+    // under live run data would still say "Read live" and break "the same run as the bars".
+    const verdicts = parseVerdicts(md);
+    if (!verdicts) return FALLBACK;
 
     return {
       asOf: new Date().toISOString(),
