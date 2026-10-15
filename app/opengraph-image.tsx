@@ -1,7 +1,8 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import snapshot from "@/data/pipeline-snapshot.json";
 
-export const runtime = "edge";
 export const alt = "Manveen Singh, automation engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -9,9 +10,10 @@ export const contentType = "image/png";
 // The card people see when manveen.me is pasted into an email, Slack or LinkedIn.
 export default async function Image() {
   // Static TTFs from the Archivo project (OFL): next/og cannot read woff2 or variable fonts.
+  // Read from disk on the Node runtime (the edge bundle with both fonts was close to Vercel's Hobby limit).
   const [bold, regular] = await Promise.all([
-    fetch(new URL("./Archivo-ExtraBold.ttf", import.meta.url)).then((r) => r.arrayBuffer()),
-    fetch(new URL("./Archivo-Regular.ttf", import.meta.url)).then((r) => r.arrayBuffer()),
+    readFile(join(process.cwd(), "app/Archivo-ExtraBold.ttf")),
+    readFile(join(process.cwd(), "app/Archivo-Regular.ttf")),
   ]);
   return new ImageResponse(
     (
@@ -28,7 +30,7 @@ export default async function Image() {
           fontFamily: "Archivo",
         }}
       >
-        <div style={{ display: "flex", fontSize: 28, fontWeight: 700 }}>Manveen Singh</div>
+        <div style={{ display: "flex", fontSize: 28, fontWeight: 800 }}>Manveen Singh</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
             Your tools don&apos;t talk to each other.

@@ -465,7 +465,13 @@ test("verdict 4: the share card loads Archivo from real static TTF files", () =>
   assert.match(og, /Archivo-ExtraBold\.ttf/);
   assert.match(og, /Archivo-Regular\.ttf/);
   assert.match(og, /fontFamily: "Archivo"/);
-  assert.match(og, /export const runtime = "edge"/);
+  // Node runtime, not edge: the edge bundle with both fonts was ~939 KB gzipped against Vercel's 1 MB Hobby limit.
+  assert.doesNotMatch(og, /runtime = "edge"/);
+  assert.match(og, /readFile\(join\(process\.cwd\(\), "app\/Archivo-ExtraBold\.ttf"\)\)/);
+  assert.match(og, /readFile\(join\(process\.cwd\(\), "app\/Archivo-Regular\.ttf"\)\)/);
+  assert.doesNotMatch(og, /import\.meta\.url/);
+  // Only weights 400 and 800 are loaded, so the name line asks for 800, not 700.
+  assert.match(og, /fontSize: 28, fontWeight: 800 \}\}>Manveen Singh/);
   for (const file of ["app/Archivo-ExtraBold.ttf", "app/Archivo-Regular.ttf"]) {
     assert.ok(built(file), `${file} is missing`);
     const head = readFileSync(path.join(root, file)).subarray(0, 4);
