@@ -84,9 +84,10 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
    same line), and from 1100px the photo moves to the rail. */
 .hero-head { margin-bottom: 18px; }
 .hero-head h1 { margin-bottom: 0; }
-/* The photo is printed onto the paper (grey, multiplied into the page colour, a slight tilt) so it
-   reads as part of the page, not a framed form photo. 176px is as large as the 264px-wide file stays sharp. */
-.photo { display: block; width: 176px; height: auto; margin: 0 0 22px; filter: grayscale(1) contrast(1.08); mix-blend-mode: multiply; transform: rotate(-1.5deg); }
+/* The photo is printed onto the paper (multiplied into the page colour, a slight tilt) so it reads as part
+   of the page, not a framed form photo. In colour, a little softened so the pink flowers don't fight the
+   red pen. 176px is as large as the 264px-wide file stays sharp. */
+.photo { display: block; width: 176px; height: auto; margin: 0 0 22px; filter: saturate(0.8); mix-blend-mode: multiply; transform: rotate(-1.5deg); }
 @media (min-width: 720px) {
   .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 176px; column-gap: 36px; align-items: start; }
   .photo { grid-column: 2; grid-row: 1; margin: 0; }

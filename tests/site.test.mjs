@@ -408,10 +408,11 @@ test("the photo sits inside the column beside the h1 from 720px, above it below 
   const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
   assert.ok(base, "no .photo rule");
   assert.match(base, /width:176px/);
-  // Manveen, 15 Oct: printed onto the paper (grey, multiplied, a slight tilt), not a framed form photo.
+  // Manveen, 15 Oct: printed onto the paper (multiplied, a slight tilt), not a framed form photo.
+  // In colour (grey made the page dull), softened so the pink flowers don't fight the red pen.
   // 176px is as large as the 264px-wide file stays sharp at 1.5x.
-  // The minifier writes grayscale(1) as grayscale().
-  assert.match(base, /filter:grayscale\(1?\)/);
+  assert.doesNotMatch(base, /grayscale/, "the photo is grey again");
+  assert.match(base, /filter:saturate\(\.8\)|filter:saturate\(0\.8\)|filter:saturate\(80%\)/);
   assert.match(base, /mix-blend-mode:multiply/);
   assert.match(base, /rotate\(-1\.5deg\)/);
   assert.doesNotMatch(base, /border:|outline:1px/);
