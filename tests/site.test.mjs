@@ -773,3 +773,16 @@ test("the wide radar and pilot sketches draw their text at 13 or more (about 11p
     assert.ok(size >= 13, `the wide sketch in #${id} has font-size ${size}: its text is 10.4px at a 640px window`);
   }
 });
+
+// ── Final fix wave, item 10: the README describes the current site ────
+test("README describes the current site: short, plain, no badges, emoji, dashes or old preview", () => {
+  const readme = read("README.md");
+  assert.ok(readme.split("\n").filter((l) => l.trim()).length <= 30, "the README is long again");
+  assert.doesNotMatch(readme, /shields\.io|og-image|Framer|Tailwind CSS 3|manveen\.vercel/i, "the old site's badges, preview or stack are still there");
+  assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u, "emoji in the README");
+  assert.doesNotMatch(readme, /[—–]/, "em or en dash in the README");
+  assert.doesNotMatch(readme, /\b(leverage|utilise|utilize|streamline|optimise|optimize|robust|seamless|cutting-edge|AI-powered|AI-driven|solutions?|honest(?:ly)?|transform)\b/i);
+  for (const s of ["manveen.me", "Tender Radar", "30-minute call", "npm run dev", "npm run build", "tests/site.test.mjs", "tests/runs.test.mjs", "tests/reveal.test.mjs", "npm run refresh-snapshot", "GITHUB_TOKEN"]) {
+    assert.ok(readme.includes(s), `the README does not mention "${s}"`);
+  }
+});
