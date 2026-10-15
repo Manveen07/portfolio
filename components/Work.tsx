@@ -64,9 +64,15 @@ export default function Work() {
         );
         return (
           <Fragment key={w.title}>
-            {w.note ? <Annotated note={w.note}>{card}</Annotated> : card}
+            {w.note ? (
+              <Annotated note={w.note} drop={w.scorecard ? "scorecard" : undefined}>
+                {card}
+              </Annotated>
+            ) : (
+              card
+            )}
             {w.quote && (
-              <Annotated note={QUOTE.penNote} drop>
+              <Annotated note={QUOTE.penNote} drop="line">
                 <figure className="quote">
                   <blockquote>
                     <p>

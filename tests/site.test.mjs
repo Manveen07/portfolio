@@ -573,7 +573,7 @@ test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, 
   assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
   for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
   // The note belongs to the card, outside the article, in the margin column.
-  assert.match(work, /<\/article><\/div><aside class="note">it once scored 100%[^<]*<\/aside><\/div>/);
+  assert.match(work, /<\/article><\/div><aside class="note note-score">it once scored 100%[^<]*<\/aside><\/div>/);
 });
 
 test("the work section has two margin notes (the quote's and leadlens's) and PresentAI has none", () => {
@@ -696,4 +696,18 @@ test("a summary that cannot be parsed sends the live path back to the whole save
   assert.match(src, /const verdicts = parseVerdicts\(md\);\s*if \(!verdicts\) return FALLBACK;/);
   assert.doesNotMatch(src, /parseVerdicts\(md\)\s*\?\?/, "a null parse is still patched with saved totals");
   assert.doesNotMatch(src, /checks: FALLBACK\.checks/);
+});
+
+// ── Final fix wave, item 4: the leadlens note points at its scorecard ──
+test("the leadlens note sits level with its scorecard on wide screens, and phones are unchanged", () => {
+  const html = markup("index.html");
+  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(work, /<aside class="note note-score">it once scored 100%/);
+  assert.equal(count(html, 'class="note note-score"'), 1, "only the leadlens note drops to its scorecard");
+  // The scorecard starts about 150px below the top of the leadlens card (measured at 1000, 1280 and 1440 wide:
+  // the reading column is 640px at every width from 1000px up). The minifier may fold the calc to 160px.
+  const wide = mediaBlocks(css(), "1000px").join("\n");
+  assert.match(wide, /\.note-score\{margin-top:(?:calc\(10px \+ 150px\)|160px)\}/, "no .note-score rule inside the 1000px media block");
+  // On a phone the note stays under the card with its up arrow, so no rule outside the media block mentions it.
+  assert.doesNotMatch(outsideMedia(css()), /note-score/, "phones get the drop too");
 });

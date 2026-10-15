@@ -51,6 +51,7 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-off
   .annotated { grid-template-columns: minmax(0, var(--col)) var(--note); column-gap: 48px; align-items: start; }
   .note { margin-top: 10px; }
   .note-drop { margin-top: calc(10px + 29px); } /* one blockquote line (20px x 1.45) lower: the marked words start on line 2 */
+  .note-score { margin-top: calc(10px + 150px); } /* level with the leadlens scorecard, which starts 150px below the card top (measured at 1000, 1280 and 1440 wide; the column is 640px from 1000px up) */
   .note::before { content: "← "; }
 }
 
