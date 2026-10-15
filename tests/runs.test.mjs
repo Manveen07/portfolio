@@ -94,3 +94,17 @@ test("parseVerdicts returns null when the table is missing or malformed", () => 
   assert.equal(parseVerdicts("# Tender Radar Daily Summary\n\nno table today"), null);
   assert.equal(parseVerdicts("| Profile | Classified |\n|---|---:|\n| cleaning | lots |"), null);
 });
+
+test("parseVerdicts returns null when a number cell is not a number, even with all three columns present", () => {
+  // The fixture above has no Bid or Maybe column, so it returns null on the missing-column check.
+  // This one has all three, so only the per-cell check can catch the bad cell.
+  const bad = [
+    "| Profile | Classified | Bid | Maybe |",
+    "|---|---:|---:|---:|",
+    "| catering | 584 | 1 | 7 |",
+    "| cleaning | 593 | lots | 20 |",
+  ].join("\n");
+  assert.equal(parseVerdicts(bad), null);
+  // The same table with the cell fixed is read normally, so the null above is the bad cell's doing.
+  assert.deepEqual(parseVerdicts(bad.replace("lots", "2")), { checks: 1177, bid: 3, maybe: 27 });
+});

@@ -120,7 +120,9 @@ test("header has Book a call; footer has recruiter links and the off-the-clock l
   assert.match(text("index.html"), /Off the clock: Hunter x Hunter/);
 });
 
-test("the pilot steps list keeps its numbers despite the CSS reset", () => {
+test("the pilot steps list is still styled as a numbered list, for screen readers that announce list style", () => {
+  // It is visually hidden behind the drawn timeline (.sr-only), but the CSS reset strips list markers
+  // and some screen readers then stop announcing it as a list, so the rule keeps decimal numbering.
   assert.match(css(), /\.steps\{[^}]*list-style:decimal/);
 });
 
@@ -142,6 +144,12 @@ test("hero shows Manveen's photo", () => {
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0];
   assert.ok(hero, "no section#top");
   assert.match(hero, /<img[^>]*alt="Manveen Singh"/);
+  // The alt text alone would let a different picture slip in: the file and its size are pinned too.
+  // next/image writes the file into src as an encoded query (/_next/image?url=%2Fme.jpg&w=...).
+  const img = hero.match(/<img[^>]*>/)?.[0] ?? "";
+  assert.match(img, /src="[^"]*me\.jpg/, "the photo is not me.jpg");
+  assert.match(img, /width="264"/);
+  assert.match(img, /height="330"/);
 });
 
 // ── Task 4: Tender Radar, with numbers a skeptic can check ─────────────
@@ -635,7 +643,13 @@ test("pilot timeline is drawn, the steps list stays for screen readers", () => {
   }
   assert.equal(count(c, "every miss logged,"), 3, `"every miss logged," in both layouts and the aria-label`);
   assert.match(text("index.html"), /you see every miss, not just a score/);
-  assert.match(css(), /\.sr-only\{/);
+  // .sr-only must hide the list from the eye but not from screen readers: display:none or
+  // visibility:hidden would remove it from the accessibility tree too.
+  const sr = css().match(/\.sr-only\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(sr, "no .sr-only rule");
+  assert.match(sr, /position:absolute/);
+  assert.match(sr, /clip:rect\(0,\s?0,\s?0,\s?0\)|width:1px/, "the list is not clipped to nothing");
+  assert.doesNotMatch(sr, /display:none|visibility:hidden/, ".sr-only would hide the list from screen readers too");
 });
 
 // ── Show the machine, Task 6: hand-drawn dividers ─────────────────────
