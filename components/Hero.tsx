@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ME, HERO, PHOTO } from "@/data/portfolio";
 import Annotated from "@/components/Annotated";
 import { Underline } from "@/components/Pen";
-import ProblemSketch from "@/components/sketches/ProblemSketch";
+import WeekSketch from "@/components/sketches/WeekSketch";
 
 export default function Hero() {
   return (
@@ -13,7 +13,7 @@ export default function Hero() {
         )}
         <h1>{HERO.headline}</h1>
       </div>
-      <ProblemSketch />
+      <WeekSketch />
       <Annotated note={HERO.nerdNote}>
         <p className="lede">
           {HERO.answer} <Underline>{HERO.marked}</Underline>
@@ -25,9 +25,6 @@ export default function Hero() {
         </p>
       ))}
       <p className="small">{ME.hours}</p>
-      <a className="btn" href={ME.calendly} target="_blank" rel="noopener">
-        Book a 30-minute call
-      </a>
     </section>
   );
 }

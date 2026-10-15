@@ -19,10 +19,10 @@ export const ME = {
 // ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
 export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
 
-// ── Hero: Manveen's own words (spec 5a), keep the phrasing ──────────
+// ── Hero: Manveen's own words (approved 15 Oct, version A), keep the phrasing ──
 export const HERO = {
-  headline: "Your tools don't talk to each other, so someone on your team copies things between them.",
-  answer: "I connect them so it happens on its own,",
+  headline: "Every week has a job that's the same clicks, in the same order.",
+  answer: "I make it run by itself,",
   marked: "the same way every time.",
   nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
   how: [

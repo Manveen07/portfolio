@@ -54,7 +54,7 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-off
    its first column keeps the reading column's width and left edge. */
 @media (min-width: 1200px) {
   .annotated { grid-template-columns: minmax(0, var(--col)) var(--note); column-gap: 48px; align-items: start; margin-right: calc(-1 * (var(--note) + 48px)); }
-  .note { margin-top: 10px; }
+  .note { margin-top: 10px; height: 0; overflow: visible; } /* the note hangs from its line; the content alone sets the block's height, so a one-line lede gets no hole under it */
   .note-drop { margin-top: calc(10px + 29px); } /* one blockquote line (20px x 1.45) lower: the marked words start on line 2 */
   .note-score { margin-top: calc(10px + 103px); } /* level with the leadlens scorecard, which starts 103px below the top of its entry (measured at 1280, 1440 and 1920) */
   .note::before { content: "← "; }
@@ -159,6 +159,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .pen-js .sketch:not(.in) .mark { stroke-dashoffset: 1; }
 .sketch-tall { display: block; max-width: 420px; }  /* from 460px up the page column is wider than 420px; uncapped, the tall sketch would scale with it (13px text reaches 24px at 639px) */
 .sketch-wide { display: none; }
+.sketch-week { display: block; max-width: 400px; }  /* the hero's week: one SVG for every width, full column on phones, a hand-written note's size on wide screens */
 @media (min-width: 640px) {
   .sketch-tall { display: none; }
   .sketch-wide { display: block; }

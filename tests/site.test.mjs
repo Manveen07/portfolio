@@ -127,10 +127,14 @@ test("the pilot steps list is still styled as a numbered list, for screen reader
 });
 
 // ── Task 3: the hero says the problem first, in Manveen's words ────────
-test("hero leads with the problem and drops the slogan", () => {
+test("hero leads with the weekly job and drops the slogan", () => {
   const t = text("index.html");
-  assert.match(t, /Your tools don't talk to each other, so someone on your team copies things between them\./);
-  assert.match(t, /I connect them so it happens on its own, the same way every time\./);
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(hero, /<h1>Every week has a job that(?:'|&#x27;)s the same clicks, in the same order\.<\/h1>/);
+  assert.match(t, /I make it run by itself, the same way every time\./);
+  assert.match(hero, /<span class="pen-under">the same way every time\.<\/span>/, "the underline is not on its words");
+  assert.doesNotMatch(t, /talk to each other|copies things between/);
+  assert.doesNotMatch(hero, /class="btn"/, "the hero still has a button");
   assert.match(t, /nerd word for this: deterministic\. Same input, same result, every time\./);
   assert.match(t, /I don't automate things that aren't anyone's problem\./);
   assert.match(t, /That's why they're not automatic yet, and that's why they're problems\./);
@@ -387,8 +391,8 @@ test("sections appear in the agreed order: four, and no writing section on the h
   assert.equal(count(html, /<section[\s>]/), 4, "the home page does not have exactly four sections");
 });
 
-test("Book a call appears exactly three times: header, first screen, bottom", () => {
-  assert.equal(count(markup("index.html"), /calendly\.com\/manveen9650/), 3);
+test("Calendly links on the home page: header and bottom, none in the hero", () => {
+  assert.equal(count(markup("index.html"), /calendly\.com\/manveen9650/), 2);
 });
 
 test("no dashes, banned words, slogans or 'honest' in the home page copy", () => {
@@ -675,14 +679,33 @@ test("scorecard and screenshot styles: ink grid, thin rule border, no shadow", (
 });
 
 // ── Show the machine, Task 4: the problem, drawn ──────────────────────
-test("hero has the problem sketch in both layouts, between the headline and the answer", () => {
+test("hero has the week sketch: one SVG, five crossed-out days, a bracket and its red label", () => {
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(hero, /aria-label="An order arrives by email, someone retypes it into your system\. I connect the two directly\."/);
+  assert.match(
+    hero,
+    /role="img" aria-label="A week of the same task: Monday to Friday, copy, paste, double-check, crossed out in red\. Runs on its own now\."/,
+  );
   assert.ok(hero.indexOf("<h1") < hero.indexOf('class="sketch"') && hero.indexOf('class="sketch"') < hero.indexOf('class="lede"'));
-  // "someone retypes it" is in the wide SVG, the tall SVG and the sketch's aria-label; the red label is in the two SVGs only.
-  assert.equal(count(hero, "someone retypes it"), 3);
-  assert.equal(count(hero, "I connect these two directly"), 2);
-  for (const v of ["sketch-wide", "sketch-tall"]) assert.ok(hero.includes(v), `missing ${v}`);
+  const svgs = hero.match(/<svg[\s\S]*?<\/svg>/g) ?? [];
+  assert.equal(svgs.length, 1, "the week sketch should be one SVG");
+  const svg = svgs[0];
+  assert.doesNotMatch(svg, /sketch-wide|sketch-tall/);
+  assert.deepEqual([...svg.matchAll(/>(mon|tue|wed|thu|fri)</g)].map((m) => m[1]), ["mon", "tue", "wed", "thu", "fri"]);
+  assert.equal(count(svg, ">copy, paste, double-check<"), 5, "one task line per day");
+  // One red strike per day, plus the bracket.
+  assert.equal(count(svg, 'class="mark"'), 6);
+  // The red label beside the bracket reads "runs on its own now" across its lines.
+  const red = [...svg.matchAll(/<text[^>]*class="red"[^>]*>([^<]*)<\/text>/g)].map((m) => m[1]).join(" ");
+  assert.equal(red, "runs on its own now");
+  // Readable on a 320 phone: the column is 280px there, so font-size x 280 / viewBox width must be at least 11.
+  const vbw = Number(/viewBox="0 0 ([\d.]+) [\d.]+"/.exec(svg)?.[1]);
+  const size = Number(/font-size="([\d.]+)"/.exec(svg)?.[1]);
+  assert.ok((size * 280) / vbw >= 11, `week sketch text is ${((size * 280) / vbw).toFixed(1)}px at 320`);
+  // No straight rectangles: no rect elements, and the old problem sketch is gone.
+  assert.doesNotMatch(svg, /<rect/);
+  assert.ok(!built("components/sketches/ProblemSketch.tsx"), "ProblemSketch.tsx is still there");
+  // It never grows past the column.
+  assert.match(css(), /\.sketch-week\{[^}]*max-width:(?:\d+px|100%)/);
 });
 
 test("tall sketches stop growing at 420px, and the wide ones are not capped", () => {
