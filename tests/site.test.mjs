@@ -65,7 +65,7 @@ const mediaBlocks = (styles, query) => {
 /** The built CSS with every min-width media block cut out: the rules that apply on a phone. */
 const outsideMedia = (styles) => {
   let rest = styles;
-  for (const px of ["640px", "1000px"]) for (const block of mediaBlocks(styles, px)) rest = rest.replace(`@media (min-width:${px}){${block}}`, "");
+  for (const px of ["640px", "720px", "1000px", "1200px"]) for (const block of mediaBlocks(styles, px)) rest = rest.replace(`@media (min-width:${px}){${block}}`, "");
   return rest;
 };
 
@@ -265,11 +265,11 @@ test("the Caprae card has the company line, then the role line, and no card gets
   assert.ok(work, "no section#work");
   assert.match(
     work,
-    /<article class="card"><p class="small">At Caprae Capital Partners<\/p><p class="small">Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote<\/p><h3 class="h3">Resume screening, automated<\/h3>/,
+    /<article class="entry"><p class="small">At Caprae Capital Partners<\/p><p class="small">Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote<\/p><h3 class="h3">Resume screening, automated<\/h3>/,
   );
   // leadlens and PresentAI keep their single "where" line.
-  assert.match(work, /<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
-  assert.match(work, /<article class="card"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
+  assert.match(work, /<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+  assert.match(work, /<article class="entry"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
 });
 
 test("the quote follows the Caprae card as a block of the Work section, with its margin note", () => {
@@ -287,21 +287,80 @@ test("the quote follows the Caprae card as a block of the Work section, with its
   assert.ok(work.slice(0, firstCardEnd).includes("Resume screening, automated"), "the first card is not the Caprae card");
   assert.ok(firstCardEnd < quoteAt && quoteAt < secondCardAt, "the quote is not between the Caprae card and the next card");
   assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
-  // The next card is leadlens, which has a note of its own, so it opens with its own annotated block.
-  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><div class="annotated"><div><article/);
+  // The next entry is leadlens, after a pencil tick; it has a note of its own, so it opens with its own annotated block.
+  assert.match(work, /<\/figure><\/div><aside class="note note-drop">[^<]*<\/aside><\/div><hr class="tick"\/><div class="annotated"><div><article/);
   assert.match(text("index.html"), /the bit that matters if you don't write code/);
   // The red underline is on the marked words.
   assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
 });
 
-test("the Work section ends with the Now line and the resume link, and keeps 18px between cards", () => {
+test("the Work section ends with the Now line and the resume link", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.match(
     text("index.html"),
     /Now: GTM automation engineer at Precise Leads, since Nov 2025\. B\.Tech Computer Science, MSIT Delhi, 2026\. Full resume ↗/,
   );
   assert.match(work, /<a class="link" href="\/resume\.pdf">Full resume ↗<\/a><\/p><\/section>$/);
-  assert.match(css(), /\.card\{[^}]*margin:0 0 18px/);
+});
+
+// ── Layout pass (15 Oct), item 1: one centred column, entries on the paper ──
+test("one reading column, centred: header, sections and footer share its width and left edge", () => {
+  const styles = css();
+  const wrap = styles.match(/\.wrap\{[^}]*\}/)?.[0] ?? "";
+  assert.match(wrap, /max-width:calc\(var\(--col\) \+ 40px\)/, "the wrap is wider than the column plus its 20px padding");
+  assert.match(wrap, /margin:0 auto/);
+  // Nothing inside the wrap may be narrower than it on purpose: the old `.wrap > *` cap pinned blocks to the left.
+  assert.doesNotMatch(styles, /\.wrap>\*\{/, "a .wrap > * rule still caps children");
+  // Header, every section and the footer are wraps.
+  const html = markup("index.html");
+  assert.match(html, /<header class="wrap head">/);
+  assert.equal(count(html, /<section[^>]*class="wrap sec/), 4);
+  assert.match(html, /<footer class="wrap foot">/);
+  // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
+  assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
+});
+
+test("margin notes hang outside the centred column from 1200px up, and sit under their block below that", () => {
+  const styles = css();
+  const wide = mediaBlocks(styles, "1200px").join("\n");
+  const ann = wide.match(/\.annotated\{[^}]*\}/)?.[0] ?? "";
+  assert.match(ann, /grid-template-columns:minmax\(0,\s?var\(--col\)\)\s?var\(--note\)/);
+  // The note column grows out to the right, so the content column keeps the column's width and left edge.
+  assert.match(ann, /margin-right:calc\(-1 ?\* ?\(var\(--note\) \+ 48px\)\)/);
+  assert.match(wide, /\.note:{1,2}before\{content:"← "\}/);
+  // Below 1200px the note keeps its up arrow and stays in the flow.
+  assert.match(outsideMedia(styles), /\.note:{1,2}before\{content:"↑ "\}/);
+});
+
+test("the photo sits inside the column beside the h1 from 720px, above it below that, never positioned", () => {
+  const styles = css();
+  const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(base, "no .photo rule");
+  assert.match(base, /width:132px/);
+  assert.match(base, /border:1px solid var\(--rule\)/);
+  for (const rule of styles.match(/\.photo\{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /position:(?:absolute|fixed)/, "the photo is positioned against layout constants");
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  // Photo, then h1, in one head block: stacked on a phone, side by side from 720px.
+  assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><h1>/);
+  const mid = mediaBlocks(styles, "720px").join("\n");
+  assert.match(mid, /\.hero-head\{[^}]*display:grid/);
+  assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 132px/);
+  // The minifier folds grid-column 2 / grid-row 1 into grid-area:1/2.
+  assert.match(mid, /\.photo\{[^}]*grid-(?:column:2|area:1\/2)/);
+});
+
+test("work entries sit on the paper: no wash box, a short pencil tick between them, plain lead line", () => {
+  const styles = css();
+  assert.doesNotMatch(styles, /\.card\{/, "the old boxed .card rule is still there");
+  const entry = styles.match(/\.entry\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(entry, "no .entry rule");
+  assert.doesNotMatch(entry, /background|padding/, "entries are boxed again");
+  const tick = styles.match(/\.tick\{[^}]*\}/)?.[0] ?? "";
+  assert.match(tick, /background-image:var\(--divider\)/, "the tick is not the pencil stroke");
+  assert.match(tick, /width:80px/);
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.ok(count(work, '<hr class="tick"/>') >= 2, "entries are not separated by ticks");
+  assert.doesNotMatch(work, /<p class="body"><b>/, "the lead sentence is still bold");
 });
 
 test("the people and incident sections are gone, with their copy", () => {
@@ -485,7 +544,7 @@ test("verdict 3b: only the quote's note drops one line on wide screens", () => {
   assert.ok(count(html, /<aside class="note">/) >= 2, "the hero and proof notes lost their plain class");
   // One blockquote line is 20px x 1.45 = 29px, added to the usual 10px margin. The minifier may fold the calc to 39px.
   assert.match(css(), /\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/);
-  assert.match(css(), /@media \(min-width:1000px\)\{(?:[^{}]+\{[^{}]*\})*\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/, "the drop rule is not inside the 1000px media block");
+  assert.match(css(), /@media \(min-width:1200px\)\{(?:[^{}]+\{[^{}]*\})*\.note-drop\{margin-top:(?:calc\(10px \+ 29px\)|39px)\}/, "the drop rule is not inside the 1200px media block");
 });
 
 test("verdict 4: the share card loads Archivo from real static TTF files", () => {
@@ -567,8 +626,8 @@ test("leadlens shows its real scorecard with the false alarms circled", () => {
 test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, no metric lines", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   // The leadlens card is wrapped in its own annotated block, directly under the section.
-  assert.match(work, /<div class="annotated"><div><article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
-  const card = work.match(/<article class="card"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
+  assert.match(work, /<div class="annotated"><div><article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+  const card = work.match(/<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
   // The story is told once, in the margin note. The old detail paragraph (and its "I hand-checked 72 postings") is gone.
   assert.doesNotMatch(text("index.html"), /It scored a perfect 100%, which was the problem/);
   assert.ok(!card.includes("I hand-checked 72 postings"), "the old detail paragraph is still in the card");
@@ -577,7 +636,7 @@ test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, 
   const order = ["Reads a job posting", "<table", "<caption>", "</table>", "class=\"stack\"", "class=\"links\""].map((s) => card.indexOf(s));
   assert.ok(order.every((i) => i >= 0), `a piece of the card is missing: ${order}`);
   assert.deepEqual([...order].sort((a, b) => a - b), order, "the card is not lead, table (caption first), stack, link");
-  assert.match(card, /<\/b><\/p><table class="scorecard"><caption>/, "something sits between the lead line and the scorecard");
+  assert.match(card, /scam\.<\/p><table class="scorecard"><caption>/, "something sits between the lead line and the scorecard");
   assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
   for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
   // The note belongs to the card, outside the article, in the margin column.
@@ -592,7 +651,7 @@ test("the work section has two margin notes (the quote's and leadlens's) and Pre
 
 test("PresentAI card shows a real screenshot of the live app", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const card = work.match(/<article class="card"><p class="small">My own project, live<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  const card = work.match(/<article class="entry"><p class="small">My own project, live<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
   // React writes the apostrophe in an attribute as &#x27;.
   assert.match(card, /<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"/);
   assert.ok(built("public/work/presentai.png"));
@@ -672,29 +731,6 @@ test("the footer has the same pencil line above it", () => {
   assert.doesNotMatch(foot, /border-top/);
 });
 
-// ── Final fix wave, item 1: the photo sits beside the headline on wide screens (Manveen's pick B, 15 Oct) ──
-test("the photo stays above the headline on phones and sits in the margin from 1000px up", () => {
-  const styles = css();
-  // On a phone it is an ordinary block above the h1 (DOM order is photo, then h1).
-  const base = outsideMedia(styles).match(/\.photo\{[^}]*\}/)?.[0] ?? "";
-  assert.ok(base, "no .photo rule");
-  assert.doesNotMatch(base, /position:(?:absolute|fixed)/, "the photo is positioned outside the 1000px media block");
-  assert.match(base, /width:132px/);
-  assert.match(base, /border:1px solid var\(--rule\)/);
-  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.ok(hero.indexOf("<img") !== -1 && hero.indexOf("<img") < hero.indexOf("<h1"), "the photo is not before the h1 in the page");
-  // From 1000px it leaves the flow and sits in the note column, level with the h1 (.hero padding-top 24px).
-  const wide = mediaBlocks(styles, "1000px").join("\n");
-  assert.match(wide, /\.hero\{[^}]*position:relative/, "the hero is not the photo's positioning box");
-  const photo = wide.match(/\.photo\{[^}]*\}/)?.[0] ?? "";
-  assert.ok(photo, "no .photo rule inside the 1000px media block");
-  assert.match(photo, /position:absolute/);
-  assert.match(photo, /top:24px/, "the photo's top is not the hero's 24px padding, so it would not line up with the h1");
-  assert.match(photo, /left:calc\((?:20px \+ var\(--col\) \+ 48px|68px \+ var\(--col\))\)/, "the photo is not in the note column");
-  assert.match(photo, /margin:0(?:[;}])/, "the 22px bottom margin is still on the wide photo");
-  assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /padding-top:24px/);
-});
-
 // ── Final fix wave, item 2: the PresentAI capture is a small framed thumbnail (Manveen's pick B, 15 Oct) ──
 test("the PresentAI screenshot shows as a 280px thumbnail, left-aligned, and the browser is told so", () => {
   const shot = css().match(/\.shot\{[^}]*\}/)?.[0] ?? "";
@@ -729,10 +765,10 @@ test("the leadlens note sits level with its scorecard on wide screens, and phone
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.match(work, /<aside class="note note-score">it once scored 100%/);
   assert.equal(count(html, 'class="note note-score"'), 1, "only the leadlens note drops to its scorecard");
-  // The scorecard starts about 150px below the top of the leadlens card (measured at 1000, 1280 and 1440 wide:
-  // the reading column is 640px at every width from 1000px up). The minifier may fold the calc to 160px.
-  const wide = mediaBlocks(css(), "1000px").join("\n");
-  assert.match(wide, /\.note-score\{margin-top:(?:calc\(10px \+ 150px\)|160px)\}/, "no .note-score rule inside the 1000px media block");
+  // The scorecard starts a fixed distance below the top of the leadlens entry (measured at 1280, 1440 and 1920:
+  // the column is 640px at every width from 1200px up, where notes go to the margin).
+  const wide = mediaBlocks(css(), "1200px").join("\n");
+  assert.match(wide, /\.note-score\{margin-top:(?:calc\(10px \+ \d+px\)|\d+px)\}/, "no .note-score rule inside the 1200px media block");
   // On a phone the note stays under the card with its up arrow, so no rule outside the media block mentions it.
   assert.doesNotMatch(outsideMedia(css()), /note-score/, "phones get the drop too");
 });

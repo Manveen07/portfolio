@@ -7,10 +7,12 @@ import ProblemSketch from "@/components/sketches/ProblemSketch";
 export default function Hero() {
   return (
     <section id="top" className="wrap sec hero">
-      {PHOTO && (
-        <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} priority />
-      )}
-      <h1>{HERO.headline}</h1>
+      <div className="hero-head">
+        {PHOTO && (
+          <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} priority />
+        )}
+        <h1>{HERO.headline}</h1>
+      </div>
       <ProblemSketch />
       <Annotated note={HERO.nerdNote}>
         <p className="lede">

@@ -31,14 +31,13 @@ a { color: inherit; }
 ::selection { background: var(--red); color: var(--paper); }
 a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
-/* ── Layout: one reading column, a margin for pen notes on wide screens ── */
-.wrap { width: 100%; max-width: calc(var(--col) + var(--note) + 48px + 40px); margin: 0 auto; padding-left: 20px; padding-right: 20px; }
-.wrap > * { max-width: var(--col); }
-.wrap > .annotated { max-width: none; }
+/* ── Layout: one reading column, centred at every width. Header, sections, dividers and footer
+   all use it. Red notes hang in the right margin only when a centred column leaves room for them. ── */
+.wrap { width: 100%; max-width: calc(var(--col) + 40px); margin: 0 auto; padding-left: 20px; padding-right: 20px; }
 .sec { padding-top: 56px; padding-bottom: 56px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .hero { border-top: 0; background-image: none; padding-top: 24px; }
 
-.annotated { display: grid; grid-template-columns: minmax(0, var(--col)); }
+.annotated { display: grid; grid-template-columns: minmax(0, 1fr); }
 .note {
   margin: 4px 0 14px;
   font-family: var(--font-mono), "IBM Plex Mono", monospace;
@@ -49,11 +48,15 @@ a:focus-visible, .btn:focus-visible { outline: 2px solid var(--red); outline-off
   transform-origin: left top;
 }
 .note::before { content: "↑ "; }
-@media (min-width: 1000px) {
-  .annotated { grid-template-columns: minmax(0, var(--col)) var(--note); column-gap: 48px; align-items: start; }
+/* Notes go to the margin when the space right of the centred column holds the 48px gap, the 210px
+   note column and 20px to the window edge: (W - 640) / 2 >= 278, so W >= 1196. Below that they sit
+   under the block they point at. The negative right margin lets the grid grow into the margin while
+   its first column keeps the reading column's width and left edge. */
+@media (min-width: 1200px) {
+  .annotated { grid-template-columns: minmax(0, var(--col)) var(--note); column-gap: 48px; align-items: start; margin-right: calc(-1 * (var(--note) + 48px)); }
   .note { margin-top: 10px; }
   .note-drop { margin-top: calc(10px + 29px); } /* one blockquote line (20px x 1.45) lower: the marked words start on line 2 */
-  .note-score { margin-top: calc(10px + 150px); } /* level with the leadlens scorecard, which starts 150px below the card top (measured at 1000, 1280 and 1440 wide; the column is 640px from 1000px up) */
+  .note-score { margin-top: calc(10px + 103px); } /* level with the leadlens scorecard, which starts 103px below the top of its entry (measured at 1280, 1440 and 1920) */
   .note::before { content: "← "; }
 }
 
@@ -85,13 +88,15 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .head-cta { color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
+/* Photo and headline share one block inside the column: stacked on phones, side by side from 720px
+   (the h1 gets the column minus the photo and a 28px gap; both tops on the same line). */
+.hero-head { margin-bottom: 18px; }
+.hero-head h1 { margin-bottom: 0; }
 .photo { display: block; width: 132px; height: auto; margin: 0 0 22px; border: 1px solid var(--rule); }
-@media (min-width: 1000px) {
-  /* The photo leaves the flow and sits in the note column beside the headline. top is the hero's own
-     padding-top (24px), so it lines up with the h1; left is the start of the note column
-     (wrap padding 20px + reading column + the 48px gap). Below 1000px it stays above the headline. */
-  .hero { position: relative; }
-  .photo { position: absolute; top: 24px; left: calc(20px + var(--col) + 48px); margin: 0; }
+@media (min-width: 720px) {
+  .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 132px; column-gap: 28px; align-items: start; }
+  .photo { grid-column: 2; grid-row: 1; margin: 0; }
+  .hero-head h1 { grid-column: 1; grid-row: 1; }
 }
 
 /* ── Proof ── */
@@ -132,7 +137,7 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 }
 
 /* ── The quote (rendered inside Work, after the Caprae card) ── */
-.quote { margin: 0 0 28px; }
+.quote { margin: 30px 0 0; }
 .quote blockquote { margin: 0; font-size: 20px; line-height: 1.45; }
 .quote blockquote p { margin: 0; }
 .quote figcaption { margin-top: 10px; font-size: 15px; }
@@ -163,9 +168,10 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
   .pen-js .sketch:not(.in) .mark { stroke-dashoffset: 0; }
 }
 
-/* ── Work ── */
-.card { background: var(--wash); padding: 20px 22px; margin: 0 0 18px; }
-.card .small + .small { margin-top: -6px; } /* where line and role line read as one block */
+/* ── Work: entries sit on the paper, one short pencil stroke between them ── */
+.entry { margin: 0; }
+.entry .small + .small { margin-top: -6px; } /* where line and role line read as one block */
+.tick { width: 80px; height: 8px; margin: 40px 0 34px; border: 0; background-image: var(--divider); background-repeat: no-repeat; background-size: 80px 8px; }
 .metrics { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 14px 0 8px; }
 .metrics dt { font-size: 28px; font-weight: 800; line-height: 1.1; }
 .metrics dd { margin: 0; font-size: 13.5px; color: var(--dim); }

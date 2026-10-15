@@ -6,22 +6,21 @@ import Annotated from "@/components/Annotated";
 import { Underline } from "@/components/Pen";
 import Scorecard from "@/components/Scorecard";
 
-// Cards and the quote block are direct children of the section, so `.wrap > .annotated`
-// (globals.css) gives the quote and the leadlens card their margin-note column on wide screens.
+// Entries and the quote block are direct children of the section; on wide screens `.annotated`
+// (globals.css) hangs the quote's and the leadlens note in the right margin. Entries sit on the
+// paper, with a short pencil tick (`hr.tick`) before every entry but the first.
 // The section allows two notes: the quote's and leadlens's. PresentAI has none.
 export default function Work() {
   return (
     <section id="work" className="wrap sec">
       <h2 className="kicker">Work, and who vouches for it</h2>
-      {WORK.map((w) => {
+      {WORK.map((w, i) => {
         const card = (
-          <article className="card">
+          <article className="entry">
             <p className="small">{w.where}</p>
             {w.role && <p className="small">{w.role}</p>}
             <h3 className="h3">{w.title}</h3>
-            <p className="body">
-              <b>{w.lead}</b>
-            </p>
+            <p className="body">{w.lead}</p>
             {w.detail && <p className="body">{w.detail}</p>}
             {w.scorecard && <Scorecard s={w.scorecard} />}
             {w.shot && (
@@ -64,6 +63,7 @@ export default function Work() {
         );
         return (
           <Fragment key={w.title}>
+            {i > 0 && <hr className="tick" />}
             {w.note ? (
               <Annotated note={w.note} drop={w.scorecard ? "scorecard" : undefined}>
                 {card}
