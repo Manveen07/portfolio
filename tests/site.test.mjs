@@ -110,9 +110,14 @@ test("fonts are Archivo and IBM Plex Mono, not the old Barlow set", () => {
   assert.doesNotMatch(styles, /Barlow/);
 });
 
-test("header has Book a call; footer has recruiter links and the off-the-clock line", () => {
+test("header has Write to me (mail, ink, plain underline); footer has recruiter links and the off-the-clock line", () => {
   const html = markup("index.html");
-  assert.match(html, /<header[^>]*class="[^"]*\bhead\b[^"]*"[\s\S]*?calendly\.com\/manveen9650[\s\S]*?<\/header>/);
+  const head = html.match(/<header[\s\S]*?<\/header>/)?.[0] ?? "";
+  assert.match(head, /<a class="head-cta" href="mailto:manveen9650@gmail\.com">Write to me<\/a>/);
+  assert.doesNotMatch(head, /calendly|Book a call/);
+  const cta = css().match(/\.head-cta\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(cta, "no .head-cta rule");
+  assert.doesNotMatch(cta, /var\(--red\)|background/, "the header link is red or a button");
   const foot = html.slice(html.lastIndexOf("<footer"));
   for (const href of ["/resume.pdf", "linkedin.com/in/Manveen", "github.com/Manveen07", 'href="/writing"']) {
     assert.ok(foot.includes(href), `footer missing ${href}`);
@@ -391,8 +396,35 @@ test("sections appear in the agreed order: four, and no writing section on the h
   assert.equal(count(html, /<section[\s>]/), 4, "the home page does not have exactly four sections");
 });
 
-test("Calendly links on the home page: header and bottom, none in the hero", () => {
-  assert.equal(count(markup("index.html"), /calendly\.com\/manveen9650/), 2);
+test("one Calendly link on the home page, at the bottom, and no buttons", () => {
+  const html = markup("index.html");
+  assert.equal(count(html, /calendly\.com\/manveen9650/), 1);
+  assert.doesNotMatch(text("index.html"), /Book a 30-minute call|Book a call/);
+  // (.btn stays in the CSS: the 404 page and the post page still use it.)
+  assert.doesNotMatch(html, /class="btn"/);
+});
+
+test("the contact section ends with the one-task line, the email address, then the calendar link", () => {
+  const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const at = (s) => c.indexOf(s);
+  const order = [
+    'class="sketch"',
+    "Tell me one task you repeat every week. I(?:'|&#x27;)ll reply within a day and say whether it can run by itself.",
+    'href="mailto:manveen9650@gmail.com"',
+    "or pick a time on my calendar",
+  ];
+  assert.match(c, new RegExp(order[1]), "the one-task line is missing");
+  const pos = [at(order[0]), c.search(new RegExp(order[1])), at(order[2]), at(order[3])];
+  assert.ok(pos.every((p) => p >= 0), `a piece is missing: ${pos}`);
+  assert.deepEqual([...pos].sort((a, b) => a - b), pos, "the contact end is out of order");
+  // The address is the main link: its own class, larger than body text, underlined.
+  assert.match(c, /<a class="mail" href="mailto:manveen9650@gmail\.com">manveen9650@gmail\.com<\/a>/);
+  const mail = css().match(/\.mail\{[^}]*\}/)?.[0] ?? "";
+  const px = Number(/font-size:(\d+)px/.exec(mail)?.[1]);
+  assert.ok(px > 17, `the email link is ${px}px, not larger than the 17px body`);
+  assert.match(mail, /text-decoration:underline|text-decoration-line:underline/);
+  // The calendar link is small, on its own line, and is the page's one Calendly link.
+  assert.match(c, /<p class="small"><a class="link" href="https:\/\/calendly\.com\/manveen9650\/30min"[^>]*>or pick a time on my calendar<\/a><\/p><\/section>$/);
 });
 
 test("no dashes, banned words, slogans or 'honest' in the home page copy", () => {
@@ -841,7 +873,8 @@ test("README describes the current site: short, plain, no badges, emoji, dashes 
   assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u, "emoji in the README");
   assert.doesNotMatch(readme, /[—–]/, "em or en dash in the README");
   assert.doesNotMatch(readme, /\b(leverage|utilise|utilize|streamline|optimise|optimize|robust|seamless|cutting-edge|AI-powered|AI-driven|solutions?|honest(?:ly)?|transform)\b/i);
-  for (const s of ["manveen.me", "Tender Radar", "30-minute call", "npm run dev", "npm run build", "tests/site.test.mjs", "tests/runs.test.mjs", "tests/reveal.test.mjs", "npm run refresh-snapshot", "GITHUB_TOKEN"]) {
+  assert.doesNotMatch(readme, /book a 30-minute call/i, "the README still describes the old booking button");
+  for (const s of ["manveen.me", "Tender Radar", "email address", "npm run dev", "npm run build", "tests/site.test.mjs", "tests/runs.test.mjs", "tests/reveal.test.mjs", "npm run refresh-snapshot", "GITHUB_TOKEN"]) {
     assert.ok(readme.includes(s), `the README does not mention "${s}"`);
   }
 });

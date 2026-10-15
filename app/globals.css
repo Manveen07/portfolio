@@ -85,7 +85,8 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 /* ── Header and footer ── */
 .head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 22px; padding-bottom: 22px; }
 .head-name { font-weight: 800; text-decoration: none; }
-.head-cta { color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.head-cta { font-weight: 600; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.head-cta:hover { color: var(--red); }
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 /* Photo and headline share one block inside the column: stacked on phones, side by side from 720px
@@ -193,6 +194,11 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 /* Visually hidden, still read aloud: the pilot steps list sits behind the drawn timeline. Must stay after .steps. */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 0; }
+/* The contact section's end: the one-task line, the address as the main link, the calendar small under it. */
+.ask { margin-top: 28px; }
+.mail-line { margin: 4px 0 10px; }
+.mail { font-size: 24px; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.mail:hover { color: var(--red); }
 
 /* ── Writing ── */
 .box { border: 1px solid var(--rule); background: var(--wash); }

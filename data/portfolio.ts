@@ -155,6 +155,9 @@ export const PILOT = {
     "If you keep it, a monthly fee covers me looking after it.",
   ],
   note: "you see every miss, not just a score",
+  // The section's end: no button, just the address and, small, the calendar (one Calendly link on the page).
+  ask: "Tell me one task you repeat every week. I'll reply within a day and say whether it can run by itself.",
+  calendar: "or pick a time on my calendar",
   sketchLabel:
     "A call about what wastes your time, then a fixed quote, then a month on your real requests with every miss logged, then you decide whether to keep it.",
 } as const;

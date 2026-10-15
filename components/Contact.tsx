@@ -18,12 +18,15 @@ export default function Contact() {
       <Annotated note={PILOT.note}>
         <PilotSketch label={PILOT.sketchLabel} />
       </Annotated>
-      <p className="cta-row">
-        <a className="btn" href={ME.calendly} target="_blank" rel="noopener">
-          Book a 30-minute call
-        </a>
-        <a className="link" href={`mailto:${ME.email}`}>
+      <p className="body ask">{PILOT.ask}</p>
+      <p className="mail-line">
+        <a className="mail" href={`mailto:${ME.email}`}>
           {ME.email}
+        </a>
+      </p>
+      <p className="small">
+        <a className="link" href={ME.calendly} target="_blank" rel="noopener">
+          {PILOT.calendar}
         </a>
       </p>
     </section>
