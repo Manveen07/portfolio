@@ -22,7 +22,7 @@ Every addition must pass all of these. The final review checks each one.
 ### 3.1 Tender Radar sketch (the signature piece)
 In the Tender Radar section, between the intro paragraph and the circled run count.
 
-- Five source boxes, top to bottom: `Find a Tender`, `Contracts Finder`, `Public Contracts Scotland`, `Sell2Wales`, `ProContract`. (Verified 14 Oct from the daily workflow: `fetch.py` holds the first four APIs and `fetch_procontract.py` runs as its own step. Implementation must confirm `fetch.py` actually calls all four; drop any it doesn't.)
+- Three source boxes, top to bottom: `Find a Tender`, `Contracts Finder`, `ProContract`. These are the sources that delivered notices on recent runs. `Public Contracts Scotland` and `Sell2Wales` are not drawn: `fetch.py` calls both, but both returned `403 Forbidden` on the five latest scheduled runs (10 to 14 Oct, checked in the workflow run logs; claims file rows 69 and 70), so drawing them would show feeds that deliver nothing. (This replaces the first draft's five boxes. `fetch_procontract.py` runs as its own workflow step.)
 - Their arrows converge on a box: `my script` / `every morning,` / `no one presses go`.
 - An arrow to a result box: `each notice, checked` / `for {trades} trades` / `{maybe} worth a look` / `{bid} worth bidding` with a red hand-drawn circle around the last line.
 - Under the result box, red mono: `↑ {bid} out of {checks} checks were worth bidding on.`
@@ -68,7 +68,7 @@ In "How working with me goes", replacing the visible numbered list (the `<ol>` s
 - The lede above it (`On the first call you tell me what wastes the most time. If it isn't a real problem, I'll say so and we won't build it.`) stays as is.
 
 ### 3.8 Hand-drawn dividers (added 14 Oct)
-Section top borders become a slightly uneven pencil line (an SVG background in `--rule` colour, about 1.4px stroke) instead of a straight 1px line. Same spacing.
+Section top borders become a slightly uneven pencil line (an SVG background, about 1.4px stroke, colour `#b9b2a2`: a touch darker than `--rule` (`#d9d3c5`) so it reads as pencil) instead of a straight 1px line. Same spacing.
 
 With 3.1, that makes three drawings on the page: the problem, the machine, the offer. No fourth: past three it reads as a theme, not an explanation.
 
