@@ -669,3 +669,20 @@ test("the photo stays above the headline on phones and sits in the margin from 1
   assert.match(photo, /margin:0(?:[;}])/, "the 22px bottom margin is still on the wide photo");
   assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /padding-top:24px/);
 });
+
+// ── Final fix wave, item 2: the PresentAI capture is a small framed thumbnail (Manveen's pick B, 15 Oct) ──
+test("the PresentAI screenshot shows as a 280px thumbnail, left-aligned, and the browser is told so", () => {
+  const shot = css().match(/\.shot\{[^}]*\}/)?.[0] ?? "";
+  assert.match(shot, /(?:^|[{;])width:280px/, "the screenshot is not 280px wide");
+  assert.match(shot, /max-width:100%/, "a narrow phone card would push the thumbnail out");
+  assert.match(shot, /border:1px solid var\(--rule\)/);
+  assert.doesNotMatch(shot, /margin:[^;}]*auto/, "the thumbnail is centred, not left-aligned");
+  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const img = work.match(/<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"[^>]*>/)?.[0] ?? "";
+  assert.ok(img, "no PresentAI screenshot");
+  // sizes tells next/image the real display width, so it stops serving a 640px source to a 280px box.
+  assert.match(img, /sizes="280px"/);
+  // The file stays 640x400: the thumbnail is the same picture shown smaller.
+  assert.match(img, /width="640"/);
+  assert.match(img, /height="400"/);
+});

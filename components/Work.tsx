@@ -31,7 +31,7 @@ export default function Work() {
                 alt={w.shot.alt}
                 width={w.shot.width}
                 height={w.shot.height}
-                sizes="(min-width: 700px) 596px, calc(100vw - 84px)"
+                sizes="280px"
               />
             )}
             {w.metrics.length > 0 && (

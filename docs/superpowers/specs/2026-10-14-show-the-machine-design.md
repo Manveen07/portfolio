@@ -44,7 +44,7 @@ Replaces the card's two metric lines. A 2×2 grid, ink lines, big numbers:
 Margin note: `it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.`
 
 ### 3.3 PresentAI: a real screenshot
-A screenshot of the live app (`present-ai-007.vercel.app`), 640px wide, real colours, thin `--rule` border, `alt="PresentAI's home page"`. No margin note (the section already has two; the free-plan detail is in the card text). If the public page is only a login wall, skip the screenshot and list "a screenshot of a deck it made" as a needs-Manveen input; never mock one up.
+A screenshot of the live app (`present-ai-007.vercel.app`), 640px wide, real colours, thin `--rule` border, `alt="PresentAI's home page"`. No margin note (the section already has two; the free-plan detail is in the card text). If the public page is only a login wall, skip the screenshot and list "a screenshot of a deck it made" as a needs-Manveen input; never mock one up. The card shows it as a 280px thumbnail (the file stays 640px wide), left-aligned: Manveen's pick on 15 Oct.
 
 ### 3.4 Resume screening
 Unchanged: text only. It's Caprae's internal system; nothing honest to show.

@@ -173,8 +173,9 @@ h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-weight: 800; ma
 .scorecard b { display: block; font-family: var(--font-sans), Archivo, sans-serif; font-size: 26px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
 .scorecard caption { caption-side: top; text-align: left; margin-bottom: 8px; font-size: 15px; }
 .scorecard .pen-circle svg { left: -10px; top: -5px; width: calc(100% + 20px); height: calc(100% + 10px); } /* a tighter loop, so it stays clear of the label under the number */
-/* PresentAI screenshot: a thin rule border, no shadow */
-.shot { display: block; width: 100%; height: auto; border: 1px solid var(--rule); margin: 14px 0 8px; }
+/* PresentAI screenshot: a framed thumbnail, left-aligned, thin rule border, no shadow. The file is 640px wide;
+   it shows at 280px (Manveen's pick, 15 Oct), and max-width keeps it inside a narrow phone card. */
+.shot { display: block; width: 280px; max-width: 100%; height: auto; border: 1px solid var(--rule); margin: 14px 0 8px; }
 
 /* ── How working with me goes ── */
 .steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }
