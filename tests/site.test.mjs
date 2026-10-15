@@ -736,3 +736,15 @@ test("the tall pilot timeline has an even gap before each step and no blank tail
   const viewH = Number(/viewBox="0 0 300 ([\d.]+)"/.exec(tall)?.[1]);
   assert.ok(viewH - lastText <= 30, `${viewH - lastText} units of blank under the last line`);
 });
+
+// ── Final fix wave, item 6: wide sketch text one size up ──────────────
+test("the wide radar and pilot sketches draw their text at 13 or more (about 11px at 640)", () => {
+  const html = markup("index.html");
+  for (const id of ["proof", "contact"]) {
+    const section = html.match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`))?.[0] ?? "";
+    const wide = section.match(/<svg[^>]*class="sketch-wide"[^>]*>/)?.[0] ?? "";
+    assert.ok(wide, `no wide sketch in #${id}`);
+    const size = Number(/font-size="(\d+(?:\.\d+)?)"/.exec(wide)?.[1]);
+    assert.ok(size >= 13, `the wide sketch in #${id} has font-size ${size}: its text is 10.4px at a 640px window`);
+  }
+});

@@ -18,7 +18,8 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
   return (
     <Sketch label={label}>
       {/* viewBox starts at y 30: with three source boxes nothing is drawn above y 38, so no blank band over the sketch */}
-      <svg className="sketch-wide" viewBox="0 30 690 200" aria-hidden="true" fontSize="12">
+      {/* text is 13 (it was 12: 10.4px at a 640px window); the script box is 10 units wider so "no one presses go" keeps its margin */}
+      <svg className="sketch-wide" viewBox="0 30 690 200" aria-hidden="true" fontSize="13">
         {SOURCES.map((s, i) => {
           const y = 48 + i * 38; // three boxes, centred on the script box (y 70 to 130)
           return (
@@ -29,11 +30,11 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
             </g>
           );
         })}
-        <path className="ink" d="M262 70 L408 68 L410 128 L263 130 Z" />
+        <path className="ink" d="M262 70 L418 68 L420 128 L263 130 Z" />
         <text x="274" y="90">my script</text>
         <text x="274" y="106" className="dim">every morning,</text>
         <text x="274" y="120" className="dim">no one presses go</text>
-        <path className="ink" d="M414 100 C428 98 436 98 448 100" />
+        <path className="ink" d="M424 100 C434 98 440 98 448 100" />
         <path className="ink" d="M440 93 L449 100 L439 106" />
         <path className="ink" d="M452 40 L680 38 L681 170 L453 172 Z" />
         <text x="464" y="62">each notice, checked</text>
