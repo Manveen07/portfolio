@@ -655,10 +655,21 @@ test("pilot timeline is drawn, the steps list stays for screen readers", () => {
 // ── Show the machine, Task 6: hand-drawn dividers ─────────────────────
 test("sections are divided by a hand-drawn pencil line, not a straight border", () => {
   const rule = css().match(/\.sec\{[^}]*\}/)?.[0] ?? "";
-  assert.match(rule, /background-image:url\("?data:image\/svg\+xml/);
+  // The pencil line is defined once, as the --divider custom property, and used by .sec and .foot.
+  assert.match(rule, /background-image:var\(--divider\)/);
+  assert.match(css().match(/:root\{[^}]*\}/)?.[0] ?? "", /--divider:\s?url\("?data:image\/svg\+xml/, "--divider is not defined on :root");
+  assert.equal(count(css(), "data:image/svg+xml"), 1, "the divider's data URI is pasted more than once");
   assert.doesNotMatch(rule, /border-top:1px solid/);
   // .hero is a .sec too, so it must switch the pencil line off.
   assert.match(css().match(/\.hero\{[^}]*\}/)?.[0] ?? "", /background-image:none/);
+});
+
+test("the footer has the same pencil line above it", () => {
+  const foot = css().match(/\.foot\{[^}]*\}/)?.[0] ?? "";
+  assert.ok(foot, "no .foot rule");
+  assert.match(foot, /background-image:var\(--divider\)/, "the footer has no divider");
+  assert.match(foot, /background-repeat:no-repeat/);
+  assert.doesNotMatch(foot, /border-top/);
 });
 
 // ── Final fix wave, item 1: the photo sits beside the headline on wide screens (Manveen's pick B, 15 Oct) ──
