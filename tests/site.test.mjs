@@ -106,8 +106,35 @@ test("an undrawn pen circle leaves no stray dot (dash gap is longer than the pat
 test("fonts are Archivo and IBM Plex Mono, not the old Barlow set", () => {
   const styles = css();
   assert.match(styles, /Archivo/);
-  assert.match(styles, /IBM Plex Mono/);
+  // next/font/local names the family after the variable that holds it.
+  assert.match(styles, /IBM ?Plex ?Mono/);
   assert.doesNotMatch(styles, /Barlow/);
+});
+
+test("fonts ship inside the repo: the build never downloads them from Google", () => {
+  // 15 Oct: a Vercel preview build failed when Google's font server did not deliver Archivo
+  // ("module not found" on each url() in next/font/google's CSS). The same files now live in app/fonts.
+  const layout = read("app/layout.tsx");
+  assert.doesNotMatch(layout, /next\/font\/google/, "the layout still fetches fonts from Google at build time");
+  assert.match(layout, /from "next\/font\/local"/);
+  for (const f of ["archivo-latin.woff2", "plex-mono-400-latin.woff2", "plex-mono-500-latin.woff2"]) {
+    assert.match(layout, new RegExp(`\\./fonts/${f.replace(/\./g, "\\.")}`), `${f} is not used`);
+    assert.ok(built(`app/fonts/${f}`), `app/fonts/${f} is missing`);
+  }
+  const html = markup("index.html");
+  assert.doesNotMatch(html, /fonts\.(?:googleapis|gstatic)\.com/);
+  // Same weights as before, declared the same way: Archivo at 400, 600, 800 and 900 (one variable file; <b> asks
+  // for 700 and must round to 800, as it did with Google's CSS), Plex Mono at 400 and 500.
+  const styles = css();
+  const archivoFaces = (styles.match(/@font-face\{[^}]*archivo-latin[^}]*\}|@font-face\{font-family:Archivo;[^}]*\}/g) ?? []).join("\n");
+  for (const w of ["400", "600", "800", "900"]) assert.match(archivoFaces, new RegExp(`font-weight:${w}[;}]`), `no Archivo face at ${w}`);
+  assert.doesNotMatch(styles, /font-weight:400 900/, "Archivo is a weight range again: <b> would draw a thinner 700");
+  assert.match(styles, /font-weight:500/);
+  // Characters the fonts lack (the → arrows) are drawn in Arial, scaled. Keep Google's exact scaling so
+  // they look the same as before; next/font/local's own guess made them wider (102.8% vs 98.7%).
+  assert.match(styles, /font-family:Archivo Fallback;src:local\(Arial\);ascent-override:88\.96%;descent-override:21\.28%;line-gap-override:0(?:\.0)?%;size-adjust:98\.7%/);
+  assert.match(styles, /font-family:IBM Plex Mono Fallback;src:local\(Arial\);ascent-override:76\.16%;descent-override:20\.43%;line-gap-override:0(?:\.0)?%;size-adjust:134\.59%/);
+  assert.doesNotMatch(styles, /size-adjust:102\.8%/, "next/font/local's own fallback scaling is still there");
 });
 
 test("header has Write to me (mail, ink, plain underline); footer has recruiter links and the off-the-clock line", () => {
