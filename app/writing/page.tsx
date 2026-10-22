@@ -5,6 +5,7 @@ import { POSTS } from "@/data/posts";
 export const metadata: Metadata = {
   title: "Writing | Manveen Singh",
   description: "What I tried, what broke, what fixed it.",
+  alternates: { types: { "text/markdown": "/writing.md" } },
 };
 
 function fmtDate(iso: string) {

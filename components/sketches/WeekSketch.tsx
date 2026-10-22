@@ -1,10 +1,8 @@
 import Sketch from "@/components/Sketch";
+import { WEEK } from "@/lib/sketch-text";
 
-const LABEL =
-  "A week of the same task: Monday to Friday, copy, paste, double-check, crossed out in red. Runs on its own now.";
-
-const DAYS = ["mon", "tue", "wed", "thu", "fri"] as const;
-const TASK = "copy, paste, double-check";
+// The words live in lib/sketch-text.ts, so the markdown copies print exactly what is drawn here.
+const { label: LABEL, days: DAYS, task: TASK, red: RED } = WEEK;
 
 // A hand-written week: five rows, each task struck through in red, a red bracket that holds them
 // together and the label beside it. One SVG for every width: 302 units wide with 12-unit text, so on a
@@ -38,9 +36,9 @@ export default function WeekSketch() {
           <path key={d} className="mark" pathLength={1} d={d} />
         ))}
         <path className="mark" pathLength={1} d={BRACKET} />
-        <text x="248" y="58" className="red">runs on</text>
-        <text x="248" y="73" className="red">its own</text>
-        <text x="248" y="88" className="red">now</text>
+        <text x="248" y="58" className="red">{RED[0]}</text>
+        <text x="248" y="73" className="red">{RED[1]}</text>
+        <text x="248" y="88" className="red">{RED[2]}</text>
       </svg>
     </Sketch>
   );

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { SITE } from "@/lib/site";
 
 // The fonts live in app/fonts (Google's own Latin files, OFL; see app/fonts/README.md), so a build never
 // depends on Google's font server. On 15 Oct a Vercel build failed when that server did not deliver Archivo.
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   keywords: ["automation engineer", "workflow automation", "data entry automation", "Python", "Manveen Singh"],
   authors: [{ name: "Manveen Singh" }],
-  metadataBase: new URL("https://manveen.me"),
+  metadataBase: new URL(SITE),
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
@@ -68,6 +69,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         {/* Lets CSS hide pen marks until they scroll into view. Without JS they stay drawn. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('pen-js')" }} />
+        {/* For AI agents (llmstxt.org): the file that describes this site. Each page links its own markdown copy. */}
+        <link rel="describedby" href="/llms.txt" type="text/plain" />
       </head>
       <body className={`${Archivo.variable} ${IBMPlexMono.variable}`}>
         <Nav />
