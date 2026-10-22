@@ -16,8 +16,11 @@ const built = (rel) => existsSync(path.join(root, rel));
 const markup = (page) => read(`.next/server/app/${page}`).replace(/<script[\s\S]*?<\/script>/g, "");
 
 /** What a reader sees: head, comments and tags stripped, entities decoded, spaces collapsed. */
-const text = (page) =>
-  markup(page)
+const text = (page) => plain(markup(page));
+
+/** Markup to the words a reader sees. */
+const plain = (html) =>
+  html
     .replace(/<head[\s\S]*?<\/head>/, " ")
     .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<style[\s\S]*?<\/style>/g, " ")
@@ -382,7 +385,7 @@ test("one reading column, centred: header, sections and footer share its width a
   // Header, every section and the footer are wraps.
   const html = markup("index.html");
   assert.match(html, /<header class="wrap head">/);
-  assert.equal(count(html, /<section[^>]*class="wrap sec/), 4);
+  assert.equal(count(html, /<section[^>]*class="wrap sec/), 6);
   assert.match(html, /<footer class="wrap foot">/);
   // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
   assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
@@ -482,14 +485,15 @@ test("the people and incident sections are gone, with their copy", () => {
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
-test("sections appear in the agreed order: four, and no writing section on the home page", () => {
+test("sections appear in the agreed order: six, and no writing section on the home page", () => {
+  // Four until 22 Oct, when Manveen added drawing-proof and the confidently-wrong notes, between Work and the pilot.
   const html = markup("index.html");
-  const at = ["top", "proof", "work", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  const at = ["top", "proof", "work", "drawings", "wrong", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
   assert.ok(!html.includes('id="writing"'));
   assert.ok(!html.includes('id="people"') && !html.includes('id="broke"'), "a removed section is back");
-  assert.equal(count(html, /<section[\s>]/), 4, "the home page does not have exactly four sections");
+  assert.equal(count(html, /<section[\s>]/), 6, "the home page does not have exactly six sections");
 });
 
 test("one Calendly link on the home page, at the bottom, and no buttons", () => {
@@ -565,9 +569,12 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   assert.deepEqual(h2, [
     "Running right now · Tender Radar",
     "Work, and who vouches for it",
+    "Marking the AI's homework · drawing-proof",
+    "Things AI got confidently wrong",
     "How working with me goes",
   ]);
-  assert.equal(count(html, /<h3[\s>]/), 4);
+  // Four work entries and the four pinned notes.
+  assert.equal(count(html, /<h3[\s>]/), 8);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -578,7 +585,7 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.match(rule, /margin:0 0 14px/);
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
-  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 3);
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
 });
 
 test("post headings use a font weight that is loaded (Archivo ships 400, 600, 800, 900)", () => {
@@ -1029,4 +1036,68 @@ test("README describes the current site: short, plain, no badges, emoji, dashes 
   for (const s of ["manveen.me", "Tender Radar", "email address", "npm run dev", "npm run build", "tests/site.test.mjs", "tests/runs.test.mjs", "tests/reveal.test.mjs", "npm run refresh-snapshot", "GITHUB_TOKEN"]) {
     assert.ok(readme.includes(s), `the README does not mention "${s}"`);
   }
+});
+
+// ── 22 Oct: two new blocks, Manveen's pick ("make sure their quirky"); claims rows 84 to 100 ──
+const section = (id) => markup("index.html").match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?<\\/section>`))?.[0] ?? "";
+
+test("drawing-proof is marked like homework: the real crop, the wrong answer circled, the scores from EVAL.md", () => {
+  const sec = section("drawings");
+  assert.ok(sec, "no section#drawings");
+  // The crop is a real PNG of the sheet, shown with its true size on the tag.
+  const png = readFileSync(path.join(root, "public/work/rod-titleblock.png"));
+  assert.deepEqual([...png.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], "rod-titleblock.png is not a PNG");
+  const img = sec.match(/<img[^>]*class="tb-img"[^>]*>/)?.[0] ?? "";
+  assert.match(img, new RegExp(`width="${png.readUInt32BE(16)}"`));
+  assert.match(img, new RegExp(`height="${png.readUInt32BE(20)}"`));
+  assert.match(img, /alt="The title block of the pinion lift rod drawing: PART pinion-lift-rod, DWG\. NO\. MHA-060/);
+  // Two red marks on top: a loop round the wrong answer, a line under the right one.
+  const marked = sec.match(/<div class="marked">[\s\S]*?<\/svg>/)?.[0] ?? "";
+  assert.equal(count(marked, 'class="mark"'), 2, "the crop does not carry its two red marks");
+  const t = plain(sec);
+  // EVAL.md, 26 Sep 2026, gemini-3-flash-preview: 7 wrong of 419, 316 of 326, 89 of 93, 194 of 194 plus one header row.
+  for (const s of [
+    "7 of 419", "answers wrong (1.7%)", "316 of 326", "89 of 93", "194 of 194", "plus one header row read as a part",
+    "that's its name, not its part number", "205 seconds", "One person labelled them: me", "scanned drawings are untested", "26 Sep 2026",
+  ]) assert.ok(t.includes(s), `missing "${s}"`);
+  // The slow runs were not all right (2 of the 6 that hit the output cap had a wrong value): never say they were.
+  assert.doesNotMatch(t, /slow(?:est)? (?:runs?|ones?) (?:were|was) (?:all )?(?:right|correct)/i);
+  assert.equal(count(sec, /<aside class="note">/), 2, "the section should have exactly two margin notes");
+  // The sheet is marked CC BY-SA: its author, the project and the licence are named and linked.
+  assert.match(t, /Drawing © 2026 Pedro Paulo Vezza Campos/);
+  assert.match(sec, /href="https:\/\/github\.com\/pedropaulovc\/harmonic-analyzer"/);
+  assert.match(sec, /href="https:\/\/creativecommons\.org\/licenses\/by-sa\/4\.0\/"/);
+});
+
+test("drawing-proof marks draw once, and are always drawn without JS or under reduced motion", () => {
+  const styles = css();
+  assert.match(styles, /\.pen-js \.marked:not\(\.in\) \.mark\{stroke-dashoffset:1(?:px)?\}/);
+  assert.match(styles, /prefers-reduced-motion:reduce\)\{[^@]*\.pen-js \.marked:not\(\.in\) \.mark\{stroke-dashoffset:0\}/);
+  assert.match(styles, /\.marked\{[^}]*mix-blend-mode:multiply/, "the crop is not printed on the paper");
+  assert.doesNotMatch(styles.match(/\.marked\{[^}]*\}/)?.[0] ?? "", /shadow|border/);
+});
+
+test("the confidently-wrong notes: four real dates in four different months, the latest in September, none in October", () => {
+  const sec = section("wrong");
+  assert.ok(sec, "no section#wrong");
+  const dates = [...sec.matchAll(/<time dateTime="(\d{4}-\d{2}-\d{2})">/g)].map((m) => m[1]);
+  assert.deepEqual(dates, ["2026-05-25", "2026-07-07", "2026-08-11", "2026-09-19"], "the dates moved: each one must come from a dated file or commit");
+  assert.equal(new Set(dates.map((d) => d.slice(0, 7))).size, dates.length, "two notes share a month");
+  assert.equal(dates.at(-1).slice(0, 7), "2026-09", "the latest note is not in September");
+  assert.ok(dates.every((d) => d < "2026-10-01"), "a note is from October");
+  // Each note: the AI's words as code with a red mark on the wrong part, what happened, and the lesson.
+  assert.equal(count(sec, /<li class="pin">/), 4);
+  assert.equal(count(sec, /<code class="exhibit">/), 4);
+  assert.equal(count(sec, /class="pen pen-circle|class="pen"><span class="pen-under">/), 4, "a note lost its red mark");
+  assert.equal(count(sec, "<b>What I check now:</b>"), 4);
+  // It teaches; it never pitches.
+  assert.doesNotMatch(sec, /mailto:|calendly|hire me|work with me|book a call|pilot|fixed price/i);
+  assert.equal(count(sec, /<aside class="note/), 0, "the pinned notes carry their own red pen, not margin notes");
+});
+
+test("pinned notes sit on the paper a step darker, tilted, with no border or shadow", () => {
+  const pin = css().match(/\.pin\{[^}]*\}/)?.[0] ?? "";
+  assert.match(pin, /background:var\(--wash\)/);
+  assert.match(pin, /rotate\(/);
+  assert.doesNotMatch(pin, /shadow|border:/);
 });

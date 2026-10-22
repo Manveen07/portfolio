@@ -1,6 +1,8 @@
 import Hero from "@/components/Hero";
 import Proof from "@/components/Proof";
 import Work from "@/components/Work";
+import Drawings from "@/components/Drawings";
+import Wrong from "@/components/Wrong";
 import Contact from "@/components/Contact";
 import { getPipeline } from "@/lib/pipeline";
 
@@ -14,6 +16,8 @@ export default async function Home() {
       <Hero />
       <Proof pipe={pipe} />
       <Work />
+      <Drawings />
+      <Wrong />
       <Contact />
     </>
   );
