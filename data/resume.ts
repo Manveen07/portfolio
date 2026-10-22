@@ -28,6 +28,11 @@ export type ResumeProject = {
   bullets: string[];
 };
 
+/** Where the data knowingly differs from public/resume.pdf, with the source. The PDF test swaps these in. */
+export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = [
+  { pdf: "June 2025 – Dec. 2025", data: "Aug. 2025 – Jan. 2026", source: "LinkedIn, per Manveen 22 Oct 2026" },
+];
+
 export const RESUME = {
   pdf: "/resume.pdf",
   /** The PDF's own creation date (its metadata), so a reader knows how fresh it is. */
@@ -64,9 +69,11 @@ export const RESUME = {
     },
     {
       org: "Caprae Capital Partners",
-      dates: "June 2025 – Dec. 2025",
-      start: "2025-06",
-      end: "2025-12",
+      // Dates per LinkedIn (Manveen, 22 Oct 2026: "You can use those dates"); the PDF still says
+      // "June 2025 – Dec. 2025" until he updates it. Listed in PDF_OVERRIDES so the PDF test allows it.
+      dates: "Aug. 2025 – Jan. 2026",
+      start: "2025-08",
+      end: "2026-01",
       title: "AI/ML Intern",
       location: "Remote (Glendale, US)",
       bullets: [

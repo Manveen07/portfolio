@@ -13,7 +13,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { RESUME } from "../data/resume.ts";
+import { RESUME, PDF_OVERRIDES } from "../data/resume.ts";
 import { LLMS_INTRO } from "../data/llms-intro.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -232,7 +232,7 @@ test("each writing page's markdown has every block of the page", () => {
 // CRLF on a Windows checkout (core.autocrlf), LF everywhere else.
 const fixture = read("data/resume-pdf.txt").replace(/\r\n/g, "\n");
 const section = (name) => fixture.split(`--- ${name}\n`)[1].split("\n--- ")[0].split("\n").filter((l) => l.trim());
-const pdfLines = section("text");
+const pdfLines = section("text").map((l) => PDF_OVERRIDES.reduce((x, o) => x.replace(o.pdf, o.data), l));
 const pdfLinks = section("links");
 const unbullet = (s) => s.replace(/^[–•-]\s+/, "");
 const low = (s) => squash(s).toLowerCase();
