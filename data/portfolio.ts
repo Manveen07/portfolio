@@ -192,7 +192,7 @@ export const DRAWINGS = {
   // the drawing states the value 316 / 326; left blank when it does not 89 / 93; BOM / cut-list fields 194 / 194,
   // plus 1 header row read as a part.
   marks: [
-    ["7 of 419", "answers wrong (1.7%)"],
+    ["7 of 419", "answers wrong (1.7%); 7 more were missed or half right (5 missed without a flag, 1 flagged, 1 partial)"],
     ["316 of 326", "right, where the drawing gives the value"],
     ["89 of 93", "left blank, where it doesn't"],
     ["194 of 194", "parts list fields, plus one header row read as a part"],
