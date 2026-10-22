@@ -171,12 +171,15 @@ export const OWN_WORK: WorkItem[] = [
 // Every figure is from out/EVAL.md, "drawing-proof v1: evaluation", 26 Sep 2026, model gemini-3-flash-preview,
 // the only model that finished all 23 drawings that day (claims rows 84 to 92). The 13 Oct Claude run is left out.
 export const DRAWINGS = {
-  title: "Marking the AI's homework · drawing-proof",
-  // EVAL.md line 3: "23 real public drawings, hand-labelled before the tool ever ran on them."
-  lede: "Can an AI fill in a quote from an engineering drawing? I answered 23 real drawings myself first, then marked its work.",
+  // 22 Oct, a fresh reader's notes: the tool's name left the title ("Marking the AI's homework · drawing-proof" until then).
+  title: "Marking the AI's homework",
+  // EVAL.md line 3: "23 real public drawings, hand-labelled before the tool ever ran on them." "A price quote", not
+  // "a quote": on this page "quote" also means the text a value was read from.
+  lede: "Can an AI fill in a price quote from an engineering drawing? I answered 23 real drawings myself first, then marked its work.",
   // What it fills in: EVAL.md "The honest email claim" and the per-field table (part number, revision, material,
-  // finish, tolerances, BOM rows), each value with the exact text it came from (the evidence column).
-  what: "It reads the drawing (a PDF) and fills in the part number, revision, material, finish, tolerances and every line of the parts list. Each value comes with the exact text it was read from.",
+  // finish, tolerances, BOM rows), each value with the exact text it came from (the evidence column). The last
+  // sentence is the lesson, said early: EVAL.md "Every wrong value", "the quote is genuine but it landed in the wrong field".
+  what: "It reads the drawing (a PDF) and fills in the part number, revision, material, finish, tolerances and every line of the parts list. Each value comes with the exact text it was read from. That proves the text is on the drawing, not that it went in the right box.",
   // A crop of the real sheet, rendered 22 Oct with pymupdf at 340 dpi from data/drawings/machined-rod-harmonic-analyzer.pdf,
   // clip (962, 641) to (1189, 757) pt: the right half of the title block. Pixels untouched; the red marks are an SVG on top.
   shot: {
@@ -193,15 +196,34 @@ export const DRAWINGS = {
   shotNote: "that's its name, not its part number. It thought for 205 seconds to get here.",
   // EVAL.md headline table, gemini-3-flash-preview column: wrong values 7 (1.7%) of 419 fields scored; correct when
   // the drawing states the value 316 / 326; left blank when it does not 89 / 93; BOM / cut-list fields 194 / 194,
-  // plus 1 header row read as a part.
+  // plus 1 header row read as a part. The sums, from EVAL.md "Per field" (verified output) and
+  // out/EVAL-tables-gemini-3-flash-preview.md "wrong values (7)":
+  // - 326 + 93 = 419. ALL row: 316 correct, 89 correct_absent, 1 partial, 1 missed_flagged, 5 missed_silent, 7 wrong.
+  // - Of the 326 (a label exists): 316 right, 3 wrong (hole count 36, part number MHA-060, revision 8-21),
+  //   5 missed_silent, 1 missed_flagged, 1 partial = the 10 it didn't get.
+  // - Of the 93 (label None): 89 left blank, 4 wrong (the BOM header row, two tightest tolerances, the March 2015
+  //   revision). 3 + 4 = the 7 wrong; 7 wrong + 7 missed or half right = 14 = (326 - 316) + (93 - 89).
+  // - "Flagged": EVAL.md "Misses", the stair material: "The verifier couldn't find that string in the PDF text, so it
+  //   blanked the value and flagged it." "Half right": the one partial (stock, structural).
+  // - The 194 are inside the 419: bom.part_number 53 + bom.description 42 + bom.qty 67 + bom.material 20 +
+  //   bom.length 12 = 194 rows of the per-field table, all correct. The header row is bom.extra_row, n 1, wrong:
+  //   wrong value #1, one of the 4 in the 93.
   marks: [
-    ["7 of 419", "answers wrong (1.7%); 7 more were missed or half right (5 missed without a flag, 1 flagged, 1 partial)"],
+    ["7 of 419", "answers wrong (1.7%)"],
     ["316 of 326", "right, where the drawing gives the value"],
     ["89 of 93", "left blank, where it doesn't"],
-    ["194 of 194", "parts list fields, plus one header row read as a part"],
+    ["194 of 194", "parts list fields right"],
   ] as [string, string][],
-  // EVAL.md "Every wrong value": "All 7 quote real text from the sheet: the quote is genuine but it landed in the wrong field."
-  wrongLine: "All 7 wrong answers quote real text from the sheet. The text is real; the AI put it in the wrong box, like the rod above, or read it wrong (20 holes counted where the drawing has 36). So every value carries its quote, and you can hold it up against the drawing.",
+  // How the four numbers fit, from the sums above. A fresh reader couldn't tell the 194 were inside the 419, or what
+  // "flagged" meant (22 Oct).
+  sums: "419 boxes in all: 326 where the drawing has an answer, 93 where it doesn't. The 194 parts list fields are in there too. Of the 326 it fumbled 10: 3 wrong, 5 left blank without a word, 1 left blank with a note saying it wasn't sure, 1 half right. Of the 93 it filled in 4 anyway, one of them the parts list's own header row, read as a part. 3 + 4 = the 7 wrong.",
+  // EVAL.md "Every wrong value": "All 7 quote real text from the sheet: the quote is genuine but it landed in the wrong
+  // field." "It also means the verifier (value must appear in its own quote and in the PDF text) could not catch them.
+  // Raw and verified wrong counts are identical." Wrong value #2: hole_count label 36, tool said 20.
+  wrongLine: "All 7 wrong answers quote real text from the sheet. The text is there. It just went in the wrong box, like the rod above, or got counted wrong (20 holes, where the drawing has 36). My own checker, which makes sure every value is in its quote and on the page, passed all 7. A quote proves the text exists, not that it went in the right box. So check the box.",
+  // The method of the whole post, said plainly at its end: EVAL.md line 3 (labelled before the tool ran) and "Every wrong value".
+  // "Red pen optional": the post's own joke (the red marks on the crop), Manveen's "make sure they're quirky".
+  lesson: "Before you trust an AI that reads your documents, answer a small batch yourself and mark its work. Red pen optional.",
   // EVAL.md caveats: "One labeller (me), no second reviewer"; "all CAD exports, no scans"; "All 23 were clean CAD PDFs,
   // and 22 of them have a usable text layer" (the Eaton sheet was read from the image alone, so "with a text layer" is
   // not said of all 23). Scans untested: verdict, "Scanned, faxed or photographed drawings: unknown."
@@ -255,7 +277,10 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
       exhibit: { before: '"confidence": ', marked: "0.95", pen: "circle" },
       scribble: "on all 50 of them",
       what: "A classifier I was building gave all 50 of its answers the same confidence, 0.95. The answers were fine. The number meant nothing: it was filling in a box.",
-      now: "a score the model writes is just more text. Mine has to write out its evidence first, 100 characters at least, before it gets to give a score.",
+      // No after-number: the week-1 notes (and commit 0baea8bc) record the 50/50 at 0.95 and the planned fix
+      // ("Reasoning-before-confidence"), not how the scores spread once it was in. So the line claims what the
+      // min_length=100 field does, not that the number became trustworthy (a fresh reader's note, 22 Oct).
+      now: "a score the model writes is just more text. Mine now has to write out its reasons first, 100 characters at least, before it's allowed a score. That stops it filling in the box blind. It doesn't make the number right by itself.",
     },
     {
       // client-hunting/BUG-STALE-TENDER-JUL7.md: "15 leads total got this same dead-tender pitch ... all fired 2026-07-07";
@@ -278,13 +303,18 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
       // "crashing on FirmProfile validation since ~20 July". Claims row 11: scheduled runs failed on all 22 days,
       // 21 Jul to 11 Aug. The bars: the home page's Tender Radar section, last 40 scheduled runs, red when one failed
       // (row 13). "Higher up this page" until the notes became a post on 22 Oct.
+      // Rewritten 22 Oct for a reader who isn't an engineer (a fresh reader's notes). What Tender Radar is: its
+      // README, "Scans public UK tenders, classifies bid / maybe / skip for a small B2B service firm"; the scheduled
+      // run is daily (row 11). What broke, from f6eff1e6: the three new profiles/*.yaml (each describes a sample firm
+      // in the trade) "were missing the required security_clearance and insurance fields" (and two had staff_count as
+      // an int), so the daily job crashed "on FirmProfile validation". The 40: data/pipeline-snapshot.json history.
       iso: "2026-08-11",
       date: "11 Aug 2026",
       title: "12 of 12, and down for three weeks",
       exhibit: { before: "", marked: "tests (12/12)", pen: "underline" },
       scribble: "none of them opened the new files",
-      what: "An AI helped me add three trades to Tender Radar, and its commit said the tests passed, 12 of 12. None of them loaded the new files, which didn't fit the checker, so the morning run crashed every day for three weeks.",
-      now: "a passing test only vouches for what it opens. The last 40 runs sit on the home page as bars, red when one fails.",
+      what: "Tender Radar is my script that reads UK government tender notices every morning and sorts out which ones are worth a bid. An AI helped me add three trades to it, each with a little file describing a sample firm. Its commit said the tests passed, 12 of 12. The new files were missing two details the script insists on, so the morning run crashed on them every day for three weeks. None of the 12 tests had opened them.",
+      now: "a passing test only vouches for what it opens. The last 40 runs sit on my home page as bars, red when one fails.",
     },
     {
       // Commit 7abe5472 (19 Sep 2026): "Two OpenCode runs produced confident write-ups whose quotes did not support

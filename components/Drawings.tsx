@@ -5,8 +5,8 @@ import Marked from "@/components/Marked";
 
 /** The body of the post /writing/marking-the-ais-homework (its title and lede come from the post page):
     drawing-proof, marked like homework. A real crop of the sheet with the wrong answer circled and the
-    right one underlined, the scores, the fine print, and the drawing's credit (it is CC BY-SA). Two margin notes.
-    A home page section until 22 Oct; the words are unchanged. */
+    right one underlined, the scores, the lesson, the fine print, and the drawing's credit (it is CC BY-SA). Two margin
+    notes. A home page section until 22 Oct; tightened the same day from a fresh reader's notes. */
 export default function Drawings() {
   return (
     <div className="post-body">
@@ -40,7 +40,9 @@ export default function Drawings() {
           </div>
         ))}
       </dl>
+      <p className="body">{D.sums}</p>
       <p className="body">{D.wrongLine}</p>
+      <p className="body">{D.lesson}</p>
       <Annotated note={D.finePrintNote}>
         <p className="small fine">{D.finePrint}</p>
       </Annotated>

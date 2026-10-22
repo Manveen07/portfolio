@@ -1079,9 +1079,25 @@ test("drawing-proof is marked like homework: the real crop, the wrong answer cir
   const t = plain(sec);
   // EVAL.md, 26 Sep 2026, gemini-3-flash-preview: 7 wrong of 419, 316 of 326, 89 of 93, 194 of 194 plus one header row.
   for (const s of [
-    "7 of 419", "answers wrong (1.7%)", "316 of 326", "89 of 93", "194 of 194", "plus one header row read as a part",
+    "7 of 419", "answers wrong (1.7%)", "316 of 326", "89 of 93", "194 of 194",
     "that's its name, not its part number", "205 seconds", "One person labelled them: me", "scanned drawings are untested", "26 Sep 2026",
   ]) assert.ok(t.includes(s), `missing "${s}"`);
+  // 22 Oct, a fresh reader's notes: the sums say how the four numbers fit (the 194 inside the 419, the header row one of
+  // the 7 wrong, what "flagged" means), and 7 wrong + 7 missed or half right is the 10 short of 326 plus the 4 of 93.
+  for (const s of [
+    "326 where the drawing has an answer, 93 where it doesn't", "The 194 parts list fields are in there too",
+    "3 wrong, 5 left blank without a word, 1 left blank with a note saying it wasn't sure, 1 half right",
+    "the parts list's own header row, read as a part", "3 + 4 = the 7 wrong",
+  ]) assert.ok(t.includes(s), `the sums lost "${s}"`);
+  assert.equal(326 + 93, 419);
+  assert.equal(3 + 5 + 1 + 1, 326 - 316);
+  assert.equal(3 + (93 - 89), 7);
+  // The lesson, early and at the end; "a price quote", since "quote" here also means the text a value came from.
+  assert.match(text("writing/marking-the-ais-homework.html"), /fill in a price quote from an engineering drawing/);
+  assert.ok(t.includes("That proves the text is on the drawing, not that it went in the right box."), "the lesson is not said early");
+  assert.ok(t.includes("A quote proves the text exists, not that it went in the right box. So check the box."));
+  assert.ok(t.includes("Before you trust an AI that reads your documents, answer a small batch yourself and mark its work."));
+  assert.doesNotMatch(t, /hold it up against the drawing/, "the old non sequitur is back");
   // The slow runs were not all right (2 of the 6 that hit the output cap had a wrong value): never say they were.
   assert.doesNotMatch(t, /slow(?:est)? (?:runs?|ones?) (?:were|was) (?:all )?(?:right|correct)/i);
   assert.equal(count(sec, /<aside class="note">/), 2, "the section should have exactly two margin notes");
@@ -1115,6 +1131,14 @@ test("the confidently-wrong notes: four real dates in four different months, the
   // It teaches; it never pitches.
   assert.doesNotMatch(sec, /mailto:|calendly|hire me|work with me|book a call|pilot|fixed price/i);
   assert.equal(count(sec, /<aside class="note/), 0, "the pinned notes carry their own red pen, not margin notes");
+  // 22 Oct, a fresh reader's notes: the 11 Aug note says what Tender Radar is and what broke, in plain words
+  // (commit f6eff1e6: the new profiles lacked two required fields); the 25 May note claims no proof it doesn't have.
+  const t = plain(sec);
+  assert.ok(t.includes("Tender Radar is my script that reads UK government tender notices every morning"), "the 11 Aug note doesn't say what Tender Radar is");
+  assert.ok(t.includes("The new files were missing two details the script insists on"));
+  assert.ok(t.includes("on my home page as bars"));
+  assert.doesNotMatch(t, /fit the checker/, "engineer's shorthand is back in the 11 Aug note");
+  assert.ok(t.includes("It doesn't make the number right by itself"), "the 25 May note implies the fix proved the score");
 });
 
 test("pinned notes sit on the paper a step darker, tilted, with no border or shadow", () => {
@@ -1141,7 +1165,7 @@ test("the home page lists the three newest posts after the work: a title and one
   assert.match(w, /<h2 class="kicker">Writing<\/h2>/);
   const items = [...w.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><h3 class="h3">([^<]*)<\/h3><p class="body">([^<]*)<\/p><\/a><\/li>/g)];
   assert.deepEqual(items.map((m) => m[1]), ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"], "not the three newest, newest first");
-  assert.match(items[0][2], /^Marking the AI(?:'|&#x27;)s homework · drawing-proof$/);
+  assert.match(items[0][2], /^Marking the AI(?:'|&#x27;)s homework$/);
   assert.equal(items[1][2], "Things AI got confidently wrong");
   assert.match(items[2][2], /^How I caught my own AI test cheating/);
   assert.equal(items[2][3], "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem.");
