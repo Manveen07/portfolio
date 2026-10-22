@@ -61,7 +61,6 @@ export const RESUME = {
         "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506 companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
         "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78% find rate) through a cost-ordered waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
         "Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.",
-        "Built a Slack monitor across 312 community channels: an LLM judge reads every new thread daily (4,705 in one run) and sends a short list of buying-intent posts.",
         "Built unattended Claude Code agents: a weekly review that ranks searches by lead quality and replies and swaps weak ones, and a cold-email writer whose LLM judge checks each claim against the research (95.5% supported, none contradicted, 300-email test set). Pipeline repo: 870+ tests.",
       ],
     },
@@ -104,7 +103,7 @@ export const RESUME = {
       links: [],
       date: "2026",
       bullets: [
-        "Scheduled agents I run for myself: an Upwork alert judge that labels every job alert and drafts a proposal for the good ones, a daily freelance lead digest, and a task tracker with Slack buttons.",
+        "Scheduled agents I run for myself: a Slack inbound monitor that reads 312 community channels plus Reddit and LinkedIn every day (an LLM judge went through 4,705 threads in one run) and emails me the few opportunities worth acting on; an Upwork alert judge that labels every job alert and drafts proposals for the good ones; and a task tracker with Slack buttons.",
       ],
     },
     {

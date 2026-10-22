@@ -1,5 +1,5 @@
-sha256: 621777dae4781ba0624668fa45090a068690b57145d52ace4c2d811fb1566b87
-created: D:20261022113448+00'00'
+sha256: 4cdbdad972a1214b3c2741c13f61b5061ca47dda2d8121c266de6e8ea03db85f
+created: D:20261022115831+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
@@ -23,8 +23,6 @@ on wording and testing it on hand labels.
 (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
 –  Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the
 result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.
-–  Built a Slack monitor across 312 community channels: an LLM judge reads every new thread daily (4,705 in one run) and sends
-a short list of buying-intent posts.
 –  Built unattended Claude Code agents: a weekly review that ranks searches by lead quality and replies and swaps weak ones, and
 a cold-email writer whose LLM judge checks each claim against the research (95.5% supported, none contradicted, 300-email
 test set). Pipeline repo: 870+ tests.
@@ -47,8 +45,9 @@ leadlens | Python, Pydantic, LLM-as-judge · write-up
 answer leakage in my own eval, then published the lower, honest score.
 Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs
 2026
-–  Scheduled agents I run for myself: an Upwork alert judge that labels every job alert and drafts a proposal for the good ones, a
-daily freelance lead digest, and a task tracker with Slack buttons.
+–  Scheduled agents I run for myself: a Slack inbound monitor that reads 312 community channels plus Reddit and LinkedIn every
+day (an LLM judge went through 4,705 threads in one run) and emails me the few opportunities worth acting on; an Upwork
+alert judge that labels every job alert and drafts proposals for the good ones; and a task tracker with Slack buttons.
 Tender Radar | Python, LLM classification, GitHub Actions · source
 2026
 –  UK public-sector tender finder: pulls new notices, an LLM scores fit per client, and each client gets a digest.
