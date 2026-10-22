@@ -28,6 +28,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) notFound();
+  const others = POSTS.filter((p) => p.slug !== post.slug);
 
   return (
     <article className="wrap sec hero post">
@@ -45,9 +46,29 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       <h1>{post.title}</h1>
       <p className="lede">{post.summary}</p>
       <Prose body={post.body} />
+      {others.length > 0 && (
+        <>
+          <p className="kicker" style={{ marginTop: 48 }}>
+            More writing
+          </p>
+          <ul className="post-list">
+            {others.map((o) => (
+              <li key={o.slug}>
+                <Link href={`/writing/${o.slug}`}>
+                  <p className="small">{fmtDate(o.date)}</p>
+                  <h2 className="h3">{o.cardTitle ?? o.title}</h2>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       <p className="cta-row" style={{ marginTop: 48 }}>
         <Link href="/writing" className="link">
           ← all writing
+        </Link>
+        <Link href="/" className="link">
+          Home
         </Link>
         <Link className="link" href="/#contact">
           Write to me

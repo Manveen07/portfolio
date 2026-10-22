@@ -76,13 +76,18 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
-  .link:hover, .links a:hover, .head-cta:hover, .mail:hover, .post-list a:hover .h3 { color: var(--red); }
+  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest:hover .h3 { color: var(--red); }
 }
 
 /* ── Header and footer ── */
 .head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-top: 22px; padding-bottom: 22px; }
 .head-name { font-weight: 800; text-decoration: none; }
 .head-cta { font-weight: 600; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+/* Writing sits beside the mail link, plain, so the mail link stays the one underlined thing in the header.
+   On a narrow phone the two links drop under the name instead of squeezing it. */
+.head { flex-wrap: wrap; row-gap: 4px; }
+.head-links { display: flex; align-items: baseline; gap: 20px; }
+.head-link { font-weight: 600; text-decoration: none; }
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 /* Photo and headline share one block: stacked on phones, side by side from 720px (both tops on the
@@ -281,3 +286,5 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .post-list { list-style: none; padding: 0; margin: 0; }
 .post-list li { padding: 18px 0; border-bottom: 1px dashed var(--rule); }
 .post-list a { text-decoration: none; }
+/* The home page's newest post: an entry on the paper like the work entries, the whole of it one link. */
+.latest { display: block; text-decoration: none; }

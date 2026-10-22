@@ -30,6 +30,11 @@ export default function WritingIndex() {
           </li>
         ))}
       </ul>
+      <p className="cta-row" style={{ marginTop: 48 }}>
+        <Link className="link" href="/">
+          ← Home
+        </Link>
+      </p>
     </section>
   );
 }

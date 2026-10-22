@@ -7,9 +7,14 @@ export default function Nav() {
       <Link href="/" className="head-name">
         {ME.name}
       </Link>
-      <a className="head-cta" href={`mailto:${ME.email}`}>
-        Write to me
-      </a>
+      <nav className="head-links" aria-label="Site">
+        <Link className="head-link" href="/writing">
+          Writing
+        </Link>
+        <a className="head-cta" href={`mailto:${ME.email}`}>
+          Write to me
+        </a>
+      </nav>
     </header>
   );
 }

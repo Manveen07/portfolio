@@ -3,12 +3,13 @@
 // aria-label, and every word drawn in a sketch must appear here, and every number here must be on the page.
 // So when a component's wording changes, change it here too, or the tests fail.
 
+import { POSTS } from "@/data/posts";
 import { ME, HERO, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, DRAWINGS as D, WRONG, PILOT, OFF_CLOCK, type WorkItem, type Pin } from "@/data/portfolio";
 import type { PipelineData } from "@/lib/pipeline";
 import { fmtDay, runLine } from "@/lib/runs";
 import { radarText, RADAR_SOURCES, WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
 import { abs, mdHref, SITE } from "@/lib/site";
-import { para, list, link, image } from "@/lib/md/format";
+import { para, list, link, image, fmtLongDate } from "@/lib/md/format";
 
 /** A red margin note on the page. */
 const pen = (s: string) => `*Red pen:* ${s}`;
@@ -69,6 +70,19 @@ function pin(p: Pin): string {
   ].join("\n\n");
 }
 
+/** components/Writing.tsx: the newest post and the way to the rest. */
+function latestWriting(): string[] {
+  const p = [...POSTS].sort((a, b) => b.date.localeCompare(a.date))[0];
+  if (!p) return [];
+  return [
+    "## Writing",
+    `### ${link(p.cardTitle ?? p.title, mdHref(`/writing/${p.slug}`))}`,
+    para(`${fmtLongDate(p.date)} · ${p.readMins} min read`),
+    para(p.line ?? p.cardSummary ?? p.summary),
+    para(link("All writing →", mdHref("/writing"))),
+  ];
+}
+
 export function homeMarkdown(pipe: PipelineData): string {
   const failed = pipe.history.filter((r) => !r.ok);
   const failedDays = failed.length ? `Days that failed: ${failed.map((r) => fmtDay(r.date)).join(", ")}.` : "None failed.";
@@ -125,6 +139,8 @@ export function homeMarkdown(pipe: PipelineData): string {
     `## ${WRONG.kicker}`,
     para(WRONG.lede),
     ...WRONG.pins.map(pin),
+
+    ...latestWriting(),
 
     "## How working with me goes",
     para(PILOT.opener),

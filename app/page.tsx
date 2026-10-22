@@ -3,6 +3,7 @@ import Proof from "@/components/Proof";
 import Work from "@/components/Work";
 import Drawings from "@/components/Drawings";
 import Wrong from "@/components/Wrong";
+import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 import type { Metadata } from "next";
 import { getPipeline } from "@/lib/pipeline";
@@ -27,6 +28,7 @@ export default async function Home() {
       <Work />
       <Drawings />
       <Wrong />
+      <Writing />
       <Contact />
     </>
   );

@@ -16,6 +16,8 @@ export type Post = {
   cardTitle?: string;
   /** Plain-English summary for the homepage card. Falls back to `summary`. */
   cardSummary?: string;
+  /** One line for the home page's writing block. Falls back to `cardSummary`. */
+  line?: string;
   date: string;       // ISO
   readMins: number;
   tags: string[];
@@ -30,6 +32,8 @@ export const POSTS: Post[] = [
     cardTitle: "How I caught my own AI test cheating, and why the lower score is the one I trust",
     cardSummary:
       "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem. This is what was wrong, how I fixed it, and why “fix the rules, not the prompt” works.",
+    // The first three sentences of the card summary, word for word.
+    line: "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem.",
     date: "2026-06-14",
     readMins: 5,
     tags: ["llm", "evals", "pydantic", "llm-as-judge"],
