@@ -57,12 +57,12 @@ export const RESUME = {
       title: "GTM Automation Engineer (outbound agency), full-time",
       location: "New Delhi, India · Remote",
       bullets: [
-        "Run the Clay lead system behind client campaigns: 31 Clay searches pull new leads daily for 3 accounts, Claygent checks ICP fit, a waterfall finds and verifies emails, and n8n loads approved leads into Smartlead.",
-        "Fixed a Claygent prompt that rejected real fits because of how they describe themselves: rewrote the shared template behind 5 segment prompts and tested it against hand labels. Wrongly rejected fits fell from 4 of 4 to 0, and it matched my labels on 30 unseen rows. A cheaper model, switched in the same round, cut cost from 1.0 to 0.19 Clay credits a row.",
-        "Moved a company-website lookup and an \"already contacted\" check ahead of paid email finding; on one search, cost per email found fell from 4.6 credits to 1.0.",
-        "Built a weekly Claude Code review that ranks every search by lead quality and positive replies, and swaps in a new search only if 70%+ of a 30-lead sample rates good.",
-        "Built a daily scan of Slack communities that flags buying-intent posts and sends them to a sheet, Slack and Clay.",
-        "Built a cold-email writer whose LLM judge checks every claim against the source research: 95.5% of claims supported and none contradicted across 300 emails; the judge scored 100% on a 20-email labeled set.",
+        "Built and run an always-on lead finder for 3 accounts: 31 Clay workflows post new people to n8n by webhook; a daily Python job screens mail servers, runs a Claygent ICP check and an email waterfall, and writes leads to client sheets. First 10 days: 2,205 new people found, 1,000+ delivered with verified emails.",
+        "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506 companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
+        "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78% find rate) through a cost-ordered waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
+        "Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.",
+        "Built a Slack monitor across 312 community channels: an LLM judge reads every new thread daily (4,705 in one run) and sends a short list of buying-intent posts.",
+        "Built unattended Claude Code agents: a weekly review that ranks searches by lead quality and replies and swaps weak ones, and a cold-email writer whose LLM judge checks each claim against the research (95.5% supported, none contradicted, 300-email test set). Pipeline repo: 870+ tests.",
       ],
     },
     {
@@ -74,7 +74,7 @@ export const RESUME = {
       title: "AI/ML Intern, internship",
       location: "Remote (Glendale, US)",
       bullets: [
-        "Built data pipelines for the firm's internal data engine that normalized financial records, with validation that kept malformed ones out of the database.",
+        "Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed ones out.",
         "Led a team of 3 building a recruitment automation platform: embeddings-based candidate ranking, an AI-scored video interview tool, and n8n automation of intake, scoring and scheduling.",
       ],
     },
@@ -86,8 +86,7 @@ export const RESUME = {
       links: [],
       date: "2026",
       bullets: [
-        "Reads engineering-drawing PDFs into a quote sheet, with the source text for every value; anything the drawing doesn't state is left blank and flagged instead of guessed.",
-        "Hand-checked on 23 public drawings: 7 wrong values out of 419, and all 194 parts-list and cut-list values right.",
+        "Reads engineering-drawing PDFs into a quote sheet with the source text for every value, and flags what the drawing doesn't state instead of guessing. Hand-checked on 23 public drawings: 7 wrong of 419 values.",
       ],
     },
     {
@@ -97,6 +96,15 @@ export const RESUME = {
       date: "2026",
       bullets: [
         "LLM classifier for AI-engineering job posts. Fixed failure modes through the output schema instead of prompt rules, and caught answer leakage in my own eval, then published the lower, honest score.",
+      ],
+    },
+    {
+      name: "Personal AI ops",
+      stack: ["Claude Code", "n8n", "Python", "Gmail and Slack APIs"],
+      links: [],
+      date: "2026",
+      bullets: [
+        "Scheduled agents I run for myself: an Upwork alert judge that labels every job alert and drafts a proposal for the good ones, a daily freelance lead digest, and a task tracker with Slack buttons.",
       ],
     },
     {
@@ -124,11 +132,11 @@ export const RESUME = {
   skills: [
     {
       name: "GTM & data",
-      keywords: ["Clay (Find-leads, workflows, Claygent, Audiences, CLI/API)", "n8n", "Smartlead", "HubSpot", "BounceBan", "LeadMagic", "Apollo", "web scraping"],
+      keywords: ["Clay (workflows, Claygent, Audiences, API/CLI, webhooks)", "n8n", "Smartlead", "HubSpot", "BounceBan", "LeadMagic", "AI Ark", "web scraping"],
     },
     {
       name: "AI & LLM",
-      keywords: ["Claude Code", "prompt and agent design", "structured outputs", "evals and LLM-as-judge", "embeddings"],
+      keywords: ["Claude Code agents", "prompt and agent design", "structured outputs", "evals and LLM-as-judge", "embeddings"],
     },
     { name: "Languages", keywords: ["Python", "TypeScript/JavaScript", "SQL"] },
     {

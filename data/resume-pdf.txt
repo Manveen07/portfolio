@@ -1,5 +1,5 @@
-sha256: 11effabfcac65921350ab30a4e5b01857218cc5d7b974c120270c64a7b40eb61
-created: D:20261022104235+00'00'
+sha256: 621777dae4781ba0624668fa45090a068690b57145d52ace4c2d811fb1566b87
+created: D:20261022113448+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
@@ -13,37 +13,42 @@ Precise Leads
 Nov. 2025 – Present
 GTM Automation Engineer (outbound agency), full-time
 New Delhi, India · Remote
-–  Run the Clay lead system behind client campaigns: 31 Clay searches pull new leads daily for 3 accounts, Claygent
-checks ICP fit, a waterfall finds and verifies emails, and n8n loads approved leads into Smartlead.
-–  Fixed a Claygent prompt that rejected real fits because of how they describe themselves: rewrote the shared
-template behind 5 segment prompts and tested it against hand labels. Wrongly rejected fits fell from 4 of 4 to 0, and
-it matched my labels on 30 unseen rows. A cheaper model, switched in the same round, cut cost from 1.0 to 0.19
-Clay credits a row.
-–  Moved a company-website lookup and an "already contacted" check ahead of paid email finding; on one search, cost
-per email found fell from 4.6 credits to 1.0.
-–  Built a weekly Claude Code review that ranks every search by lead quality and positive replies, and swaps in a new
-search only if 70%+ of a 30-lead sample rates good.
-–  Built a daily scan of Slack communities that flags buying-intent posts and sends them to a sheet, Slack and Clay.
-–  Built a cold-email writer whose LLM judge checks every claim against the source research: 95.5% of claims
-supported and none contradicted across 300 emails; the judge scored 100% on a 20-email labeled set.
+–  Built and run an always-on lead finder for 3 accounts: 31 Clay workflows post new people to n8n by webhook; a daily Python
+job screens mail servers, runs a Claygent ICP check and an email waterfall, and writes leads to client sheets. First 10 days: 2,205
+new people found, 1,000+ delivered with verified emails.
+–  Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506
+companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits
+on wording and testing it on hand labels.
+–  Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78% find rate) through a cost-ordered waterfall
+(Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
+–  Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the
+result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.
+–  Built a Slack monitor across 312 community channels: an LLM judge reads every new thread daily (4,705 in one run) and sends
+a short list of buying-intent posts.
+–  Built unattended Claude Code agents: a weekly review that ranks searches by lead quality and replies and swaps weak ones, and
+a cold-email writer whose LLM judge checks each claim against the research (95.5% supported, none contradicted, 300-email
+test set). Pipeline repo: 870+ tests.
 Caprae Capital Partners
 Aug. 2025 – Jan. 2026
 AI/ML Intern, internship
 Remote (Glendale, US)
-–  Built data pipelines for the firm's internal data engine that normalized financial records, with validation that kept
-malformed ones out of the database.
-–  Led a team of 3 building a recruitment automation platform: embeddings-based candidate ranking, an AI-scored
-video interview tool, and n8n automation of intake, scoring and scheduling.
+–  Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed
+ones out.
+–  Led a team of 3 building a recruitment automation platform: embeddings-based candidate ranking, an AI-scored video interview
+tool, and n8n automation of intake, scoring and scheduling.
 Projects
 drawing-proof | Python, Gemini, structured outputs, evals
 2026
-–  Reads engineering-drawing PDFs into a quote sheet, with the source text for every value; anything the drawing
-doesn't state is left blank and flagged instead of guessed.
-–  Hand-checked on 23 public drawings: 7 wrong values out of 419, and all 194 parts-list and cut-list values right.
+–  Reads engineering-drawing PDFs into a quote sheet with the source text for every value, and flags what the drawing doesn't state
+instead of guessing. Hand-checked on 23 public drawings: 7 wrong of 419 values.
 leadlens | Python, Pydantic, LLM-as-judge · write-up
 2026
-–  LLM classifier for AI-engineering job posts. Fixed failure modes through the output schema instead of prompt rules,
-and caught answer leakage in my own eval, then published the lower, honest score.
+–  LLM classifier for AI-engineering job posts. Fixed failure modes through the output schema instead of prompt rules, and caught
+answer leakage in my own eval, then published the lower, honest score.
+Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs
+2026
+–  Scheduled agents I run for myself: an Upwork alert judge that labels every job alert and drafts a proposal for the good ones, a
+daily freelance lead digest, and a task tracker with Slack buttons.
 Tender Radar | Python, LLM classification, GitHub Actions · source
 2026
 –  UK public-sector tender finder: pulls new notices, an LLM scores fit per client, and each client gets a digest.
@@ -53,9 +58,9 @@ GPA 8.6/10
 Bachelor of Technology in Computer Science
 Nov. 2022 – Aug. 2026
 Skills
-GTM & data: Clay (Find-leads, workflows, Claygent, Audiences, CLI/API), n8n, Smartlead, HubSpot, BounceBan,
-LeadMagic, Apollo, web scraping
-AI & LLM: Claude Code, prompt and agent design, structured outputs, evals and LLM-as-judge, embeddings
+GTM & data: Clay (workflows, Claygent, Audiences, API/CLI, webhooks), n8n, Smartlead, HubSpot, BounceBan, LeadMagic, AI
+Ark, web scraping
+AI & LLM: Claude Code agents, prompt and agent design, structured outputs, evals and LLM-as-judge, embeddings
 Languages: Python, TypeScript/JavaScript, SQL
 Backend & tools: FastAPI, Next.js, Node.js, PostgreSQL, Docker, Git, CI/CD, PyTorch, scikit-learn
 --- links
