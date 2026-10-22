@@ -29,9 +29,7 @@ export type ResumeProject = {
 };
 
 /** Where the data knowingly differs from public/resume.pdf, with the source. The PDF test swaps these in. */
-export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = [
-  { pdf: "June 2025 – Dec. 2025", data: "Aug. 2025 – Jan. 2026", source: "LinkedIn, per Manveen 22 Oct 2026" },
-];
+export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = [];
 
 export const RESUME = {
   pdf: "/resume.pdf",
@@ -41,7 +39,7 @@ export const RESUME = {
   /** The line under the name: "AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows". */
   role: "AI & GTM Automation Engineer",
   focus: "Clay, n8n, Python, LLM workflows",
-  location: "India (remote, US/EU overlap)",
+  location: "New Delhi, India (remote)",
   phone: "+91 9289644633",
   links: [
     { label: "manveen9650@gmail.com", href: "mailto:manveen9650@gmail.com" },
@@ -56,8 +54,8 @@ export const RESUME = {
       org: "Precise Leads",
       dates: "Nov. 2025 – Present",
       start: "2025-11",
-      title: "GTM / Automation Engineer (outbound agency)",
-      location: "Remote",
+      title: "GTM Automation Engineer (outbound agency), full-time",
+      location: "New Delhi, India · Remote",
       bullets: [
         "Run the Clay lead system behind client campaigns: 31 Clay searches pull new leads daily for 3 accounts, Claygent checks ICP fit, a waterfall finds and verifies emails, and n8n loads approved leads into Smartlead.",
         "Fixed a Claygent prompt that rejected real fits because of how they describe themselves: rewrote the shared template behind 5 segment prompts and tested it against hand labels. Wrongly rejected fits fell from 4 of 4 to 0, and it matched my labels on 30 unseen rows. A cheaper model, switched in the same round, cut cost from 1.0 to 0.19 Clay credits a row.",
@@ -69,12 +67,11 @@ export const RESUME = {
     },
     {
       org: "Caprae Capital Partners",
-      // Dates per LinkedIn (Manveen, 22 Oct 2026: "You can use those dates"); the PDF still says
-      // "June 2025 – Dec. 2025" until he updates it. Listed in PDF_OVERRIDES so the PDF test allows it.
+      // Dates and title per LinkedIn; the PDF matches since 27b3186 (22 Oct 2026).
       dates: "Aug. 2025 – Jan. 2026",
       start: "2025-08",
       end: "2026-01",
-      title: "AI/ML Intern",
+      title: "AI/ML Intern, internship",
       location: "Remote (Glendale, US)",
       bullets: [
         "Built data pipelines for the firm's internal data engine that normalized financial records, with validation that kept malformed ones out of the database.",

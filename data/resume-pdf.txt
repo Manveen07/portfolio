@@ -1,9 +1,9 @@
-sha256: 036b5f94937b26f517a26d6e7de3059b4baefb8e1495c0a4473596837b338565
-created: D:20261022084918+00'00'
+sha256: 11effabfcac65921350ab30a4e5b01857218cc5d7b974c120270c64a7b40eb61
+created: D:20261022104235+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
-India (remote, US/EU overlap) · +91 9289644633
+New Delhi, India (remote) · +91 9289644633
 manveen9650@gmail.com
 linkedin.com/in/Manveen
 github.com/Manveen07
@@ -11,8 +11,8 @@ manveen.me
 Experience
 Precise Leads
 Nov. 2025 – Present
-GTM / Automation Engineer (outbound agency)
-Remote
+GTM Automation Engineer (outbound agency), full-time
+New Delhi, India · Remote
 –  Run the Clay lead system behind client campaigns: 31 Clay searches pull new leads daily for 3 accounts, Claygent
 checks ICP fit, a waterfall finds and verifies emails, and n8n loads approved leads into Smartlead.
 –  Fixed a Claygent prompt that rejected real fits because of how they describe themselves: rewrote the shared
@@ -27,8 +27,8 @@ search only if 70%+ of a 30-lead sample rates good.
 –  Built a cold-email writer whose LLM judge checks every claim against the source research: 95.5% of claims
 supported and none contradicted across 300 emails; the judge scored 100% on a 20-email labeled set.
 Caprae Capital Partners
-June 2025 – Dec. 2025
-AI/ML Intern
+Aug. 2025 – Jan. 2026
+AI/ML Intern, internship
 Remote (Glendale, US)
 –  Built data pipelines for the firm's internal data engine that normalized financial records, with validation that kept
 malformed ones out of the database.
