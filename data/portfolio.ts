@@ -198,7 +198,7 @@ export const DRAWINGS = {
     ["194 of 194", "parts list fields, plus one header row read as a part"],
   ] as [string, string][],
   // EVAL.md "Every wrong value": "All 7 quote real text from the sheet: the quote is genuine but it landed in the wrong field."
-  wrongLine: "All 7 wrong answers quote real text from the sheet, put in the wrong box, like the rod above. So every value carries its quote, and you can hold it up against the drawing.",
+  wrongLine: "All 7 wrong answers quote real text from the sheet. The text is real; the AI put it in the wrong box, like the rod above, or read it wrong (20 holes counted where the drawing has 36). So every value carries its quote, and you can hold it up against the drawing.",
   // EVAL.md caveats: "One labeller (me), no second reviewer"; "all CAD exports, no scans"; "All 23 were clean CAD PDFs,
   // and 22 of them have a usable text layer" (the Eaton sheet was read from the image alone, so "with a text layer" is
   // not said of all 23). Scans untested: verdict, "Scanned, faxed or photographed drawings: unknown."
