@@ -4,6 +4,7 @@
 
 import { T } from "@/lib/tokens";
 import type { Block } from "@/data/posts";
+import Exhibit from "@/components/Exhibit";
 
 type Token = { type: "text" | "bold" | "italic" | "code" | "link"; value: string; href?: string };
 
@@ -70,7 +71,12 @@ function Inline({ s }: { s: string }) {
             }}>{tk.value}</code>
           );
         if (tk.type === "link")
-          return (
+          // A link to another page of this site opens in the same tab.
+          return tk.href?.startsWith("/") ? (
+            <a key={k} href={tk.href} className="prose-link">
+              {tk.value}
+            </a>
+          ) : (
             <a key={k} href={tk.href} target="_blank" rel="noopener" className="prose-link">
               {tk.value}
             </a>
@@ -117,6 +123,7 @@ export default function Prose({ body }: { body: Block[] }) {
               }}>{b.s}</pre>
             </div>
           );
+        if (b.t === "exhibit") return <Exhibit key={i} e={b} scribble={b.scribble} />;
         if (b.t === "quote")
           return (
             <blockquote key={i} style={{

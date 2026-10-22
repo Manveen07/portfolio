@@ -8,18 +8,27 @@ import { ME, DRAWINGS as D, WRONG, type Pin } from "@/data/portfolio";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
 
+/** A red-pen exhibit as the page shows it: the words as code, the scribble, and which part the pen marks. */
+const exhibit = (e: Pin["exhibit"], scribble: string) =>
+  para(`\`${e.before}${e.marked}${e.after ?? ""}\` ${scribble} (the red pen ${e.pen === "underline" ? "underlines" : "circles"} \`${e.marked}\`)`);
+
+/** Links to this site's pages point at their markdown copies, like the rest of the copy. */
+const mdLinks = (s: string) => s.replace(/\]\((\/[^)]*)\)/g, (_, href: string) => `](${mdHref(href)})`);
+
 function block(b: Block): string {
   switch (b.t) {
     case "h2":
       return `## ${b.s}`;
     case "p":
-      return para(b.s);
+      return para(mdLinks(b.s));
+    case "exhibit":
+      return exhibit(b, b.scribble);
     case "code":
       return ["```" + b.lang, b.s, "```"].join("\n");
     case "quote":
-      return `> ${b.s}`;
+      return `> ${mdLinks(b.s)}`;
     case "ul":
-      return list(b.items);
+      return list(b.items.map(mdLinks));
     case "table":
       return [`| ${b.head.join(" | ")} |`, `| ${b.head.map(() => "---").join(" | ")} |`, ...b.rows.map((r) => `| ${r.join(" | ")} |`)].join("\n");
   }
@@ -47,10 +56,9 @@ function drawingProof(): string[] {
 
 /** One note of components/Wrong.tsx. */
 function pin(p: Pin): string {
-  const e = p.exhibit;
   return [
     `## ${p.date} · ${p.title}`,
-    para(`\`${e.before}${e.marked}${e.after ?? ""}\` ${p.scribble} (the red pen ${e.pen === "underline" ? "underlines" : "circles"} \`${e.marked}\`)`),
+    exhibit(p.exhibit, p.scribble),
     para(p.what),
     para(`**What I check now:** ${p.now}`),
   ].join("\n\n");

@@ -1,7 +1,7 @@
 // Blog / writing content. Block-based so we render without any markdown dep.
 // Inline syntax supported by the renderer: **bold**, `code`, *italic*, [text](url).
 
-import { DRAWINGS, WRONG } from "./portfolio";
+import { DRAWINGS, WRONG, type Pin } from "./portfolio";
 
 export type Block =
   | { t: "h2"; s: string }
@@ -9,7 +9,9 @@ export type Block =
   | { t: "code"; lang: string; s: string }
   | { t: "quote"; s: string }
   | { t: "ul"; items: string[] }
-  | { t: "table"; head: string[]; rows: string[][] };
+  | { t: "table"; head: string[]; rows: string[][] }
+  /** A line in mono with the red pen on it and a scribble beside it, like the confidently-wrong notes. */
+  | ({ t: "exhibit"; scribble: string } & Pin["exhibit"]);
 
 /** A post drawn by its own component instead of prose blocks. Its words stay in data/portfolio.ts;
     app/writing/[slug]/page.tsx picks the component and lib/md/posts.ts writes its markdown copy. */
@@ -60,101 +62,75 @@ export const POSTS: Post[] = [
     body: { component: "confidently-wrong" },
   },
   {
+    // Trimmed 22 Oct to its best part, the eval that leaked its own answers (Manveen: "Trim to its best part, with
+    // real numbers"). Part 1, the schema fixes, is cut: the 0.95 story is the 25 May note in the confidently-wrong post.
+    // Paths are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\new 10x engineer\ ; P = projects\business-classification-pipeline.
+    // Every number, and where it comes from:
+    // - 72 postings, 11 fakes, 61 real: P\data\golden-jds.jsonl at commit a587f972 (13 Jun 2026), 72 rows; 11 have
+    //   expected_category "ai_washed" (judge_v2.py golden_label: ai_washed is "yes"), 61 do not.
+    // - Before, 11 of 11 and no false alarms: commit a587f972, "Judge v2 held TPR/TNR 1.0 on 72 -- which was suspicious";
+    //   PROGRESS.md and P\failure-taxonomy.md at b399e59f, "honest TPR fell 1.0 → 0.818". The before run's outputs were
+    //   not kept; the commit message is the record.
+    // - 31 sentences: commit a587f972, "clean_descriptions.py strips 31 such sentences, leaving only real posting text".
+    // - After, 9 of 11 and still 0 false alarms of 61: P\data\judge-v2-outputs.jsonl at a587f972 against the labels
+    //   above gives 9 caught, 2 missed, 0 false alarms, 61 left alone (recounted 22 Oct; the leadlens card's scorecard).
+    //   Commit: "TPR dropped 1.0 -> 0.818, TNR held 1.0".
+    // - The two that got through: jd_032, GC AI, "Director of Partnerships (Legal AI)"; jd_034, DataAnnotation,
+    //   "AI Data Quality Specialist - AI Trainer". Commit: "Two scams now slip (GC partnerships role; DataAnnotation
+    //   coding-gig) = the ambiguous frontier."
+    // - The tells: P\clean_descriptions.py docstring, the golden JDs had "meta-commentary baked into the description
+    //   field ("Judge must catch this", "Non-AI control", "tests whether...", "Edge case: ...")"; its LEAK_MARKERS list
+    //   includes "judge must", "non-ai control", "edge case". "The editorial meta belongs in expected_category /
+    //   is_edge_case (the label side), never the input side."
+    // - "Crib notes": Manveen's own words, commit a587f972, "the high score was the eval grading its own crib notes".
     slug: "schema-as-eval-spec",
-    title: "Schema-as-eval-spec: killing LLM failure modes by construction (and catching my eval cheating)",
-    cardTitle: "How I caught my own AI test cheating, and why the lower score is the one I trust",
-    cardSummary:
-      "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem. This is what was wrong, how I fixed it, and why “fix the rules, not the prompt” works.",
-    // The first three sentences of the card summary, word for word.
-    line: "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem.",
+    title: "How I caught my own AI test cheating, and why the lower score is the one I trust",
+    // The first two sentences of the summary, word for word.
+    line: "My AI judge caught all 11 fake AI jobs in my test. My own notes in the test data were giving it the answers.",
     date: "2026-06-14",
-    readMins: 5,
-    tags: ["llm", "evals", "pydantic", "llm-as-judge"],
+    readMins: 2,
+    tags: ["llm", "evals", "llm-as-judge"],
     summary:
-      "I built an LLM job-posting classifier, fixed three failure modes by changing the output schema instead of the prompt, then discovered my own evaluation was leaking the answer. The second part taught me more than the first.",
+      "My AI judge caught all 11 fake AI jobs in my test. My own notes in the test data were giving it the answers. Without them, it caught 9.",
     body: [
       {
         t: "p",
-        s: "I've been building **leadlens**, an LLM classifier that reads an AI-engineering job posting and decides whether it's a real role, what kind, and whether it's worth applying to. I'm a final-year CS student aiming at remote AI-engineering work, so the tool doubles as dogfood: the thing that helps me find jobs is the portfolio piece.",
+        s: "leadlens is my tool that reads an AI job posting and says whether the job is real. Part of it is a judge: a second model that hunts for the fakes. A sales job with \"AI\" in the title. Gig work dressed up as engineering. A \"partnership opportunity\" with no salary.",
       },
       {
         t: "p",
-        s: "Two things happened building it that were worth more than the tool itself. First, a pattern for fixing model failures. Second, the more uncomfortable lesson: my evaluation was quietly cheating, and I almost shipped the result.",
+        s: "To test the judge, I labelled 72 postings by hand: 11 fakes, 61 real jobs.",
       },
-      { t: "h2", s: "Part 1: Fix failures in the schema, not the prompt" },
+      { t: "h2", s: "11 out of 11" },
       {
         t: "p",
-        s: 'When an LLM misbehaves, the reflex is to add a line to the prompt: *"don\'t hardcode confidence," "don\'t miss scams," "be thorough."* It mostly doesn\'t hold. Instructions are suggestions, and the model drifts back.',
-      },
-      {
-        t: "p",
-        s: "What worked instead was making the bad behaviour **impossible to express**, by changing the output schema so the model has to surface the thing it was hiding. I started calling it **schema-as-eval-spec**: every recurring failure gets a schema field that forces the model to declare itself, which both kills the failure and makes it measurable.",
-      },
-      { t: "p", s: "Three times this worked:" },
-      {
-        t: "p",
-        s: "**Hardcoded confidence.** The classifier returned a `confidence` value that was always the same number. It wasn't reasoning, it was defaulting. The fix wasn't \"please reason about confidence.\" It was a `confidence_reasoning` field with a minimum length, so the model literally cannot answer without first writing out the evidence. You can't default through a justification you're forced to produce.",
-      },
-      {
-        t: "code",
-        lang: "python",
-        s: 'confidence_reasoning: str = Field(\n    min_length=100,\n    description="Quote specific evidence from the description before any score.",\n)',
+        s: "It caught all 11 fakes and didn't call a single real job fake. Perfect, on a set I'd just made harder on purpose. A perfect score on a hard test usually means the test is broken, so I read the test data, line by line.",
       },
       {
         t: "p",
-        s: '**Invisible thin extraction.** It pulls the frameworks a posting names into `core_stack`. Sometimes that came back empty, but "empty" was ambiguous: did the posting name nothing, or did the model miss something that was there? Both looked identical. Adding a `stack_unspecified: bool` companion split the two apart, turning an invisible failure into a countable one.',
+        s: "The answers were in it. I'd written each posting's description myself, and my notes to myself had come along for the ride: \"Non-AI control\", \"Edge case:\", and my favourite:",
+      },
+      { t: "exhibit", before: "", marked: "Judge must catch this", pen: "underline", scribble: "that's my handwriting" },
+      {
+        t: "p",
+        s: "The judge wasn't judging the posting. It was reading my note and agreeing with me.",
+      },
+      { t: "h2", s: "9 out of 11" },
+      {
+        t: "p",
+        s: "I cut 31 sentences that were my notes rather than the advert's, and ran the same judge on the same 72. It caught 9 of the 11 fakes, still with no false alarms. The two that got through were a Director of Partnerships at a legal AI company, and an \"AI trainer\" gig that is really piecework. Both sit right on the line.",
       },
       {
         t: "p",
-        s: "**Ungrounded judge verdicts.** For catching fake \"AI\" roles I built a second LLM as a judge. Same trick: it must write a critique *before* the verdict, never after. The order is the discipline. A verdict with no reasoning in front of it is where calibration quietly breaks.",
+        s: "9 is lower, and closer to the truth. 11 was my test grading its own crib notes.",
       },
       {
         t: "p",
-        s: 'The reframing is the takeaway: the schema stops being a formatting detail and becomes the spec for what "good" means. Most of my fixes were schema edits, not prompt edits.',
-      },
-      { t: "h2", s: "Part 2: My evaluation was cheating" },
-      { t: "p", s: "Here's the part I didn't expect." },
-      {
-        t: "p",
-        s: 'To trust the scam-detecting judge, I built a small hand-labelled set, then grew it: more postings, more variety, more of the genuinely tricky cases (sales roles with "AI" in the title, gig "AI trainer" work, partnership pitches with no salary). I expected the judge to start failing as the set got harder. It didn\'t. It kept scoring suspiciously well.',
+        s: "So now the answer goes in the label and nowhere else. And if your AI aces your own test, read the test before you believe the score.",
       },
       {
         t: "p",
-        s: "That should have made me happy. It made me uneasy. A judge that aces every case usually means the test is too easy, not that the judge is brilliant.",
-      },
-      {
-        t: "p",
-        s: 'So I read my own evaluation data line by line, which is the one eval habit that actually pays off. And the problem was obvious in hindsight: **I\'d written the answer into the input.** My job descriptions had editorial notes baked in, phrases like "zero technical AI work" or "this is a sales role, not engineering." The judge wasn\'t judging a raw posting. It was reading my hint and repeating it back. The headline score was measuring my own annotations, not the model.',
-      },
-      {
-        t: "p",
-        s: 'I stripped every one of those tells out of the descriptions, leaving only what a real posting would actually say, and ran it again. The score dropped. The judge started missing the subtlest cases: a "Director of Partnerships" at a real AI company, a coding-heavy gig that\'s really piecework annotation. Exactly the cases where a human skimming fast would also be fooled.',
-      },
-      {
-        t: "p",
-        s: "The lower number is the honest one. The high number was never real. It was the eval grading its own crib notes.",
-      },
-      { t: "h2", s: "Why this is the better lesson" },
-      {
-        t: "p",
-        s: "A failure mode you can fix with a schema field is satisfying but tidy. A failure mode in your *measurement* is the dangerous one, because it doesn't look like a failure. It looks like success. If I'd trusted the first result, I'd have shipped a judge I believed was near-perfect and watched it fall apart on real job boards, with no idea why.",
-      },
-      {
-        t: "p",
-        s: "The fix for the model was a schema. The fix for the eval was reading the data and being willing to make my own numbers look worse. The second one was harder and mattered more.",
-      },
-      { t: "h2", s: "What's next" },
-      {
-        t: "p",
-        s: "The judge now misses the genuinely ambiguous cases: partnership-flavoured roles at real AI companies, coding gig work that isn't really a job. Those are the frontier, and the next iteration targets them with worked examples of exactly those shapes. The classifier itself is the weaker link. It still over-trusts the word \"AI\" in a title, so that's next too.",
-      },
-      {
-        t: "p",
-        s: "leadlens runs for a fraction of a cent per posting. Cost was never the constraint. Honesty about what the evaluation is actually measuring was.",
-      },
-      {
-        t: "p",
-        s: "The code is in a private repo until leadlens goes live. The production system built on the same pattern is public: [tender-radar-showcase](https://github.com/Manveen07/tender-radar-showcase).",
+        s: "My own answer key caught me out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of my labels were wrong and the AI was right. The answer key needs marking as well.",
       },
     ],
   },

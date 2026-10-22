@@ -1148,6 +1148,31 @@ test("pinned notes sit on the paper a step darker, tilted, with no border or sha
   assert.doesNotMatch(pin, /shadow|border:/);
 });
 
+// ── 22 Oct: the June post trimmed to its best part, with real numbers (Manveen: "Trim to its best part, with real
+// numbers"). Sources: the comment on the post in data/posts.ts; claims section K. ──
+test("the June post is the eval that leaked its own answers: one title everywhere, the real numbers, a red-pen line", () => {
+  const title = "How I caught my own AI test cheating, and why the lower score is the one I trust";
+  const html = markup("writing/schema-as-eval-spec.html");
+  assert.match(html, new RegExp(`<h1>${title}</h1>`));
+  assert.ok(text("writing.html").includes(title), "the writing index shows another title");
+  assert.doesNotMatch(text("writing.html"), /Full title|Schema-as-eval-spec/, "the old long title is still listed");
+  const t = plain(prose("schema-as-eval-spec"));
+  // 72 labelled by hand, 11 fakes and 61 real; 11 of 11 before; 31 sentences cut; 9 of 11 after, no false alarms.
+  for (const s of ["72 postings by hand: 11 fakes, 61 real jobs", "It caught all 11 fakes", "31 sentences", "It caught 9 of the 11 fakes, still with no false alarms", "9 is lower, and closer to the truth"]) {
+    assert.ok(t.includes(s), `missing "${s}"`);
+  }
+  // Its red-pen moment: the tell that gave the answer away, underlined, with a scribble.
+  const ex = prose("schema-as-eval-spec").match(/<p class="pin-exhibit">[\s\S]*?<\/p>/)?.[0] ?? "";
+  assert.match(ex, /<code class="exhibit"><span class="pen"><span class="pen-under">Judge must catch this<\/span><\/span><\/code>/);
+  assert.ok(plain(ex).includes("that's my handwriting"));
+  // It links the drawing post, in the same tab.
+  assert.match(html, /<a href="\/writing\/marking-the-ais-homework" class="prose-link">Marking the AI(?:'|&#x27;)s homework<\/a>/);
+  // Part 1 and the lines that read machine-written are gone.
+  for (const s of ["Part 1", "confidence_reasoning", "Here's the part I didn't expect", "It made me uneasy", "It wasn't reasoning", "The order is the discipline", "Cost was never the constraint", "final-year", "literally cannot"]) {
+    assert.ok(!t.includes(s), `still says "${s}"`);
+  }
+});
+
 // ── 22 Oct: the writing is findable. Manveen: "a person navigating the website will never lead to the writing
 // section. I want them to go to the writing section." It was only a footer link. ──
 test("every page's header links Writing, plainly, beside the mail link", () => {
@@ -1168,7 +1193,7 @@ test("the home page lists the three newest posts after the work: a title and one
   assert.match(items[0][2], /^Marking the AI(?:'|&#x27;)s homework$/);
   assert.equal(items[1][2], "Things AI got confidently wrong");
   assert.match(items[2][2], /^How I caught my own AI test cheating/);
-  assert.equal(items[2][3], "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem.");
+  assert.equal(items[2][3], "My AI judge caught all 11 fake AI jobs in my test. My own notes in the test data were giving it the answers.");
   // "Not filled with balls of text": one line each, no dates, no read times, no long paragraphs.
   for (const m of items) assert.ok(m[3].length <= 140, `a long line under "${m[2]}": ${m[3].length} characters`);
   assert.doesNotMatch(w, /min read|<time/, "the list carries dates or read times");
@@ -1191,7 +1216,7 @@ test("the writing index lists every post newest first, with the date each one sh
   assert.deepEqual(items, [
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
     ["things-ai-got-confidently-wrong", "Last entry 19 Sep 2026 · 2 min read"],
-    ["schema-as-eval-spec", "14 June 2026 · 5 min read"],
+    ["schema-as-eval-spec", "14 June 2026 · 2 min read"],
   ]);
   // The notes post is dated by its newest note; nothing on the writing pages is dated in October.
   const notes = [...postBody("things-ai-got-confidently-wrong").matchAll(/<time dateTime="([\d-]+)">/g)].map((m) => m[1]);
