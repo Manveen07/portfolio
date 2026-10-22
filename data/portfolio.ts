@@ -1,4 +1,5 @@
-// All copy for the home page. Components read from here; edit words here.
+// All copy for the home page, and the words of the two posts drawn by components (DRAWINGS, WRONG).
+// Components read from here; edit words here.
 // Rules for every string: spec section 5 (no dashes, no sales words, Manveen's
 // own phrasing where spec 5a has it). Every figure needs a source: see
 // docs/superpowers/specs/2026-10-13-claims.md.
@@ -163,12 +164,14 @@ export const OWN_WORK: WorkItem[] = [
 ];
 
 // ── drawing-proof: an AI reads engineering drawings, marked against my own labels (added 22 Oct) ──
+// A home page block until later on 22 Oct, now the post /writing/marking-the-ais-homework (data/posts.ts).
+// Manveen: "these are the blogs"; "I want my website to be not filled with balls of text".
 // Manveen's pick on 22 Oct ("make sure they're quirky"): the red pen marks the AI's answers like homework.
 // Paths below are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\new 10x engineer\projects\drawing-proof\.
 // Every figure is from out/EVAL.md, "drawing-proof v1: evaluation", 26 Sep 2026, model gemini-3-flash-preview,
 // the only model that finished all 23 drawings that day (claims rows 84 to 92). The 13 Oct Claude run is left out.
 export const DRAWINGS = {
-  kicker: "Marking the AI's homework · drawing-proof",
+  title: "Marking the AI's homework · drawing-proof",
   // EVAL.md line 3: "23 real public drawings, hand-labelled before the tool ever ran on them."
   lede: "Can an AI fill in a quote from an engineering drawing? I answered 23 real drawings myself first, then marked its work.",
   // What it fills in: EVAL.md "The honest email claim" and the per-field table (part number, revision, material,
@@ -219,6 +222,7 @@ export const DRAWINGS = {
 } as const;
 
 // ── Things AI got confidently wrong: pinned notes (added 22 Oct) ──
+// A home page block until later on 22 Oct, now the post /writing/things-ai-got-confidently-wrong (data/posts.ts).
 // Manveen, 22 Oct: "make sure their quirky" and "have distriibuted date and last one in september". Each date is the
 // day the mistake was caught, from a dated file or commit; nothing from October. The block teaches, it never pitches.
 // Paths are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\new 10x engineer\ (claims rows 93 to 100).
@@ -235,8 +239,8 @@ export type Pin = {
   now: string;
 };
 
-export const WRONG: { kicker: string; lede: string; pins: Pin[] } = {
-  kicker: "Things AI got confidently wrong",
+export const WRONG: { title: string; lede: string; pins: Pin[] } = {
+  title: "Things AI got confidently wrong",
   lede: "Pinned here so I don't forget them. Each one came back sounding sure of itself, and each one changed what I check.",
   pins: [
     {
@@ -272,14 +276,15 @@ export const WRONG: { kicker: string; lede: string; pins: Pin[] } = {
       // message "tests (12/12)". Its test_radar.py has 12 tests and none reads profiles/*.yaml or FirmProfile.
       // Commit f6eff1e6 (11 Aug 2026): the three profiles had staff_count as an int and lacked two required fields;
       // "crashing on FirmProfile validation since ~20 July". Claims row 11: scheduled runs failed on all 22 days,
-      // 21 Jul to 11 Aug. The bars: the Tender Radar section above, last 40 scheduled runs, red when one failed (row 13).
+      // 21 Jul to 11 Aug. The bars: the home page's Tender Radar section, last 40 scheduled runs, red when one failed
+      // (row 13). "Higher up this page" until the notes became a post on 22 Oct.
       iso: "2026-08-11",
       date: "11 Aug 2026",
       title: "12 of 12, and down for three weeks",
       exhibit: { before: "", marked: "tests (12/12)", pen: "underline" },
       scribble: "none of them opened the new files",
       what: "An AI helped me add three trades to Tender Radar, and its commit said the tests passed, 12 of 12. None of them loaded the new files, which didn't fit the checker, so the morning run crashed every day for three weeks.",
-      now: "a passing test only vouches for what it opens. The last 40 runs sit higher up this page as bars, red when one fails.",
+      now: "a passing test only vouches for what it opens. The last 40 runs sit on the home page as bars, red when one fails.",
     },
     {
       // Commit 7abe5472 (19 Sep 2026): "Two OpenCode runs produced confident write-ups whose quotes did not support

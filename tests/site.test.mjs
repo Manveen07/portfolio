@@ -74,6 +74,9 @@ const outsideMedia = (styles) => {
 
 const snapshot = JSON.parse(read("data/pipeline-snapshot.json"));
 
+/** Every post's slug, in data/posts.ts order. */
+const posts = [...read("data/posts.ts").matchAll(/slug: "([a-z0-9-]+)"/g)].map((m) => m[1]);
+
 // ── Task 1: the build exists and the saved run numbers are current ─────
 test("the home page was built", () => {
   assert.ok(built(".next/server/app/index.html"), "run the build first");
@@ -385,7 +388,7 @@ test("one reading column, centred: header, sections and footer share its width a
   // Header, every section and the footer are wraps.
   const html = markup("index.html");
   assert.match(html, /<header class="wrap head">/);
-  assert.equal(count(html, /<section[^>]*class="wrap sec/), 7);
+  assert.equal(count(html, /<section[^>]*class="wrap sec/), 5);
   assert.match(html, /<footer class="wrap foot">/);
   // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
   assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
@@ -485,16 +488,17 @@ test("the people and incident sections are gone, with their copy", () => {
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
-test("sections appear in the agreed order: seven, with the newest post just before the pilot", () => {
-  // Four until 22 Oct, when Manveen added drawing-proof and the confidently-wrong notes, between Work and the pilot.
-  // The same day he asked for the writing to be findable ("a person navigating the website will never lead to the
-  // writing section. I want them to go to the writing section."), so a quiet Writing block follows the notes.
+test("sections appear in the agreed order: five, with the newest writing just before the pilot", () => {
+  // On 22 Oct Manveen added drawing-proof and the confidently-wrong notes between Work and the pilot, then asked for
+  // the writing to be findable ("a person navigating the website will never lead to the writing section. I want them
+  // to go to the writing section."), then moved both blocks into the writing: "these are the blogs"; "I want my
+  // website to be not filled with balls of text". So Work is followed by a short Writing list.
   const html = markup("index.html");
-  const at = ["top", "proof", "work", "drawings", "wrong", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  const at = ["top", "proof", "work", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
-  assert.ok(!html.includes('id="people"') && !html.includes('id="broke"'), "a removed section is back");
-  assert.equal(count(html, /<section[\s>]/), 7, "the home page does not have exactly seven sections");
+  for (const id of ["people", "broke", "drawings", "wrong"]) assert.ok(!html.includes(`id="${id}"`), `a removed section is back: #${id}`);
+  assert.equal(count(html, /<section[\s>]/), 5, "the home page does not have exactly five sections");
 });
 
 test("one Calendly link on the home page, at the bottom, and no buttons", () => {
@@ -505,18 +509,19 @@ test("one Calendly link on the home page, at the bottom, and no buttons", () => 
 });
 
 test("no black buttons anywhere: the 404 and post pages end with plain links too", () => {
-  for (const page of ["_not-found.html", "writing/schema-as-eval-spec.html"]) {
+  for (const page of ["_not-found.html", ...posts.map((s) => `writing/${s}.html`)]) {
     assert.doesNotMatch(markup(page), /class="btn"/, `${page} still has a button`);
   }
   assert.doesNotMatch(css(), /\.btn[{:]/, "the .btn style is still in the CSS");
   assert.match(markup("_not-found.html"), /<a class="link" href="\/">Back to the home page<\/a>/);
-  assert.match(markup("writing/schema-as-eval-spec.html"), /<a class="link" href="\/#contact">Write to me<\/a>/);
+  for (const s of posts) assert.match(markup(`writing/${s}.html`), /<a class="link" href="\/#contact">Write to me<\/a>/);
 });
 
 test("a post fills the side rail too: back link and date sit in the rail, the title stays readable", () => {
   // Release check, 15 Oct: the post left the rail empty, so its text sat pushed to the right.
   const html = markup("writing/schema-as-eval-spec.html");
   assert.match(html, /<article class="wrap sec hero post"><div class="post-meta"><p class="small"><a class="link" href="\/writing">← all writing<\/a><\/p><p class="small">14 June 2026/);
+  for (const s of posts) assert.match(markup(`writing/${s}.html`), /<article class="wrap sec hero post"><div class="post-meta"><p class="small"><a class="link" href="\/writing">← all writing<\/a><\/p><p class="small">/, `${s}: no rail`);
   const wide = mediaBlocks(css(), "1100px").join("\n");
   assert.match(wide, /\.sec>\.post-meta\{[^}]*grid-(?:column:1|area:1\/1)[^}]*position:sticky/);
   // A long post title is a heading, not a poster: at most 44px.
@@ -570,13 +575,11 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   assert.deepEqual(h2, [
     "Running right now · Tender Radar",
     "Work, and who vouches for it",
-    "Marking the AI's homework · drawing-proof",
-    "Things AI got confidently wrong",
     "Writing",
     "How working with me goes",
   ]);
-  // Four work entries, the four pinned notes and the newest post.
-  assert.equal(count(html, /<h3[\s>]/), 9);
+  // Four work entries and the three newest posts.
+  assert.equal(count(html, /<h3[\s>]/), 7);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -587,11 +590,18 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.match(rule, /margin:0 0 14px/);
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
-  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 6);
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 4);
 });
 
+/** A prose post up to its "More writing" list: the post's own headings. */
+const prose = (slug) => {
+  const html = markup(`writing/${slug}.html`);
+  const end = html.indexOf(">More writing<");
+  return end < 0 ? html : html.slice(0, end);
+};
+
 test("post headings use a font weight that is loaded (Archivo ships 400, 600, 800, 900)", () => {
-  const html = markup("writing/schema-as-eval-spec.html");
+  const html = prose("schema-as-eval-spec");
   const h2s = html.match(/<h2[^>]*>/g) ?? [];
   assert.ok(h2s.length > 0, "no h2 in the post");
   for (const tag of h2s) {
@@ -602,7 +612,7 @@ test("post headings use a font weight that is loaded (Archivo ships 400, 600, 80
 
 // ── Task 9: writing pages, 404, metadata and share image match ─────────
 test("writing pages and 404 have no control-panel labels or dashes", () => {
-  for (const page of ["writing.html", "writing/schema-as-eval-spec.html", "_not-found.html"]) {
+  for (const page of ["writing.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
     const html = markup(page);
     for (const s of ["P-05", "P-XX", "back to the panel", "Back to the panel", "panel on"]) {
       assert.ok(!html.includes(s), `${page} still has "${s}"`);
@@ -693,18 +703,20 @@ test("PresentAI card: the live app takes a typed prompt, the public repo has no 
   assert.doesNotMatch(t, /2h → 15m/);
 });
 
-test("the post's read time is in line with its length", () => {
-  const html = markup("writing/schema-as-eval-spec.html");
-  const article = html.match(/<article[\s\S]*?<\/article>/)?.[0] ?? "";
-  const plain = article.replace(/<[^>]+>/g, " ");
-  const words = plain.split(/\s+/).filter(Boolean).length;
-  const mins = Number(/(\d+)\s+min read/.exec(plain)?.[1]);
-  assert.ok(mins >= Math.floor(words / 260) && mins <= Math.ceil(words / 180), `says ${mins} min for ${words} words`);
+test("every post's read time is in line with its length", () => {
+  for (const s of posts) {
+    const html = markup(`writing/${s}.html`);
+    const article = html.match(/<article[\s\S]*?<\/article>/)?.[0] ?? "";
+    const plain = article.replace(/<[^>]+>/g, " ");
+    const words = plain.split(/\s+/).filter(Boolean).length;
+    const mins = Number(/(\d+)\s+min read/.exec(plain)?.[1]);
+    assert.ok(mins >= Math.max(1, Math.floor(words / 260)) && mins <= Math.ceil(words / 180), `${s} says ${mins} min for ${words} words`);
+  }
 });
 
 // ── Design verdicts (docs/superpowers/specs/2026-10-14-design-verdicts.md) ──
 test("verdict 2: post headings have no ## marker and match the site's 800 weight", () => {
-  const html = markup("writing/schema-as-eval-spec.html");
+  const html = prose("schema-as-eval-spec");
   assert.doesNotMatch(html, />##</);
   const h2s = html.match(/<h2[^>]*>/g) ?? [];
   assert.ok(h2s.length > 0, "no h2 in the post");
@@ -1040,12 +1052,20 @@ test("README describes the current site: short, plain, no badges, emoji, dashes 
   }
 });
 
-// ── 22 Oct: two new blocks, Manveen's pick ("make sure their quirky"); claims rows 84 to 100 ──
-const section = (id) => markup("index.html").match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?<\\/section>`))?.[0] ?? "";
+// ── 22 Oct: two new blocks, Manveen's pick ("make sure their quirky"); claims rows 84 to 100. Home page sections
+// at first; the same day he moved them into the writing ("these are the blogs"), so they are posts now. ──
+/** A post's body: from the component's wrapper to the "More writing" list (or the closing links). */
+const postBody = (slug) => {
+  const html = markup(`writing/${slug}.html`);
+  const at = html.indexOf('<div class="post-body">');
+  if (at < 0) return "";
+  const ends = ['<h2 class="kicker">More writing', '<p class="cta-row"'].map((s) => html.indexOf(s, at)).filter((i) => i >= 0);
+  return html.slice(at, Math.min(...ends));
+};
 
 test("drawing-proof is marked like homework: the real crop, the wrong answer circled, the scores from EVAL.md", () => {
-  const sec = section("drawings");
-  assert.ok(sec, "no section#drawings");
+  const sec = postBody("marking-the-ais-homework");
+  assert.ok(sec, "no drawing-proof post body");
   // The crop is a real PNG of the sheet, shown with its true size on the tag.
   const png = readFileSync(path.join(root, "public/work/rod-titleblock.png"));
   assert.deepEqual([...png.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], "rod-titleblock.png is not a PNG");
@@ -1080,8 +1100,8 @@ test("drawing-proof marks draw once, and are always drawn without JS or under re
 });
 
 test("the confidently-wrong notes: four real dates in four different months, the latest in September, none in October", () => {
-  const sec = section("wrong");
-  assert.ok(sec, "no section#wrong");
+  const sec = postBody("things-ai-got-confidently-wrong");
+  assert.ok(sec, "no confidently-wrong post body");
   const dates = [...sec.matchAll(/<time dateTime="(\d{4}-\d{2}-\d{2})">/g)].map((m) => m[1]);
   assert.deepEqual(dates, ["2026-05-25", "2026-07-07", "2026-08-11", "2026-09-19"], "the dates moved: each one must come from a dated file or commit");
   assert.equal(new Set(dates.map((d) => d.slice(0, 7))).size, dates.length, "two notes share a month");
@@ -1107,7 +1127,7 @@ test("pinned notes sit on the paper a step darker, tilted, with no border or sha
 // ── 22 Oct: the writing is findable. Manveen: "a person navigating the website will never lead to the writing
 // section. I want them to go to the writing section." It was only a footer link. ──
 test("every page's header links Writing, plainly, beside the mail link", () => {
-  for (const page of ["index.html", "writing.html", "writing/schema-as-eval-spec.html", "_not-found.html"]) {
+  for (const page of ["index.html", "writing.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
     const head = markup(page).match(/<header[\s\S]*?<\/header>/)?.[0] ?? "";
     assert.match(head, /<nav class="head-links" aria-label="Site"><a class="head-link" href="\/writing">Writing<\/a><a class="head-cta" href="mailto:/, `${page}: no Writing link before the mail link`);
   }
@@ -1116,20 +1136,52 @@ test("every page's header links Writing, plainly, beside the mail link", () => {
   assert.match(styles, /\.head\{[^}]*flex-wrap:wrap/, "on a narrow phone the links would squeeze the name");
 });
 
-test("the home page shows the newest post after the notes: date, title, one line, and a link to all writing", () => {
+test("the home page lists the three newest posts after the work: a title and one line each, and all writing", () => {
   const w = markup("index.html").match(/<section[^>]*id="writing"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.match(w, /<h2 class="kicker">Writing<\/h2>/);
-  assert.match(w, /<a class="latest" href="\/writing\/schema-as-eval-spec"><p class="small">14 June 2026 · 5 min read<\/p><h3 class="h3">How I caught my own AI test cheating/);
-  assert.match(w, /<p class="body">I built an AI that grades job postings\. It scored perfectly on my tests\. That was the problem\.<\/p>/);
+  const items = [...w.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><h3 class="h3">([^<]*)<\/h3><p class="body">([^<]*)<\/p><\/a><\/li>/g)];
+  assert.deepEqual(items.map((m) => m[1]), ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"], "not the three newest, newest first");
+  assert.match(items[0][2], /^Marking the AI(?:'|&#x27;)s homework · drawing-proof$/);
+  assert.equal(items[1][2], "Things AI got confidently wrong");
+  assert.match(items[2][2], /^How I caught my own AI test cheating/);
+  assert.equal(items[2][3], "I built an AI that grades job postings. It scored perfectly on my tests. That was the problem.");
+  // "Not filled with balls of text": one line each, no dates, no read times, no long paragraphs.
+  for (const m of items) assert.ok(m[3].length <= 140, `a long line under "${m[2]}": ${m[3].length} characters`);
+  assert.doesNotMatch(w, /min read|<time/, "the list carries dates or read times");
   assert.match(w, /<a href="\/writing">All writing →<\/a>/);
   assert.doesNotMatch(w, /class="btn"|Read more|Subscribe/i, "the block pitches");
 });
 
-test("the writing pages link back home, and a post links the rest of the writing", () => {
+test("the two blocks left the home page whole: no crop, no scores, no pinned notes", () => {
+  const html = markup("index.html");
+  const t = text("index.html");
+  for (const s of ['class="tb-img"', 'class="pins"', 'class="pin"', 'class="exhibit"', 'class="marked"']) assert.ok(!html.includes(s), `the home page still has ${s}`);
+  for (const s of ["7 of 419", "316 of 326", "Pedro Paulo Vezza Campos", "What I check now", "Pinned here so I don't forget them"]) {
+    assert.ok(!t.includes(s), `the home page still says "${s}"`);
+  }
+});
+
+test("the writing index lists every post newest first, with the date each one shows", () => {
+  const html = markup("writing.html");
+  const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
+  assert.deepEqual(items, [
+    ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
+    ["things-ai-got-confidently-wrong", "Last entry 19 Sep 2026 · 2 min read"],
+    ["schema-as-eval-spec", "14 June 2026 · 5 min read"],
+  ]);
+  // The notes post is dated by its newest note; nothing on the writing pages is dated in October.
+  const notes = [...postBody("things-ai-got-confidently-wrong").matchAll(/<time dateTime="([\d-]+)">/g)].map((m) => m[1]);
+  assert.equal(notes.at(-1), "2026-09-19");
+  for (const page of ["writing.html", ...posts.map((s) => `writing/${s}.html`)]) assert.doesNotMatch(text(page), /\d+ Oct(?:ober)? 2026/, `${page} shows an October date`);
+});
+
+test("the writing pages link back home, and a post links the rest of the writing, newest first", () => {
   assert.match(markup("writing.html"), /<a class="link" href="\/">← Home<\/a>/);
-  const post = markup("writing/schema-as-eval-spec.html");
-  assert.match(post, /<a class="link" href="\/writing">← all writing<\/a><a class="link" href="\/">Home<\/a><a class="link" href="\/#contact">Write to me<\/a>/);
-  // With one post there is nothing else to list; the "More writing" list appears once there are two.
-  assert.doesNotMatch(post, /More writing/);
-  assert.match(read("app/writing/[slug]/page.tsx"), /POSTS\.filter\(\(p\) => p\.slug !== post\.slug\)/);
+  for (const s of posts) {
+    const post = markup(`writing/${s}.html`);
+    assert.match(post, /<a class="link" href="\/writing">← all writing<\/a><a class="link" href="\/">Home<\/a><a class="link" href="\/#contact">Write to me<\/a>/);
+    const more = post.slice(post.indexOf("More writing"));
+    const listed = [...more.matchAll(/<a href="\/writing\/([a-z0-9-]+)">/g)].map((m) => m[1]);
+    assert.deepEqual(listed, ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
+  }
 });

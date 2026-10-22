@@ -1,6 +1,8 @@
 // Blog / writing content. Block-based so we render without any markdown dep.
 // Inline syntax supported by the renderer: **bold**, `code`, *italic*, [text](url).
 
+import { DRAWINGS, WRONG } from "./portfolio";
+
 export type Block =
   | { t: "h2"; s: string }
   | { t: "p"; s: string }
@@ -9,23 +11,54 @@ export type Block =
   | { t: "ul"; items: string[] }
   | { t: "table"; head: string[]; rows: string[][] };
 
+/** A post drawn by its own component instead of prose blocks. Its words stay in data/portfolio.ts;
+    app/writing/[slug]/page.tsx picks the component and lib/md/posts.ts writes its markdown copy. */
+export type PostComponent = "drawing-proof" | "confidently-wrong";
+
 export type Post = {
   slug: string;
   title: string;
   /** Plain-English title for the homepage card. Falls back to `title`. */
   cardTitle?: string;
-  /** Plain-English summary for the homepage card. Falls back to `summary`. */
+  /** Plain-English summary for the writing index. Falls back to `summary`. */
   cardSummary?: string;
-  /** One line for the home page's writing block. Falls back to `cardSummary`. */
+  /** One line for the home page's writing list. Falls back to `cardSummary`. */
   line?: string;
   date: string;       // ISO
+  /** A word for the date, where it shows: "Marked" gives "Marked 26 Sep 2026". Without one: "14 June 2026". */
+  dateLabel?: string;
   readMins: number;
   tags: string[];
   summary: string;    // card + meta description
-  body: Block[];
+  body: Block[] | { component: PostComponent };
 };
 
 export const POSTS: Post[] = [
+  {
+    // Was the home page's "Marking the AI's homework" block until 22 Oct, when Manveen moved it here:
+    // "these are the blogs". Dated the day it was marked: out/EVAL.md, 26 Sep 2026 (the fine print says so too).
+    slug: "marking-the-ais-homework",
+    title: DRAWINGS.title,
+    date: "2026-09-26",
+    dateLabel: "Marked",
+    readMins: 2,
+    tags: ["evals", "llm", "engineering drawings"],
+    summary: DRAWINGS.lede,
+    body: { component: "drawing-proof" },
+  },
+  {
+    // Was the home page's pinned notes until 22 Oct. Dated by its newest note, 19 Sep 2026; each note keeps its own date.
+    slug: "things-ai-got-confidently-wrong",
+    title: WRONG.title,
+    // The lede's second sentence, word for word: under this title on the home page, "Pinned here" would point nowhere.
+    line: "Each one came back sounding sure of itself, and each one changed what I check.",
+    date: "2026-09-19",
+    dateLabel: "Last entry",
+    readMins: 2,
+    tags: ["llm", "evals", "lessons"],
+    summary: WRONG.lede,
+    body: { component: "confidently-wrong" },
+  },
   {
     slug: "schema-as-eval-spec",
     title: "Schema-as-eval-spec: killing LLM failure modes by construction (and catching my eval cheating)",
@@ -129,4 +162,17 @@ export const POSTS: Post[] = [
 
 export function getPost(slug: string): Post | undefined {
   return POSTS.find((p) => p.slug === slug);
+}
+
+/** Every post, newest first: the order of the writing index, the home page list and llms.txt. */
+export const NEWEST_FIRST: Post[] = [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+
+const LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** A post's date as every page and markdown copy shows it: "14 June 2026", or with its label, "Marked 26 Sep 2026".
+    Built by hand: en-GB's short month for September is "Sept" in current ICU. */
+export function postDate(p: Post): string {
+  const [y, m, d] = p.date.split("-").map(Number);
+  return p.dateLabel ? `${p.dateLabel} ${d} ${SHORT[m - 1]} ${y}` : `${d} ${LONG[m - 1]} ${y}`;
 }

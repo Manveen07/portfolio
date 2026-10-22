@@ -4,6 +4,8 @@ export const para = (s: string) => s.trim();
 export const list = (items: string[]) => items.map((i) => `- ${i}`).join("\n");
 export const link = (text: string, href: string) => `[${text.replace(/([[\]])/g, "\\$1")}](${href})`;
 export const image = (alt: string, src: string) => `![${alt.replace(/([[\]])/g, "\\$1")}](${src})`;
+/** A red margin note on the page. */
+export const pen = (s: string) => `*Red pen:* ${s}`;
 
 /** A Response with a text body and its content type. Markdown copies say they are markdown (llmstxt.org). */
 export function textResponse(body: string, type: "text/markdown" | "text/plain" | "application/json"): Response {

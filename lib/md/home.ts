@@ -3,16 +3,13 @@
 // aria-label, and every word drawn in a sketch must appear here, and every number here must be on the page.
 // So when a component's wording changes, change it here too, or the tests fail.
 
-import { POSTS } from "@/data/posts";
-import { ME, HERO, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, DRAWINGS as D, WRONG, PILOT, OFF_CLOCK, type WorkItem, type Pin } from "@/data/portfolio";
+import { NEWEST_FIRST } from "@/data/posts";
+import { ME, HERO, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, PILOT, OFF_CLOCK, type WorkItem } from "@/data/portfolio";
 import type { PipelineData } from "@/lib/pipeline";
 import { fmtDay, runLine } from "@/lib/runs";
 import { radarText, RADAR_SOURCES, WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
 import { abs, mdHref, SITE } from "@/lib/site";
-import { para, list, link, image, fmtLongDate } from "@/lib/md/format";
-
-/** A red margin note on the page. */
-const pen = (s: string) => `*Red pen:* ${s}`;
+import { para, list, link, image, pen } from "@/lib/md/format";
 
 /** The words of the week sketch, as drawn. */
 function weekDrawing(): string {
@@ -60,25 +57,13 @@ function entry(w: WorkItem): string {
   return out.join("\n\n");
 }
 
-function pin(p: Pin): string {
-  const e = p.exhibit;
-  return [
-    `### ${p.date} · ${p.title}`,
-    para(`\`${e.before}${e.marked}${e.after ?? ""}\` ${p.scribble} (the red pen ${e.pen === "underline" ? "underlines" : "circles"} \`${e.marked}\`)`),
-    para(p.what),
-    para(`**What I check now:** ${p.now}`),
-  ].join("\n\n");
-}
-
-/** components/Writing.tsx: the newest post and the way to the rest. */
+/** components/Writing.tsx: the three newest posts, a title and one line each, and the way to the rest. */
 function latestWriting(): string[] {
-  const p = [...POSTS].sort((a, b) => b.date.localeCompare(a.date))[0];
-  if (!p) return [];
+  const latest = NEWEST_FIRST.slice(0, 3);
+  if (!latest.length) return [];
   return [
     "## Writing",
-    `### ${link(p.cardTitle ?? p.title, mdHref(`/writing/${p.slug}`))}`,
-    para(`${fmtLongDate(p.date)} · ${p.readMins} min read`),
-    para(p.line ?? p.cardSummary ?? p.summary),
+    ...latest.map((p) => [`### ${link(p.cardTitle ?? p.title, mdHref(`/writing/${p.slug}`))}`, para(p.line ?? p.cardSummary ?? p.summary)].join("\n\n")),
     para(link("All writing →", mdHref("/writing"))),
   ];
 }
@@ -120,25 +105,6 @@ export function homeMarkdown(pipe: PipelineData): string {
     "### Built on my own",
     ...OWN_WORK.map(entry),
     para(`${NOW_LINE} ${link("Full resume ↗", abs(ME.resume))} (as text: ${link("resume.md", abs("/resume.md"))})`),
-
-    `## ${D.kicker}`,
-    para(D.lede),
-    para(D.what),
-    para(image(D.shot.alt, abs(D.shot.src))),
-    para(pen(D.shotNote)),
-    para(D.caption),
-    list(D.marks.map(([n, label]) => `**${n}** ${label}`)),
-    para(D.wrongLine),
-    para(D.finePrint),
-    para(pen(D.finePrintNote)),
-    para(`built with ${D.stack.join(", ")}`),
-    para(
-      `Drawing © 2026 ${D.credit.by}, from his ${link(D.credit.project, D.credit.projectHref)} project, marked ${link(D.credit.licence, D.credit.licenceHref)}. Cropped, and shared under the same licence; the red pen is mine.`,
-    ),
-
-    `## ${WRONG.kicker}`,
-    para(WRONG.lede),
-    ...WRONG.pins.map(pin),
 
     ...latestWriting(),
 

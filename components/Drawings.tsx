@@ -3,14 +3,13 @@ import { DRAWINGS as D } from "@/data/portfolio";
 import Annotated from "@/components/Annotated";
 import Marked from "@/components/Marked";
 
-/** drawing-proof, marked like homework: a real crop of the sheet with the wrong answer circled and the
-    right one underlined, the scores, the fine print, and the drawing's credit (it is CC BY-SA).
-    Two margin notes, like every section. */
+/** The body of the post /writing/marking-the-ais-homework (its title and lede come from the post page):
+    drawing-proof, marked like homework. A real crop of the sheet with the wrong answer circled and the
+    right one underlined, the scores, the fine print, and the drawing's credit (it is CC BY-SA). Two margin notes.
+    A home page section until 22 Oct; the words are unchanged. */
 export default function Drawings() {
   return (
-    <section id="drawings" className="wrap sec">
-      <h2 className="kicker">{D.kicker}</h2>
-      <p className="lede">{D.lede}</p>
+    <div className="post-body">
       <p className="body">{D.what}</p>
       <figure className="tb">
         <Annotated note={D.shotNote}>
@@ -57,6 +56,6 @@ export default function Drawings() {
         </a>
         . Cropped, and shared under the same licence; the red pen is mine.
       </p>
-    </section>
+    </div>
   );
 }

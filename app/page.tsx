@@ -1,8 +1,6 @@
 import Hero from "@/components/Hero";
 import Proof from "@/components/Proof";
 import Work from "@/components/Work";
-import Drawings from "@/components/Drawings";
-import Wrong from "@/components/Wrong";
 import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 import type { Metadata } from "next";
@@ -26,8 +24,6 @@ export default async function Home() {
       <Hero />
       <Proof pipe={pipe} />
       <Work />
-      <Drawings />
-      <Wrong />
       <Writing />
       <Contact />
     </>

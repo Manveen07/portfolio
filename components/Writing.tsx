@@ -1,24 +1,26 @@
 import Link from "next/link";
-import { POSTS } from "@/data/posts";
+import { NEWEST_FIRST } from "@/data/posts";
 
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-}
-
-/** The newest post, quietly, after the work: date, title, one line, and the way to the rest.
-    Manveen, 22 Oct: "a person navigating the website will never lead to the writing section. I want them to go to the writing section." */
+/** The three newest posts, quietly, after the work: a title and one line each, and the way to the rest.
+    Manveen, 22 Oct: "a person navigating the website will never lead to the writing section. I want them to go to
+    the writing section." Later that day the drawing-proof and confidently-wrong blocks moved into the writing
+    ("these are the blogs"; "I want my website to be not filled with balls of text"), so this stays a short list. */
 export default function Writing() {
-  const latest = [...POSTS].sort((a, b) => b.date.localeCompare(a.date))[0];
-  if (!latest) return null;
+  const latest = NEWEST_FIRST.slice(0, 3);
+  if (!latest.length) return null;
   return (
     <section id="writing" className="wrap sec">
       <h2 className="kicker">Writing</h2>
-      <Link className="latest" href={`/writing/${latest.slug}`}>
-        {/* One string, so the server HTML holds the line in one piece (no React text markers). */}
-        <p className="small">{`${fmtDate(latest.date)} · ${latest.readMins} min read`}</p>
-        <h3 className="h3">{latest.cardTitle ?? latest.title}</h3>
-        <p className="body">{latest.line ?? latest.cardSummary ?? latest.summary}</p>
-      </Link>
+      <ul className="latest">
+        {latest.map((p) => (
+          <li key={p.slug}>
+            <Link href={`/writing/${p.slug}`}>
+              <h3 className="h3">{p.cardTitle ?? p.title}</h3>
+              <p className="body">{p.line ?? p.cardSummary ?? p.summary}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
       <p className="links">
         <Link href="/writing">All writing →</Link>
       </p>

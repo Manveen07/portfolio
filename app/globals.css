@@ -76,7 +76,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
-  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest:hover .h3 { color: var(--red); }
+  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3 { color: var(--red); }
 }
 
 /* ── Header and footer ── */
@@ -219,7 +219,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .pen-circle.tight { padding: 0 1px; }
 .pen-circle.tight svg { left: -7px; top: -8px; width: calc(100% + 14px); height: calc(100% + 16px); }
 
-/* ── drawing-proof: the crop is printed on the paper like the photo (multiplied, a slight tilt), the red pen on top ── */
+/* ── The post /writing/marking-the-ais-homework (drawing-proof): the crop is printed on the paper like the photo (multiplied, a slight tilt), the red pen on top ── */
 .tb { margin: 18px 0 22px; }
 .tb figcaption { margin: 0; }
 .marked { position: relative; max-width: 540px; mix-blend-mode: multiply; transform: rotate(-0.8deg); }
@@ -242,7 +242,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .pen-js .marked:not(.in) .mark { stroke-dashoffset: 0; }
 }
 
-/* ── Things AI got confidently wrong: slips pinned down the page, oldest first ──
+/* ── The post /writing/things-ai-got-confidently-wrong: slips pinned down the page, oldest first ──
    Each slip is a step darker than the paper (no border, no shadow), tilted a little, held by an ink pin.
    From 640px they zigzag, every other one pinned to the right. */
 .pins { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 34px; }
@@ -286,5 +286,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .post-list { list-style: none; padding: 0; margin: 0; }
 .post-list li { padding: 18px 0; border-bottom: 1px dashed var(--rule); }
 .post-list a { text-decoration: none; }
-/* The home page's newest post: an entry on the paper like the work entries, the whole of it one link. */
-.latest { display: block; text-decoration: none; }
+/* The home page's three newest posts: a title and one line each, each the whole of it one link. Kept short. */
+.latest { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 22px; }
+.latest a { display: block; text-decoration: none; }
+.latest .h3 { margin-bottom: 4px; }
+.latest .body { margin: 0; font-size: 17px; line-height: 1.5; color: var(--dim); }

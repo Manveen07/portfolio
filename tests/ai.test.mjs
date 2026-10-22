@@ -201,10 +201,41 @@ test("every project and job title on the page is in llms.txt, index.md and llms-
   const work = homePage().match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const titles = [...work.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>/g)].map((m) => squash(plain(m[1])));
   assert.ok(titles.length >= 4, `only ${titles.length} titles in #work`);
-  titles.push("Tender Radar", "drawing-proof", "Things AI got confidently wrong");
+  titles.push("Tender Radar");
   for (const [name, body] of [["llms.txt", route("llms.txt").body], ["index.md", route("index.md").body], ["llms-full.txt", route("llms-full.txt").body]]) {
     for (const t of titles) assert.ok(unmark(body).includes(t), `${name} is missing "${t}"`);
   }
+});
+
+test("llms.txt lists every post under Writing, newest first, with the date its page shows; the moved blocks are posts, not projects", () => {
+  // 22 Oct: drawing-proof and the confidently-wrong notes left the home page for the writing ("these are the blogs"),
+  // so llms.txt lists them where they now live, with the numbers and dates they carried as projects.
+  const txt = route("llms.txt").body;
+  const part = (name) => txt.split(`\n## ${name}\n`)[1].split("\n## ")[0];
+  const writing = [...part("Writing").matchAll(/^- \[[^\]]+\]\(https:\/\/manveen\.me\/writing\/([a-z0-9-]+)\.md\): (.+)$/gm)];
+  assert.deepEqual(writing.map((m) => m[1]), ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"]);
+  assert.match(writing[0][2], /Numbers: 7 of 419 answers wrong \(1\.7%\)[^\n]*\(Marked 26 Sep 2026\)$/);
+  assert.match(writing[1][2], /25 May 2026, 0\.95, fifty times; [^\n]*19 Sep 2026, POD matching, allegedly\. \(Last entry 19 Sep 2026\)$/);
+  assert.match(writing[2][2], /\(14 June 2026\)$/);
+  assert.doesNotMatch(part("Projects and work"), /drawing-proof|confidently wrong/i, "a moved block is still listed as a project on the home page");
+});
+
+test("numbers and pictures: every number and alt text on a writing page is in its markdown, and every number there is on the page", () => {
+  // drawing-proof's scores and the notes' dates live on post pages now, so the home page's number check follows them.
+  const pages = [["writing.html", "writing.md"], ...posts.map((s) => [`writing/${s}.html`, `md/writing/${s}`])];
+  for (const [html, md] of pages) {
+    const page = app(html).replace(/<script[\s\S]*?<\/script>/g, "");
+    const main = page.slice(page.indexOf("<main"), page.indexOf("</main>"));
+    const body = route(md).body;
+    const seen = numbers([plain(main), ...pictureWords(main)].join(" "));
+    const inMd = mdNumbers(body);
+    assert.deepEqual([...seen].filter((n) => !inMd.has(n)), [], `${html}: on the page, not in ${md}`);
+    assert.deepEqual([...inMd].filter((n) => !seen.has(n)), [], `${md}: not on ${html}`);
+    const text = unmark(body);
+    assert.deepEqual(pictureWords(main).filter((w) => !text.includes(w)), [], `${html}: an alt text or label not in ${md}`);
+  }
+  // The crop's alt text is a real check, not an empty one.
+  assert.match(app("writing/marking-the-ais-homework.html"), /alt="The title block of the pinion lift rod drawing/);
 });
 
 test("llms-full.txt holds Manveen's intro, the resume, the home page and every post, whole", () => {
