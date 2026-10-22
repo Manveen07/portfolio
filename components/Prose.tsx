@@ -1,6 +1,5 @@
-"use client";
-
-/* Renders a Post body (Block[]) in red pen on paper.
+/* A server component: no state, no handlers, so none of it ships as JavaScript.
+   Renders a Post body (Block[]) in red pen on paper.
    Inline syntax: **bold**, *italic*, `code`, [text](url). */
 
 import { T } from "@/lib/tokens";
