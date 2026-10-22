@@ -216,7 +216,7 @@ export const DRAWINGS = {
   ] as [string, string][],
   // How the four numbers fit, from the sums above. A fresh reader couldn't tell the 194 were inside the 419, or what
   // "flagged" meant (22 Oct).
-  sums: "419 boxes in all: 326 where the drawing has an answer, 93 where it doesn't. The 194 parts list fields are in there too. Of the 326 it fumbled 10: 3 wrong, 5 left blank without a word, 1 left blank with a note saying it wasn't sure, 1 half right. Of the 93 it filled in 4 anyway, one of them the parts list's own header row, read as a part. 3 + 4 = the 7 wrong.",
+  sums: "419 boxes in all: 326 where the drawing has an answer, 93 where it doesn't. The 194 parts list fields are in there too. Of the 326 with an answer it got 316: 3 wrong, 6 left blank (once with a note saying it wasn't sure), 1 half right. Of the 93 with no answer it made up 4, one of them the parts list's own header row, read as a part. 3 + 4 = the 7 wrong.",
   // EVAL.md "Every wrong value": "All 7 quote real text from the sheet: the quote is genuine but it landed in the wrong
   // field." "It also means the verifier (value must appear in its own quote and in the PDF text) could not catch them.
   // Raw and verified wrong counts are identical." Wrong value #2: hole_count label 36, tool said 20.
@@ -314,7 +314,7 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
       exhibit: { before: "", marked: "tests (12/12)", pen: "underline" },
       scribble: "none of them opened the new files",
       what: "Tender Radar is my script that reads UK government tender notices every morning and sorts out which ones are worth a bid. An AI helped me add three trades to it, each with a little file describing a sample firm. Its commit said the tests passed, 12 of 12. The new files were missing two details the script insists on, so the morning run crashed on them every day for three weeks. None of the 12 tests had opened them.",
-      now: "a passing test only vouches for what it opens. The last 40 runs sit on my home page as bars, red when one fails.",
+      now: "a passing test only vouches for what it opens. So I watch the run, not the tests: the last 40 sit on my home page as bars, red when one fails.",
     },
     {
       // Commit 7abe5472 (19 Sep 2026): "Two OpenCode runs produced confident write-ups whose quotes did not support

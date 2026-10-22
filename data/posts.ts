@@ -130,7 +130,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        s: "My own answer key caught me out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of my labels were wrong and the AI was right. The answer key needs marking as well.",
+        s: "*Added 26 Sep:* my answer key caught me out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of my labels were wrong and the AI was right. The answer key needs marking as well.",
       },
     ],
   },

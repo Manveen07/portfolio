@@ -1086,11 +1086,11 @@ test("drawing-proof is marked like homework: the real crop, the wrong answer cir
   // the 7 wrong, what "flagged" means), and 7 wrong + 7 missed or half right is the 10 short of 326 plus the 4 of 93.
   for (const s of [
     "326 where the drawing has an answer, 93 where it doesn't", "The 194 parts list fields are in there too",
-    "3 wrong, 5 left blank without a word, 1 left blank with a note saying it wasn't sure, 1 half right",
+    "Of the 326 with an answer it got 316: 3 wrong, 6 left blank (once with a note saying it wasn't sure), 1 half right",
     "the parts list's own header row, read as a part", "3 + 4 = the 7 wrong",
   ]) assert.ok(t.includes(s), `the sums lost "${s}"`);
   assert.equal(326 + 93, 419);
-  assert.equal(3 + 5 + 1 + 1, 326 - 316);
+  assert.equal(3 + 6 + 1, 326 - 316); // 6 blank = 5 without a word + 1 flagged
   assert.equal(3 + (93 - 89), 7);
   // The lesson, early and at the end; "a price quote", since "quote" here also means the text a value came from.
   assert.match(text("writing/marking-the-ais-homework.html"), /fill in a price quote from an engineering drawing/);

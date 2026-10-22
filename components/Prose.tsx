@@ -102,10 +102,8 @@ export default function Prose({ body }: { body: Block[] }) {
           );
         if (b.t === "p")
           return (
-            <p key={i} style={{
-              fontFamily: T.sans, fontSize: 16, lineHeight: 1.72, color: T.dim,
-              margin: "0 0 18px",
-            }}>
+            // Same body text as the other posts (was 16px in the dim grey, which read as fine print).
+            <p key={i} className="body" style={{ lineHeight: 1.65, margin: "0 0 16px" }}>
               <Inline s={b.s} />
             </p>
           );
