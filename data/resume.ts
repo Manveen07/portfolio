@@ -29,15 +29,12 @@ export type ResumeProject = {
 };
 
 /** Where the data knowingly differs from public/resume.pdf, with the source. The PDF test swaps these in. */
-export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = [
-  // The PDF links linkedin.com/in/Manveen, which is not his profile; applies to the text line and the link.
-  { pdf: "linkedin.com/in/Manveen", data: "linkedin.com/in/manveen-singh-b9b7672a0", source: "his LinkedIn URL, given 23 Oct 2026" },
-];
+export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = [];
 
 export const RESUME = {
   pdf: "/resume.pdf",
   /** The PDF's own creation date (its metadata), so a reader knows how fresh it is. */
-  updated: "2026-10-22",
+  updated: "2026-10-23",
   name: "Manveen Singh",
   /** The line under the name: "AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows". */
   role: "AI & GTM Automation Engineer",

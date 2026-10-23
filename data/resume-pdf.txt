@@ -1,11 +1,11 @@
-sha256: 4cdbdad972a1214b3c2741c13f61b5061ca47dda2d8121c266de6e8ea03db85f
-created: D:20261022115831+00'00'
+sha256: 09e6b9b309295e05d9c2cebe22a8a9047f37e3c974bcad0627c463442a5d3d0b
+created: D:20261023182527+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
 New Delhi, India (remote) · +91 9289644633
 manveen9650@gmail.com
-linkedin.com/in/Manveen
+linkedin.com/in/manveen-singh-b9b7672a0
 github.com/Manveen07
 manveen.me
 Experience
@@ -64,7 +64,7 @@ Languages: Python, TypeScript/JavaScript, SQL
 Backend & tools: FastAPI, Next.js, Node.js, PostgreSQL, Docker, Git, CI/CD, PyTorch, scikit-learn
 --- links
 mailto:manveen9650@gmail.com
-https://www.linkedin.com/in/Manveen
+https://www.linkedin.com/in/manveen-singh-b9b7672a0
 https://github.com/Manveen07
 https://manveen.me/
 https://manveen.me/writing/schema-as-eval-spec
