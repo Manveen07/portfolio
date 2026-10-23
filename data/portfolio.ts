@@ -12,7 +12,8 @@ export const ME = {
   hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
-  linkedin: "https://linkedin.com/in/Manveen",
+  // His profile, given 23 Oct 2026. linkedin.com/in/Manveen (used until then) is not his.
+  linkedin: "https://www.linkedin.com/in/manveen-singh-b9b7672a0",
   calendly: "https://calendly.com/manveen9650/30min",
   resume: "/resume.pdf",
 } as const;

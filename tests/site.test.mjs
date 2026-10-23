@@ -152,10 +152,12 @@ test("header has Write to me (mail, ink, plain underline); footer has recruiter 
   assert.ok(cta, "no .head-cta rule");
   assert.doesNotMatch(cta, /var\(--red\)|background/, "the header link is red or a button");
   const foot = html.slice(html.lastIndexOf("<footer"));
-  for (const href of ["/resume.pdf", "linkedin.com/in/Manveen", "github.com/Manveen07", 'href="/writing"']) {
+  for (const href of ["/resume.pdf", "linkedin.com/in/manveen-singh-b9b7672a0", "github.com/Manveen07", 'href="/writing"']) {
     assert.ok(foot.includes(href), `footer missing ${href}`);
   }
   assert.match(text("index.html"), /Off the clock: Hunter x Hunter/);
+  // 23 Oct 2026: linkedin.com/in/Manveen is someone else's profile; it was linked everywhere until then.
+  assert.ok(!html.includes("linkedin.com/in/Manveen"), "the page links the wrong LinkedIn profile");
 });
 
 test("the pilot steps list is still styled as a numbered list, for screen readers that announce list style", () => {

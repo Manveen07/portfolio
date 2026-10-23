@@ -264,7 +264,7 @@ test("each writing page's markdown has every block of the page", () => {
 const fixture = read("data/resume-pdf.txt").replace(/\r\n/g, "\n");
 const section = (name) => fixture.split(`--- ${name}\n`)[1].split("\n--- ")[0].split("\n").filter((l) => l.trim());
 const pdfLines = section("text").map((l) => PDF_OVERRIDES.reduce((x, o) => x.replace(o.pdf, o.data), l));
-const pdfLinks = section("links");
+const pdfLinks = section("links").map((l) => PDF_OVERRIDES.reduce((x, o) => x.replace(o.pdf, o.data), l));
 const unbullet = (s) => s.replace(/^[–•-]\s+/, "");
 const low = (s) => squash(s).toLowerCase();
 
