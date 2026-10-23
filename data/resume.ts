@@ -43,7 +43,7 @@ export const RESUME = {
   phone: "+91 9289644633",
   links: [
     { label: "manveen9650@gmail.com", href: "mailto:manveen9650@gmail.com" },
-    { label: "linkedin.com/in/manveen-singh-b9b7672a0", href: "https://www.linkedin.com/in/manveen-singh-b9b7672a0" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/manveen-singh-b9b7672a0" },
     { label: "github.com/Manveen07", href: "https://github.com/Manveen07" },
     { label: "manveen.me", href: "https://manveen.me/" },
   ] as ResumeLink[],

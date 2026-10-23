@@ -1,11 +1,10 @@
-sha256: 09e6b9b309295e05d9c2cebe22a8a9047f37e3c974bcad0627c463442a5d3d0b
-created: D:20261023182527+00'00'
+sha256: ad2de331222825f3059eaf1b2bba3008ad0f870e6e1577807e2c6c6823f58060
+created: D:20261023183430+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
-New Delhi, India (remote) · +91 9289644633
-manveen9650@gmail.com
-linkedin.com/in/manveen-singh-b9b7672a0
+New Delhi, India (remote) · +91 9289644633 manveen9650@gmail.com
+LinkedIn
 github.com/Manveen07
 manveen.me
 Experience
