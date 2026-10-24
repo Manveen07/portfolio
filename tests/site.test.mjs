@@ -1191,11 +1191,12 @@ test("the home page lists the three newest posts after the work: a title and one
   const w = markup("index.html").match(/<section[^>]*id="writing"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.match(w, /<h2 class="kicker">Writing<\/h2>/);
   const items = [...w.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><h3 class="h3">([^<]*)<\/h3><p class="body">([^<]*)<\/p><\/a><\/li>/g)];
-  assert.deepEqual(items.map((m) => m[1]), ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"], "not the three newest, newest first");
-  assert.match(items[0][2], /^Marking the AI(?:'|&#x27;)s homework$/);
-  assert.equal(items[1][2], "Things AI got confidently wrong");
-  assert.match(items[2][2], /^How I caught my own AI test cheating/);
-  assert.equal(items[2][3], "My AI judge caught all 11 fake AI jobs in my test. My own notes in the test data were giving it the answers.");
+  // 25 Oct: the n8n testing post is the newest, so the eval post now sits behind "All writing".
+  assert.deepEqual(items.map((m) => m[1]), ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong"], "not the three newest, newest first");
+  assert.equal(items[0][2], "How I test an n8n workflow before it goes live");
+  assert.equal(items[0][3], "My task tracker is a few Slack buttons and two n8n workflows. It has 149 tests, because of one week of green ticks.");
+  assert.match(items[1][2], /^Marking the AI(?:'|&#x27;)s homework$/);
+  assert.equal(items[2][2], "Things AI got confidently wrong");
   // "Not filled with balls of text": one line each, no dates, no read times, no long paragraphs.
   for (const m of items) assert.ok(m[3].length <= 140, `a long line under "${m[2]}": ${m[3].length} characters`);
   assert.doesNotMatch(w, /min read|<time/, "the list carries dates or read times");
@@ -1216,14 +1217,18 @@ test("the writing index lists every post newest first, with the date each one sh
   const html = markup("writing.html");
   const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(items, [
+    ["149-tests-for-a-few-slack-buttons", "25 October 2026 · 3 min read"],
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
     ["things-ai-got-confidently-wrong", "Last entry 19 Sep 2026 · 2 min read"],
     ["schema-as-eval-spec", "14 June 2026 · 2 min read"],
   ]);
-  // The notes post is dated by its newest note; nothing on the writing pages is dated in October.
+  // The notes post is dated by its newest note. The blocks moved here on 22 Oct keep their own dates: the only October
+  // date on the writing pages is the n8n testing post's own, 25 October 2026 (written that day).
   const notes = [...postBody("things-ai-got-confidently-wrong").matchAll(/<time dateTime="([\d-]+)">/g)].map((m) => m[1]);
   assert.equal(notes.at(-1), "2026-09-19");
-  for (const page of ["writing.html", ...posts.map((s) => `writing/${s}.html`)]) assert.doesNotMatch(text(page), /\d+ Oct(?:ober)? 2026/, `${page} shows an October date`);
+  for (const page of ["writing.html", ...posts.map((s) => `writing/${s}.html`)]) {
+    assert.doesNotMatch(text(page).replaceAll("25 October 2026", ""), /\d+ Oct(?:ober)? 2026/, `${page} shows an October date`);
+  }
 });
 
 test("the writing pages link back home, and a post links the rest of the writing, newest first", () => {
@@ -1233,6 +1238,6 @@ test("the writing pages link back home, and a post links the rest of the writing
     assert.match(post, /<a class="link" href="\/writing">← all writing<\/a><a class="link" href="\/">Home<\/a><a class="link" href="\/#contact">Write to me<\/a>/);
     const more = post.slice(post.indexOf("More writing"));
     const listed = [...more.matchAll(/<a href="\/writing\/([a-z0-9-]+)">/g)].map((m) => m[1]);
-    assert.deepEqual(listed, ["marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
+    assert.deepEqual(listed, ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
   }
 });

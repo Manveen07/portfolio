@@ -37,6 +37,104 @@ export type Post = {
 
 export const POSTS: Post[] = [
   {
+    // Written 25 Oct 2026 (Manveen: "create a good blog make sure it quirky and it is usefull as a social proff and
+    // not boring for viewer"). Paths are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\ ; D = daily-log.
+    // Every number, and where it comes from:
+    // - 149 tests, 59 / 28 / 20 / 25 / 17: `python3 -m unittest tests.test_n8n_js tests.test_n8n_workflows
+    //   tests.test_n8n_replay tests.test_n8n_notify tests.test_n8n_deploy` in D, "Ran 149 tests ... OK", 24 Oct 2026;
+    //   per file: `grep -c "def test_"` (js 59, workflows 28, replay 20, deploy 25, notify 17).
+    // - 2 workflows, 37 nodes: D\n8n\workflows\tasks-clicks.json (15 nodes) and notify-manveen.json (22).
+    // - Under a second, one new event file, wrong secret fails: D\docs\LEDGER.md runbook, "pass = 200, empty body,
+    //   under 1 s, `events repo: <file> found`; with `--bad-sig`: not found".
+    // - The five layers: the docstrings of D\tests\test_n8n_js.py, test_n8n_workflows.py, test_n8n_replay.py,
+    //   test_n8n_deploy.py (test_an_error_that_echoes_a_secret_is_redacted, test_a_second_run_updates_by_name) and
+    //   test_n8n_notify.py (test_the_page_shows_one_button_and_changes_nothing).
+    // - The scheduler week: new 10x engineer\money\upwork\HARD-PARTS.md item 14, "an expired Gmail login once let runs
+    //   report success for a week while sending nothing" (30 Sep to 6 Oct 2026); the message ID and health check fix.
+    // - "emails to prospective clients": the scheduler sends his own outreach (CAN-CLAIM email scheduler line; ROADMAP-2026-10
+    //   review-offer wave). No count of the emails lost is claimed.
+    // - Slack's 3 seconds: docs.slack.dev/interactivity/handling-user-interaction, "reply to the HTTP POST request with
+    //   an HTTP 200 OK response. This must be sent within 3 seconds of receiving the payload" (checked 25 Oct 2026).
+    slug: "149-tests-for-a-few-slack-buttons",
+    title: "149 tests for a few Slack buttons",
+    cardTitle: "How I test an n8n workflow before it goes live",
+    line: "My task tracker is a few Slack buttons and two n8n workflows. It has 149 tests, because of one week of green ticks.",
+    date: "2026-10-25",
+    readMins: 3,
+    tags: ["n8n", "testing", "automation"],
+    summary:
+      "My task tracker is a few Slack buttons and two n8n workflows. It has 149 tests. That's because my email scheduler once said Success every day for a week and sent nothing.",
+    body: [
+      {
+        t: "p",
+        s: "My task tracker lives in Slack. Every task has buttons: done, snooze, blocked. A click goes to an n8n webhook, a web address n8n listens on, which checks the click really came from Slack, writes it to a GitHub repo and updates the card, all in under a second. Behind those buttons sit two n8n workflows with 37 nodes between them.",
+      },
+      {
+        t: "p",
+        s: "They have 149 tests. That's four tests a node, which sounds like a lot until you've had a week like the one below.",
+      },
+      { t: "h2", s: "A week of green ticks" },
+      {
+        t: "p",
+        s: "My email scheduler is an n8n workflow too. For a week, every run ended like this:",
+      },
+      { t: "exhibit", before: "Status: ", marked: "Success", pen: "circle", scribble: "0 emails sent" },
+      {
+        t: "p",
+        s: "A Gmail login had expired. Every node ran, so n8n was telling the truth. Nothing in the workflow treated \"no email went out\" as a failure, so for a week my emails to prospective clients just didn't go, and nobody noticed, including me.",
+      },
+      {
+        t: "p",
+        s: "Now an email only counts as sent when Gmail hands back a message ID and it's saved next to the row, and a health check counts the overdue ones. The tracker I built after that got tested like software, in five layers.",
+      },
+      { t: "h2", s: "1. The JavaScript doesn't live in n8n" },
+      {
+        t: "p",
+        s: "n8n's Code node is a fine place to write code and a bad place to keep it. Mine lives in plain files, and the build pastes it into the workflow. **59 tests** run that exact code outside n8n first: a good Slack signature passes, a bad, missing or old one is refused, every button goes to the right action, and clicks from anyone but me are dropped.",
+      },
+      { t: "h2", s: "2. The workflow file gets checked too" },
+      {
+        t: "p",
+        s: "**28 tests** read the workflow JSON as it sits in git: nodes in the right order, only node types I expect, and credentials referred to by name, never by value. One of them compares every Code node with what the build makes from the tested files, so the workflow can't quietly drift away from the code I tested.",
+      },
+      { t: "h2", s: "3. Real clicks, replayed" },
+      {
+        t: "p",
+        s: "A script takes a recorded Slack click, signs it the way Slack does and fires it at the live webhook. A pass means the webhook answers OK in under a second and exactly one new event file lands in the repo. Slack gives a button 3 seconds to get an answer, so under one leaves room. The same click signed with the wrong secret has to fail, and the replay script has **20 tests** of its own.",
+      },
+      { t: "h2", s: "4. Deploys come from a script" },
+      {
+        t: "p",
+        s: "One command creates or updates both workflows and their credentials. Run it twice and the second run updates by name, so there's never a \"My workflow (copy)\". Credentials come from a private settings file and are never printed, even when an error from the server tries to echo one back. **25 tests.**",
+      },
+      { t: "h2", s: "5. Email links a robot can't press" },
+      {
+        t: "p",
+        s: "The tracker also emails me, and some of those emails have buttons. Email security scanners open links to check them before you do, so if opening a link did the thing, a robot would press every button. Each of my links is signed and opens a confirm page. Opening the page changes nothing; only its button writes the event. **17 tests.**",
+      },
+      { t: "exhibit", before: "GET /confirm → ", marked: "changes nothing", pen: "underline", scribble: "robots click links too" },
+      { t: "h2", s: "What I'd steal from this" },
+      {
+        t: "ul",
+        items: [
+          "Keep Code-node JavaScript in files and test it outside n8n.",
+          "Count a real result, a message ID or a written file, never the word \"Success\".",
+          "Keep the workflow JSON in git and test it there.",
+          "Make every link in an email safe to open.",
+          "Deploy with a script you can run twice.",
+        ],
+      },
+      {
+        t: "p",
+        s: "149 tests is a lot for a few buttons. It's still cheaper than another week of Success with nothing sent.",
+      },
+      {
+        t: "p",
+        s: "*Same lesson, other project:* in my post [Things AI got confidently wrong](/writing/things-ai-got-confidently-wrong), 12 tests passed while a morning run crashed for three weeks, because none of them opened the new files.",
+      },
+    ],
+  },
+  {
     // Was the home page's "Marking the AI's homework" block until 22 Oct, when Manveen moved it here:
     // "these are the blogs". Dated the day it was marked: out/EVAL.md, 26 Sep 2026 (the fine print says so too).
     slug: "marking-the-ais-homework",
