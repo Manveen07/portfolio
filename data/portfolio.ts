@@ -149,18 +149,19 @@ export const OWN_WORK: WorkItem[] = [
   },
   {
     title: "PresentAI",
-    where: "My own project, live",
-    lead: "Type a prompt, get a slide deck in under a minute.",
+    // Rewritten 25 Oct 2026 from the code (Manveen: "it does not have export"). src/actions/openai.ts: an outline
+    // first, then every slide in one Gemini call, Pexels photos; src/lib/constant.ts: 25 themes. No speaker notes, no
+    // export, no free plan (every deck needs the subscription flag), and gemini-2.0-flash was shut down 1 June 2026,
+    // so the live demo link is off until the model is updated. The "<60s" figure had no source and is gone.
+    where: "My own project",
+    lead: "Type a topic, get a first-draft slide deck you can edit.",
     detail:
-      "It works out the story first, then writes the slides and the speaker notes. The free plan makes 3 decks a month, so you can try it right now. PowerPoint export is on the paid plan.",
-    metrics: [["<60s", "for the first draft"]],
+      "Gemini writes the outline first, then the slides, and Pexels adds a photo to each. You finish the deck in a drag-and-drop editor with 25 themes. Its AI step needs a model update before it runs again.",
+    metrics: [],
     // Captured from the live site 14 Oct 2026 (headless Chrome, 1280x800, scaled to 640 wide).
     shot: { src: "/work/presentai.png", alt: "PresentAI's home page", width: 640, height: 400 },
     stack: ["next.js", "postgres"],
-    links: [
-      { label: "Try it ↗", href: "https://present-ai-007.vercel.app/" },
-      { label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" },
-    ],
+    links: [{ label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" }],
   },
 ];
 

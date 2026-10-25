@@ -348,7 +348,7 @@ test("the Caprae card has the company line, then the role line, and no card gets
   );
   // leadlens and PresentAI keep their single "where" line.
   assert.match(work, /<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
-  assert.match(work, /<article class="entry"><p class="small">My own project, live<\/p><h3 class="h3">PresentAI<\/h3>/);
+  assert.match(work, /<article class="entry"><p class="small">My own project<\/p><h3 class="h3">PresentAI<\/h3>/);
 });
 
 test("the quote follows the Caprae card as a block of the Work section, with its margin note", () => {
@@ -688,20 +688,22 @@ test("the Loom link states the video's real length (281 s per Loom's oEmbed, so 
   assert.doesNotMatch(t, /\(3 min\)/);
 });
 
-test("PresentAI does not claim to be free: the live pricing page has a 3-a-month free plan and a paid plan with PowerPoint export", () => {
+test("PresentAI claims only what its code does: no export, no free plan, no live demo while its model is retired", () => {
+  // 25 Oct 2026: the code has no PDF/PPTX export and every deck needs a paid account (Manveen: "it does not have export").
   const t = text("index.html");
-  assert.doesNotMatch(t, /It's free/);
-  assert.match(t, /free plan/);
-  assert.match(t, /PowerPoint export is on the paid plan/);
+  for (const claim of [/It's free/, /free plan/, /PowerPoint export/, /export to P/, /speaker notes/, /decks a month/]) {
+    assert.doesNotMatch(t, claim);
+  }
+  assert.ok(!markup("index.html").includes("present-ai-007.vercel.app"), "the card links a live demo that can't generate");
 });
 
-test("PresentAI card: the live app takes a typed prompt, the public repo has no Python, one timing figure", () => {
+test("PresentAI card: a typed topic, the public repo has no Python, no unsourced timing figure", () => {
   const t = text("index.html");
-  assert.match(t, /Type a prompt, get a slide deck in under a minute\./);
+  assert.match(t, /Type a topic, get a first-draft slide deck you can edit\./);
   assert.doesNotMatch(t, /Paste your notes/);
   assert.match(t, /built with next\.js, postgres(?!,)/);
   assert.doesNotMatch(t, /python-pptx/);
-  assert.match(t, /<60s for the first draft/);
+  assert.doesNotMatch(t, /<60s/, "a timing figure with no source");
   assert.doesNotMatch(t, /2h → 15m/);
 });
 
@@ -854,7 +856,7 @@ test("the work section has two margin notes (the quote's and leadlens's) and Pre
 
 test("PresentAI card shows a real screenshot of the live app", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const card = work.match(/<article class="entry"><p class="small">My own project, live<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  const card = work.match(/<article class="entry"><p class="small">My own project<\/p><h3 class="h3">PresentAI<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
   // React writes the apostrophe in an attribute as &#x27;.
   assert.match(card, /<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"/);
   assert.ok(built("public/work/presentai.png"));
