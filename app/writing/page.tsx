@@ -2,10 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NEWEST_FIRST, postDate } from "@/data/posts";
 
+const TITLE = "Writing | Manveen Singh";
+const DESCRIPTION = "What I tried, what broke, what fixed it.";
+
+// A page's own openGraph replaces the layout's whole block, image included, so the home card is named again here.
 export const metadata: Metadata = {
-  title: "Writing | Manveen Singh",
-  description: "What I tried, what broke, what fixed it.",
-  alternates: { types: { "text/markdown": "/writing.md" } },
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/writing", types: { "text/markdown": "/writing.md" } },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: "/writing", type: "website", siteName: "Manveen Singh", images: "/opengraph-image" },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: "/opengraph-image" },
 };
 
 export default function WritingIndex() {

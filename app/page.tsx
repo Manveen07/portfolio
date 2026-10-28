@@ -7,8 +7,8 @@ import type { Metadata } from "next";
 import { getPipeline } from "@/lib/pipeline";
 import { personJsonLd } from "@/lib/md/person";
 
-// The page's markdown copy, for AI agents (llmstxt.org).
-export const metadata: Metadata = { alternates: { types: { "text/markdown": "/index.md" } } };
+// The page's canonical address (one URL per page for search engines) and its markdown copy, for AI agents (llmstxt.org).
+export const metadata: Metadata = { alternates: { canonical: "/", types: { "text/markdown": "/index.md" } } };
 
 // The run history is re-read from GitHub at most once an hour.
 export const revalidate = 3600;

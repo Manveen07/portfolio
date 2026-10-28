@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { SITE } from "./lib/site";
 
 const nextConfig: NextConfig = {
   // Speed, tried 22 Oct and measured with Lighthouse (mobile, 3 to 8 runs each), none kept:
@@ -16,7 +17,17 @@ const nextConfig: NextConfig = {
   async headers() {
     // Every response, the markdown files included, points to the llms.txt that describes it (llmstxt.org's
     // Link header form; the HTML pages also carry it as a <link> in the head).
-    return [{ source: "/:path*", headers: [{ key: "Link", value: '</llms.txt>; rel="describedby"; type="text/plain"' }] }];
+    // A page's markdown copy also names the page as canonical, so search engines index the page, not its copy
+    // (Google: the rel="canonical" HTTP header is the way for non-HTML files). The last rule matching a path sets
+    // its Link header, so the copies' rules repeat describedby.
+    const describedby = '</llms.txt>; rel="describedby"; type="text/plain"';
+    const copyOf = (page: string) => [{ key: "Link", value: `${describedby}, <${SITE}${page}>; rel="canonical"` }];
+    return [
+      { source: "/:path*", headers: [{ key: "Link", value: describedby }] },
+      { source: "/index.md", headers: copyOf("/") },
+      { source: "/writing.md", headers: copyOf("/writing") },
+      { source: "/writing/:slug.md", headers: copyOf("/writing/:slug") },
+    ];
   },
 };
 

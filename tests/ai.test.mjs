@@ -390,9 +390,32 @@ test("robots.txt lets every crawler in, AI ones included, and points to the site
   assert.ok(robots.includes(`Sitemap: ${SITE}/sitemap.xml`));
 });
 
-test("the sitemap lists the pages, their markdown copies, llms.txt, llms-full.txt and the resume files", () => {
+test("the sitemap lists the pages and the resume PDF, not the copies (28 Oct: Google reads every sitemap URL as a canonical)", () => {
   const xml = route("sitemap.xml").body;
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  const want = ["/", "/index.md", "/writing", "/writing.md", "/llms.txt", "/llms-full.txt", "/resume.pdf", "/resume.md", "/resume.json", ...posts.flatMap((s) => [`/writing/${s}`, `/writing/${s}.md`])];
+  const want = ["/", "/writing", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
   assert.deepEqual([...urls].sort(), want.map((p) => `${SITE}${p}`).sort());
+});
+
+// 28 Oct: a markdown copy names its page as canonical in its Link header, next to describedby (next.config.ts).
+// Read from the built routes-manifest.json, the header rules as Vercel serves them.
+test("each markdown copy points search engines to its page as canonical", () => {
+  const rules = JSON.parse(read(".next/routes-manifest.json")).headers;
+  /** The Link header a path gets: the last matching rule wins. */
+  const linkFor = (path) => {
+    let value;
+    for (const r of rules) {
+      const m = path.match(new RegExp(r.regex));
+      const link = r.headers.find((h) => h.key === "Link");
+      if (m && link) value = link.value.replace(":slug", m.groups?.slug ?? m[1] ?? "");
+    }
+    return value;
+  };
+  const pages = [["/index.md", "/"], ["/writing.md", "/writing"], ...posts.map((s) => [`/writing/${s}.md`, `/writing/${s}`])];
+  for (const [md, page] of pages) {
+    const link = linkFor(md);
+    assert.ok(link.includes(`<${SITE}${page}>; rel="canonical"`), `${md}: ${link}`);
+    assert.ok(link.includes('</llms.txt>; rel="describedby"'), `${md} lost describedby`);
+  }
+  assert.doesNotMatch(linkFor("/writing"), /canonical/, "the page itself gets no canonical header");
 });

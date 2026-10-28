@@ -1252,3 +1252,41 @@ test("every page counts its views with Vercel Web Analytics, loaded after the pa
   assert.match(layout, /<Footer \/>[\s\S]*<Analytics \/>[\s\S]*<\/body>/);
   assert.ok(JSON.parse(read("package.json")).dependencies["@vercel/analytics"], "@vercel/analytics is not a dependency");
 });
+
+// ── 28 Oct: SEO. Manveen: "do complete seo and aeo of the site" ──
+/** A built page's <head>. */
+const headOf = (page) => read(`.next/server/app/${page}`).match(/<head[\s\S]*?<\/head>/)[0];
+const tag = (head, re) => head.match(re)?.[1];
+
+test("every page names one canonical address, and its share card points to the same one", () => {
+  const pages = [["index.html", "https://manveen.me"], ["writing.html", "https://manveen.me/writing"], ...posts.map((s) => [`writing/${s}.html`, `https://manveen.me/writing/${s}`])];
+  for (const [page, url] of pages) {
+    const head = headOf(page);
+    assert.equal(head.match(/rel="canonical"/g)?.length, 1, `${page}: canonical count`);
+    assert.equal(tag(head, /<link rel="canonical" href="([^"]+)"/), url, `${page}: canonical`);
+    assert.equal(tag(head, /<meta property="og:url" content="([^"]+)"/), url, `${page}: og:url`);
+    assert.ok(tag(head, /<meta property="og:image" content="([^"]+)"/), `${page}: no share image`);
+    assert.equal(tag(head, /<meta name="twitter:card" content="([^"]+)"/), "summary_large_image", `${page}: twitter card`);
+  }
+  // The writing index shares as itself, not as the home page.
+  assert.equal(tag(headOf("writing.html"), /<meta property="og:title" content="([^"]+)"/), "Writing | Manveen Singh");
+});
+
+test("each post shares with its own card and title, and says so in BlogPosting JSON-LD", () => {
+  for (const s of posts) {
+    const html = read(`.next/server/app/writing/${s}.html`);
+    const head = headOf(`writing/${s}.html`);
+    const h1 = plain(markup(`writing/${s}.html`).match(/<h1>([\s\S]*?)<\/h1>/)[1]).trim();
+    assert.match(tag(head, /<meta property="og:image" content="([^"]+)"/), new RegExp(`^https://manveen\\.me/writing/${s}/opengraph-image`), `${s}: card`);
+    assert.equal(plain(tag(head, /<meta name="twitter:title" content="([^"]+)"/)), h1, `${s}: twitter:title`);
+    assert.ok(built(`.next/server/app/writing/${s}/opengraph-image.body`), `${s}: card not built`);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    assert.equal(ld["@type"], "BlogPosting");
+    assert.equal(ld.headline, h1, `${s}: headline is not the page title`);
+    assert.equal(ld.url, `https://manveen.me/writing/${s}`);
+    assert.match(ld.datePublished, /^\d{4}-\d{2}-\d{2}$/);
+    assert.equal(ld.author["@id"], "https://manveen.me/#person", `${s}: author is not the home page's Person`);
+  }
+  const home = JSON.parse(read(".next/server/app/index.html").match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  assert.equal(home["@id"], "https://manveen.me/#person");
+});
