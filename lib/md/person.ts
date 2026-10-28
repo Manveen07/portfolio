@@ -1,22 +1,37 @@
-// The site's schema.org JSON-LD: who this is (the home page's Person), and each post as a BlogPosting written by
-// that Person, for search engines and agents that read structured data. The Person's @id ties the two together.
+// The site's schema.org JSON-LD, for search engines and agents that read structured data. The home page is a
+// ProfilePage about a Person, on a WebSite named after him (Google shows that name above results); each post is a
+// BlogPosting by the same Person. The @ids tie them together across pages.
 // Identity and links from the site (data/portfolio.ts), job title, skills and school from the resume (data/resume.ts).
 
-import { ME, PHOTO } from "@/data/portfolio";
+import { ME, HERO, PHOTO } from "@/data/portfolio";
 import { RESUME } from "@/data/resume";
 import type { Post } from "@/data/posts";
 import { abs } from "@/lib/site";
 
 const PERSON_ID = abs("/#person");
+const SITE_ID = abs("/#website");
 
-export function personJsonLd() {
-  const [locality, country] = ME.location.split(",").map((s) => s.trim());
+/** The home page's graph: ProfilePage, its Person and the WebSite. */
+export function homeJsonLd() {
   return {
     "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "ProfilePage", url: abs("/"), mainEntity: { "@id": PERSON_ID }, isPartOf: { "@id": SITE_ID } },
+      person(),
+      { "@type": "WebSite", "@id": SITE_ID, url: abs("/"), name: ME.name, alternateName: "manveen.me" },
+    ],
+  };
+}
+
+/** Who this is. The description is the paragraph under the hero, word for word. */
+function person() {
+  const [locality, country] = ME.location.split(",").map((s) => s.trim());
+  return {
     "@type": "Person",
     "@id": PERSON_ID,
     name: ME.name,
     jobTitle: RESUME.role,
+    description: HERO.how[0],
     url: abs("/"),
     email: `mailto:${ME.email}`,
     ...(PHOTO ? { image: abs(PHOTO.src) } : {}),

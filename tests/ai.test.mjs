@@ -369,8 +369,18 @@ test("the home page says who this is in schema.org JSON-LD, from the site and th
   const html = app("index.html");
   const raw = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
   assert.ok(raw, "no JSON-LD");
-  const p = JSON.parse(raw);
-  assert.equal(p["@type"], "Person");
+  // 28 Oct: one graph, a ProfilePage about the Person on the WebSite (Google's profile-page and site-name docs).
+  const graph = JSON.parse(raw)["@graph"];
+  const p = graph.find((n) => n["@type"] === "Person");
+  assert.ok(p, "no Person in the graph");
+  assert.equal(p["@id"], `${SITE}/#person`);
+  const profile = graph.find((n) => n["@type"] === "ProfilePage");
+  assert.equal(profile?.mainEntity["@id"], p["@id"], "the ProfilePage is not about the Person");
+  const site = graph.find((n) => n["@type"] === "WebSite");
+  assert.equal(site?.name, "Manveen Singh");
+  assert.equal(site?.url, `${SITE}/`);
+  // The description is the visible paragraph under the hero, so it says what the page says.
+  assert.ok(plain(html).includes(p.description), "Person.description is not on the page");
   assert.equal(p.name, "Manveen Singh");
   assert.equal(p.jobTitle, RESUME.role);
   assert.equal(p.url, `${SITE}/`);
@@ -395,6 +405,9 @@ test("the sitemap lists the pages and the resume PDF, not the copies (28 Oct: Go
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   const want = ["/", "/writing", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
   assert.deepEqual([...urls].sort(), want.map((p) => `${SITE}${p}`).sort());
+  // Google ignores changefreq and priority; lastmod only where it is a real content date.
+  assert.doesNotMatch(xml, /<changefreq>|<priority>/);
+  assert.doesNotMatch(app("index.html"), /<meta name="keywords"/, "meta keywords: no effect on Google, a spam hint on Bing");
 });
 
 // 28 Oct: a markdown copy names its page as canonical in its Link header, next to describedby (next.config.ts).

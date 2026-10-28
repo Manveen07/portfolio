@@ -1288,5 +1288,12 @@ test("each post shares with its own card and title, and says so in BlogPosting J
     assert.equal(ld.author["@id"], "https://manveen.me/#person", `${s}: author is not the home page's Person`);
   }
   const home = JSON.parse(read(".next/server/app/index.html").match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
-  assert.equal(home["@id"], "https://manveen.me/#person");
+  assert.ok(home["@graph"].some((n) => n["@id"] === "https://manveen.me/#person"), "the home page has no Person with that @id");
+});
+
+test("one IndexNow key file, saying its own name, for scripts/indexnow.mjs", () => {
+  const keys = readdirSync(path.join(root, "public")).filter((f) => /^[a-f0-9]{32}\.txt$/.test(f));
+  assert.equal(keys.length, 1, `IndexNow key files: ${keys.join(", ")}`);
+  assert.equal(read(`public/${keys[0]}`).trim(), keys[0].replace(".txt", ""));
+  assert.match(JSON.parse(read("package.json")).scripts.indexnow, /scripts\/indexnow\.mjs/);
 });

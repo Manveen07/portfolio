@@ -44,7 +44,6 @@ const DESCRIPTION = "Every week has a job that's the same clicks, in the same or
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ["automation engineer", "workflow automation", "data entry automation", "Python", "Manveen Singh"],
   authors: [{ name: "Manveen Singh" }],
   metadataBase: new URL(SITE),
   openGraph: {

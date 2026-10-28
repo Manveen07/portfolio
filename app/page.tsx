@@ -5,7 +5,7 @@ import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 import type { Metadata } from "next";
 import { getPipeline } from "@/lib/pipeline";
-import { personJsonLd } from "@/lib/md/person";
+import { homeJsonLd } from "@/lib/md/person";
 
 // The page's canonical address (one URL per page for search engines) and its markdown copy, for AI agents (llmstxt.org).
 export const metadata: Metadata = { alternates: { canonical: "/", types: { "text/markdown": "/index.md" } } };
@@ -19,7 +19,7 @@ export default async function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd()).replace(/</g, "\\u003c") }}
       />
       <Hero />
       <Proof pipe={pipe} />
