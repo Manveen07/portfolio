@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -76,6 +77,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Nav />
         <main>{children}</main>
         <Footer />
+        {/* Vercel Web Analytics (28 Oct): page views, referrers and countries, no cookies. Hobby plan: 50,000
+            views a month, the last month kept. It loads its script after the page, so first paint is unchanged. */}
+        <Analytics />
       </body>
     </html>
   );

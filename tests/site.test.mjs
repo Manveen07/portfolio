@@ -1243,3 +1243,12 @@ test("the writing pages link back home, and a post links the rest of the writing
     assert.deepEqual(listed, ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
   }
 });
+
+// ── 28 Oct: Vercel Web Analytics, from Manveen's screenshot of the project's Analytics "Get Started" page ──
+test("every page counts its views with Vercel Web Analytics, loaded after the page", () => {
+  const layout = read("app/layout.tsx");
+  assert.match(layout, /import \{ Analytics \} from "@vercel\/analytics\/next";/);
+  // In <body>, after the footer: the component adds its deferred script once React is running, never in <head>.
+  assert.match(layout, /<Footer \/>[\s\S]*<Analytics \/>[\s\S]*<\/body>/);
+  assert.ok(JSON.parse(read("package.json")).dependencies["@vercel/analytics"], "@vercel/analytics is not a dependency");
+});
