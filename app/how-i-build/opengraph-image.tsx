@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { HOW } from "@/data/how";
+import { HOW, VISUAL } from "@/data/how";
 
 export const alt = `Manveen Singh: ${HOW.title}`;
 export const size = { width: 1200, height: 630 };
@@ -14,7 +14,7 @@ export default async function Image() {
     readFile(join(process.cwd(), "app/Archivo-ExtraBold.ttf")),
     readFile(join(process.cwd(), "app/Archivo-Regular.ttf")),
   ]);
-  const [tests, testsLabel] = HOW.proofs[2];
+  const [tests, testsLabel] = VISUAL.tiles[2];
   return new ImageResponse(
     (
       <div

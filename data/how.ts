@@ -16,51 +16,8 @@ export const HOW = {
   // The niche line. Three drafts, a Hormozi view (picked B for naming Clay) and a fresh hiring-manager reader
   // (picked A, edited to this). Record and alternatives: new 10x engineer\money\applications\PITCH.md.
   headline: "GTM engineer who builds outbound systems like software: tested before they touch a real lead, monitored after, fixed when they break.",
-  // SOURCES.md: 870+ tests (G/runs/_accounting_domain_first_2026-10-19/STATUS.md); resume bullet 1 (Clay, n8n, Python).
-  lede: "At my day job I built an outbound agency's pipeline end to end in Clay, n8n and Python: it finds the companies, checks they fit, finds the right people and their verified emails, and writes the emails.",
-  // SOURCES.md rows: "15,514 decision-makers ... 12,030 verified emails", "78% find rate", "34,044 companies, 0 data credits".
-  proofs: [
-    ["12,030", "verified emails found for 15,514 decision makers, a 78% find rate"],
-    ["34,044", "companies mapped from Clay's own search, with no data credits spent"],
-    ["870+", "automated tests on the pipeline"],
-  ] as [string, string][],
-  // LOOM-TRANSCRIPT.md slides 3 and 6. The full story is the first item under #failures. Each arrow sits after a
-  // no-break space, so it never wraps onto a line of its own.
-  hardest:
-    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all 4 good companies in a hand-labelled set of 25. I rewrote it, and on 30 companies it had never seen, it rejected no good ones.",
-  // Round A1 (29 Oct): the link opened a section of closed stories. It now points at the story, and a small script
-  // in the page opens a <details> when the address names it.
-  hardestLink: { label: "How I found it and proved the fix ↓", href: "#claygent" },
-  // CAN-CLAIM.md "Day-job builds": describe only; never name the employer or clients, never show their work.
-  privacy:
-    "Built at my day job since November 2025. The code, prompts and client data stay private; on a call I can show the workflows on screen with names blurred. The main numbers are on my [resume](/resume.pdf).",
-  heroLinks: [
-    { label: "n8n test setup, public stand-in (45 tests) ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
-    // Round A1: the home page's hero is about freelance automation, so this link goes to the video, not /#proof.
-    { label: "Tender Radar at work, under 5 min ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
-  ],
 } as const;
 
-// ── The same patterns, for builds GTM teams ask for (round A1: the near matches were buried in the stories) ──
-// 1: the identity story below (SOURCES.md). 2: the qualify step and the email checks (LOOM-TRANSCRIPT.md; the home page's
-// Precise Leads card). 3: CAN-CLAIM.md "Day-job n8n builds he may talk about" (the Slack approval flow, Manveen 23 Oct).
-export const PATTERNS = {
-  intro: "Three things GTM teams often ask for, and where the closest version runs in my work:",
-  items: [
-    {
-      lead: "Hold uncertain matches.",
-      text: "My email identity check passes a match only with a recorded reason and refuses rather than guesses: after my fix, 53 of the 123 refused addresses still stay refused. It's the rule I'd bring to a champion tracker, with the doubtful ones sent to a person instead of dropped. [The identity story](#identity)",
-    },
-    {
-      lead: "Every fact with its source.",
-      text: "Every email is checked claim by claim against the research behind it, and a draft with a name or number the research doesn't back fails the gate. A quote only proves the text exists, so a Claygent yes also has to agree with my hand labels before the prompt goes live, and a person reads a sample of every list. It's the check I'd bring to briefs built from call notes and the CRM. [How I test](#testing)",
-    },
-    {
-      lead: "People correct it where they work.",
-      text: "I built an n8n flow where AI drafts the next reply, code checks it, and it lands in Slack with Send, Edit, Snooze and Stop buttons, so a person approves every message. [How I test Slack buttons, on my own task tracker](/writing/149-tests-for-a-few-slack-buttons)",
-    },
-  ],
-} as const;
 
 // ── Three failures, each: what broke, how I found it, how I proved the fix, what it changed ──
 export type Story = {
@@ -83,13 +40,13 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       title: "A Claygent fit check kept rejecting the companies we wanted",
       result: "4 of 4 good companies rejected. After the rewrite, on 30 companies it had never seen: none lost.",
       broke:
-        "Before we pay to find anyone's email, Claygent (an AI step inside Clay that reads a company's website) decides whether the company fits. In our lead finder (the daily job that finds new people for each client), for one segment, systems integrators, it kept saying no to companies we wanted.",
+        "Before we pay to find anyone's email, Claygent (Clay's AI step that reads a company's website) decides if the company's a fit. It runs in our lead finder, the daily job that finds new people for each client. For one segment, systems integrators, it kept saying no to exactly the companies we wanted. And every answer looked reasonable, because each yes quoted the company's own site.",
       found:
-        "Before the full run on the whole market, I tested it on 25 companies I'd labelled by hand. It rejected all four good ones: an engineering firm that sets up factory control systems, a business-software partner and a distributor that builds its own control panels. They all do the work; none of them call themselves integrators. Then I read every row where Claygent and my labels disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. It could read the sites fine, since every yes quoted the company's own site. The rules were the problem.",
+        "Before the big run on the whole market, I hand-labelled 25 companies and ran it on them. It threw out all four good ones: an engineering firm that sets up factory control systems, a business-software partner, and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators. So I read every row where Claygent and I disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. Reading wasn't the problem. The rules were.",
       tested:
-        "I rewrote it as a briefing: what we look for, good signs, the usual not-a-fit cases and past calls as examples, with five hard rules kept, such as quote their own site for every yes. I checked first how many good companies it still rejected, because that was the failure. On the same 25, the set I'd tuned it on, it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. On top of that it had to pass a gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
+        "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the same 25 (the set I tuned it on, so it had better) it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. Then it still had to clear the gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
       changed:
-        "Only then did the full run start: it checked 24,506 companies, and 17,056 passed. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person for review. The prompt is now a shared template: one file holds what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix lands everywhere at once. The same check runs every day on each new company the lead finder brings in.",
+        "Only then did the big run start: it checked 24,506 companies, and 17,056 passed. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check runs every day on each new company the lead finder brings in.",
     },
     {
       // SOURCES.md last row: A/B on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123 unique
@@ -99,13 +56,13 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       title: "The email identity check was refusing real people's emails",
       result: "Old and new checks replayed on 2,376 past emails: the new one accepted 77 more and lost none.",
       broke:
-        "When a provider returns an email, a check asks: is this really the same person, at the same company? It was refusing correct addresses from people who go by a short form of their name, add a department to their address, or work at a company whose parent owns the mail domain. Every wrong refusal costs twice: the paid result we throw away, then the next provider's lookup.",
+        "When a provider hands back an email, a check asks: is this really the same person, at the same company? It was rejecting real people: folks who go by a short version of their name, put their department in their address, or work somewhere whose parent company owns the mail domain. And every wrong rejection costs twice: you throw away a result you paid for, then pay the next provider to look again.",
       found:
-        "I pulled every email the check had refused in past runs, 154 of them (123 distinct addresses), and put them back through it: none passed. Read in a row, many were plainly the right person, and the same few patterns came up again and again.",
+        "I pulled every email it had refused in past runs, 154 of them (123 distinct addresses), and ran them back through: zero passed. Read in a row, a lot were obviously the right person, and the same few patterns kept showing up.",
       tested:
-        "I added a rule for each pattern, each one recording why it passed a match: short names, a department tag, the spelling on the person's LinkedIn profile, and website evidence that two domains belong to one company. Then two checks. On the refusals I'd pulled, 70 of the 123 distinct addresses now pass, each with its reason, and 53 stay refused. On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and lost none of the old passes.",
+        "One rule per pattern, each one writing down why it let a match through: short names, a department tag, the spelling on the person's LinkedIn, website evidence that two domains are one company. Then two checks before switching anything. On the refusals I'd pulled, 70 of the 123 distinct addresses now pass, each with its reason, and 53 stay refused. On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and didn't lose a single old pass.",
       changed:
-        "A match still never passes on a guess. When no website shows that two domains belong together, the email stays refused, so an uncertain match is held back instead of sent.",
+        "It still doesn't guess. If no website shows that two domains belong together, the email stays refused. An uncertain match gets held back, not sent.",
     },
     {
       // Resume bullet 4 and SOURCES.md rows: 505,461 sends; Mimecast 5.1%, Barracuda 2.4%, Google 0.5%; 28% cut of
@@ -115,13 +72,13 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       title: "Some mail servers bounced our emails, however good the address",
       result: "505,461 sends grouped by mail server. Bounces on the lists I built fell from 2.7% to 0.7% after.",
       broke:
-        "Some campaigns bounced too much even with verified addresses. Reading the bounce messages, many were the receiving company's security gateway refusing us, not a bad address.",
+        "Some campaigns were bouncing way too much, even with verified addresses. When I actually read the bounce messages, a lot of them were the company's security gateway turning us away. The address was fine.",
       found:
-        "I grouped 505,461 of our sends by the receiving company's mail server. Domains behind Mimecast bounced 5.1%, Barracuda 2.4%, Google 0.5%.",
+        "So I split 505,461 of our sends by the receiving company's mail server. Mimecast domains bounced 5.1%. Barracuda 2.4%. Google 0.5%.",
       tested:
-        "A DNS check (a free lookup of which mail server a company uses) now runs before any paid email lookup and skips the servers that bounce. The order is pinned in tests: a company can put a security gateway in front of its Microsoft mail, and then the gateway decides, so it is checked first. On the 34,044-company market it cut 28% before a credit was spent, and in the first 9 days of daily runs it skipped 2,800+ people before a paid lookup. It's a trade-off: most mail to those servers still lands, but bounces put the sending domains at risk, so skipping them is the default and each client's list of allowed servers can change it.",
+        "Now a DNS check (a free lookup of which mail server a company uses) runs before any paid email lookup and skips the servers that bounce. The order's pinned in tests, because a company can put a security gateway in front of its Microsoft mail, and then the gateway is the one that decides. On the 34,044-company market it cut 28% before a single credit was spent, and in the first 9 days of daily runs it skipped 2,800+ people before a paid lookup. It's a trade-off: most mail to those servers still lands, but bounces put the sending domains at risk, so skipping is the default and each client's list of allowed servers can change it.",
       changed:
-        "Bounces on the lists I built fell from 2.7% (8,649 leads) to 0.7% (2,047 leads) after the check went in, while lists loaded without it stayed at 2.1%. Not all of that drop is this one check, so I say after, not because.",
+        "Bounces on the lists I built went from 2.7% (8,649 leads) to 0.7% (2,047 leads) after the check went in, while lists loaded without it stayed at 2.1%. Not all of that drop is this one check, so I say after, not because.",
     },
   ],
 };
@@ -207,21 +164,105 @@ export const CLAY = {
   ],
 } as const;
 
-// ── Things you can open. Every link here is checked by new 10x engineer\money\showcase\tools\linkcheck.py. ──
-export const LIVE = {
-  intro: "The day-job work stays private. These are mine, and they're live:",
-  items: [
-    { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "reads UK public tenders every morning and sorts which are worth a bid; the code is public, and its daily runs are on my home page." },
-    { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Tender Radar, the video ↗", text: "watch it work, under 5 minutes." },
-    { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "a small n8n workflow with 45 tests you can run: Code nodes, the workflow file, a replayed Slack click and the deploy." },
-    { href: "/writing/149-tests-for-a-few-slack-buttons", label: "149 tests for a few Slack buttons", text: "how I test an n8n workflow before it goes live." },
-    { href: "/writing/schema-as-eval-spec", label: "How I caught my own AI test cheating", text: "an eval that scored 100% because my notes leaked the answers." },
-    { href: "/writing/marking-the-ais-homework", label: "Marking the AI's homework", text: "23 drawings answered by hand, then the AI's work marked against them." },
-    { href: "/resume.pdf", label: "Resume (PDF)", text: "jobs, dates and the main numbers." },
+// ── Visual-first version (29 Oct, later). Manveen: "i want it to be more visual people don't have that much intrest
+// to read wall of text we want it to be easily consumable". Pictures and numbers carry the page; the words above are
+// the captions' sources and sit behind "Read the story" / "How each gate works" clicks. Same sources as above.
+// Voice, same day: "no that makes it human i want it edgey i don't want it to be safe make everything casual". So the
+// captions talk like he does to a peer: short, contractions, honest about what was annoying. Facts unchanged.
+export const VISUAL = {
+  // Three big tiles under the niche line (SOURCES.md rows).
+  tiles: [
+    ["12,030", "verified emails, a 78% find rate"],
+    ["34,044", "companies mapped in Clay, 0 data credits"],
+    ["870+", "automated tests guarding the pipeline"],
+  ] as [string, string][],
+  pipelineCaption: "What I built at my day job: 12 steps, from who to email to handling the replies. Nothing gets past a gate on a hunch.",
+  stepsSummary: "What each step won't let through",
+  heroLinks: [
+    { label: "Hardest failure ↓", href: "#claygent" },
+    { label: "Public test repo ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
+    { label: "Resume", href: "/resume.pdf" },
   ],
-} as const;
-
-// ── The end of the page ──
-export const HOW_END = {
-  ask: "If you're hiring for this kind of work, write to me.",
+  // Three tiles: what GTM teams ask for, and where the closest version runs (the PATTERNS words, cut to one line).
+  patterns: [
+    { head: "Don't guess on matches", line: "No reason on record, no match. 53 of 123 stay refused, on purpose.", href: "#identity" },
+    { head: "Receipts for every fact", line: "Every claim in an email is checked against the research first.", href: "#testing" },
+    { head: "Fix it in Slack", line: "AI drafts land with Send, Edit, Snooze, Stop. A person decides.", href: "/writing/149-tests-for-a-few-slack-buttons" },
+  ],
+  // One picture and one caption per story; the full story stays in FAILURES behind a click.
+  stories: {
+    claygent: {
+      head: "The fit check that said no to every good company",
+      caption: "It graded website copy, not businesses. Rewrote the prompt, tested it on my labels first.",
+      // LOOM-TRANSCRIPT.md: "rejected all four of the good ones"; "Same 25 companies: 100% agreement, no good company
+      // lost"; "Then 30 it had never seen: also 100%, none lost". How many of the 30 were good isn't published, so
+      // the third row shows agreement, not good companies.
+      rows: [
+        { label: "Before: good ones kept", n: 4, filled: 0, value: "0 of 4" },
+        { label: "After, same 25: agree", n: 25, filled: 25, value: "25 of 25" },
+        { label: "After, 30 unseen: agree", n: 30, filled: 30, value: "30 of 30, none lost" },
+      ],
+    },
+    identity: {
+      head: "The email check that kept rejecting real people",
+      caption: "Old vs new, replayed on past emails before switching. Still refuses what it can't explain.",
+      // SOURCES.md: "A/B on 2,376 past emails", "77 more accepted, 0 earlier passes lost".
+      tiles: [
+        ["2,376", "past emails replayed"],
+        ["+77", "more accepted"],
+        ["0", "earlier passes lost"],
+      ] as [string, string][],
+    },
+    bounces: {
+      head: "Mail servers that bounce you anyway",
+      caption: "505,461 sends by receiving server. The red ones are now skipped before any paid lookup.",
+      // Resume bullet 4: "Mimecast 5.1%, Barracuda 2.4%, Google 0.5%". The scale runs to the largest value.
+      bars: [
+        { label: "Google", value: 0.5, skipped: false },
+        { label: "Barracuda", value: 2.4, skipped: true },
+        { label: "Mimecast", value: 5.1, skipped: true },
+      ],
+      after: "Bounces on my lists: 2.7% → 0.7% after. After, not because.",
+    },
+  },
+  readStory: "How it actually went",
+  // Section labels (the rail on wide screens).
+  kickers: {
+    patterns: "What GTM teams keep asking for",
+    failures: "Three times it broke",
+    testing: "Before it touches a real lead",
+    clay: "Clay, by the numbers",
+    live: "Stuff you can actually click",
+    contact: "Say hi",
+  },
+  // The gates a workflow passes before it touches a real lead, then what happens after (TESTING, cut to a line each).
+  gates: [
+    { head: "Label it by hand first", line: "25 to 30 real cases, by me", href: "/writing/schema-as-eval-spec" },
+    { head: "Write the bar down", line: "before the run, not after" },
+    { head: "Replay the past", line: "old vs new on real history" },
+    { head: "Automated tests", line: "870+ on the pipeline, 149 on my n8n tracker", href: "/writing/149-tests-for-a-few-slack-buttons" },
+    { head: "Claim check, fresh eyes", line: "a no-context AI reads every email cold" },
+    { head: "Spend caps", line: "runs stop and ask before burning credits" },
+  ],
+  live: { head: "A real lead", line: "only now" },
+  after: { head: "Then watch it", line: "Tender Radar went red 9 mornings in October. Fixed 29 Oct.", href: "/#proof" },
+  gatesSummary: "The long version",
+  // Clay depth as tiles (CLAY above, cut to a line each).
+  clay: [
+    ["31", "Clay workflows, 3 accounts, daily, deduped in Audiences"],
+    ["0.18", "credits a company to qualify 24,506 with Claygent"],
+    ["5", "Claygent prompts, one template, built by a script"],
+    ["2-way", "Clay and n8n by webhook: people out, lookalikes back"],
+    ["5", "email tools in a waterfall, cheapest first, each capped"],
+    ["HubSpot", "reply events synced by n8n. Salesforce: not yet."],
+  ] as [string, string][],
+  clayDetails: "Nerd details",
+  live_items: [
+    { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "UK tenders sorted every morning" },
+    { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Tender Radar video ↗", text: "under 5 minutes" },
+    { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "45 tests you can run" },
+    { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
+  ],
+  privacy: "Day-job code, prompts and client data stay private. On a call I'll show the workflows, names blurred.",
+  ask: "Hiring for this kind of work? Let's talk.",
 } as const;

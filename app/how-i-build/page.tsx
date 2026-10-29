@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HOW, PATTERNS, FAILURES, TESTING, PIPELINE_STEPS, CLAY, LIVE, HOW_END, type Story } from "@/data/how";
+import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, VISUAL, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { Inline } from "@/components/Prose";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
+import { ClaygentUnits, IdentityTiles, BounceBars } from "@/components/HowCharts";
 
-// How Manveen builds and tests GTM systems, for hiring managers (29 Oct 2026). The first screen says what kind of
-// GTM engineer he is and gives three numbers and the hardest fix; everything longer sits behind a <details> the
-// reader opens (no JavaScript needed). Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts).
+// How Manveen builds and tests GTM systems, for hiring managers. Visual-first since the evening of 29 Oct: numbers and
+// pictures carry the page, each caption is a line, and every longer text sits behind a <details> (no JavaScript).
+// Words in data/how.ts (VISUAL for what shows, FAILURES / TESTING / CLAY / PIPELINE_STEPS behind the clicks);
+// markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
 
 const DESCRIPTION = HOW.headline;
-
-// A link to a story (#claygent) opens it: a <details> named by the address opens on load and on every hash change.
-// Without JavaScript the link still scrolls to the story's title.
-const OPEN_FROM_HASH =
-  "(function(){function o(){var e=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(e&&e.tagName==='DETAILS')e.open=true}o();addEventListener('hashchange',o)})()";
 
 export const metadata: Metadata = {
   title: `${HOW.title} | Manveen Singh`,
@@ -24,7 +21,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: HOW.title, description: DESCRIPTION },
 };
 
-/** A link: same tab inside the site, a new tab outside it. */
+/** A link: same tab inside the site or the page, a new tab outside it. */
 function A({ href, children, className = "link" }: { href: string; children: React.ReactNode; className?: string }) {
   return href.startsWith("/") || href.startsWith("#") ? (
     <a className={className} href={href}>
@@ -37,7 +34,7 @@ function A({ href, children, className = "link" }: { href: string; children: Rea
   );
 }
 
-function StoryItem({ s }: { s: Story }) {
+function StoryText({ s }: { s: Story }) {
   const parts: [string, string][] = [
     ["What broke", s.broke],
     ["How I found it", s.found],
@@ -45,10 +42,9 @@ function StoryItem({ s }: { s: Story }) {
     ["What it changed", s.changed],
   ];
   return (
-    <details className="more" id={s.id}>
+    <details className="more">
       <summary>
-        <h3 className="h3">{s.title}</h3>
-        <span className="more-line">{s.result}</span>
+        <span className="more-line more-label">{VISUAL.readStory}</span>
         <span className="more-hint" aria-hidden="true" />
       </summary>
       <dl className="story">
@@ -65,76 +61,34 @@ function StoryItem({ s }: { s: Story }) {
   );
 }
 
+const CHARTS: Record<string, () => React.ReactElement> = {
+  claygent: ClaygentUnits,
+  identity: IdentityTiles,
+  bounces: BounceBars,
+};
+
 export default function HowIBuild() {
+  const K = VISUAL.kickers;
   return (
     <>
       <section id="top" className="wrap sec hero how">
         <p className="kicker">{HOW.title}</p>
         <h1>{HOW.headline}</h1>
-        <p className="lede">{HOW.lede}</p>
-        <dl className="metrics proofs">
-          {HOW.proofs.map(([n, label]) => (
+        <dl className="tiles">
+          {VISUAL.tiles.map(([n, label]) => (
             <div key={n}>
               <dt>{n}</dt>
               <dd>{label}</dd>
             </div>
           ))}
         </dl>
-        <p className="body hardest">
-          <Inline s={HOW.hardest} />{" "}
-          <A href={HOW.hardestLink.href}>{HOW.hardestLink.label}</A>
-        </p>
-        <p className="small">
-          <Inline s={HOW.privacy} />
-        </p>
-        <p className="links">
-          {HOW.heroLinks.map((l) => (
-            <A key={l.href} href={l.href} className="">
-              {l.label}
-            </A>
-          ))}
-        </p>
-      </section>
-
-      <section id="patterns" className="wrap sec">
-        <h2 className="kicker">Patterns GTM teams ask for</h2>
-        <p className="body">{PATTERNS.intro}</p>
-        <ul className="habits">
-          {PATTERNS.items.map((t) => (
-            <li key={t.lead}>
-              <b>{t.lead}</b> <Inline s={t.text} />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section id="failures" className="wrap sec">
-        <h2 className="kicker">Three failures I fixed</h2>
-        <p className="body">{FAILURES.intro}</p>
-        {FAILURES.stories.map((s) => (
-          <StoryItem key={s.id} s={s} />
-        ))}
-      </section>
-
-      <section id="testing" className="wrap sec">
-        <h2 className="kicker">How I test a workflow</h2>
-        <p className="body">{TESTING.intro}</p>
-        <ol className="habits">
-          {TESTING.items.map((t) => (
-            <li key={t.lead}>
-              <b>{t.lead}</b> <Inline s={t.text} />
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section id="pipeline" className="wrap sec">
-        <h2 className="kicker">The whole pipeline</h2>
-        <p className="body">{PIPELINE_STEPS.intro}</p>
-        <PipelineSketch />
+        <figure className="pipe">
+          <PipelineSketch />
+          <figcaption className="cap">{VISUAL.pipelineCaption}</figcaption>
+        </figure>
         <details className="more">
           <summary>
-            <span className="more-line more-label">Each step, and the check that stops bad output</span>
+            <span className="more-line more-label">{VISUAL.stepsSummary}</span>
             <span className="more-hint" aria-hidden="true" />
           </summary>
           <ol className="steps-full">
@@ -145,35 +99,122 @@ export default function HowIBuild() {
             ))}
           </ol>
         </details>
+        <p className="links">
+          {VISUAL.heroLinks.map((l) => (
+            <A key={l.href} href={l.href} className="">
+              {l.label}
+            </A>
+          ))}
+        </p>
+      </section>
+
+      <section id="patterns" className="wrap sec">
+        <h2 className="kicker">{K.patterns}</h2>
+        <ul className="tilegrid three">
+          {VISUAL.patterns.map((t) => (
+            <li key={t.head}>
+              <A href={t.href} className="tile-link">
+                <span className="tile-head">{t.head}</span>{" "}
+                <span className="tile-line">{t.line}</span>
+              </A>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="failures" className="wrap sec">
+        <h2 className="kicker">{K.failures}</h2>
+        {FAILURES.stories.map((s) => {
+          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
+          const Chart = CHARTS[s.id];
+          return (
+            <article key={s.id} id={s.id} className="storycard">
+              <h3 className="h3">{v.head}</h3>
+              <Chart />
+              <p className="cap">{v.caption}</p>
+              <StoryText s={s} />
+            </article>
+          );
+        })}
+      </section>
+
+      <section id="testing" className="wrap sec">
+        <h2 className="kicker">{K.testing}</h2>
+        <ol className="gates">
+          {VISUAL.gates.map((g) => (
+            <li key={g.head}>
+              <span className="gate-head">{"href" in g && g.href ? <A href={g.href}>{g.head}</A> : g.head}</span>{" "}
+              <span className="gate-line">{g.line}</span>
+            </li>
+          ))}
+          <li className="gate-live">
+            <span className="gate-head">{VISUAL.live.head}</span>{" "}
+            <span className="gate-line">{VISUAL.live.line}</span>
+          </li>
+          <li className="gate-after">
+            <span className="gate-head">
+              <A href={VISUAL.after.href}>{VISUAL.after.head}</A>
+            </span>{" "}
+            <span className="gate-line">{VISUAL.after.line}</span>
+          </li>
+        </ol>
+        <details className="more">
+          <summary>
+            <span className="more-line more-label">{VISUAL.gatesSummary}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <ol className="habits">
+            {TESTING.items.map((t) => (
+              <li key={t.lead}>
+                <b>{t.lead}</b> <Inline s={t.text} />
+              </li>
+            ))}
+          </ol>
+        </details>
       </section>
 
       <section id="clay" className="wrap sec">
-        <h2 className="kicker">Clay, in depth</h2>
-        <p className="body">{CLAY.intro}</p>
-        <ul className="habits">
-          {CLAY.items.map((t) => (
-            <li key={t}>
-              <Inline s={t} />
-            </li>
+        <h2 className="kicker">{K.clay}</h2>
+        <dl className="tilegrid">
+          {VISUAL.clay.map(([n, line], i) => (
+            <div key={i}>
+              <dt>{n}</dt>
+              <dd>{line}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
+        <details className="more">
+          <summary>
+            <span className="more-line more-label">{VISUAL.clayDetails}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <ul className="habits">
+            {CLAY.items.map((t) => (
+              <li key={t}>
+                <Inline s={t} />
+              </li>
+            ))}
+          </ul>
+        </details>
       </section>
 
       <section id="live" className="wrap sec">
-        <h2 className="kicker">See it running</h2>
-        <p className="body">{LIVE.intro}</p>
-        <ul className="habits live">
-          {LIVE.items.map((l) => (
+        <h2 className="kicker">{K.live}</h2>
+        <ul className="linkgrid">
+          {VISUAL.live_items.map((l) => (
             <li key={l.href}>
-              <A href={l.href}>{l.label}</A>: {l.text}
+              <A href={l.href}>{l.label}</A>
+              <span className="sr-only">: </span>
+              <span>{l.text}</span>
             </li>
           ))}
         </ul>
+        <p className="small">{VISUAL.privacy}</p>
       </section>
 
       <section id="contact" className="wrap sec">
-        <h2 className="kicker">Write to me</h2>
-        <p className="body">{HOW_END.ask}</p>
+        <h2 className="kicker">{K.contact}</h2>
+        <p className="body">{VISUAL.ask}</p>
         <p className="mail-line">
           <a className="mail" href={`mailto:${ME.email}`}>
             {ME.email}
@@ -189,7 +230,6 @@ export default function HowIBuild() {
           </Link>
         </p>
       </section>
-      <script dangerouslySetInnerHTML={{ __html: OPEN_FROM_HASH }} />
     </>
   );
 }
