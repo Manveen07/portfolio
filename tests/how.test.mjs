@@ -100,11 +100,11 @@ test("the charts show the published numbers, with red only where it means someth
   const units = html.match(/<figure class="chart units"[\s\S]*?<\/figure>/)[0];
   const rows = [...units.matchAll(/<div class="urow[^"]*"[\s\S]*?<\/div>/g)].map((m) => m[0]);
   // Visual round 1: one measure per comparison (good ones kept, before and after; then agreement, tuning set greyed).
-  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 25, 30]);
-  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 25, 30]);
-  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "", "tuned", "main"]);
+  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 30, 25]);
+  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 30, 25]);
+  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "", "main", "tuned"]);
   const bars = [...html.matchAll(/<span class="blabel">([^<]*)<\/span><span class="btrack"><i class="(bar red|bar)" style="--w:([\d.]+)"/g)];
-  assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without it"]);
+  assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without the check"]);
   assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red", "bar", "bar", "bar"]);
   const w = bars.map((b) => Number(b[3]));
   assert.ok(Math.abs(w[3] - 2.7 / 5.1) < 0.001 && Math.abs(w[4] - 0.7 / 5.1) < 0.001 && Math.abs(w[5] - 2.1 / 5.1) < 0.001, "result bars off scale");

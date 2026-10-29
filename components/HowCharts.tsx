@@ -62,7 +62,7 @@ const pct = (v: number) => `${v.toFixed(1)}%`;
 export const bounceLabel = () =>
   `Bounce rate by the receiving mail server, 505,461 sends: ${C.bounces.bars
     .map((b) => `${b.label} ${pct(b.value)}${b.skipped ? ", skipped before any paid lookup" : ", kept"}`)
-    .join("; ")}. Bounces on my lists: ${C.bounces.result.map((b) => `${b.label} ${pct(b.value)}`).join("; ")}. ${C.bounces.after}`;
+    .join("; ")}. My lists vs lists without the check, bounce rate: ${C.bounces.result.map((b) => `${b.label} ${pct(b.value)}`).join("; ")}. ${C.bounces.after}`;
 
 export function BounceBars() {
   return (
@@ -79,7 +79,7 @@ export function BounceBars() {
           </span>
         </div>
       ))}
-      <span className="bsub">Bounces on my lists</span>
+      <span className="bsub">My lists vs lists without the check</span>
       {C.bounces.result.map((b) => (
         <div key={b.label} className="brow" title={`${b.label}: ${pct(b.value)}`}>
           <span className="blabel">{b.label}</span>

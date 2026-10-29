@@ -176,25 +176,25 @@ export const VISUAL = {
     ["34,044", "companies mapped in Clay, 0 data credits"],
     ["870+", "automated tests guarding the pipeline"],
   ] as [string, string][],
-  pipelineCaption: "Built at my day job, an outbound agency. Nothing passes a gate on a hunch.",
+  pipelineCaption: "Built at my day job, an outbound agency, since November 2025.",
   stepsSummary: "What each step won't let through",
   heroLinks: [
     { label: "Hardest failure ↓", href: "#claygent" },
-    { label: "45-test public sample ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
+    { label: "45 tests on a toy n8n workflow ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
   ],
   // Three tiles: what GTM teams ask for, and where the closest version runs (the PATTERNS words, cut to one line).
   patterns: [
     // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
     // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
-    { num: "0 lost", head: "Don't guess on matches", line: "70 refused emails now pass with a written reason. 53 stay refused.", href: "#identity", link: "the story ↓" },
+    { num: "0 lost", head: "Don't guess on matches", line: "77 more accepted on 2,376 past emails, no old pass lost.", href: "#identity", link: "the story ↓" },
     { num: "95.5%", head: "Receipts for every fact", line: "claims supported on a 300-email test set, 0 contradicted.", href: "#testing", link: "how I check ↓" },
-    { num: "4 buttons", head: "Fix it in Slack", line: "At my day job, AI drafts land with Send, Edit, Snooze, Stop. Demo on a call.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my own Slack button tests →" },
+    { num: "0 unapproved", head: "Fix it in Slack", line: "Day-job AI drafts land in Slack: Send, Edit, Snooze, Stop. Demo on a call.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
   ],
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
   stories: {
     claygent: {
-      head: "The fit check that said no to every good company",
-      caption: "It graded website copy, not businesses. Rewrote the prompt, tested it first.",
+      head: "The hardest one: a fit check that said no to every good company",
+      caption: "Caught on hand labels before the 24,506-company run. It graded website copy, not businesses.",
       // LOOM-TRANSCRIPT.md: "rejected all four of the good ones"; "Same 25 companies: 100% agreement, no good company
       // lost"; "Then 30 it had never seen: also 100%, none lost". How many of the 30 were good isn't published, so
       // the third row shows agreement, not good companies.
@@ -203,8 +203,8 @@ export const VISUAL = {
         // company lost", so 4 of 4); then agreement, the tuning set greyed and labelled, the unseen 30 as the result.
         { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
         { label: "Good ones kept, after", n: 4, filled: 4, value: "4 of 4", kind: "" },
-        { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
         { label: "Agrees, 30 it never saw", n: 30, filled: 30, value: "30 of 30, none lost", kind: "main" },
+        { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
       ],
     },
     identity: {
@@ -230,7 +230,7 @@ export const VISUAL = {
       result: [
         { label: "My lists, before", value: 2.7, skipped: false },
         { label: "My lists, after", value: 0.7, skipped: false },
-        { label: "Lists without it", value: 2.1, skipped: false },
+        { label: "Lists without the check", value: 2.1, skipped: false },
       ],
       after: "After, not because: not all of it is the check.",
     },
@@ -241,7 +241,7 @@ export const VISUAL = {
     patterns: "What GTM teams keep asking for",
     failures: "Three times it broke",
     testing: "Before it touches a real lead",
-    clay: "Clay, by the numbers",
+    clay: "Clay and friends",
     live: "Stuff you can actually click",
     contact: "Say hi",
   },
@@ -255,7 +255,7 @@ export const VISUAL = {
     { head: "Spend caps", line: "runs stop and ask before burning credits" },
   ],
   live: { head: "A real lead", line: "only now" },
-  after: { head: "Then watch it", line: "Tender Radar went red 9 mornings in October. Fixed 29 Oct.", href: "/#proof" },
+  after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in October. Fix shipped 29 Oct; the bars will tell.", href: "/#proof" },
   gatesSummary: "The long version",
   // Clay depth as tiles (CLAY above, cut to a line each).
   clay: [
@@ -267,7 +267,7 @@ export const VISUAL = {
   clayDetails: "Nerd details",
   live_items: [
     { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "UK tenders sorted every morning" },
-    { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Tender Radar video ↗", text: "under 5 minutes" },
+    { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Its 5-minute video ↗", text: "Tender Radar running" },
     { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "45 tests you can run" },
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
   ],
