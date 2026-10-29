@@ -27,7 +27,7 @@ export const HOW = {
   // LOOM-TRANSCRIPT.md slides 3 and 6. The full story is the first item under #failures. Each arrow sits after a
   // no-break space, so it never wraps onto a line of its own.
   hardest:
-    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all four good companies in 25 I'd hand-labelled, while every yes it gave quoted the company's own site. I rewrote it, and on 30 companies it had never seen, it rejected no good ones.",
+    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all 4 good companies in a hand-labelled set of 25. I rewrote it, and on 30 companies it had never seen, it rejected no good ones.",
   // Round A1 (29 Oct): the link opened a section of closed stories. It now points at the story, and a small script
   // in the page opens a <details> when the address names it.
   hardestLink: { label: "How I found it and proved the fix ↓", href: "#claygent" },
@@ -49,11 +49,11 @@ export const PATTERNS = {
   items: [
     {
       lead: "Hold uncertain matches.",
-      text: "When my Claygent fit check can't back a yes with a quote that a script finds on the company's saved page, the company goes to a person for review. My email identity check passes a match only with a recorded reason and refuses rather than guesses: after my fix, 53 of the 123 refused addresses still stay refused. It's the rule I'd bring to a champion tracker. [The identity story](#identity)",
+      text: "My email identity check passes a match only with a recorded reason and refuses rather than guesses: after my fix, 53 of the 123 refused addresses still stay refused. It's the rule I'd bring to a champion tracker, with the doubtful ones sent to a person instead of dropped. [The identity story](#identity)",
     },
     {
       lead: "Every fact with its source.",
-      text: "Every email is checked claim by claim against the research behind it, and a draft with a name or number the research doesn't back fails the gate. Every Claygent yes must quote the company's own site. It's the check I'd bring to briefs built from call notes and the CRM. [How I test](#testing)",
+      text: "Every email is checked claim by claim against the research behind it, and a draft with a name or number the research doesn't back fails the gate. A quote only proves the text exists, so a Claygent yes also has to agree with my hand labels before the prompt goes live, and a person reads a sample of every list. It's the check I'd bring to briefs built from call notes and the CRM. [How I test](#testing)",
     },
     {
       lead: "People correct it where they work.",
@@ -181,10 +181,10 @@ export const PIPELINE_STEPS: { intro: string; label: string; note: string; steps
     { name: "strategy", what: "Picks the campaigns worth running from past reply data.", check: "Each test changes one thing, and the rule for the winner is written before the data comes in." },
     { name: "client context", what: "Writes down what the client sells, who to reach, and who to leave alone.", check: "A checker blocks a brief with open questions, a sender who isn't a real person, or no approval." },
     { name: "find companies", what: "Maps the market with Clay's search first, and pays only to fill measured gaps.", check: "Every new search is judged on a sample before it runs at scale; a search that finds too few fits is dropped." },
-    { name: "qualify", what: "A Claygent fit check reads each company's own site.", check: "Every yes needs a quote that a script finds in the saved page, or it goes to review.", gate: true },
+    { name: "qualify", what: "A free mail-server check first, then a Claygent fit check reads each company's own site.", check: "Every yes needs a quote that a script finds in the saved page, or it goes to review.", gate: true },
     { name: "research signals", what: "Finds a reason to write now: hiring, news, changes on the site.", check: "Right company, the exact words, a recent date; paid sources are capped." },
     { name: "find people", what: "Finds the decision makers at each company.", check: "A title needs both the right seniority and the right function, and people who've left are dropped." },
-    { name: "find emails", what: "A mail-server check, then a waterfall of providers, cheapest first.", check: "The address must match the person at that company, and be verified.", gate: true },
+    { name: "find emails", what: "A waterfall of providers, cheapest first.", check: "The address must match the person at that company, and be verified.", gate: true },
     { name: "list QA", what: "Reads the whole list before anything uses it.", check: "Blocks duplicates, one address on two people, do-not-contact, recent contact and shared addresses like info@; a person reads a sample.", gate: true },
     { name: "write copy", what: "Writes emails that only say what the research found.", check: "Every name and number is traced to the research, and a blind reader must be able to say what's on offer." },
     { name: "spintax", what: "Wording variants, so no two sends read the same.", check: "Every combination is checked, and a separate judge drops any variant that changes the meaning." },
