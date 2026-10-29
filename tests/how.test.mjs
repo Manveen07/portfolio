@@ -123,7 +123,7 @@ test("the day job is described, never named, and nothing points into private wor
     assert.doesNotMatch(s, /Precise\s?Leads|preciseleads/i, "the employer is named");
     assert.doesNotMatch(s, /\bworkspace \d|\bcampaign \d{4,}|webhook\/[a-z0-9]{6,}/i, "an id slipped in");
   }
-  assert.match(text(), /Day-job code and client data stay private/);
+  assert.match(text(), /Day-job code stays private/);
 });
 
 test("the site's word rules: no dashes, no sales words, no superlatives", () => {

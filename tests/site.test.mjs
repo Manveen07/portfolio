@@ -1180,9 +1180,10 @@ test("the June post is the eval that leaked its own answers: one title everywher
 // ── 22 Oct: the writing is findable. Manveen: "a person navigating the website will never lead to the writing
 // section. I want them to go to the writing section." It was only a footer link. ──
 test("every page's header links Writing, plainly, beside the mail link", () => {
-  for (const page of ["index.html", "writing.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
+  for (const page of ["index.html", "writing.html", "how-i-build.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
     const head = markup(page).match(/<header[\s\S]*?<\/header>/)?.[0] ?? "";
-    assert.match(head, /<nav class="head-links" aria-label="Site"><a class="head-link" href="\/writing">Writing<\/a><a class="head-cta" href="mailto:/, `${page}: no Writing link before the mail link`);
+    // 29 Oct: "How I build" (the page for hiring managers) comes first, then Writing, then the mail link.
+    assert.match(head, /<nav class="head-links" aria-label="Site"><a class="head-link" href="\/how-i-build">How I build<\/a><a class="head-link" href="\/writing">Writing<\/a><a class="head-cta" href="mailto:/, `${page}: no How I build and Writing links before the mail link`);
   }
   const styles = css();
   assert.match(styles, /\.head-link\{[^}]*text-decoration:none/, "Writing is underlined like the mail link");

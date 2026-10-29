@@ -8,6 +8,10 @@ export default function Nav() {
         {ME.name}
       </Link>
       <nav className="head-links" aria-label="Site">
+        {/* 29 Oct: the page for hiring managers, findable from every page (Manveen: "yes", put it live). */}
+        <Link className="head-link" href="/how-i-build">
+          How I build
+        </Link>
         <Link className="head-link" href="/writing">
           Writing
         </Link>

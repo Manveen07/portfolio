@@ -260,11 +260,11 @@ export const VISUAL = {
     { head: "Spend caps", line: "runs stop and ask first" },
   ],
   live: { head: "A real lead", line: "only now" },
-  after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct. Fixed 29 Oct; watch the bars.", href: "/#proof" },
+  after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct, fixed 29 Oct.", href: "/#proof" },
   gatesSummary: "The long version",
   // Clay depth as tiles (CLAY above, cut to a line each).
   clay: [
-    ["31", "Clay workflows, 3 accounts, daily, deduped in Audiences"],
+    ["31", "Clay workflows, 3 accounts, daily, no dupes"],
     ["5", "Claygent prompts, one template, built by a script"],
     ["2-way", "Clay and n8n by webhook: people out, lookalikes back"],
     ["HubSpot", "reply events synced by n8n. Salesforce: not yet."],
@@ -273,9 +273,11 @@ export const VISUAL = {
   live_items: [
     { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "UK tenders, sorted daily" },
     { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Its 5-minute video ↗", text: "Tender Radar running" },
+    // Public, CI green, 60 tests (gh api + gh run list, 29 Oct). Built for the "hold uncertain matches" ask.
+    { href: "https://github.com/Manveen07/champion-move-checker", label: "champion-move-checker ↗", text: "holds unsure matches. 60 tests, CI green." },
     { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "45 tests you can run" },
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
   ],
-  privacy: "Day-job code and client data stay private; I'll demo the workflows on a call.",
+  privacy: "Day-job code stays private; I'll demo it on a call.",
   ask: "Hiring for this? Let's talk.",
 } as const;
