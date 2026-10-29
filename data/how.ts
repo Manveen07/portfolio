@@ -27,7 +27,7 @@ export const HOW = {
   // LOOM-TRANSCRIPT.md slides 3 and 6. The full story is the first item under #failures. Each arrow sits after a
   // no-break space, so it never wraps onto a line of its own.
   hardest:
-    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all four good companies in 25 I'd hand-labelled. I rewrote it and scored it on good companies lost: none in the same 25, none in 30 it had never seen.",
+    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all four good companies in 25 I'd hand-labelled, while every yes it gave quoted the company's own site. I rewrote it, and on 30 companies it had never seen, it rejected no good ones.",
   // Round A1 (29 Oct): the link opened a section of closed stories. It now points at the story, and a small script
   // in the page opens a <details> when the address names it.
   hardestLink: { label: "How I found it and proved the fix ↓", href: "#claygent" },
@@ -35,7 +35,7 @@ export const HOW = {
   privacy:
     "Built at my day job since November 2025. The code, prompts and client data stay private; on a call I can show the workflows on screen with names blurred. The main numbers are on my [resume](/resume.pdf).",
   heroLinks: [
-    { label: "Tested n8n workflow, public repo ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
+    { label: "n8n test setup, public stand-in (45 tests) ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
     // Round A1: the home page's hero is about freelance automation, so this link goes to the video, not /#proof.
     { label: "Tender Radar at work, under 5 min ↗", href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc" },
   ],
@@ -45,15 +45,15 @@ export const HOW = {
 // 1: the identity story below (SOURCES.md). 2: the qualify step and the email checks (LOOM-TRANSCRIPT.md; the home page's
 // Precise Leads card). 3: CAN-CLAIM.md "Day-job n8n builds he may talk about" (the Slack approval flow, Manveen 23 Oct).
 export const PATTERNS = {
-  intro: "Three things GTM teams often ask for, and where each already runs in my work:",
+  intro: "Three things GTM teams often ask for, and where the closest version runs in my work:",
   items: [
     {
       lead: "Hold uncertain matches.",
-      text: "When my Claygent fit check can't back a yes with a quote that a script finds on the company's saved page, the company goes to a person for review. My email identity check passes a match only with a recorded reason, and refuses rather than guesses. A champion tracker needs both rules. [The identity story](#identity)",
+      text: "When my Claygent fit check can't back a yes with a quote that a script finds on the company's saved page, the company goes to a person for review. My email identity check passes a match only with a recorded reason and refuses rather than guesses: after my fix, 53 of the 123 refused addresses still stay refused. It's the rule I'd bring to a champion tracker. [The identity story](#identity)",
     },
     {
       lead: "Every fact with its source.",
-      text: "Every email is checked claim by claim against the research behind it, and every Claygent yes must quote the company's own site. Briefs built from call notes and the CRM need the same check. [How I test](#testing)",
+      text: "Every email is checked claim by claim against the research behind it, and a draft with a name or number the research doesn't back fails the gate. Every Claygent yes must quote the company's own site. It's the check I'd bring to briefs built from call notes and the CRM. [How I test](#testing)",
     },
     {
       lead: "People correct it where they work.",
@@ -81,15 +81,15 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       // LOOM-TRANSCRIPT.md slides 3 to 7; resume bullet 2 and SOURCES.md (24,506 sent to Claygent, 17,056 fits).
       id: "claygent",
       title: "A Claygent fit check kept rejecting the companies we wanted",
-      result: "4 of 4 good companies rejected. After the rewrite: 25 of 25 agreed, then 30 unseen companies, none lost.",
+      result: "4 of 4 good companies rejected. After the rewrite, on 30 companies it had never seen: none lost.",
       broke:
-        "Before we pay to find anyone's email, Claygent (an AI step inside Clay that reads a company's website) decides whether the company fits. For one segment, systems integrators, it kept saying no to companies we wanted.",
+        "Before we pay to find anyone's email, Claygent (an AI step inside Clay that reads a company's website) decides whether the company fits. In our lead finder (the daily job that finds new people for each client), for one segment, systems integrators, it kept saying no to companies we wanted.",
       found:
-        "Before the full run, I tested it on 25 companies I'd labelled by hand. It rejected all four good ones: an engineering firm that sets up factory control systems, a business-software partner and a distributor that builds its own control panels. They all do the work; none of them call themselves integrators. Then I read every row where Claygent and my labels disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. It could read the sites fine, since every yes quoted the company's own site. The rules were the problem.",
+        "Before the full run on the whole market, I tested it on 25 companies I'd labelled by hand. It rejected all four good ones: an engineering firm that sets up factory control systems, a business-software partner and a distributor that builds its own control panels. They all do the work; none of them call themselves integrators. Then I read every row where Claygent and my labels disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. It could read the sites fine, since every yes quoted the company's own site. The rules were the problem.",
       tested:
-        "I rewrote it as a briefing: what we look for, good signs, the usual not-a-fit cases and past calls as examples, with five hard rules kept, such as quote their own site for every yes. I scored it first on good companies lost, because that was the failure. On the same 25, the set I'd tuned it on, it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. On top of that it had to pass a gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
+        "I rewrote it as a briefing: what we look for, good signs, the usual not-a-fit cases and past calls as examples, with five hard rules kept, such as quote their own site for every yes. I checked first how many good companies it still rejected, because that was the failure. On the same 25, the set I'd tuned it on, it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. On top of that it had to pass a gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
       changed:
-        "Only then did the full run start: it qualified 24,506 companies. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person for review. The prompt is now a shared template: one file holds what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix lands everywhere at once. The same check runs every day on each new company the lead finder brings in.",
+        "Only then did the full run start: it checked 24,506 companies, and 17,056 passed. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person for review. The prompt is now a shared template: one file holds what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix lands everywhere at once. The same check runs every day on each new company the lead finder brings in.",
     },
     {
       // SOURCES.md last row: A/B on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123 unique
@@ -103,7 +103,7 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       found:
         "I pulled every email the check had refused in past runs, 154 of them (123 distinct addresses), and put them back through it: none passed. Read in a row, many were plainly the right person, and the same few patterns came up again and again.",
       tested:
-        "I added a rule for each pattern, each one recording why it passed a match: short names, a department tag, the spelling on the person's LinkedIn profile, and website evidence that two domains belong to one company. Then I ran the old and new checks side by side on all 2,376 past emails. The new one accepted 77 more and lost none of the old passes. Of the 123 distinct refusals, 70 now pass, each with its reason, and the other 53 stay refused.",
+        "I added a rule for each pattern, each one recording why it passed a match: short names, a department tag, the spelling on the person's LinkedIn profile, and website evidence that two domains belong to one company. Then two checks. On the refusals I'd pulled, 70 of the 123 distinct addresses now pass, each with its reason, and 53 stay refused. On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and lost none of the old passes.",
       changed:
         "A match still never passes on a guess. When no website shows that two domains belong together, the email stays refused, so an uncertain match is held back instead of sent.",
     },
@@ -154,7 +154,7 @@ export const TESTING = {
     },
     {
       lead: "Check every email before it goes out.",
-      text: "Each one is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted. When someone spots a new kind of mistake, it becomes a check.",
+      text: "Each one is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted; in live runs, a draft with a name or number the research doesn't back fails the gate. When someone spots a new kind of mistake, it becomes a check.",
     },
     {
       lead: "Cap the spend.",

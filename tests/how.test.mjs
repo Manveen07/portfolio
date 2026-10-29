@@ -160,7 +160,7 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
 
 test("the words match their sources: résumé numbers and the Loom story, as written down in data/how.ts", () => {
   const t = text();
-  for (const s of ["12,030", "15,514", "78%", "34,044", "870+", "2,376", "77", "505,461", "5.1%", "2.4%", "0.5%", "28%", "2,800+", "2.7%", "0.7%", "2.1%", "8,649", "2,047", "24,506", "0.18", "95.5%"]) {
+  for (const s of ["12,030", "15,514", "78%", "34,044", "870+", "2,376", "77", "505,461", "5.1%", "2.4%", "0.5%", "28%", "2,800+", "2.7%", "0.7%", "2.1%", "8,649", "2,047", "24,506", "17,056", "0.18", "95.5%"]) {
     assert.ok(t.includes(s), `${s} is missing`);
   }
   // The bounce drop is "after", never "because" (SOURCES.md caveat).
