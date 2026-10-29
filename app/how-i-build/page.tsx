@@ -116,6 +116,11 @@ export default function HowIBuild() {
               <span className="tile-num">{t.num}</span>{" "}
               <span className="tile-head">{t.head}</span>{" "}
               <span className="tile-line">{t.line}</span>{" "}
+              {"note" in t && t.note ? (
+                <>
+                  <span className="tile-note">{t.note}</span>{" "}
+                </>
+              ) : null}
               <A href={t.href} className="tile-more">
                 {t.link}
               </A>

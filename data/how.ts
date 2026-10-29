@@ -180,14 +180,18 @@ export const VISUAL = {
   stepsSummary: "What each step won't let through",
   heroLinks: [
     { label: "Hardest failure ↓", href: "#claygent" },
-    { label: "45 tests on a toy n8n workflow ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
+    { label: "45-test toy n8n repo ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
   ],
   // Three tiles: what GTM teams ask for, and where the closest version runs (the PATTERNS words, cut to one line).
   patterns: [
     // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
     // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
     { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails, no old pass lost; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
-    { num: "95.5%", head: "Receipts for every claim", line: "0 contradicted on 300 test emails; live, unbacked claims fail the gate.", href: "#testing", link: "how I check ↓" },
+    // Manveen, 29 Oct: "300 test emails; maybe a better number". His own freelance run instead (no employer data):
+    // money/applications/key-outreach/pipeline/STATUS.md, "76 two-email sequences" (152 emails), "NoGood failed
+    // grounding" and "Powills failed grounding", both fixed, "0 failed checks"; the checker matched a human on
+    // "124 / 124" claims (cold-outbound-eval-public/eval/CALIBRATION-REPORT.md). Names stay off the page.
+    { num: "152", head: "Receipts for every claim", line: "emails in a 50-agency work sample, every fact sourced. The check blocked 2 till I fixed them.", note: "My checker matched a human on 124 of 124 claims.", href: "#testing", link: "how I check ↓" },
     { num: "Approve first", head: "Fix it in Slack", line: "Day-job AI drafts wait in Slack for Send, Edit, Snooze or Stop.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
   ],
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
@@ -203,7 +207,7 @@ export const VISUAL = {
         // Visual round 1: one measure per comparison. Good companies kept, before and after (the same 25: "no good
         // company lost", so 4 of 4); then agreement, the tuning set greyed and labelled, the unseen 30 as the result.
         { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
-        { label: "Good ones kept, after (tuned set)", n: 4, filled: 4, value: "4 of 4", kind: "tuned" },
+        { label: "Kept after (tuned set)", n: 4, filled: 4, value: "4 of 4", kind: "tuned" },
         { label: "Agrees, 30 it never saw", n: 30, filled: 30, value: "30 of 30, none lost", kind: "main" },
         { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
       ],
@@ -220,7 +224,7 @@ export const VISUAL = {
     },
     bounces: {
       head: "Mail servers that bounce you anyway",
-      caption: "505,461 sends by receiving server. Red ones are now skipped before any paid lookup.",
+      caption: "505,461 sends by receiving server. Red ones now get skipped before paid lookups.",
       // Resume bullet 4: "Mimecast 5.1%, Barracuda 2.4%, Google 0.5%". The scale runs to the largest value.
       bars: [
         { label: "Google", value: 0.5, skipped: false },
@@ -252,8 +256,8 @@ export const VISUAL = {
     { head: "Write the bar down", line: "before the run, not after" },
     { head: "Replay the past", line: "old vs new on real history" },
     { head: "Automated tests", line: "870+ on the pipeline, 149 on my n8n tracker", href: "/writing/149-tests-for-a-few-slack-buttons" },
-    { head: "Claim check, fresh eyes", line: "every email, against its research" },
-    { head: "Spend caps", line: "runs stop and ask before burning credits" },
+    { head: "Claim check, fresh eyes", line: "every email vs its research" },
+    { head: "Spend caps", line: "runs stop and ask first" },
   ],
   live: { head: "A real lead", line: "only now" },
   after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct. Fixed 29 Oct; watch the bars.", href: "/#proof" },
@@ -267,7 +271,7 @@ export const VISUAL = {
   ] as [string, string][],
   clayDetails: "Nerd details",
   live_items: [
-    { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "UK tenders sorted every morning" },
+    { href: "https://github.com/Manveen07/tender-radar-showcase", label: "Tender Radar ↗", text: "UK tenders, sorted daily" },
     { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Its 5-minute video ↗", text: "Tender Radar running" },
     { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "45 tests you can run" },
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
