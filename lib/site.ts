@@ -9,12 +9,12 @@ export function abs(path: string): string {
   return `${SITE}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-/** The markdown copy of a page on this site: "/" is /index.md, a post is its address plus .md.
+/** The markdown copy of a page on this site: "/" is /index.md, a post (or /how-i-build) is its address plus .md.
  *  Anything else (a file, an outside link) is returned as is. */
 export function mdHref(href: string): string {
   if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return href;
   const [path, hash] = href.split("#");
   if (path === "" || path === "/") return abs(`/index.md${hash ? `#${hash}` : ""}`);
-  if (/^\/writing(\/[a-z0-9-]+)?$/.test(path)) return abs(`${path}.md`);
+  if (/^\/writing(\/[a-z0-9-]+)?$/.test(path) || path === "/how-i-build") return abs(`${path}.md${hash ? `#${hash}` : ""}`);
   return abs(href);
 }

@@ -403,7 +403,7 @@ test("robots.txt lets every crawler in, AI ones included, and points to the site
 test("the sitemap lists the pages and the resume PDF, not the copies (28 Oct: Google reads every sitemap URL as a canonical)", () => {
   const xml = route("sitemap.xml").body;
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  const want = ["/", "/writing", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
+  const want = ["/", "/writing", "/how-i-build", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
   assert.deepEqual([...urls].sort(), want.map((p) => `${SITE}${p}`).sort());
   // Google ignores changefreq and priority; lastmod only where it is a real content date.
   assert.doesNotMatch(xml, /<changefreq>|<priority>/);

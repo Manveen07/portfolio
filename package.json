@@ -9,7 +9,7 @@
     "lint": "eslint",
     "refresh-snapshot": "node --experimental-strip-types scripts/refresh-snapshot.mjs",
     "indexnow": "node scripts/indexnow.mjs",
-    "test": "node --experimental-strip-types --test tests/site.test.mjs tests/runs.test.mjs tests/reveal.test.mjs tests/ai.test.mjs"
+    "test": "node --experimental-strip-types --test tests/site.test.mjs tests/runs.test.mjs tests/reveal.test.mjs tests/ai.test.mjs tests/how.test.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

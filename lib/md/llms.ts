@@ -12,6 +12,8 @@ import { para, list, link } from "@/lib/md/format";
 import { homeMarkdown } from "@/lib/md/home";
 import { resumeMarkdown } from "@/lib/md/resume";
 import { postMarkdown } from "@/lib/md/posts";
+import { howMarkdown } from "@/lib/md/how";
+import { HOW } from "@/data/how";
 
 /** H1, the blockquote summary, then Manveen's paragraphs: the part of both files he writes. */
 function intro(title: string): string {
@@ -56,6 +58,7 @@ export function llmsTxt(pipe: PipelineData): string {
     list([
       `${link("Home page", home)}: the whole home page as markdown, in page order: what I build, Tender Radar running every morning with its numbers, two jobs and my own projects, the three newest posts, how working with me goes, contact`,
       `${link("Writing", mdHref("/writing"))}: every post, newest first`,
+      `${link(HOW.title, mdHref("/how-i-build"))}: for hiring managers: ${HOW.headline} Three failures I fixed, how I test a workflow, the whole outbound pipeline step by step, Clay in depth, and live links`,
       `${link("Everything in one file", abs("/llms-full.txt"))}: the resume, the home page and every post, inline`,
     ]),
     "## Projects and work",
@@ -83,11 +86,12 @@ export function llmsFullTxt(pipe: PipelineData): string {
   const sources = [
     { url: abs("/resume.md"), md: resumeMarkdown() },
     { url: home, md: homeMarkdown(pipe) },
+    { url: mdHref("/how-i-build"), md: howMarkdown() },
     ...NEWEST_FIRST.map((p) => ({ url: mdHref(`/writing/${p.slug}`), md: postMarkdown(p) })),
   ];
   return [
     intro(`${ME.name}: everything on manveen.me in one file`),
-    para(`What follows, in order: the resume, the home page and every post, each with the address it comes from. The short index is ${link("llms.txt", abs("/llms.txt"))}.`),
+    para(`What follows, in order: the resume, the home page, how I build GTM systems and every post, each with the address it comes from. The short index is ${link("llms.txt", abs("/llms.txt"))}.`),
     ...sources.map((s) => `---\n\nSource: ${s.url}\n\n${s.md.trim()}`),
   ]
     .join("\n\n")

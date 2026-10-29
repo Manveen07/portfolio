@@ -53,7 +53,8 @@ function tokenize(s: string): Token[] {
   return tokens;
 }
 
-function Inline({ s }: { s: string }) {
+/** Inline syntax only (**bold**, *italic*, `code`, [text](url)); also used by the page /how-i-build. */
+export function Inline({ s }: { s: string }) {
   const tokens = tokenize(s);
   return (
     <>

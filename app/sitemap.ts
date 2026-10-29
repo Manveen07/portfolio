@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: abs("/") },
     { url: abs("/writing"), lastModified: latest },
+    // The page for hiring managers (29 Oct 2026); its date is the day its words last changed.
+    { url: abs("/how-i-build"), lastModified: "2026-10-29" },
     ...POSTS.map((p) => ({ url: abs(`/writing/${p.slug}`), lastModified: p.date })),
     { url: abs(RESUME.pdf), lastModified: RESUME.updated },
   ];

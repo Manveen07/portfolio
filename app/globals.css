@@ -76,7 +76,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
-  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3 { color: var(--red); }
+  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label { color: var(--red); }
 }
 
 /* ── Header and footer ── */
@@ -291,3 +291,32 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .latest a { display: block; text-decoration: none; }
 .latest .h3 { margin-bottom: 4px; }
 .latest .body { margin: 0; font-size: 17px; line-height: 1.5; color: var(--dim); }
+
+/* ── The page /how-i-build: a one-screen summary, then sections whose detail opens on a click ──
+   Each story and the step list is a <details>: it opens without JavaScript, and its words are in the HTML for
+   search engines and AI readers. The + and the minus are drawn in CSS, so they are not read as words. */
+.how h1 { font-size: clamp(28px, 3.2vw, 40px); }  /* the niche line is a sentence, not a poster */
+.proofs { margin: 20px 0 16px; }
+.proofs > div { max-width: 200px; }
+.hardest { margin-top: 6px; }
+.more { border-bottom: 1px dashed var(--rule); }
+.more summary { position: relative; display: block; list-style: none; cursor: pointer; padding: 16px 40px 14px 0; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.more summary .h3 { margin-bottom: 4px; }
+.more-line { display: block; font-size: 17px; line-height: 1.5; color: var(--dim); }
+.more-label { color: var(--ink); font-weight: 600; }
+.more-hint { position: absolute; right: 6px; top: 14px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 22px; line-height: 1; color: var(--red); }
+.more-hint::after { content: "+"; }
+.more[open] .more-hint::after { content: "\2212"; }
+.story { margin: 2px 0 20px; }
+.story > div { margin: 0 0 14px; }
+.story dt { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.story dd { margin: 0; font-size: 17px; line-height: 1.55; }
+.habits { padding-left: 22px; margin: 4px 0 8px; }
+ol.habits { list-style: decimal; }
+ul.habits { list-style: disc; }
+.habits li { margin-bottom: 12px; font-size: 17px; line-height: 1.55; }
+.steps-full { list-style: decimal; padding-left: 24px; margin: 4px 0 20px; }
+.steps-full li { margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
+.steps-full .check { display: block; color: var(--dim); }

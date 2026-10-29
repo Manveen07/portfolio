@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: [{ key: "Link", value: describedby }] },
       { source: "/index.md", headers: copyOf("/") },
       { source: "/writing.md", headers: copyOf("/writing") },
+      { source: "/how-i-build.md", headers: copyOf("/how-i-build") },
       { source: "/writing/:slug.md", headers: copyOf("/writing/:slug") },
     ];
   },

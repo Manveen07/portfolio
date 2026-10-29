@@ -15,7 +15,7 @@ npm run build    # production build; npm start serves it
 npm test         # build first: the site tests read the pages in .next/
 ```
 
-`npm test` runs `tests/site.test.mjs`, `tests/runs.test.mjs`, `tests/reveal.test.mjs` and `tests/ai.test.mjs`.
+`npm test` runs `tests/site.test.mjs`, `tests/runs.test.mjs`, `tests/reveal.test.mjs`, `tests/ai.test.mjs` and `tests/how.test.mjs` (the page `/how-i-build`, for hiring managers; its words are in `data/how.ts`).
 
 ## Working on it
 
