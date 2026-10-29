@@ -72,8 +72,8 @@ export function Inline({ s }: { s: string }) {
             }}>{tk.value}</code>
           );
         if (tk.type === "link")
-          // A link to another page of this site opens in the same tab.
-          return tk.href?.startsWith("/") ? (
+          // A link to another page of this site, or to a part of this page, opens in the same tab.
+          return tk.href?.startsWith("/") || tk.href?.startsWith("#") ? (
             <a key={k} href={tk.href} className="prose-link">
               {tk.value}
             </a>

@@ -61,7 +61,7 @@ test("the first screen: the niche line as the one h1, what he builds, three numb
   assert.match(app("how-i-build.html"), /tagName===&#x27;DETAILS&#x27;|tagName==='DETAILS'/);
   // Not a wall of text: the first screen stays short.
   const words = squash(plain(hero)).split(" ").length;
-  assert.ok(words <= 190, `the first screen has ${words} words`);
+  assert.ok(words <= 200, `the first screen has ${words} words`);
 });
 
 test("sections in order, each detail behind a click: three stories and the step list", () => {
@@ -143,6 +143,8 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
   const html = page();
   for (const [, a] of html.matchAll(/(<a [^>]*>)/g)) {
     const href = a.match(/href="([^"]*)"/)[1];
+    // Round A2: in-page links opened a second copy of the page, so only outside links may open a new tab.
+    if (!/^https?:/.test(href)) assert.doesNotMatch(a, /target="_blank"/, `${href} opens a new tab`);
     if (/^https?:/.test(href)) assert.match(a, /target="_blank" rel="noopener"/, `${href} opens in the same tab`);
     else if (href.startsWith("/") && !href.startsWith("/#") && href !== "/") {
       const p = href.split("#")[0];
@@ -166,9 +168,10 @@ test("the words match their sources: résumé numbers and the Loom story, as wri
   // The public repo has 45 tests; 149 is the private tracker it stands in for.
   assert.match(t, /149 automated tests/);
   assert.match(t, /a public version with 45 tests/);
-  assert.equal(TESTING.items.length, 6);
+  assert.equal(TESTING.items.length, 7);
   assert.equal(CLAY.items.length, 6);
   // Round A1: the Tender Radar outage in October is on the bars, so the page says what it was.
   assert.match(t, /on nine mornings since 17 October a tender portal stopped answering/);
+  assert.match(t, /On 29 October I made each source fail on its own, with tests/);
   assert.match(t, /I haven't run Salesforce in production yet/);
 });

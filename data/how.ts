@@ -21,13 +21,13 @@ export const HOW = {
   // SOURCES.md rows: "15,514 decision-makers ... 12,030 verified emails", "78% find rate", "34,044 companies, 0 data credits".
   proofs: [
     ["12,030", "verified emails found for 15,514 decision makers, a 78% find rate"],
-    ["34,044", "companies mapped through Clay for 0 data credits"],
+    ["34,044", "companies mapped from Clay's own search, with no data credits spent"],
     ["870+", "automated tests on the pipeline"],
   ] as [string, string][],
   // LOOM-TRANSCRIPT.md slides 3 and 6. The full story is the first item under #failures. Each arrow sits after a
   // no-break space, so it never wraps onto a line of its own.
   hardest:
-    "**The hardest failure I've fixed:** a Claygent fit check rejected all four good companies in 25 I'd hand-labelled. I rewrote it and scored it on good companies lost before it went live: none in the same 25, none in 30 it had never seen.",
+    "**The hardest failure I've fixed:** an AI fit check in Clay (Claygent) rejected all four good companies in 25 I'd hand-labelled. I rewrote it and scored it on good companies lost: none in the same 25, none in 30 it had never seen.",
   // Round A1 (29 Oct): the link opened a section of closed stories. It now points at the story, and a small script
   // in the page opens a <details> when the address names it.
   hardestLink: { label: "How I found it and proved the fix ↓", href: "#claygent" },
@@ -45,19 +45,19 @@ export const HOW = {
 // 1: the identity story below (SOURCES.md). 2: the qualify step and the email checks (LOOM-TRANSCRIPT.md; the home page's
 // Precise Leads card). 3: CAN-CLAIM.md "Day-job n8n builds he may talk about" (the Slack approval flow, Manveen 23 Oct).
 export const PATTERNS = {
-  intro: "Most GTM engineering asks come down to three patterns. Each one is already running in my work:",
+  intro: "Three things GTM teams often ask for, and where each already runs in my work:",
   items: [
     {
       lead: "Hold uncertain matches.",
-      text: "My email identity check passes a match only with a recorded reason; when nothing shows two domains belong together, it stays refused instead of guessed. The same rule fits a champion or job-change tracker. [The story](#identity)",
+      text: "When my Claygent fit check can't back a yes with a quote that a script finds on the company's saved page, the company goes to a person for review. My email identity check passes a match only with a recorded reason, and refuses rather than guesses. A champion tracker needs both rules. [The identity story](#identity)",
     },
     {
       lead: "Every fact with its source.",
-      text: "Every Claygent yes carries a quote that a script finds in the saved page, and every email is checked claim by claim against its research. The same check fits account briefs built from call notes and the CRM. [How I test](#testing)",
+      text: "Every email is checked claim by claim against the research behind it, and every Claygent yes must quote the company's own site. Briefs built from call notes and the CRM need the same check. [How I test](#testing)",
     },
     {
       lead: "People correct it where they work.",
-      text: "I built an n8n flow where AI drafts the next reply, code checks it, and it lands in Slack with Send, Edit, Snooze and Stop buttons, so a person approves every message. [How I test Slack buttons](/writing/149-tests-for-a-few-slack-buttons)",
+      text: "I built an n8n flow where AI drafts the next reply, code checks it, and it lands in Slack with Send, Edit, Snooze and Stop buttons, so a person approves every message. [How I test Slack buttons, on my own task tracker](/writing/149-tests-for-a-few-slack-buttons)",
     },
   ],
 } as const;
@@ -83,13 +83,13 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       title: "A Claygent fit check kept rejecting the companies we wanted",
       result: "4 of 4 good companies rejected. After the rewrite: 25 of 25 agreed, then 30 unseen companies, none lost.",
       broke:
-        "Before we pay to find anyone's email, Claygent (an AI step inside Clay that reads a company's website) decides whether the company fits. For one segment, systems integrators, it kept saying no to companies we wanted. On 25 companies I'd labelled by hand it rejected all four good ones: an engineering firm that sets up factory control systems, a business-software partner and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators.",
+        "Before we pay to find anyone's email, Claygent (an AI step inside Clay that reads a company's website) decides whether the company fits. For one segment, systems integrators, it kept saying no to companies we wanted.",
       found:
-        "I read every row where Claygent and my labels disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. It could read the sites fine, since every yes quoted the company's own site. The rules were the problem.",
+        "Before the full run, I tested it on 25 companies I'd labelled by hand. It rejected all four good ones: an engineering firm that sets up factory control systems, a business-software partner and a distributor that builds its own control panels. They all do the work; none of them call themselves integrators. Then I read every row where Claygent and my labels disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. It could read the sites fine, since every yes quoted the company's own site. The rules were the problem.",
       tested:
-        "I rewrote it as a briefing: what we look for, good signs, the usual not-a-fit cases and past calls as examples, with five hard rules kept, such as quote their own site for every yes. I scored it first on good companies lost, because that was the failure. On the same 25 it agreed 25 of 25 with no good company lost. On 30 it had never seen: also 100%, none lost. On top of that it had to pass a gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
+        "I rewrote it as a briefing: what we look for, good signs, the usual not-a-fit cases and past calls as examples, with five hard rules kept, such as quote their own site for every yes. I scored it first on good companies lost, because that was the failure. On the same 25, the set I'd tuned it on, it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. On top of that it had to pass a gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
       changed:
-        "It then qualified 24,506 companies. The prompt is now a shared template: one file holds what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix lands everywhere at once. The same check runs every day on each new company the lead finder brings in.",
+        "Only then did the full run start: it qualified 24,506 companies. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person for review. The prompt is now a shared template: one file holds what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix lands everywhere at once. The same check runs every day on each new company the lead finder brings in.",
     },
     {
       // SOURCES.md last row: A/B on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123 unique
@@ -115,11 +115,11 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       title: "Some mail servers bounced our emails, however good the address",
       result: "505,461 sends grouped by mail server. Bounces on the lists I built fell from 2.7% to 0.7% after.",
       broke:
-        "Some campaigns bounced too much even with verified addresses. Reading the bounce messages, many were the receiving company's security gateway refusing us, not a bad address. No email verifier catches that.",
+        "Some campaigns bounced too much even with verified addresses. Reading the bounce messages, many were the receiving company's security gateway refusing us, not a bad address.",
       found:
         "I grouped 505,461 of our sends by the receiving company's mail server. Domains behind Mimecast bounced 5.1%, Barracuda 2.4%, Google 0.5%.",
       tested:
-        "A DNS check (a free lookup of which mail server a company uses) now runs before any paid email lookup and skips the servers that bounce. The order is pinned in tests: a company can put a security gateway in front of its Microsoft mail, and then the gateway decides, so it is checked first. On the 34,044-company market it cut 28% before a credit was spent, and in the first 9 days of daily runs it skipped 2,800+ people before a paid lookup.",
+        "A DNS check (a free lookup of which mail server a company uses) now runs before any paid email lookup and skips the servers that bounce. The order is pinned in tests: a company can put a security gateway in front of its Microsoft mail, and then the gateway decides, so it is checked first. On the 34,044-company market it cut 28% before a credit was spent, and in the first 9 days of daily runs it skipped 2,800+ people before a paid lookup. It's a trade-off: most mail to those servers still lands, but bounces put the sending domains at risk, so skipping them is the default and each client's list of allowed servers can change it.",
       changed:
         "Bounces on the lists I built fell from 2.7% (8,649 leads) to 0.7% (2,047 leads) after the check went in, while lists loaded without it stayed at 2.1%. Not all of that drop is this one check, so I say after, not because.",
     },
@@ -148,6 +148,11 @@ export const TESTING = {
       text: "My own n8n task tracker has 149 automated tests: the JavaScript inside each n8n step is tested in Node exactly as n8n runs it, recorded Slack clicks are replayed against the webhook, and deploys run from a script. [The write-up](/writing/149-tests-for-a-few-slack-buttons), and [a public version with 45 tests](https://github.com/Manveen07/n8n-workflow-tests) you can run.",
     },
     {
+      // From the gtm repo's tests and lessons (read 29 Oct for accuracy; no numbers or names taken).
+      lead: "Turn every real incident into a test.",
+      text: "The pipeline's 870+ tests are mostly real cases: replays of stored data, old-versus-new runs on past results, and a test for each mistake that reached a draft. One that paid off: a merge once matched rows by position and put email addresses on the wrong people. Now list QA blocks any list where one address sits on two people, and a test pins it.",
+    },
+    {
       lead: "Check every email before it goes out.",
       text: "Each one is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted. When someone spots a new kind of mistake, it becomes a check.",
     },
@@ -157,7 +162,7 @@ export const TESTING = {
     },
     {
       lead: "Watch the run, not only the tests.",
-      text: "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. Now its daily runs [sit on my home page](/#proof) as bars, red when one fails. They show this month's gap too: on nine mornings since 17 October a tender portal stopped answering, and the whole run stopped with it. One slow source should only cost that source. [The three-week story](/writing/things-ai-got-confidently-wrong)",
+      text: "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. Now its daily runs [sit on my home page](/#proof) as bars, red when one fails. They show this month's gap too: on nine mornings since 17 October a tender portal stopped answering, and the whole run stopped with it. On 29 October I made each source fail on its own, with tests; the next mornings show whether it holds. [The three-week story](/writing/things-ai-got-confidently-wrong)",
     },
   ],
 } as const;
@@ -218,5 +223,5 @@ export const LIVE = {
 
 // ── The end of the page ──
 export const HOW_END = {
-  ask: "Building something like this, or fixing one that broke? Write to me.",
+  ask: "If you're hiring for this kind of work, write to me.",
 } as const;
