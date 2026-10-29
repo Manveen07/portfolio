@@ -15,7 +15,8 @@ export const HOW = {
   title: "How I build GTM systems",
   // The niche line. Three drafts, a Hormozi view (picked B for naming Clay) and a fresh hiring-manager reader
   // (picked A, edited to this). Record and alternatives: new 10x engineer\money\applications\PITCH.md.
-  headline: "GTM engineer who builds outbound systems like software: tested before they touch a real lead, monitored after, fixed when they break.",
+  // 29 Oct, later: the merged line (A's "tested like software", B's "act on what they can prove, hold the rest").
+  headline: "GTM engineer. My workflows act on what they can prove, hold the rest for a person, and get tested like software before they touch a real lead.",
 } as const;
 
 
@@ -186,7 +187,7 @@ export const VISUAL = {
   patterns: [
     // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
     // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
-    { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails, no old pass lost; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
+    { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
     // Manveen, 29 Oct: "300 test emails; maybe a better number". His own freelance run instead (no employer data):
     // money/applications/key-outreach/pipeline/STATUS.md, "76 two-email sequences" (152 emails), "NoGood failed
     // grounding" and "Powills failed grounding", both fixed, "0 failed checks"; the checker matched a human on
@@ -224,7 +225,7 @@ export const VISUAL = {
     },
     bounces: {
       head: "Mail servers that bounce you anyway",
-      caption: "505,461 sends by receiving server. Red ones now get skipped before paid lookups.",
+      caption: "505,461 sends by receiving server. Red ones are skipped before paid lookups.",
       // Resume bullet 4: "Mimecast 5.1%, Barracuda 2.4%, Google 0.5%". The scale runs to the largest value.
       bars: [
         { label: "Google", value: 0.5, skipped: false },
@@ -279,5 +280,5 @@ export const VISUAL = {
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
   ],
   privacy: "Day-job code stays private; I'll demo it on a call.",
-  ask: "Hiring for this? Let's talk.",
+  ask: "Hiring? Let's talk.",
 } as const;
