@@ -56,7 +56,9 @@ test("the first screen: the niche line as the one h1, what he builds, three numb
   assert.equal((hero.match(/<dt>/g) ?? []).length, 3, "not three proof numbers");
   for (const [n] of HOW.proofs) assert.ok(hero.includes(`<dt>${n}</dt>`), `${n} is not in the first screen`);
   assert.match(squash(plain(hero)), /The hardest failure I've fixed:/);
-  assert.match(hero, /href="#failures"/);
+  assert.match(hero, /href="#claygent"/, "the hardest-failure link does not open the story");
+  // The page opens the story a link names (round A1: the link landed on a list of closed stories).
+  assert.match(app("how-i-build.html"), /tagName===&#x27;DETAILS&#x27;|tagName==='DETAILS'/);
   // Not a wall of text: the first screen stays short.
   const words = squash(plain(hero)).split(" ").length;
   assert.ok(words <= 190, `the first screen has ${words} words`);
@@ -65,7 +67,7 @@ test("the first screen: the niche line as the one h1, what he builds, three numb
 test("sections in order, each detail behind a click: three stories and the step list", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
-  assert.deepEqual(h2, ["Three failures I fixed", "How I test a workflow", "The whole pipeline", "Clay, in depth", "See it running", "Write to me"]);
+  assert.deepEqual(h2, ["Patterns GTM teams ask for", "Three failures I fixed", "How I test a workflow", "The whole pipeline", "Clay, in depth", "See it running", "Write to me"]);
   assert.equal((html.match(/<details class="more"/g) ?? []).length, 4);
   assert.doesNotMatch(html, /<details[^>]* open/, "a detail starts open");
   for (const s of FAILURES.stories) {
@@ -83,7 +85,9 @@ test("the day job is described, never named, and nothing points into private wor
     assert.doesNotMatch(s, /Precise\s?Leads|preciseleads/i, "the employer is named");
     assert.doesNotMatch(s, /\bworkspace \d|\bcampaign \d{4,}|webhook\/[a-z0-9]{6,}/i, "an id slipped in");
   }
-  assert.match(text(), /The code, prompts and client data stay private, and I don't name the agency or its clients/);
+  assert.match(text(), /The code, prompts and client data stay private; on a call I can show the workflows on screen with names blurred/);
+  // Round A1: "I don't name the agency" read as hiding something the resume shows; the page simply doesn't name it.
+  assert.doesNotMatch(text(), /I don't name the agency/);
 });
 
 test("the site's word rules: no dashes, no sales words, no superlatives", () => {
@@ -154,7 +158,7 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
 
 test("the words match their sources: résumé numbers and the Loom story, as written down in data/how.ts", () => {
   const t = text();
-  for (const s of ["12,030", "15,514", "78%", "34,044", "870+", "2,376", "77", "505,461", "5.1%", "2.4%", "0.5%", "28%", "2,800+", "2.7%", "0.7%", "2.1%", "24,506", "17,056", "0.18"]) {
+  for (const s of ["12,030", "15,514", "78%", "34,044", "870+", "2,376", "77", "505,461", "5.1%", "2.4%", "0.5%", "28%", "2,800+", "2.7%", "0.7%", "2.1%", "8,649", "2,047", "24,506", "0.18", "95.5%"]) {
     assert.ok(t.includes(s), `${s} is missing`);
   }
   // The bounce drop is "after", never "because" (SOURCES.md caveat).
@@ -163,5 +167,8 @@ test("the words match their sources: résumé numbers and the Loom story, as wri
   assert.match(t, /149 automated tests/);
   assert.match(t, /a public version with 45 tests/);
   assert.equal(TESTING.items.length, 6);
-  assert.equal(CLAY.items.length, 5);
+  assert.equal(CLAY.items.length, 6);
+  // Round A1: the Tender Radar outage in October is on the bars, so the page says what it was.
+  assert.match(t, /on nine mornings since 17 October a tender portal stopped answering/);
+  assert.match(t, /I haven't run Salesforce in production yet/);
 });

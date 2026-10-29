@@ -2,7 +2,7 @@
 // The strings already use markdown's inline syntax, so they print as is; links to this site's pages point at their
 // markdown copies, like the other copies. tests/how.test.mjs checks every block and number against the built page.
 
-import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, LIVE, HOW_END } from "@/data/how";
+import { HOW, PATTERNS, FAILURES, TESTING, PIPELINE_STEPS, CLAY, LIVE, HOW_END } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, pen } from "@/lib/md/format";
@@ -20,6 +20,9 @@ export function howMarkdown(): string {
     para(`${md(HOW.hardest)} ${link(HOW.hardestLink.label.replace(/\s*[↓→↗]$/, ""), href(HOW.hardestLink.href))}`),
     para(md(HOW.privacy)),
     list(HOW.heroLinks.map((l) => link(l.label.replace(/\s*[↓→↗]$/, ""), href(l.href)))),
+    "## Patterns GTM teams ask for",
+    para(PATTERNS.intro),
+    list(PATTERNS.items.map((t) => `**${t.lead}** ${md(t.text)}`)),
     "## Three failures I fixed",
     para(FAILURES.intro),
     ...FAILURES.stories.flatMap((s) => [

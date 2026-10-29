@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, LIVE, HOW_END, type Story } from "@/data/how";
+import { HOW, PATTERNS, FAILURES, TESTING, PIPELINE_STEPS, CLAY, LIVE, HOW_END, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { Inline } from "@/components/Prose";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
@@ -10,6 +10,11 @@ import PipelineSketch from "@/components/sketches/PipelineSketch";
 // reader opens (no JavaScript needed). Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts).
 
 const DESCRIPTION = HOW.headline;
+
+// A link to a story (#claygent) opens it: a <details> named by the address opens on load and on every hash change.
+// Without JavaScript the link still scrolls to the story's title.
+const OPEN_FROM_HASH =
+  "(function(){function o(){var e=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(e&&e.tagName==='DETAILS')e.open=true}o();addEventListener('hashchange',o)})()";
 
 export const metadata: Metadata = {
   title: `${HOW.title} | Manveen Singh`,
@@ -89,6 +94,18 @@ export default function HowIBuild() {
             </A>
           ))}
         </p>
+      </section>
+
+      <section id="patterns" className="wrap sec">
+        <h2 className="kicker">Patterns GTM teams ask for</h2>
+        <p className="body">{PATTERNS.intro}</p>
+        <ul className="habits">
+          {PATTERNS.items.map((t) => (
+            <li key={t.lead}>
+              <b>{t.lead}</b> <Inline s={t.text} />
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section id="failures" className="wrap sec">
@@ -172,6 +189,7 @@ export default function HowIBuild() {
           </Link>
         </p>
       </section>
+      <script dangerouslySetInnerHTML={{ __html: OPEN_FROM_HASH }} />
     </>
   );
 }
