@@ -41,11 +41,25 @@ const wideAt = (i: number) => {
   return { x: COLS[col], y: ROWS[row] };
 };
 
+// Visual round 1: the middle row runs right to left, so a small ink chevron between each pair of steps shows which way
+// the work flows. Rows change at the curves, which need no chevron.
+const chevrons = STEPS.slice(0, -1).flatMap((_, i) => {
+  const a = wideAt(i);
+  const b = wideAt(i + 1);
+  if (a.y !== b.y) return [];
+  const d = Math.sign(b.x - a.x);
+  const m = (a.x + b.x) / 2;
+  return [`M${m - 4 * d} ${a.y - 4.5} L${m + 2 * d} ${a.y} L${m - 4 * d} ${a.y + 4.5}`];
+});
+
 export default function PipelineSketch() {
   return (
     <Sketch label={PIPELINE_STEPS.label}>
       <svg className="sketch-wide" viewBox="0 0 720 250" aria-hidden="true" fontSize="13">
         <path className="ink" d="M30 34 C220 31 420 37 620 34 C700 33 700 114 620 114 C420 111 220 117 60 114 C0 115 0 194 60 194 C260 191 460 197 690 194" />
+        {chevrons.map((d) => (
+          <path key={d} className="ink" d={d} />
+        ))}
         {STEPS.map((s, i) => {
           const { x, y } = wideAt(i);
           const tx = x - 6;

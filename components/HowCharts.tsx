@@ -21,8 +21,8 @@ export const claygentLabel = () =>
 export function ClaygentUnits() {
   return (
     <figure className="chart units" role="img" aria-label={claygentLabel()}>
-      {C.claygent.rows.map((r, i) => (
-        <div key={r.label} className={i === 0 ? "urow bad" : "urow"} title={`${r.label}: ${r.value}`}>
+      {C.claygent.rows.map((r) => (
+        <div key={r.label} className={r.kind ? `urow ${r.kind}` : "urow"} title={`${r.label}: ${r.value}`}>
           <span className="ulabel">{r.label}</span>
           <span className="udots">
             {Array.from({ length: r.n }, (_, k) => (
@@ -44,7 +44,7 @@ export function IdentityTiles() {
     <figure className="chart" role="img" aria-label={identityLabel()}>
       <dl className="tiles mini">
         {C.identity.tiles.map(([n, label]) => (
-          <div key={label} className={n === "0" ? "hit" : undefined}>
+          <div key={label}>
             <dt>{n}</dt>
             <dd>{label}</dd>
           </div>
@@ -54,7 +54,7 @@ export function IdentityTiles() {
   );
 }
 
-// --w is the bar's share of the longest; CSS turns it into a width (70% of the track, 52% on a phone), so the
+// --w is the bar's share of the longest (5.1%, the same scale for both groups, so the two read together); CSS turns it into a width (70% of the track, 52% on a phone), so the
 // value label always fits beside the longest bar.
 const MAX = Math.max(...C.bounces.bars.map((b) => b.value));
 const pct = (v: number) => `${v.toFixed(1)}%`;
@@ -62,7 +62,7 @@ const pct = (v: number) => `${v.toFixed(1)}%`;
 export const bounceLabel = () =>
   `Bounce rate by the receiving mail server, 505,461 sends: ${C.bounces.bars
     .map((b) => `${b.label} ${pct(b.value)}${b.skipped ? ", skipped before any paid lookup" : ", kept"}`)
-    .join("; ")}. ${C.bounces.after}`;
+    .join("; ")}. Bounces on my lists: ${C.bounces.result.map((b) => `${b.label} ${pct(b.value)}`).join("; ")}. ${C.bounces.after}`;
 
 export function BounceBars() {
   return (
@@ -76,6 +76,16 @@ export function BounceBars() {
               {pct(b.value)}
               {b.skipped ? " · skipped" : ""}
             </span>
+          </span>
+        </div>
+      ))}
+      <span className="bsub">Bounces on my lists</span>
+      {C.bounces.result.map((b) => (
+        <div key={b.label} className="brow" title={`${b.label}: ${pct(b.value)}`}>
+          <span className="blabel">{b.label}</span>
+          <span className="btrack">
+            <i className="bar" style={{ "--w": (b.value / MAX).toFixed(4) } as React.CSSProperties} />
+            <span className="bval">{pct(b.value)}</span>
           </span>
         </div>
       ))}

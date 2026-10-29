@@ -172,40 +172,44 @@ export const CLAY = {
 export const VISUAL = {
   // Three big tiles under the niche line (SOURCES.md rows).
   tiles: [
-    ["12,030", "verified emails, a 78% find rate"],
+    ["12,030", "verified emails for 15,514 decision makers (78%)"],
     ["34,044", "companies mapped in Clay, 0 data credits"],
     ["870+", "automated tests guarding the pipeline"],
   ] as [string, string][],
-  pipelineCaption: "What I built at my day job: 12 steps, from who to email to handling the replies. Nothing gets past a gate on a hunch.",
+  pipelineCaption: "Built at my day job, an outbound agency. Nothing passes a gate on a hunch.",
   stepsSummary: "What each step won't let through",
   heroLinks: [
     { label: "Hardest failure ↓", href: "#claygent" },
-    { label: "Public test repo ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
-    { label: "Resume", href: "/resume.pdf" },
+    { label: "45-test public sample ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
   ],
   // Three tiles: what GTM teams ask for, and where the closest version runs (the PATTERNS words, cut to one line).
   patterns: [
-    { head: "Don't guess on matches", line: "No reason on record, no match. 53 of 123 stay refused, on purpose.", href: "#identity" },
-    { head: "Receipts for every fact", line: "Every claim in an email is checked against the research first.", href: "#testing" },
-    { head: "Fix it in Slack", line: "AI drafts land with Send, Edit, Snooze, Stop. A person decides.", href: "/writing/149-tests-for-a-few-slack-buttons" },
+    // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
+    // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
+    { num: "0 lost", head: "Don't guess on matches", line: "70 refused emails now pass with a written reason. 53 stay refused.", href: "#identity", link: "the story ↓" },
+    { num: "95.5%", head: "Receipts for every fact", line: "claims supported on a 300-email test set, 0 contradicted.", href: "#testing", link: "how I check ↓" },
+    { num: "4 buttons", head: "Fix it in Slack", line: "At my day job, AI drafts land with Send, Edit, Snooze, Stop. Demo on a call.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my own Slack button tests →" },
   ],
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
   stories: {
     claygent: {
       head: "The fit check that said no to every good company",
-      caption: "It graded website copy, not businesses. Rewrote the prompt, tested it on my labels first.",
+      caption: "It graded website copy, not businesses. Rewrote the prompt, tested it first.",
       // LOOM-TRANSCRIPT.md: "rejected all four of the good ones"; "Same 25 companies: 100% agreement, no good company
       // lost"; "Then 30 it had never seen: also 100%, none lost". How many of the 30 were good isn't published, so
       // the third row shows agreement, not good companies.
       rows: [
-        { label: "Before: good ones kept", n: 4, filled: 0, value: "0 of 4" },
-        { label: "After, same 25: agree", n: 25, filled: 25, value: "25 of 25" },
-        { label: "After, 30 unseen: agree", n: 30, filled: 30, value: "30 of 30, none lost" },
+        // Visual round 1: one measure per comparison. Good companies kept, before and after (the same 25: "no good
+        // company lost", so 4 of 4); then agreement, the tuning set greyed and labelled, the unseen 30 as the result.
+        { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
+        { label: "Good ones kept, after", n: 4, filled: 4, value: "4 of 4", kind: "" },
+        { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
+        { label: "Agrees, 30 it never saw", n: 30, filled: 30, value: "30 of 30, none lost", kind: "main" },
       ],
     },
     identity: {
       head: "The email check that kept rejecting real people",
-      caption: "Old vs new, replayed on past emails before switching. Still refuses what it can't explain.",
+      caption: "Replayed before switching. Still refuses what it can't explain.",
       // SOURCES.md: "A/B on 2,376 past emails", "77 more accepted, 0 earlier passes lost".
       tiles: [
         ["2,376", "past emails replayed"],
@@ -215,14 +219,20 @@ export const VISUAL = {
     },
     bounces: {
       head: "Mail servers that bounce you anyway",
-      caption: "505,461 sends by receiving server. The red ones are now skipped before any paid lookup.",
+      caption: "505,461 sends by receiving server. Red ones are now skipped before any paid lookup.",
       // Resume bullet 4: "Mimecast 5.1%, Barracuda 2.4%, Google 0.5%". The scale runs to the largest value.
       bars: [
         { label: "Google", value: 0.5, skipped: false },
         { label: "Barracuda", value: 2.4, skipped: true },
         { label: "Mimecast", value: 5.1, skipped: true },
       ],
-      after: "Bounces on my lists: 2.7% → 0.7% after. After, not because.",
+      // SOURCES.md: his leads before 16 Sep 2.74%, from 16 Sep 0.73%; a teammate's unscreened uploads 2.09% after.
+      result: [
+        { label: "My lists, before", value: 2.7, skipped: false },
+        { label: "My lists, after", value: 0.7, skipped: false },
+        { label: "Lists without it", value: 2.1, skipped: false },
+      ],
+      after: "After, not because: not all of it is the check.",
     },
   },
   readStory: "How it actually went",
@@ -241,7 +251,7 @@ export const VISUAL = {
     { head: "Write the bar down", line: "before the run, not after" },
     { head: "Replay the past", line: "old vs new on real history" },
     { head: "Automated tests", line: "870+ on the pipeline, 149 on my n8n tracker", href: "/writing/149-tests-for-a-few-slack-buttons" },
-    { head: "Claim check, fresh eyes", line: "a no-context AI reads every email cold" },
+    { head: "Claim check, fresh eyes", line: "every email, against its research" },
     { head: "Spend caps", line: "runs stop and ask before burning credits" },
   ],
   live: { head: "A real lead", line: "only now" },
@@ -250,10 +260,8 @@ export const VISUAL = {
   // Clay depth as tiles (CLAY above, cut to a line each).
   clay: [
     ["31", "Clay workflows, 3 accounts, daily, deduped in Audiences"],
-    ["0.18", "credits a company to qualify 24,506 with Claygent"],
     ["5", "Claygent prompts, one template, built by a script"],
     ["2-way", "Clay and n8n by webhook: people out, lookalikes back"],
-    ["5", "email tools in a waterfall, cheapest first, each capped"],
     ["HubSpot", "reply events synced by n8n. Salesforce: not yet."],
   ] as [string, string][],
   clayDetails: "Nerd details",
@@ -263,6 +271,6 @@ export const VISUAL = {
     { href: "https://github.com/Manveen07/n8n-workflow-tests", label: "n8n-workflow-tests ↗", text: "45 tests you can run" },
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
   ],
-  privacy: "Day-job code, prompts and client data stay private. On a call I'll show the workflows, names blurred.",
+  privacy: "Day-job code and client data stay private; I'll demo the workflows on a call.",
   ask: "Hiring for this kind of work? Let's talk.",
 } as const;

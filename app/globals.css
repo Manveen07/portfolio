@@ -76,7 +76,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
-  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label, .tile-link:hover .tile-head { color: var(--red); }
+  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label, .tile-more:hover { color: var(--red); }
 }
 
 /* ── Header and footer ── */
@@ -327,11 +327,11 @@ ul.habits { list-style: disc; }
 .tiles dd { margin: 6px 0 0; font-size: 13.5px; line-height: 1.35; color: var(--dim); }
 .tiles.mini { margin: 4px 0 6px; }
 .tiles.mini dt { font-size: 30px; }
-.tiles.mini .hit dt { color: var(--red); }
 .pipe { margin: 0; }
 .cap { margin: 2px 0 10px; font-size: 15px; line-height: 1.45; color: var(--dim); }
 .tilegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; list-style: none; padding: 0; margin: 4px 0 10px; }
 .tilegrid.three { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.tilegrid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .tilegrid > li, .tilegrid > div { background: var(--wash); padding: 14px; }
 .tilegrid dt { font-size: 28px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
 .tilegrid dd { margin: 6px 0 0; font-size: 14px; line-height: 1.4; color: var(--dim); }
@@ -343,17 +343,23 @@ ul.habits { list-style: disc; }
 .chart { margin: 0 0 4px; }
 .urow { display: grid; grid-template-columns: 190px minmax(0, 1fr); column-gap: 14px; align-items: center; margin: 0 0 10px; }
 .ulabel { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.3; color: var(--dim); }
-.udots { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.udots { display: grid; grid-template-columns: repeat(15, 10px); align-items: center; gap: 2px; }  /* rows of 15: 25 and 30 never leave a stray dot */
 .udots i { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
-.urow.bad .udots i { width: 14px; height: 14px; background: transparent; box-shadow: inset 0 0 0 2px var(--red); }
+.urow.bad .udots i { width: 10px; height: 10px; background: transparent; box-shadow: inset 0 0 0 2px var(--red); }
+.urow.tuned .udots i { background: var(--rule); }
+.urow.tuned .uval { color: var(--dim); font-weight: 400; }
+.urow.main .uval { font-size: 15px; font-weight: 800; }
 .uval { grid-column: 2; margin-top: 2px; font-size: 13.5px; font-weight: 600; }
-.brow { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 12px; align-items: center; margin: 0 0 8px; }
+.brow { display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 12px; align-items: center; margin: 0 0 8px; }
 .blabel { font-size: 15px; }
 .btrack { display: flex; align-items: center; gap: 8px; min-height: 24px; border-left: 1px solid var(--rule); }
 .bar { display: block; flex: none; width: calc(var(--w) * 70%); height: 12px; border-radius: 0 4px 4px 0; background: var(--ink); }
 .bar.red { background: var(--red); }
 .bval { font-size: 13.5px; white-space: nowrap; }
-.bafter { display: block; margin-top: 10px; font-size: 15px; }
+.bsub { display: block; margin: 14px 0 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
+.bafter { display: block; margin-top: 4px; font-size: 14px; color: var(--dim); }
+.tile-num { display: block; margin-bottom: 4px; font-size: 26px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+.tile-more { display: inline-block; margin-top: 8px; font-size: 13.5px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .gates { list-style: none; padding: 0; margin: 6px 0 10px; }
 .gates li { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; padding: 0 0 14px 36px; }
 .gates li::before { content: "\2713"; position: absolute; left: 0; top: 0; width: 23px; height: 23px; border: 1.5px solid var(--red); color: var(--red); font-size: 14px; line-height: 20px; text-align: center; }
@@ -374,6 +380,8 @@ ul.habits { list-style: disc; }
   .bar { width: calc(var(--w) * 52%); }
   .tilegrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tilegrid.three { grid-template-columns: minmax(0, 1fr); }
+  .brow { grid-template-columns: 104px minmax(0, 1fr); }
+  .blabel { font-size: 13.5px; }
   .tilegrid dt { font-size: 24px; }
   .uval { grid-column: 1; }
 }

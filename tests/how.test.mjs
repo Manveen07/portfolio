@@ -99,17 +99,21 @@ test("the charts show the published numbers, with red only where it means someth
   const html = page().replace(/<!--[\s\S]*?-->/g, "");
   const units = html.match(/<figure class="chart units"[\s\S]*?<\/figure>/)[0];
   const rows = [...units.matchAll(/<div class="urow[^"]*"[\s\S]*?<\/div>/g)].map((m) => m[0]);
-  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 25, 30]);
-  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 25, 30]);
-  assert.match(rows[0], /class="urow bad"/);
+  // Visual round 1: one measure per comparison (good ones kept, before and after; then agreement, tuning set greyed).
+  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 25, 30]);
+  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 25, 30]);
+  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "", "tuned", "main"]);
   const bars = [...html.matchAll(/<span class="blabel">([^<]*)<\/span><span class="btrack"><i class="(bar red|bar)" style="--w:([\d.]+)"/g)];
-  assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast"]);
-  assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red"]);
+  assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without it"]);
+  assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red", "bar", "bar", "bar"]);
   const w = bars.map((b) => Number(b[3]));
+  assert.ok(Math.abs(w[3] - 2.7 / 5.1) < 0.001 && Math.abs(w[4] - 0.7 / 5.1) < 0.001 && Math.abs(w[5] - 2.1 / 5.1) < 0.001, "result bars off scale");
   assert.ok(Math.abs(w[0] / w[2] - 0.5 / 5.1) < 0.01 && Math.abs(w[1] / w[2] - 2.4 / 5.1) < 0.01, `bar lengths ${w} are not to scale`);
   // Never colour alone: each red bar says "skipped" in words.
   assert.equal((html.match(/<span class="bval">[^<]*· skipped<\/span>/g) ?? []).length, 2);
-  for (const s of ["+77", "2,376", "0.5%", "2.4%", "5.1%", "505,461", "2.7%", "0.7%"]) assert.ok(text().includes(s), `${s} is missing`);
+  for (const s of ["+77", "2,376", "0.5%", "2.4%", "5.1%", "505,461", "2.7%", "0.7%", "2.1%", "95.5%", "15,514"]) assert.ok(text().includes(s), `${s} is missing`);
+  // Red means a gate, a failure or "skipped", never a good result.
+  assert.doesNotMatch(html, /class="hit"/);
 });
 
 test("the day job is described, never named, and nothing points into private work", () => {
@@ -119,7 +123,7 @@ test("the day job is described, never named, and nothing points into private wor
     assert.doesNotMatch(s, /Precise\s?Leads|preciseleads/i, "the employer is named");
     assert.doesNotMatch(s, /\bworkspace \d|\bcampaign \d{4,}|webhook\/[a-z0-9]{6,}/i, "an id slipped in");
   }
-  assert.match(text(), /Day-job code, prompts and client data stay private/);
+  assert.match(text(), /Day-job code and client data stay private/);
 });
 
 test("the site's word rules: no dashes, no sales words, no superlatives", () => {
@@ -194,7 +198,7 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
 
 test("the words match their sources: résumé numbers and the Loom story, as written down in data/how.ts", () => {
   const t = text();
-  for (const s of ["12,030", "78%", "34,044", "870+", "31", "0.18", "24,506", "149", "45 tests"]) assert.ok(t.includes(s), `${s} is missing`);
+  for (const s of ["12,030", "78%", "34,044", "870+", "31", "149", "45"]) assert.ok(t.includes(s), `${s} is missing`);
   const all = unmark(md());
   for (const s of ["2,800+", "28%", "8,649", "2,047", "2.1%", "17,056", "95.5%", "so I say after, not because"]) {
     assert.ok(all.includes(s), `${s} is missing from the page's full text`);

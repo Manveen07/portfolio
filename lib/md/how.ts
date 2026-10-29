@@ -28,7 +28,7 @@ export function howMarkdown(): string {
     PIPELINE_STEPS.steps.map((s, i) => `${i + 1}. **${s.name}${s.gate ? " (gate)" : ""}.** ${s.what} Check: ${s.check}`).join("\n"),
     list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href)))),
     `## ${K.patterns}`,
-    list(VISUAL.patterns.map((t) => `${link(t.head, href(t.href))}: ${t.line}`)),
+    list(VISUAL.patterns.map((t) => `**${t.num}** ${t.head} ${t.line} ${link(bare(t.link), href(t.href))}`)),
     `## ${K.failures}`,
     ...FAILURES.stories.flatMap((s) => {
       const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];

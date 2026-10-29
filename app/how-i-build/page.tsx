@@ -113,9 +113,11 @@ export default function HowIBuild() {
         <ul className="tilegrid three">
           {VISUAL.patterns.map((t) => (
             <li key={t.head}>
-              <A href={t.href} className="tile-link">
-                <span className="tile-head">{t.head}</span>{" "}
-                <span className="tile-line">{t.line}</span>
+              <span className="tile-num">{t.num}</span>{" "}
+              <span className="tile-head">{t.head}</span>{" "}
+              <span className="tile-line">{t.line}</span>{" "}
+              <A href={t.href} className="tile-more">
+                {t.link}
               </A>
             </li>
           ))}
@@ -175,7 +177,7 @@ export default function HowIBuild() {
 
       <section id="clay" className="wrap sec">
         <h2 className="kicker">{K.clay}</h2>
-        <dl className="tilegrid">
+        <dl className="tilegrid two">
           {VISUAL.clay.map(([n, line], i) => (
             <div key={i}>
               <dt>{n}</dt>
