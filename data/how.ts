@@ -186,9 +186,9 @@ export const VISUAL = {
   patterns: [
     // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
     // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
-    { num: "0 lost", head: "Don't guess on matches", line: "77 more accepted on 2,376 past emails, no old pass lost.", href: "#identity", link: "the story ↓" },
-    { num: "95.5%", head: "Receipts for every fact", line: "claims supported on a 300-email test set, 0 contradicted.", href: "#testing", link: "how I check ↓" },
-    { num: "0 unapproved", head: "Fix it in Slack", line: "Day-job AI drafts land in Slack: Send, Edit, Snooze, Stop. Demo on a call.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
+    { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails, no old pass lost; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
+    { num: "95.5%", head: "Receipts for every claim", line: "0 contradicted on 300 test emails; live, unbacked claims fail the gate.", href: "#testing", link: "how I check ↓" },
+    { num: "Approve first", head: "Fix it in Slack", line: "Day-job AI drafts wait in Slack for Send, Edit, Snooze or Stop.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
   ],
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
   stories: {
@@ -199,10 +199,11 @@ export const VISUAL = {
       // lost"; "Then 30 it had never seen: also 100%, none lost". How many of the 30 were good isn't published, so
       // the third row shows agreement, not good companies.
       rows: [
+        // Visual round 3: the 4 good ones are inside the tuning set, so that row is greyed too; the unseen 30 is the result.
         // Visual round 1: one measure per comparison. Good companies kept, before and after (the same 25: "no good
         // company lost", so 4 of 4); then agreement, the tuning set greyed and labelled, the unseen 30 as the result.
         { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
-        { label: "Good ones kept, after", n: 4, filled: 4, value: "4 of 4", kind: "" },
+        { label: "Good ones kept, after (tuned set)", n: 4, filled: 4, value: "4 of 4", kind: "tuned" },
         { label: "Agrees, 30 it never saw", n: 30, filled: 30, value: "30 of 30, none lost", kind: "main" },
         { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
       ],
@@ -238,7 +239,7 @@ export const VISUAL = {
   readStory: "How it actually went",
   // Section labels (the rail on wide screens).
   kickers: {
-    patterns: "What GTM teams keep asking for",
+    patterns: "What GTM teams ask for",
     failures: "Three times it broke",
     testing: "Before it touches a real lead",
     clay: "Clay and friends",
@@ -255,7 +256,7 @@ export const VISUAL = {
     { head: "Spend caps", line: "runs stop and ask before burning credits" },
   ],
   live: { head: "A real lead", line: "only now" },
-  after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in October. Fix shipped 29 Oct; the bars will tell.", href: "/#proof" },
+  after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct. Fixed 29 Oct; watch the bars.", href: "/#proof" },
   gatesSummary: "The long version",
   // Clay depth as tiles (CLAY above, cut to a line each).
   clay: [
@@ -272,5 +273,5 @@ export const VISUAL = {
     { href: "/writing/schema-as-eval-spec", label: "The time my own eval cheated", text: "it scored 100%. It shouldn't have." },
   ],
   privacy: "Day-job code and client data stay private; I'll demo the workflows on a call.",
-  ask: "Hiring for this kind of work? Let's talk.",
+  ask: "Hiring for this? Let's talk.",
 } as const;

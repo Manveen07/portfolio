@@ -102,7 +102,7 @@ test("the charts show the published numbers, with red only where it means someth
   // Visual round 1: one measure per comparison (good ones kept, before and after; then agreement, tuning set greyed).
   assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 30, 25]);
   assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 30, 25]);
-  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "", "main", "tuned"]);
+  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "tuned", "main", "tuned"]);
   const bars = [...html.matchAll(/<span class="blabel">([^<]*)<\/span><span class="btrack"><i class="(bar red|bar)" style="--w:([\d.]+)"/g)];
   assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without the check"]);
   assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red", "bar", "bar", "bar"]);
