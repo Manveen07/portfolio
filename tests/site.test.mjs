@@ -1155,7 +1155,7 @@ test("pinned notes sit on the paper a step darker, tilted, with no border or sha
 // ── 22 Oct: the June post trimmed to its best part, with real numbers (Manveen: "Trim to its best part, with real
 // numbers"). Sources: the comment on the post in data/posts.ts; claims section K. ──
 test("the June post is the eval that leaked its own answers: one title everywhere, the real numbers, a red-pen line", () => {
-  const title = "How I caught my own AI test cheating, and why the lower score is the one I trust";
+  const title = "How I caught my own AI test cheating"; // title changed 31 Oct (two more leaks found; Manveen: "i agree to 3")
   const html = markup("writing/schema-as-eval-spec.html");
   assert.match(html, new RegExp(`<h1>${title}</h1>`));
   assert.ok(text("writing.html").includes(title), "the writing index shows another title");

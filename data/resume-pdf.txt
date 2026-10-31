@@ -1,5 +1,5 @@
-sha256: ad2de331222825f3059eaf1b2bba3008ad0f870e6e1577807e2c6c6823f58060
-created: D:20261023183430+00'00'
+sha256: 357d0b1f8707ac08bf07f19501a43e4242af659f7260cfc5a3207feee3daac10
+created: D:20261031105724+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
@@ -18,13 +18,13 @@ new people found, 1,000+ delivered with verified emails.
 –  Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506
 companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits
 on wording and testing it on hand labels.
-–  Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78% find rate) through a cost-ordered waterfall
-(Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
+–  Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a cost-ordered
+waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
 –  Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the
 result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.
-–  Built unattended Claude Code agents: a weekly review that ranks searches by lead quality and replies and swaps weak ones, and
-a cold-email writer whose LLM judge checks each claim against the research (95.5% supported, none contradicted, 300-email
-test set). Pipeline repo: 870+ tests.
+–  Built an unattended weekly Claude Code agent that ranks searches by lead quality and replies and swaps a weak one only after a
+gate passes, and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email
+had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.
 Caprae Capital Partners
 Aug. 2025 – Jan. 2026
 AI/ML Intern, internship
@@ -41,7 +41,7 @@ instead of guessing. Hand-checked on 23 public drawings: 7 wrong of 419 values.
 leadlens | Python, Pydantic, LLM-as-judge · write-up
 2026
 –  LLM classifier for AI-engineering job posts. Fixed failure modes through the output schema instead of prompt rules, and caught
-answer leakage in my own eval, then published the lower, honest score.
+answer leakage in my own eval, then published the lower score (a later audit found two more leaks, so it needs a re-run).
 Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs
 2026
 –  Scheduled agents I run for myself: a Slack inbound monitor that reads 312 community channels plus Reddit and LinkedIn every

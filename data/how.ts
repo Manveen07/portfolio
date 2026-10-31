@@ -173,7 +173,7 @@ export const CLAY = {
 export const VISUAL = {
   // Three big tiles under the niche line (SOURCES.md rows).
   tiles: [
-    ["12,030", "verified emails for 15,514 decision makers (78%)"],
+    ["12,030", "verified emails for 15,514 decision makers, in one batch (78%)"],
     ["34,044", "companies mapped in Clay, 0 data credits"],
     ["870+", "automated tests guarding the pipeline"],
   ] as [string, string][],
