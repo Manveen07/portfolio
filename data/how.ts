@@ -127,7 +127,7 @@ export const TESTING = {
     },
     {
       lead: "Check each email before upload.",
-      text: "On campaigns I upload myself, each email is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted; in live runs, a draft with a name or number the research doesn't back fails the gate. When someone spots a new kind of mistake, it becomes a check.",
+      text: "On campaigns I upload myself, each email is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, the average email had 95.5% of its claims supported and none contradicted; in live runs, a draft with a name or number the research doesn't back fails the gate. When someone spots a new kind of mistake, it becomes a check.",
     },
     {
       lead: "Cap the spend.",

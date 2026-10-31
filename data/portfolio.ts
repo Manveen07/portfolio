@@ -107,7 +107,7 @@ export const JOBS: WorkItem[] = [
     role: "GTM automation engineer · Nov 2025 → now · remote",
     lead: "Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found.",
     detail:
-      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and every yes came with a quote from the company's own website. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
+      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and the prompt asks for a quote from the company's own website behind every yes. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
     metrics: [
       ["0", "contradicted claims in 300 drafted emails"],
       ["34,044", "companies sorted in four days"],
