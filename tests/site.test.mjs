@@ -1084,8 +1084,10 @@ test("drawing-proof is marked like homework: the real crop, the wrong answer cir
   // EVAL.md, 26 Sep 2026, gemini-3-flash-preview: 7 wrong of 419, 316 of 326, 89 of 93, 194 of 194 plus one header row.
   for (const s of [
     "7 of 419", "answers wrong (1.7%)", "316 of 326", "89 of 93", "194 of 194",
-    "that's its name, not its part number", "205 seconds", "One person labelled them: me", "scanned drawings are untested", "26 Sep 2026",
+    "that's its name, not its part number", "205 seconds", "One labeller, no second reviewer", "scanned drawings are untested", "26 Sep 2026",
   ]) assert.ok(t.includes(s), `missing "${s}"`);
+  // 1 Nov: who labelled the 23 is unconfirmed (EVALS-2026-10-31.md), so the post doesn't say it was him.
+  assert.doesNotMatch(t, /One person labelled them: me|answered 23 real drawings myself|two of my labels/);
   // 22 Oct, a fresh reader's notes: the sums say how the four numbers fit (the 194 inside the 419, the header row one of
   // the 7 wrong, what "flagged" means), and 7 wrong + 7 missed or half right is the 10 short of 326 plus the 4 of 93.
   for (const s of [

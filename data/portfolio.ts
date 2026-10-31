@@ -165,7 +165,11 @@ export const OWN_WORK: WorkItem[] = [
   },
 ];
 
-// ── drawing-proof: an AI reads engineering drawings, marked against my own labels (added 22 Oct) ──
+// ── drawing-proof: an AI reads engineering drawings, marked against labels written before its first run (added 22 Oct) ──
+// 1 Nov: who wrote the labels is unconfirmed (new 10x engineer money\research\EVALS-2026-10-31.md: EVAL.md's "One
+// labeller (me)" is in a doc a session wrote). Until Manveen confirms he wrote data/make_truth.py's labels, no line
+// here says he labelled them: "I answered 23 real drawings myself", "One person labelled them: me" and "two of my
+// labels" are retired. If he confirms, they can come back.
 // A home page block until later on 22 Oct, now the post /writing/marking-the-ais-homework (data/posts.ts).
 // Manveen: "these are the blogs"; "I want my website to be not filled with balls of text".
 // Manveen's pick on 22 Oct ("make sure they're quirky"): the red pen marks the AI's answers like homework.
@@ -177,7 +181,7 @@ export const DRAWINGS = {
   title: "Marking the AI's homework",
   // EVAL.md line 3: "23 real public drawings, hand-labelled before the tool ever ran on them." "A price quote", not
   // "a quote": on this page "quote" also means the text a value was read from.
-  lede: "Can an AI fill in a price quote from an engineering drawing? I answered 23 real drawings myself first, then marked its work.",
+  lede: "Can an AI fill in a price quote from an engineering drawing? Its work, marked against 23 real drawings labelled before its first run.",
   // What it fills in: EVAL.md "The honest email claim" and the per-field table (part number, revision, material,
   // finish, tolerances, BOM rows), each value with the exact text it came from (the evidence column). The last
   // sentence is the lesson, said early: EVAL.md "Every wrong value", "the quote is genuine but it landed in the wrong field".
@@ -229,9 +233,9 @@ export const DRAWINGS = {
   // EVAL.md caveats: "One labeller (me), no second reviewer"; "all CAD exports, no scans"; "All 23 were clean CAD PDFs,
   // and 22 of them have a usable text layer" (the Eaton sheet was read from the image alone, so "with a text layer" is
   // not said of all 23). Scans untested: verdict, "Scanned, faxed or photographed drawings: unknown."
-  finePrint: "One person labelled them: me. All 23 are clean CAD exports, no scans, so scanned drawings are untested. Marked 26 Sep 2026.",
+  finePrint: "One labeller, no second reviewer. All 23 are clean CAD exports, no scans, so scanned drawings are untested. Marked 26 Sep 2026.",
   // EVAL.md caveats: "Two labels were corrected after the first run, both because the model was right and I was wrong."
-  finePrintNote: "it marked me back twice: two of my labels were wrong, and it was right.",
+  finePrintNote: "it marked the labels back twice: two were wrong, and it was right.",
   // data/SOURCES.md: machined-rod-harmonic-analyzer.pdf, "CC BY-SA marked in the title block; repo LICENSE file is MIT".
   // The title block reads "© 2026 Pedro Paulo Vezza Campos" and a CC BY-SA badge with no version number.
   credit: {

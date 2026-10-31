@@ -231,7 +231,7 @@ export const POSTS: Post[] = [
       },
       {
         t: "p",
-        s: "*Added 26 Sep:* my answer key caught me out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of my labels were wrong and the AI was right. The answer key needs marking as well.",
+        s: "*Added 26 Sep:* the answer key got caught out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of its labels were wrong and the AI was right. The answer key needs marking as well.",
       },
       {
         t: "p",
