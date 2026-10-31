@@ -37,17 +37,24 @@ export const FAILURES: { intro: string; stories: Story[] } = {
   stories: [
     {
       // LOOM-TRANSCRIPT.md slides 3 to 7; resume bullet 2 and SOURCES.md (24,506 sent to Claygent, 17,056 fits).
+      // 1 Nov, new 10x engineer money\research\EVALS-2026-10-31.md sections 1, 3, 5: the Loom's "Same 25: 100%" and
+      // "30 it had never seen: also 100%" are retired. Only 10 of the 25 test rows carry his labels; the "100%" on the
+      // 30 was scored against a cheap AI judge's answers. All 30 holdout rows were later labelled by him, after reading
+      // the model's answers (gold-n5.csv notes: "read Luna's quote and reason, agree"). The numbers below are from
+      // gtm runs\preciseleads\2026-10-06-universe\claygent\loop: gold-n5.csv (18 of the 30 labelled ICP), h6-n5.csv
+      // (all 18 answered ICP), history.csv (niche 5 passed the gate; final block r6-n3 quote share 0.875 and h6-n2
+      // 0.786 failed, and the run went on: the production path never checked the gate's exit code).
       id: "claygent",
       title: "A Claygent fit check kept rejecting the companies we wanted",
-      result: "4 of 4 good companies rejected. After the rewrite, on 30 companies it had never seen: none lost.",
+      result: "It rejected 4 good companies I'd labelled by hand. After the rewrite it kept all 18 good ones in 30 more I labelled, though I labelled those after seeing its answers.",
       broke:
         "Before we pay to find anyone's email, Claygent (Clay's AI step that reads a company's website) decides if the company's a fit. It runs in our lead finder, the daily job that finds new people for each client. For one segment, systems integrators, it kept saying no to exactly the companies we wanted. And every answer looked reasonable, because each yes quoted the company's own site.",
       found:
-        "Before the big run on the whole market, I hand-labelled 25 companies and ran it on them. It threw out all four good ones: an engineering firm that sets up factory control systems, a business-software partner, and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators. So I read every row where Claygent and I disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. Reading wasn't the problem. The rules were.",
+        "Before the big run on the whole market, I tested it on 25 companies. It threw out four good ones I'd labelled by hand: an engineering firm that sets up factory control systems, a business-software partner, and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators. So I read every row where Claygent and I disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. Reading wasn't the problem. The rules were.",
       tested:
-        "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the same 25 (the set I tuned it on, so it had better) it agreed 25 of 25 with no good company lost. The real test was 30 companies it had never seen: also 100%, none lost. Then it still had to clear the gate: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
+        "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better). Then 30 more companies, every one labelled by me: it kept all 18 good ones. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. This segment also passed the bar I'd written down: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
       changed:
-        "Only then did the big run start: it checked 24,506 companies, and 17,056 passed. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check runs every day on each new company the lead finder brings in.",
+        "Then the big run, across five segments: it checked 24,506 companies, and 17,056 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Making it stop is the next fix. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check runs every day on each new company the lead finder brings in.",
     },
     {
       // SOURCES.md last row: A/B on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123 unique
@@ -85,17 +92,20 @@ export const FAILURES: { intro: string; stories: Story[] } = {
 };
 
 // ── How I test: one line each, a link where there is something public ──
-// 1: LOOM-TRANSCRIPT.md (25 hand labels, 30 unseen; the gate). 2: SOURCES.md identity A/B. 3: CAN-CLAIM.md "His own
+// 1: the Claygent story above (30 labelled by him, after its answers; the bar). EVALS-2026-10-31.md section 1: 40 of
+// 82 AI steps have no known-answer test, so no line here says every step or every email gets one. Section 5 and
+// money\applications\bustem\NOTES.md: ticked rows reach the sending tool without these checks, so the email check
+// is said of campaigns he uploads himself. 2: SOURCES.md identity A/B. 3: CAN-CLAIM.md "His own
 // build, testing" (149 tests, Ran 149 tests OK 24 Oct) and the public repo's README (45 tests, a stand-in).
 // 4: the home page's Precise Leads card ("when someone spots a new kind of mistake, it becomes a check that runs before
 // anything goes out") and SOURCES.md (95.5% supported, none contradicted, 300-email test set). 5: resume bullet 3
 // ("per-provider caps and a spend ledger"). 6: things-ai-got-confidently-wrong, 11 Aug note; the home page bars.
 export const TESTING = {
-  intro: "The same habits on every workflow, whether it's Clay, n8n or plain Python.",
+  intro: "Habits I use across Clay, n8n and plain Python. Not every workflow has all of them yet.",
   items: [
     {
-      lead: "Answer a small set by hand first.",
-      text: "Before an AI step runs at scale, I label 25 to 30 real cases myself, score it against my answers, and write the go-live gate down before the run. [How I caught my own test cheating](/writing/schema-as-eval-spec)",
+      lead: "Test it on labelled cases.",
+      text: "The Claygent fix above was scored on 30 companies I labelled by hand, against a bar written down before the big run. I labelled them after seeing its answers, so the next set gets labelled first. Not every AI step I've built has a test like this yet. [How I caught my own test cheating](/writing/schema-as-eval-spec)",
     },
     {
       lead: "Replay the past before switching.",
@@ -111,8 +121,8 @@ export const TESTING = {
       text: "The pipeline's 870+ tests are mostly real cases: replays of stored data, old-versus-new runs on past results, and a test for each mistake that reached a draft. One that paid off: a merge once matched rows by position and put email addresses on the wrong people. Now list QA blocks any list where one address sits on two people, and a test pins it.",
     },
     {
-      lead: "Check every email before it goes out.",
-      text: "Each one is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted; in live runs, a draft with a name or number the research doesn't back fails the gate. When someone spots a new kind of mistake, it becomes a check.",
+      lead: "Check each email before upload.",
+      text: "On campaigns I upload myself, each email is checked claim by claim against the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. On a 300-email test set, 95.5% of the claims were supported and none contradicted; in live runs, a draft with a name or number the research doesn't back fails the gate. When someone spots a new kind of mistake, it becomes a check.",
     },
     {
       lead: "Cap the spend.",
@@ -131,10 +141,13 @@ export const TESTING = {
 export type Step = { name: string; what: string; check: string; gate?: true };
 
 export const PIPELINE_STEPS: { intro: string; label: string; note: string; steps: Step[] } = {
-  intro: "Twelve steps, each one a script or a Clay workflow with its own check. Circled steps are gates: nothing moves on until the check passes.",
+  // 1 Nov: "Nothing moves on until its check passes" is retired (EVALS-2026-10-31.md; money\applications\bustem\
+  // NOTES.md): ticked rows reach a running campaign without these gates, and the Claygent gate's result was never
+  // checked by the production run. The note now says only what a gate does to what passes through it.
+  intro: "Twelve steps, each one a script or a Clay workflow with its own check. Circled steps are gates: what fails the check is held back.",
   label:
     "The pipeline in twelve steps, in order: strategy, client context, find companies, qualify, research signals, find people, find emails, list QA, write copy, spintax, launch, follow-up. Qualify, find emails, list QA and launch are circled as gates.",
-  note: "circled: a gate. Nothing moves on until its check passes.",
+  note: "circled: a gate. What fails its check is held back.",
   steps: [
     { name: "strategy", what: "Picks the campaigns worth running from past reply data.", check: "Each test changes one thing, and the rule for the winner is written before the data comes in." },
     { name: "client context", what: "Writes down what the client sells, who to reach, and who to leave alone.", check: "A checker blocks a brief with open questions, a sender who isn't a real person, or no approval." },
@@ -157,7 +170,8 @@ export const CLAY = {
   items: [
     "**31 Clay workflows across 3 accounts** run every day. Each finds new people for one of those accounts, writes them to Clay Audiences (Clay's saved lists) so nobody is found twice, and posts them to n8n by webhook.",
     "**Search before spend.** I mapped a 34,044-company market from Clay's search for 0 data credits, then qualified 24,506 of them with Claygent at about 0.18 credits each.",
-    "**Claygent prompts as code.** A shared template, built by a script, scored against my own hand labels, and live only after it passes the gate.",
+    // 1 Nov: "live only after it passes the gate" retired (two segments ran with a failed gate check; EVALS-2026-10-31.md).
+    "**Claygent prompts as code.** A shared template, built by a script, and tested against companies I labelled by hand before it ran on 24,506 companies.",
     "**Clay and n8n both ways.** Clay posts each new person to n8n for the daily job; n8n sends a company into Clay by webhook and gets its lookalikes back.",
     "**A cost-ordered email waterfall** with a cap per provider: the next provider runs only on a miss, and every address is verified.",
     // LOOM-TRANSCRIPT.md, the HubSpot line. Round A1: the page never mentioned a CRM. The gap is said plainly.
@@ -190,27 +204,31 @@ export const VISUAL = {
     { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
     // Manveen, 29 Oct: "300 test emails; maybe a better number". His own freelance run instead (no employer data):
     // money/applications/key-outreach/pipeline/STATUS.md, "76 two-email sequences" (152 emails), "NoGood failed
-    // grounding" and "Powills failed grounding", both fixed, "0 failed checks"; the checker matched a human on
-    // "124 / 124" claims (cold-outbound-eval-public/eval/CALIBRATION-REPORT.md). Names stay off the page.
-    { num: "152", head: "Receipts for every claim", line: "emails in a 50-agency work sample, every fact sourced. The check blocked 2 till I fixed them.", note: "My checker matched a human on 124 of 124 claims.", href: "#testing", link: "how I check ↓" },
+    // grounding" and "Powills failed grounding", both fixed, "0 failed checks". Names stay off the page.
+    // 1 Nov: the note "My checker matched a human on 124 of 124 claims" is gone for good: the archived calibration
+    // sheet has 0 of 124 human calls filled (EVALS-2026-10-31.md section 5), so it can't be shown. Never cite it.
+    { num: "152", head: "Receipts for every claim", line: "emails in a 50-agency work sample, every fact sourced. The check blocked 2 till I fixed them.", href: "#testing", link: "how I check ↓" },
     { num: "Approve first", head: "Fix it in Slack", line: "Day-job AI drafts wait in Slack for Send, Edit, Snooze or Stop.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
-  ],
+  ] as { num: string; head: string; line: string; note?: string; href: string; link: string }[],
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
   stories: {
     claygent: {
       head: "The hardest one: a fit check that said no to every good company",
-      caption: "Caught on hand labels before the 24,506-company run. It graded website copy, not businesses.",
-      // LOOM-TRANSCRIPT.md: "rejected all four of the good ones"; "Same 25 companies: 100% agreement, no good company
-      // lost"; "Then 30 it had never seen: also 100%, none lost". How many of the 30 were good isn't published, so
-      // the third row shows agreement, not good companies.
+      // 1 Nov: the caption says the 30 were labelled after its answers (gold-n5.csv notes), so the chart isn't read as blind.
+      caption: "Caught on hand labels before the 24,506-company run. It graded website copy, not businesses. I labelled the 30 after seeing its answers.",
+      // LOOM-TRANSCRIPT.md: "rejected all four of the good ones". The four are his labels (gold-n5.csv), and the r4 and
+      // r6 runs (r4-n5.csv, r6-n5.csv) answer ICP for all four after the rewrite.
+      // 1 Nov: the rows "Agrees, 30 it never saw: 30 of 30, none lost" and "Agrees, the 25 I tuned on: 25 of 25" are
+      // retired (EVALS-2026-10-31.md): the 30's "100%" was scored against an AI judge's answers, and only 10 of the
+      // 25 carry his labels. The result row is now good companies kept in the 30 he labelled: gold-n5.csv has 18 of
+      // the 30 holdout rows (holdout-n5-key.csv) as ICP, and h6-n5.csv answers ICP for all 18 (history.csv h6 niche
+      // 5: lost_leads 0).
       rows: [
-        // Visual round 3: the 4 good ones are inside the tuning set, so that row is greyed too; the unseen 30 is the result.
-        // Visual round 1: one measure per comparison. Good companies kept, before and after (the same 25: "no good
-        // company lost", so 4 of 4); then agreement, the tuning set greyed and labelled, the unseen 30 as the result.
+        // Visual round 3: the 4 good ones are inside the tuning set, so that row is greyed too.
+        // Visual round 1: one measure per comparison: good companies kept, before and after, then on the 30.
         { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
         { label: "Kept after (tuned set)", n: 4, filled: 4, value: "4 of 4", kind: "tuned" },
-        { label: "Agrees, 30 it never saw", n: 30, filled: 30, value: "30 of 30, none lost", kind: "main" },
-        { label: "Agrees, the 25 I tuned on", n: 25, filled: 25, value: "25 of 25", kind: "tuned" },
+        { label: "Kept, 30 more I labelled", n: 18, filled: 18, value: "18 of 18 good ones", kind: "main" },
       ],
     },
     identity: {
@@ -251,16 +269,19 @@ export const VISUAL = {
     live: "Stuff you can actually click",
     contact: "Say hi",
   },
-  // The gates a workflow passes before it touches a real lead, then what happens after (TESTING, cut to a line each).
+  // The checks a workflow can pass before it touches a real lead, then what happens after (TESTING, cut to a line each).
+  // 1 Nov (EVALS-2026-10-31.md): "Label it by hand first: 25 to 30 real cases, by me", "every email vs its research"
+  // and "A real lead: only now" are retired. Labels came after the answers on the Claygent 30, 40 of 82 AI steps have
+  // no labelled test, and ticked rows skip the email check, so the live line says not every step has all six.
   gates: [
-    { head: "Label it by hand first", line: "25 to 30 real cases, by me", href: "/writing/schema-as-eval-spec" },
+    { head: "Label real cases by hand", line: "30 companies for the Claygent fix", href: "/writing/schema-as-eval-spec" },
     { head: "Write the bar down", line: "before the run, not after" },
     { head: "Replay the past", line: "old vs new on real history" },
     { head: "Automated tests", line: "870+ on the pipeline, 149 on my n8n tracker", href: "/writing/149-tests-for-a-few-slack-buttons" },
-    { head: "Claim check, fresh eyes", line: "every email vs its research" },
+    { head: "Claim check, fresh eyes", line: "each email I upload vs its research" },
     { head: "Spend caps", line: "runs stop and ask first" },
   ],
-  live: { head: "A real lead", line: "only now" },
+  live: { head: "A real lead", line: "next. Not every step has all six yet." },
   after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct, fixed 29 Oct.", href: "/#proof" },
   gatesSummary: "The long version",
   // Clay depth as tiles (CLAY above, cut to a line each).

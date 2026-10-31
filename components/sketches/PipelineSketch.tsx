@@ -28,8 +28,8 @@ function loop(x: number, y: number, w: number): string {
 
 const label = (i: number) => `${i + 1} ${STEPS[i].name}`;
 
-// The tall drawing is 300 wide, so its red note takes two lines, split before "on until".
-const CUT = PIPELINE_STEPS.note.indexOf(" on until");
+// The tall drawing is 300 wide, so its red note takes two lines, split after its first sentence ("circled: a gate.").
+const CUT = PIPELINE_STEPS.note.indexOf(". ") + 1;
 const NOTE_TALL = [PIPELINE_STEPS.note.slice(0, CUT), PIPELINE_STEPS.note.slice(CUT + 1)];
 
 // Wide: dots in four columns; row 2 runs right to left, so its steps sit in reverse column order.
