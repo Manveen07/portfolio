@@ -44,6 +44,11 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       // gtm runs\preciseleads\2026-10-06-universe\claygent\loop: gold-n5.csv (18 of the 30 labelled ICP), h6-n5.csv
       // (all 18 answered ICP), history.csv (niche 5 passed the gate; final block r6-n3 quote share 0.875 and h6-n2
       // 0.786 failed, and the run went on: the production path never checked the gate's exit code).
+      // 1 Nov, a reviewer's check: niche 5's pass came after a relabel. history.csv lines 26, 36 and 46 score the same
+      // r6-n5.csv answers three times (14 ICP, 10 not, 1 review): lost_leads 1, 1, then 0, and gate False, False, then
+      // True. In r6-n5.csv the only labelled row the model rejected that isn't NOT_ICP is rapidise.co (r4 said ICP, r6
+      // NOT_ICP), now EITHER in gold-n5.csv:10, "toss-up, flipped between rounds". EVALS-2026-10-31.md row 38: "labels
+      // written after reading the misses; edits moved 4 rows". So "tested" says the pass came after that relabel.
       id: "claygent",
       title: "A Claygent fit check kept rejecting the companies we wanted",
       result: "It rejected 4 good companies I'd labelled by hand. After the rewrite it kept all 18 good ones in 30 more I labelled, though I labelled those after seeing its answers.",
@@ -52,7 +57,7 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       found:
         "Before the big run on the whole market, I tested it on 25 companies. It threw out four good ones I'd labelled by hand: an engineering firm that sets up factory control systems, a business-software partner, and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators. So I read every row where Claygent and I disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. Reading wasn't the problem. The rules were.",
       tested:
-        "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better). Then 30 more companies, every one labelled by me: it kept all 18 good ones. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. This segment also passed the bar I'd written down: 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote.",
+        "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better), but it said no to one more I'd marked good, a borderline one. Then 30 more companies, every one labelled by me: it kept all 18 good ones. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. The bar I'd written down was 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote. This segment only cleared it after I changed that borderline company's label to a toss-up, with the same answers from the model, so I don't count that pass as proof.",
       changed:
         "Then the big run, across five segments: it checked 24,506 companies, and 17,056 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Making it stop is the next fix. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check runs every day on each new company the lead finder brings in.",
     },
@@ -93,12 +98,12 @@ export const FAILURES: { intro: string; stories: Story[] } = {
 
 // ── How I test: one line each, a link where there is something public ──
 // 1: the Claygent story above (30 labelled by him, after its answers; the bar). EVALS-2026-10-31.md section 1: 40 of
-// 82 AI steps have no known-answer test, so no line here says every step or every email gets one. Section 5 and
-// money\applications\bustem\NOTES.md: ticked rows reach the sending tool without these checks, so the email check
-// is said of campaigns he uploads himself. 2: SOURCES.md identity A/B. 3: CAN-CLAIM.md "His own
+// 82 AI steps have no known-answer test, so no line here says every step or every email gets one.
+// money\applications\bustem\NOTES.md line 11: ticked rows reach the sending tool without these checks, so the email
+// check is said of campaigns he uploads himself. 2: SOURCES.md identity A/B. 3: CAN-CLAIM.md "His own
 // build, testing" (149 tests, Ran 149 tests OK 24 Oct) and the public repo's README (45 tests, a stand-in).
 // 4: the home page's Precise Leads card ("when someone spots a new kind of mistake, it becomes a check that runs before
-// anything goes out") and SOURCES.md (95.5% supported, none contradicted, 300-email test set). 5: resume bullet 3
+// upload", narrowed 1 Nov from "before anything goes out") and SOURCES.md (95.5% supported, none contradicted, 300-email test set). 5: resume bullet 3
 // ("per-provider caps and a spend ledger"). 6: things-ai-got-confidently-wrong, 11 Aug note; the home page bars.
 export const TESTING = {
   intro: "Habits I use across Clay, n8n and plain Python. Not every workflow has all of them yet.",
@@ -226,9 +231,11 @@ export const VISUAL = {
       rows: [
         // Visual round 3: the 4 good ones are inside the tuning set, so that row is greyed too.
         // Visual round 1: one measure per comparison: good companies kept, before and after, then on the 30.
+        // 1 Nov, a reviewer's check: the 30 were labelled after reading the model's answers (28 of the 30 gold-n5.csv
+        // notes: "read Luna's quote and reason, agree"), so their row is greyed like the tuned set, not highlighted.
         { label: "Good ones kept, before", n: 4, filled: 0, value: "0 of 4", kind: "bad" },
         { label: "Kept after (tuned set)", n: 4, filled: 4, value: "4 of 4", kind: "tuned" },
-        { label: "Kept, 30 more I labelled", n: 18, filled: 18, value: "18 of 18 good ones", kind: "main" },
+        { label: "Kept, 30 more I labelled", n: 18, filled: 18, value: "18 of 18 good ones", kind: "tuned" },
       ],
     },
     identity: {

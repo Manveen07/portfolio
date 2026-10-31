@@ -328,12 +328,15 @@ test("the Precise Leads entry: meta, title, plain text, two metrics, stack; no n
   assert.match(entry, /<p class="body">Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found\.<\/p>/);
   assert.match(
     entry,
-    /<p class="body">I built the agency(?:'|&#x27;)s outbound pipeline\. One run sorted 34,044 companies in four days, and every yes came with a quote from the company(?:'|&#x27;)s own website\. Each draft is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before anything goes out\. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client(?:'|&#x27;)s sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team\.<\/p>/,
+    /<p class="body">I built the agency(?:'|&#x27;)s outbound pipeline\. One run sorted 34,044 companies in four days, and every yes came with a quote from the company(?:'|&#x27;)s own website\. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload\. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client(?:'|&#x27;)s sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team\.<\/p>/,
   );
   assert.match(entry, /<dt>0<\/dt><dd>contradicted claims in 300 drafted emails<\/dd>/);
   assert.match(entry, /<dt>34,044<\/dt><dd>companies sorted in four days<\/dd>/);
   assert.match(entry, /<p class="stack">built with (?:<!-- -->)?python, typescript, clay, smartlead, n8n<\/p>/);
   assert.doesNotMatch(entry, /Lead research, automated|watches Slack communities as messages come in/);
+  // 1 Nov: the check covers drafts he uploads himself; ticked rows reach the sending tool through n8n without it
+  // (new 10x engineer money/applications/bustem/NOTES.md line 11), so the old universal line stays off.
+  assert.doesNotMatch(entry, /runs before anything goes out/);
   assert.doesNotMatch(entry, /<a /, "the Precise Leads entry has a link");
   // No note: it is not inside an annotated block.
   assert.match(work, /<p class="group">Jobs<\/p><article class="entry"><p class="small">At Precise Leads/);

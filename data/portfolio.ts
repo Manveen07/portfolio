@@ -101,10 +101,13 @@ export const JOBS: WorkItem[] = [
     where: "At Precise Leads",
     // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"). The rest was rewritten
     // 15 Oct from his own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
+    // 1 Nov: "a check that runs before anything goes out" narrowed to drafts he uploads himself, as on /how-i-build:
+    // ticked rows reach the sending tool through n8n without the check (new 10x engineer money\applications\bustem\
+    // NOTES.md line 11, jury round 1: "ticked rows reach Smartlead through n8n ungated").
     role: "GTM automation engineer · Nov 2025 → now · remote",
     lead: "Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found.",
     detail:
-      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and every yes came with a quote from the company's own website. Each draft is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before anything goes out. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
+      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and every yes came with a quote from the company's own website. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
     metrics: [
       ["0", "contradicted claims in 300 drafted emails"],
       ["34,044", "companies sorted in four days"],

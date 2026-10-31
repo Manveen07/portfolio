@@ -101,10 +101,12 @@ test("the charts show the published numbers, with red only where it means someth
   const rows = [...units.matchAll(/<div class="urow[^"]*"[\s\S]*?<\/div>/g)].map((m) => m[0]);
   // Visual round 1: one measure per comparison (good ones kept, before and after, tuning set greyed; then the 30).
   // 1 Nov: the rows "30 of 30" (30 it never saw) and "25 of 25" (the tuned set) were retired claims
-  // (new 10x engineer money/research/EVALS-2026-10-31.md); the result row is the 18 good ones in the 30 he labelled.
+  // (new 10x engineer money/research/EVALS-2026-10-31.md); the last row is the 18 good ones in the 30 he labelled.
+  // 1 Nov, a reviewer's check: he labelled those 30 after reading the model's answers, so that row is greyed like the
+  // tuned set, and no row is styled as the headline result.
   assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 18]);
   assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 18]);
-  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "tuned", "main"]);
+  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "tuned", "tuned"]);
   const bars = [...html.matchAll(/<span class="blabel">([^<]*)<\/span><span class="btrack"><i class="(bar red|bar)" style="--w:([\d.]+)"/g)];
   assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without the check"]);
   assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red", "bar", "bar", "bar"]);
