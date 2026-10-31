@@ -181,8 +181,11 @@ export const POSTS: Post[] = [
     //   includes "judge must", "non-ai control", "edge case". "The editorial meta belongs in expected_category /
     //   is_edge_case (the label side), never the input side."
     // - "Crib notes": Manveen's own words, commit a587f972, "the high score was the eval grading its own crib notes".
+    // - 31 Oct note, the two later leaks: new 10x engineer\ROADMAP-2026-10.md line 35, "Few-shots jd_046, jd_064 inside
+    //   the 72 scored; judge_v2.py:90 and :136-139 show the judge the classifier's verdict". Title changed the same day
+    //   (was "...and why the lower score is the one I trust"; Manveen: "i agree to 3").
     slug: "schema-as-eval-spec",
-    title: "How I caught my own AI test cheating, and why the lower score is the one I trust",
+    title: "How I caught my own AI test cheating",
     // The first two sentences of the summary, word for word.
     line: "My AI judge caught all 11 fake AI jobs in my test. My own notes in the test data were giving it the answers.",
     date: "2026-06-14",
@@ -229,6 +232,10 @@ export const POSTS: Post[] = [
       {
         t: "p",
         s: "*Added 26 Sep:* my answer key caught me out in the drawing test too, the other way round: in [Marking the AI's homework](/writing/marking-the-ais-homework), two of my labels were wrong and the AI was right. The answer key needs marking as well.",
+      },
+      {
+        t: "p",
+        s: "*Added 31 Oct:* a later audit found two more leaks in the same test. Two of the worked examples I showed the judge were among the 72 it was scored on, and the judge could see the classifier's verdict before giving its own. So the 9 needs a re-run too, and I don't count it as clean yet. Same lesson, one level down: check what the model can see that a real input never would.",
       },
     ],
   },
