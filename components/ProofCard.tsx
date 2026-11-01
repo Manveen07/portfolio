@@ -1,0 +1,168 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { Brace, Circle, Strike } from "@/components/Pen";
+import { stepLine, type ProofCard as Card, type ProofStep } from "@/data/proof";
+
+// A proof card (1 Nov): one story told as what broke (struck through in red), the check, and the measured result
+// (circled in red). All real text, no images, so it reflows on a phone and reads aloud. Words in data/proof.ts; the
+// markdown copies print the same card through lib/md/proof.ts.
+// - full: once the card is 760px wide (on a laptop), the whole flow as a row of steps and the struck lines held by a
+//   red brace with the note beside them; narrower, a column of steps and the note under the lines.
+// - compact: two lines instead of the flow (the check, then the result), the note under the struck lines at every
+//   width, no brace: the hero's week already uses strike, brace and note, so the cards under it don't repeat it.
+// Red only through the pen (strike, brace, circle, notes). The box is the tiles' wash: no border, no shadow, no tilt.
+
+/** A count never splits across two lines ("194 of" / "194", "90%" / "bar"): the spaces in "N of M" and after a
+    percentage become no-break spaces when the card renders, so data/proof.ts stays word for word with the application
+    cards (review 2, 1 Nov). */
+const keep = (s: string) => s.replace(/(\d+) of (\d+)/g, "$1\u00a0of\u00a0$2").replace(/(\d+%) (?=\w)/g, "$1\u00a0");
+
+/** `text` with `circle` inside a red loop, its counts kept whole. The punctuation touching the circled words stays
+    with them: brackets inside the loop on the big result line ("(94%)", review 2), anything else (and every bracket
+    in the flow's small steps, where `tight` hugs the letters) outside it, on the same line. */
+function circled(text: string, circle: string | undefined, tight: boolean): ReactNode {
+  text = keep(text);
+  const ring = circle && keep(circle);
+  const at = ring ? text.indexOf(ring) : -1;
+  if (!ring || at < 0) return text;
+  const before = text.slice(0, at);
+  const after = text.slice(at + ring.length);
+  const cut = before.lastIndexOf(" ") + 1;
+  const end = after.search(/\s|$/);
+  const lead = before.slice(cut);
+  const trail = after.slice(0, end);
+  const bracketed = !tight && !!(lead || trail) && /^\(?$/.test(lead) && /^\)?$/.test(trail);
+  let loop: ReactNode = <Circle tight={tight}>{ring}</Circle>;
+  if (bracketed) {
+    loop = (
+      <Circle>
+        {lead}
+        {ring}
+        {trail}
+      </Circle>
+    );
+  } else if (lead || trail) {
+    loop = (
+      <span className="pc-nb">
+        {lead}
+        {loop}
+        {trail}
+      </span>
+    );
+  }
+  // On the result line the word after the loop stays on its line ("7 wrong of 419 values", not "values" alone below).
+  // A no-break space is not enough: Chrome still breaks between the loop and it.
+  const rest = after.slice(end);
+  const next = tight ? "" : (rest.match(/^ \S+/)?.[0] ?? "");
+  if (next) {
+    loop = (
+      <span className="pc-nb">
+        {loop}
+        {next}
+      </span>
+    );
+  }
+  return (
+    <>
+      {before.slice(0, cut)}
+      {loop}
+      {rest.slice(next.length)}
+    </>
+  );
+}
+
+/** A step's name and sub, the circle on whichever holds it. */
+function parts(s: ProofStep, tight: boolean): [ReactNode, ReactNode] {
+  const inName = !!s.circle && s.name.includes(s.circle);
+  return [circled(s.name, inName ? s.circle : undefined, tight), circled(s.sub, inName ? undefined : s.circle, tight)];
+}
+
+function Before({ c, full }: { c: Card; full: boolean }) {
+  return (
+    <div className="pc-before">
+      <p className="pc-label">{c.before.label}</p>
+      <div className="pc-struck">
+        {c.before.lines.map((l) => (
+          <p key={l} className="pc-line">
+            <Strike>{keep(l)}</Strike>
+          </p>
+        ))}
+      </div>
+      {full && <Brace />}
+      <p className="scribble pc-scribble">
+        <span className="arr-up" aria-hidden="true">↑ </span>
+        {full && <span className="arr-left" aria-hidden="true">← </span>}
+        {keep(c.before.note)}
+      </p>
+    </div>
+  );
+}
+
+function Flow({ steps }: { steps: ProofStep[] }) {
+  return (
+    <ol className="pc-flow">
+      {steps.map((s) => {
+        const [name, sub] = parts(s, true);
+        return (
+          <li key={s.name} className="pc-step">
+            <p className="pc-pill">
+              <span className="pc-name">{name}</span> <span className="pc-sub">{sub}</span>
+            </p>
+            {s.note && <p className="note">{keep(s.note)}</p>}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function Pair({ c }: { c: Card }) {
+  const check = c.steps[c.compact.check];
+  const result = c.steps[c.compact.result];
+  // The colon sits inside the bold name, so a circled name keeps it on its line (": on its first run" was a line).
+  const [name, sub] = parts({ ...result, name: `${result.name}:` }, false);
+  return (
+    <>
+      <p className="pc-check">{keep(stepLine(check))}</p>
+      <p className="pc-result">
+        <b>{name}</b> {sub}
+      </p>
+      {result.note && <p className="note">{keep(result.note)}</p>}
+    </>
+  );
+}
+
+export default function ProofCard({
+  c,
+  density,
+  level,
+  links = true,
+}: {
+  c: Card;
+  density: "full" | "compact";
+  level: 2 | 3;
+  /** Off where the card's link would point at the card itself (held-list on /how-i-build). */
+  links?: boolean;
+}) {
+  const H = level === 2 ? "h2" : "h3";
+  const full = density === "full";
+  return (
+    <article className={`pc pc-${density}`} id={c.slug}>
+      <p className="pc-eyebrow">{c.eyebrow}</p>
+      <H className="h3">{keep(c.title)}</H>
+      <Before c={c} full={full} />
+      {full ? <Flow steps={c.steps} /> : <Pair c={c} />}
+      <p className="note pc-legend">circled: {keep(c.circledLabel)}</p>
+      <p className="small pc-foot">{keep(c.footer)}</p>
+      {links && c.links.length > 0 && (
+        <p className="links">
+          {c.links.map((l) => (
+            <Link key={l.href} href={l.href}>
+              {l.label}
+            </Link>
+          ))}
+        </p>
+      )}
+    </article>
+  );
+}

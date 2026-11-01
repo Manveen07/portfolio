@@ -4,9 +4,11 @@
 
 import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, VISUAL } from "@/data/how";
 import { ME } from "@/data/portfolio";
+import { PROOF, HOW_CARDS } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, pen } from "@/lib/md/format";
 import { claygentLabel, identityLabel, bounceLabel } from "@/components/HowCharts";
+import { proofMarkdown } from "@/lib/md/proof";
 
 /** Site links to their markdown copies; anchors on this page to their full address. */
 const href = (h: string) => (h.startsWith("#") ? abs(`/how-i-build${h}`) : mdHref(h));
@@ -20,15 +22,10 @@ export function howMarkdown(): string {
   return [
     `# ${HOW.headline}`,
     para(`*${HOW.title}*`),
-    list(VISUAL.tiles.map(([n, label]) => `**${n}** ${label}`)),
-    para(`Drawing: ${PIPELINE_STEPS.label}`),
-    para(pen(PIPELINE_STEPS.note)),
-    para(VISUAL.pipelineCaption),
-    `### ${VISUAL.stepsSummary}`,
-    PIPELINE_STEPS.steps.map((s, i) => `${i + 1}. **${s.name}${s.gate ? " (gate)" : ""}.** ${s.what} Check: ${s.check}`).join("\n"),
+    proofMarkdown(PROOF["held-list"], "full", { level: 2, links: false, href }),
     list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href)))),
-    `## ${K.patterns}`,
-    list(VISUAL.patterns.map((t) => `**${t.num}** ${t.head} ${t.line} ${"note" in t && t.note ? `${t.note} ` : ""}${link(bare(t.link), href(t.href))}`)),
+    `## ${K.proof}`,
+    ...HOW_CARDS.map((slug) => proofMarkdown(PROOF[slug], "compact", { level: 3, links: true, href })),
     `## ${K.failures}`,
     ...FAILURES.stories.flatMap((s) => {
       const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
@@ -43,6 +40,12 @@ export function howMarkdown(): string {
         para(`**What it changed:** ${md(s.changed)}`),
       ];
     }),
+    `## ${K.pipeline}`,
+    para(`Drawing: ${PIPELINE_STEPS.label}`),
+    para(pen(PIPELINE_STEPS.note)),
+    para(VISUAL.pipelineCaption),
+    `### ${VISUAL.stepsSummary}`,
+    PIPELINE_STEPS.steps.map((s, i) => `${i + 1}. **${s.name}${s.gate ? " (gate)" : ""}.** ${s.what} Check: ${s.check}`).join("\n"),
     `## ${K.testing}`,
     [
       ...VISUAL.gates.map((g, i) => `${i + 1}. **${"href" in g && g.href ? link(g.head, href(g.href)) : g.head}** ${g.line}`),

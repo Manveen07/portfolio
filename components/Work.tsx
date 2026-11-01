@@ -89,7 +89,7 @@ function Group({ label, items }: { label: string; items: WorkItem[] }) {
 }
 
 // Groups, entries and the quote are direct children of the section, all on the column's left edge.
-// The section allows two margin notes: the quote's and leadlens's.
+// The section has one margin note, the quote's (leadlens's left on 1 Nov: its story is the caught-my-own-test card).
 export default function Work() {
   return (
     <section id="work" className="wrap sec">

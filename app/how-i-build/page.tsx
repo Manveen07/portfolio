@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, VISUAL, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
+import { PROOF, HOW_CARDS } from "@/data/proof";
 import { Inline } from "@/components/Prose";
+import ProofCard from "@/components/ProofCard";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
 import { ClaygentUnits, IdentityTiles, BounceBars } from "@/components/HowCharts";
 
@@ -10,6 +12,9 @@ import { ClaygentUnits, IdentityTiles, BounceBars } from "@/components/HowCharts
 // pictures carry the page, each caption is a line, and every longer text sits behind a <details> (no JavaScript).
 // Words in data/how.ts (VISUAL for what shows, FAILURES / TESTING / CLAY / PIPELINE_STEPS behind the clicks);
 // markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
+// 1 Nov, proof cards (new 10x engineer runs\2026-11-01-job-agent\site-visuals\DESIGN-PLAN.md and its review): the
+// first screen is the niche line and the held-list card, which proves "hold the rest"; then two compact cards from his
+// own projects, the failures, and the pipeline drawing as what sits underneath. Card words in data/proof.ts.
 
 const DESCRIPTION = HOW.headline;
 
@@ -74,14 +79,41 @@ export default function HowIBuild() {
       <section id="top" className="wrap sec hero how">
         <p className="kicker">{HOW.title}</p>
         <h1>{HOW.headline}</h1>
-        <dl className="tiles">
-          {VISUAL.tiles.map(([n, label]) => (
-            <div key={n}>
-              <dt>{n}</dt>
-              <dd>{label}</dd>
-            </div>
+        <ProofCard c={PROOF["held-list"]} density="full" level={2} links={false} />
+        <p className="links">
+          {VISUAL.heroLinks.map((l) => (
+            <A key={l.href} href={l.href} className="">
+              {l.label}
+            </A>
           ))}
-        </dl>
+        </p>
+      </section>
+
+      <section id="proof" className="wrap sec">
+        <h2 className="kicker">{K.proof}</h2>
+        {HOW_CARDS.map((slug) => (
+          <ProofCard key={slug} c={PROOF[slug]} density="compact" level={3} />
+        ))}
+      </section>
+
+      <section id="failures" className="wrap sec">
+        <h2 className="kicker">{K.failures}</h2>
+        {FAILURES.stories.map((s) => {
+          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
+          const Chart = CHARTS[s.id];
+          return (
+            <article key={s.id} id={s.id} className="storycard">
+              <h3 className="h3">{v.head}</h3>
+              <Chart />
+              <p className="cap">{v.caption}</p>
+              <StoryText s={s} />
+            </article>
+          );
+        })}
+      </section>
+
+      <section id="pipeline" className="wrap sec">
+        <h2 className="kicker">{K.pipeline}</h2>
         <figure className="pipe">
           <PipelineSketch />
           <figcaption className="cap">{VISUAL.pipelineCaption}</figcaption>
@@ -99,50 +131,6 @@ export default function HowIBuild() {
             ))}
           </ol>
         </details>
-        <p className="links">
-          {VISUAL.heroLinks.map((l) => (
-            <A key={l.href} href={l.href} className="">
-              {l.label}
-            </A>
-          ))}
-        </p>
-      </section>
-
-      <section id="patterns" className="wrap sec">
-        <h2 className="kicker">{K.patterns}</h2>
-        <ul className="tilegrid three">
-          {VISUAL.patterns.map((t) => (
-            <li key={t.head}>
-              <span className="tile-num">{t.num}</span>{" "}
-              <span className="tile-head">{t.head}</span>{" "}
-              <span className="tile-line">{t.line}</span>{" "}
-              {"note" in t && t.note ? (
-                <>
-                  <span className="tile-note">{t.note}</span>{" "}
-                </>
-              ) : null}
-              <A href={t.href} className="tile-more">
-                {t.link}
-              </A>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section id="failures" className="wrap sec">
-        <h2 className="kicker">{K.failures}</h2>
-        {FAILURES.stories.map((s) => {
-          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
-          const Chart = CHARTS[s.id];
-          return (
-            <article key={s.id} id={s.id} className="storycard">
-              <h3 className="h3">{v.head}</h3>
-              <Chart />
-              <p className="cap">{v.caption}</p>
-              <StoryText s={s} />
-            </article>
-          );
-        })}
       </section>
 
       <section id="testing" className="wrap sec">

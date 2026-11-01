@@ -94,14 +94,17 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
    same line), and from 1100px the photo moves to the rail. */
 .hero-head { margin-bottom: 18px; }
 .hero-head h1 { margin-bottom: 0; }
+.hero-kicker { margin-bottom: 10px; }  /* the role, above the h1 (1 Nov) */
+.hero-links { margin: 4px 0 14px; }
 /* The photo is printed onto the paper (multiplied into the page colour, a slight tilt) so it reads as part
    of the page, not a framed form photo. In colour, a little softened so the pink flowers don't fight the
    red pen. 176px is as large as the 264px-wide file stays sharp. */
 .photo { display: block; width: 176px; height: auto; margin: 0 0 22px; filter: saturate(0.8); mix-blend-mode: multiply; transform: rotate(-1.5deg); }
 @media (min-width: 720px) {
-  .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 176px; column-gap: 36px; align-items: start; }
-  .photo { grid-column: 2; grid-row: 1; margin: 0; }
-  .hero-head h1 { grid-column: 1; grid-row: 1; }
+  .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 176px; grid-template-rows: auto 1fr; column-gap: 36px; align-items: start; }
+  .photo { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
+  .hero-kicker { grid-column: 1; grid-row: 1; }
+  .hero-head h1 { grid-column: 1; grid-row: 2; }
 }
 /* From 1100px a single column leaves both sides of a laptop screen empty, so each section becomes
    two columns: a rail on the left (the section's label, pinned as you scroll; the photo in the hero)
@@ -116,6 +119,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .sec > .kicker { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 28px; margin-top: 10px; }
   .hero-head { display: contents; }
   .hero .photo { grid-column: 1; grid-row: 1 / span 60; margin: 6px 0 0; }
+  .hero-kicker { grid-column: 2; }
   .hero-head h1 { grid-column: 2; margin-bottom: 22px; }
   .sec > .post-meta { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 28px; margin-top: 12px; }
 }
@@ -150,13 +154,27 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   box-decoration-break: clone;
   transition: background-size 0.9s ease 0.15s;
 }
+/* The strike is the underline lifted to the middle of the letters: a background on each line box (clone), so a run
+   that wraps on a phone is struck on every line, and the <s> under it says "struck" without the pen. */
+.pen-strike {
+  text-decoration: none;
+  background-image: linear-gradient(var(--red), var(--red));
+  background-repeat: no-repeat;
+  background-position: 0 58%;
+  background-size: 100% 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 0.9s ease 0.15s;
+}
 .pen-js .pen:not(.in) path { stroke-dashoffset: 1; }
 .pen-js .pen:not(.in) .pen-under { background-size: 0% 2px; }
+.pen-js .pen:not(.in) .pen-strike { background-size: 0% 2px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .pen path, .pen-under { transition: none; }
+  .pen path, .pen-under, .pen-strike { transition: none; }
   .pen-js .pen:not(.in) path { stroke-dashoffset: 0; }
   .pen-js .pen:not(.in) .pen-under { background-size: 100% 2px; }
+  .pen-js .pen:not(.in) .pen-strike { background-size: 100% 2px; }
 }
 
 /* ── The quote (rendered inside Work, after the Caprae card) ── */
@@ -385,4 +403,86 @@ ul.habits { list-style: disc; }
   .blabel { font-size: 13.5px; }
   .tilegrid dt { font-size: 24px; }
   .uval { grid-column: 1; }
+}
+
+/* ── Proof cards (1 Nov): one story each, what broke (struck), the check, the measured result (circled) ──
+   Manveen: "use the visual idea also on the website make it easily undrersatndble". components/ProofCard.tsx, words in
+   data/proof.ts. A card is the tiles' wash, straight: no border, no shadow, no tilt (the pen notes tilt, the evidence
+   doesn't). Red comes only through the pen: .pen (strike, brace, circle), .scribble and .note. */
+.pc { container-type: inline-size; margin: 0 0 34px; padding: 20px; background: var(--wash); }
+.pc:last-child { margin-bottom: 0; }
+@media (min-width: 640px) { .pc { padding: 22px; } }
+.pc-nb { white-space: nowrap; }  /* a circled number stays with its brackets */
+.pc .note, .pc-scribble { text-wrap: balance; }
+.pc-line { text-wrap: pretty; }
+/* Where the story comes from, in the pinned notes' date style (.pin-date): mono, dim, sentence case. Uppercase and
+   tracked it ran 3 to 4 lines on a phone, stacked under the section kicker and the "what broke" label (review 2). */
+.pc-eyebrow { margin: 0 0 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.45; letter-spacing: 0; text-transform: none; text-wrap: balance; color: var(--dim); }
+.pc .h3 { margin-bottom: 16px; text-wrap: balance; }  /* no one-word last line ("score", "bar") */
+.pc-before { margin: 0 0 20px; }
+.pc-label { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.pc-line { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 15px; line-height: 1.6; }
+.pc-scribble { margin-top: 6px; }
+.pen-brace { display: none; }
+.pen-brace svg { display: block; width: 14px; height: 100%; overflow: visible; }
+.pen-brace path { vector-effect: non-scaling-stroke; transition-delay: 0.75s; }  /* after the strikes */
+/* The note under the struck lines, pointing up: compact cards at every width, a full card until it is 760px wide. */
+.pc .pc-scribble { display: block; margin: 6px 0 0; }
+.pc .arr-up { display: inline; }
+.pc .arr-left { display: none; }
+/* Full, once the card is 760px wide (the full card on a laptop): the brace holds the struck lines on one line each,
+   the note beside it, pointing left. */
+@container (min-width: 760px) {
+  .pc-full .pc-before { display: grid; grid-template-columns: minmax(0, max-content) 14px minmax(150px, 240px); column-gap: 14px; align-items: center; }
+  .pc-full .pc-label { grid-column: 1 / -1; }
+  .pc-full .pen-brace { display: block; align-self: stretch; }
+  .pc-full .pc-scribble { display: inline-block; margin: 0; }
+  .pc-full .arr-up { display: none; }
+  .pc-full .arr-left { display: inline; }
+}
+
+/* The flow: a column of steps with arrows down, a row from 760px of card. Start and end are rounded, each step between
+   them a box; all sit on the paper. The arrows are CSS, so screen readers read the steps, not the arrows. */
+.pc-flow { list-style: none; padding: 0; margin: 0 0 4px; display: grid; }
+.pc-step { display: grid; justify-items: start; }
+.pc-step:not(:last-child)::after { content: "\2193" / ""; margin: 6px 0 6px 20px; font-size: 16px; line-height: 1; color: var(--dim); }
+.pc-pill { position: relative; margin: 0; padding: 9px 14px 10px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; }
+.pc-step:first-child .pc-pill, .pc-step:last-child .pc-pill { padding-left: 20px; padding-right: 20px; border-color: var(--dim); border-radius: 999px; }
+.pc-name { display: block; font-size: 15px; font-weight: 800; line-height: 1.25; text-wrap: balance; }
+.pc-sub { display: block; margin-top: 3px; text-wrap: balance; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.4; color: var(--dim); }
+.pc-step .note { margin: 8px 0 0 6px; }
+.pc-pill .pen-circle { margin: 3px 0 2px; }  /* room for the loop, so it doesn't cross the line above */
+@container (min-width: 760px) {
+  .pc-flow { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 26px; }
+  .pc-flow .note { font-size: 12.5px; }
+  .pc-step { grid-row: span 2; grid-template-rows: subgrid; justify-items: stretch; }
+  .pc-step:not(:last-child)::after { content: none; }
+  .pc-pill { display: flex; flex-direction: column; justify-content: center; padding-left: 10px; padding-right: 10px; text-align: center; }
+  .pc-step:first-child .pc-pill, .pc-step:last-child .pc-pill { padding-left: 14px; padding-right: 14px; }
+  .pc-step:not(:last-child) .pc-pill::after { content: "\2192" / ""; position: absolute; top: 50%; right: -22px; margin-top: -8px; font-size: 16px; line-height: 1; color: var(--dim); }
+}
+/* A wide card (the full one on a laptop): each step's name on one line, so a column is at least as wide as its name
+   and the room left is shared out evenly. */
+@container (min-width: 840px) {
+  .pc-flow { grid-auto-columns: minmax(min-content, 1fr); }
+  .pc-name { white-space: nowrap; }
+}
+
+/* Compact: the check, an arrow, the result. */
+.pc-check { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; text-wrap: balance; }
+.pc-check::after { content: "\2193" / ""; display: block; margin: 4px 0 0 2px; font-size: 16px; line-height: 1; color: var(--dim); }
+.pc-result { margin: 8px 0 0; font-size: 19px; line-height: 1.45; text-wrap: balance; }
+.pc-result + .note { margin-top: 10px; }
+/* The brackets sit inside the loop ("(94%)", ProofCard circled()). The scorecard's tighter loop, and a little room on
+   the left where words come before it (a loop in the sub, not one that opens the bold name), keep the pen clear. */
+.pc-result > .pen-circle { margin-left: 4px; }
+.pc-result .pen-circle svg { left: -10px; width: calc(100% + 20px); }
+/* What a circle means: a legend under the result, no arrow (like the drawing's "circled: a gate."). */
+.pc-legend { margin: 12px 0 12px; }
+.pc-legend::before { content: none; }
+.pc-foot { margin: 0; }
+.pc .links { margin-top: 12px; }
+/* From 1100px the full card takes the rail and the column (about 910px), so five steps fit in a row. */
+@media (min-width: 1100px) {
+  .sec > .pc-full { grid-column: 1 / -1; }
 }

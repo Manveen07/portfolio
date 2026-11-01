@@ -7,7 +7,9 @@
 // ── Identity ─────────────────────────────────────────────────────────
 export const ME = {
   name: "Manveen Singh",
-  role: "automation engineer",
+  // 1 Nov (proof cards review, fix 1; his yes needed before merge): "GTM engineer", his own words from the live
+  // /how-i-build headline, shown as the home hero's kicker. Was "automation engineer".
+  role: "GTM engineer",
   location: "Delhi, India",
   hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",
@@ -21,6 +23,12 @@ export const ME = {
 // ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
 export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
 
+// ── The line above the hero's h1 (1 Nov, second review of the proof cards, hiring manager fix 1; his yes needed before
+// merge, and this commit can be dropped on its own). The first screen named the role but not the AI edge (Manveen, 1 Nov:
+// "we need to standup by our ai edge everybody in this space does this"). Not part of his approved hero below; ME.role
+// stays "GTM engineer" for the JSON-LD and the markdown title. ──
+export const HERO_KICKER = "GTM engineer · I build AI agents and measure what they get wrong";
+
 // ── Hero: Manveen's own words (approved 15 Oct, version A), keep the phrasing ──
 export const HERO = {
   headline: "Every week has a job that's the same clicks, in the same order.",
@@ -28,7 +36,7 @@ export const HERO = {
   marked: "the same way every time.",
   nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
   how: [
-    "I spent a year automating lead-finding for an outbound agency, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
   ],
 } as const;
 
@@ -78,7 +86,7 @@ export type WorkItem = {
   title: string;
   where: string;
   lead: string;
-  /** Optional: leadlens has none, its scorecard and margin note tell the story. */
+  /** Optional: leadlens has none; its story is the caught-my-own-test proof card (1 Nov). */
   detail?: string;
   metrics: [string, string][];
   stack: string[];
@@ -91,7 +99,7 @@ export type WorkItem = {
   scorecard?: { caught: number; missed: number; falseAlarms: number; leftAlone: number; caption: string };
   /** A real screenshot under /public (spec 3.3), with its true pixel size. */
   shot?: { src: string; alt: string; width: number; height: number };
-  /** A red margin note beside the card (wide screens) or under it (phones). The section allows two. */
+  /** A red margin note beside the card (wide screens) or under it (phones). None since 1 Nov; the quote has its own. */
   note?: string;
 };
 
@@ -136,17 +144,10 @@ export const OWN_WORK: WorkItem[] = [
     title: "leadlens",
     where: "My own project",
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
-    // No detail paragraph: the scorecard caption and the margin note say it (claims rows 41, 42, 45).
-    // The scorecard replaces the two metric lines. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+    // 1 Nov (proof cards): the scorecard (TP 9, FN 2, FP 0, TN 61) and the margin note ("it once scored 100%, because
+    // my own notes leaked the answers") left this entry. The caught-my-own-test card in the home page's proof band
+    // tells that story and shows the 9 of 11 two screens up; showing both would print the same numbers twice.
     metrics: [],
-    scorecard: {
-      caught: 9,
-      missed: 2,
-      falseAlarms: 0,
-      leftAlone: 61,
-      caption: "Out of 72 postings I checked by hand:",
-    },
-    note: "it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.",
     stack: ["python", "gemini", "pydantic"],
     links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
   },

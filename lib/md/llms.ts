@@ -56,9 +56,9 @@ export function llmsTxt(pipe: PipelineData): string {
     ]),
     "## Pages",
     list([
-      `${link("Home page", home)}: the whole home page as markdown, in page order: what I build, Tender Radar running every morning with its numbers, two jobs and my own projects, the three newest posts, how working with me goes, contact`,
+      `${link("Home page", home)}: the whole home page as markdown, in page order: what I build, how I check my AI (three proof cards: what broke, the check, the measured result), Tender Radar running every morning with its numbers, two jobs and my own projects, the three newest posts, how working with me goes, contact`,
       `${link("Writing", mdHref("/writing"))}: every post, newest first`,
-      `${link(HOW.title, mdHref("/how-i-build"))}: for hiring managers: ${HOW.headline} Three failures I fixed, how I test a workflow, the whole outbound pipeline step by step, Clay in depth, and live links`,
+      `${link(HOW.title, mdHref("/how-i-build"))}: for hiring managers: ${HOW.headline} The AI check that held a list, my own test that cheated, three failures I fixed, the outbound pipeline step by step, how I test a workflow, Clay in depth, and live links`,
       `${link("Everything in one file", abs("/llms-full.txt"))}: the resume, the home page and every post, inline`,
     ]),
     "## Projects and work",

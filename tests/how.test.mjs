@@ -2,10 +2,11 @@
 //   node --experimental-strip-types --test tests/how.test.mjs
 //
 // What it pins (visual-first since the evening of 29 Oct, Manveen: "people don't have that much intrest to read wall
-// of text"): the first screen is the niche line, three number tiles and the pipeline drawing, with no paragraph; each
-// failure story is a chart with a one-line caption and its full text behind a click; the visible words stay under
-// 40% of the earlier text version (1,334); the day job is described, never named; the markdown copy says
-// everything the page says, charts included, and nothing else.
+// of text"): the first screen is the niche line and the held-list proof card (1 Nov; it was three number tiles and the
+// pipeline drawing), with no paragraph outside the card; each failure story is a chart with a one-line caption and its
+// full text behind a click; the visible words stay at the count measured on 1 Nov (the review's cap: 750 or less);
+// the day job is described, never named; the markdown copy says everything the page says, charts and cards
+// included, and nothing else. The cards' own words and numbers are pinned in tests/proof.test.mjs.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -13,6 +14,7 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { HOW, FAILURES, PIPELINE_STEPS, VISUAL } from "../data/how.ts";
+import { PROOF, HOW_CARDS } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -56,31 +58,62 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.ok(app("llms-full.txt.body").includes(md().trim()), "llms-full.txt does not hold the copy whole");
 });
 
-test("the first screen: the niche line, three number tiles and the pipeline drawing, and no paragraph", () => {
+test("the first screen: the niche line, then the held-list card, and no paragraph outside the card", () => {
+  // 1 Nov (proof cards plan): the three tiles and the pipeline drawing left the first screen. The held-list card proves
+  // the headline ("hold the rest" = "so I held the list"); the drawing is in #pipeline, the tiles' numbers in #clay.
   const hero = page().match(/<section[^>]*id="top"[\s\S]*?<\/section>/)[0];
   assert.equal((page().match(/<h1[\s>]/g) ?? []).length, 1);
   assert.equal(squash(plain(hero.match(/<h1>([\s\S]*?)<\/h1>/)[1])), HOW.headline);
-  const tiles = hero.match(/<dl class="tiles">[\s\S]*?<\/dl>/)?.[0] ?? "";
-  assert.deepEqual([...tiles.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]), VISUAL.tiles.map(([n]) => n));
-  assert.ok(hero.indexOf('<dl class="tiles">') < hero.indexOf('class="sketch"'), "the tiles come before the drawing");
-  assert.match(hero, /<figure class="pipe">[\s\S]*class="sketch"[\s\S]*<figcaption class="cap">/);
-  // No paragraph above the fold: everything the hero says in a <p> is a row of links.
-  for (const [, p] of hero.replace(/<details[\s\S]*?<\/details>/g, "").replace(/<p class="kicker">[\s\S]*?<\/p>/, "").matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
+  const card = hero.indexOf('<article class="pc pc-full" id="held-list">');
+  assert.ok(card > hero.indexOf("</h1>"), "the held-list card does not follow the niche line");
+  // The card keeps "90% bar" on one line with a no-break space (review 2).
+  assert.match(hero.replace(/\u00a0/g, " "), new RegExp(`<h2 class="h3">${PROOF["held-list"].title}</h2>`), "the card's title is not an h2 styled as h3");
+  assert.doesNotMatch(hero, /<dl class="tiles">|class="sketch"/, "the old tiles or the drawing are back in the first screen");
+  // No paragraph above the fold outside the card: everything else the hero says in a <p> is a row of links.
+  const rest = hero.replace(/<article class="pc[\s\S]*?<\/article>/g, "").replace(/<details[\s\S]*?<\/details>/g, "").replace(/<p class="kicker">[\s\S]*?<\/p>/, "");
+  for (const [, p] of rest.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
     assert.ok(!squash(plain(p.replace(/<a\b[\s\S]*?<\/a>/g, ""))), `a paragraph in the first screen: ${squash(plain(p)).slice(0, 60)}`);
   }
-  assert.match(hero, /href="#claygent"/);
+  assert.match(hero, /href="#proof"/);
 });
 
-test("visible text is cut by at least 60% from the text version (1,334 words)", () => {
+test("visible words stay at the count measured on 1 Nov, under the review's cap of 750", () => {
+  // 509 before the proof cards (cap 533). With the held-list card and one compact card, 704 measured on 1 Nov; the
+  // plan's second compact card took it to 823, so it went (data/proof.ts HOW_CARDS). Adding words means cutting some.
+  // Review 2 (1 Nov): the clarity fixes on the cards ("the company's words they quoted", "so I tested it on a new
+  // sample", the leadlens eyebrow) took it to 707.
   const n = visibleWords();
-  assert.ok(n <= 533, `the page shows ${n} words without a click`);
+  assert.ok(n <= 707, `the page shows ${n} words without a click`);
+});
+
+test("short blocks: no visible paragraph over 30 words outside a card, and each card under its cap", () => {
+  const html = page();
+  const outside = html.replace(/<article class="pc[\s\S]*?<\/article>/g, "").replace(/<details[\s\S]*?<\/details>/g, "");
+  for (const [, , inner] of outside.matchAll(/<(p|li|dd)\b[^>]*>([\s\S]*?)<\/\1>/g)) {
+    const n = squash(plain(inner)).split(" ").filter(Boolean).length;
+    assert.ok(n <= 30, `a ${n}-word block: ${squash(plain(inner)).slice(0, 60)}`);
+  }
+  // Caps from the plan were estimates (130 full, 95 compact). Measured 1 Nov: full 128, compact 107 (the card words are
+  // the application cards' word for word, plus the review's "circled:" line), so compact is capped at the largest
+  // compact card on the site, 118 (labelled-drawings, on the home page). Review 2 (1 Nov): held-list's clarity fixes
+  // took the full card to 133.
+  for (const [a, cls] of html.matchAll(/<article class="pc (pc-full|pc-compact)"[\s\S]*?<\/article>/g)) {
+    const n = squash(plain(a)).split(" ").filter(Boolean).length;
+    assert.ok(n <= (cls === "pc-full" ? 133 : 118), `a ${cls} card shows ${n} words`);
+  }
 });
 
 test("sections in order; each failure is a chart, a one-line caption, and the story behind a click", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
   const K = VISUAL.kickers;
-  assert.deepEqual(h2, [K.patterns, K.failures, K.testing, K.clay, K.live, K.contact]);
+  // 1 Nov: "What GTM teams ask for" is cut; his own project's card comes first, the drawing moves under the failures.
+  assert.deepEqual(h2, [K.proof, K.failures, K.pipeline, K.testing, K.clay, K.live, K.contact]);
+  const proof = html.match(/<section id="proof" class="wrap sec">[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.deepEqual([...proof.matchAll(/<article class="pc pc-compact" id="([^"]+)">/g)].map((m) => m[1]), HOW_CARDS);
+  const pipeline = html.match(/<section id="pipeline" class="wrap sec">[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(pipeline, /<figure class="pipe">[\s\S]*class="sketch"[\s\S]*<figcaption class="cap">/, "the drawing is not in #pipeline");
+  assert.match(pipeline, /<summary><span class="more-line more-label">What each step won(?:'|&#x27;)t let through<\/span>/);
   assert.doesNotMatch(html, /<details[^>]* open/, "a detail starts open");
   for (const s of FAILURES.stories) {
     const card = html.match(new RegExp(`<article id="${s.id}" class="storycard">[\\s\\S]*?</article>`))?.[0] ?? "";
@@ -207,7 +240,7 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
       assert.ok(built, `${href} was not built`);
     }
   }
-  for (const l of [...VISUAL.live_items, ...VISUAL.heroLinks, ...VISUAL.patterns]) assert.ok(html.includes(`href="${l.href}"`), `${l.href} is missing`);
+  for (const l of [...VISUAL.live_items, ...VISUAL.heroLinks, ...HOW_CARDS.flatMap((s) => PROOF[s].links)]) assert.ok(html.includes(`href="${l.href}"`), `${l.href} is missing`);
   // "/#proof" points at the home page's Tender Radar section, which must still exist.
   assert.match(app("index.html"), /<section id="proof"/);
 });
