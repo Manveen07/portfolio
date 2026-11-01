@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ME, HERO, PHOTO } from "@/data/portfolio";
+import { HOME_BAND } from "@/data/proof";
 import Annotated from "@/components/Annotated";
 import { Underline } from "@/components/Pen";
 import WeekSketch from "@/components/sketches/WeekSketch";
@@ -13,6 +14,8 @@ export default function Hero() {
           // priority: it is the largest thing in the first screen, so it is fetched first; every other image is lazy.
           <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} sizes="176px" priority />
         )}
+        {/* 1 Nov: the role first (review fix 1), so the first screen says GTM before the week's story. */}
+        <p className="kicker hero-kicker">{ME.role}</p>
         <h1>{HERO.headline}</h1>
       </div>
       <Annotated note={HERO.nerdNote}>
@@ -26,6 +29,9 @@ export default function Hero() {
           {line}
         </p>
       ))}
+      <p className="links hero-links">
+        <a href={HOME_BAND.link.href}>{HOME_BAND.link.label}</a>
+      </p>
       <p className="small">{ME.hours}</p>
     </section>
   );

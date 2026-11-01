@@ -81,12 +81,14 @@ export function homeMarkdown(pipe: PipelineData): string {
         `Everything in one file: ${link("llms-full.txt", abs("/llms-full.txt"))}.`,
     ),
 
-    `## ${HERO.headline}`,
     PHOTO ? para(image(PHOTO.alt, abs(PHOTO.src))) : "",
+    para(`*${ME.role}*`),
+    `## ${HERO.headline}`,
     para(`${HERO.answer} ${HERO.marked}`),
     para(pen(HERO.nerdNote)),
     para(weekDrawing()),
     ...HERO.how.map(para),
+    list([link(HOME_BAND.link.label, mdHref(HOME_BAND.link.href))]),
     para(ME.hours),
 
     `## ${HOME_BAND.kicker}`,

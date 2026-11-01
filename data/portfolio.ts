@@ -7,7 +7,9 @@
 // ── Identity ─────────────────────────────────────────────────────────
 export const ME = {
   name: "Manveen Singh",
-  role: "automation engineer",
+  // 1 Nov (proof cards review, fix 1; his yes needed before merge): "GTM engineer", his own words from the live
+  // /how-i-build headline, shown as the home hero's kicker. Was "automation engineer".
+  role: "GTM engineer",
   location: "Delhi, India",
   hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   email: "manveen9650@gmail.com",

@@ -116,7 +116,11 @@ export type ProofSlug = keyof typeof PROOF;
 
 /** The home page's band, between the hero and Tender Radar, AI stories first (DESIGN-PLAN.md section 2). Its label is a
     placeholder in his casual voice, his to rename. */
-export const HOME_BAND = { kicker: "How I check my AI" } as const;
+export const HOME_BAND = {
+  kicker: "How I check my AI",
+  // The hero's link down to the band (review fix 1, his yes needed before merge): the first screen ends on it.
+  link: { label: "How I check my AI\u00a0↓", href: "#proof-cards" },
+} as const;
 export const HOME_CARDS: ProofSlug[] = ["held-list", "caught-my-own-test", "labelled-drawings"];
 /** /how-i-build's section from his own projects, under the full held-list card that opens the page. One card, not the
     plan's two: with both, the page measured 823 words without a click, over the review's 750 cap (1 Nov). The
