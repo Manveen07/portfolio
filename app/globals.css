@@ -469,13 +469,13 @@ ul.habits { list-style: disc; }
 }
 
 /* Compact: the check, an arrow, the result. */
-.pc-check { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; }
+.pc-check { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; text-wrap: balance; }
 .pc-check::after { content: "\2193" / ""; display: block; margin: 4px 0 0 2px; font-size: 16px; line-height: 1; color: var(--dim); }
 .pc-result { margin: 8px 0 0; font-size: 19px; line-height: 1.45; text-wrap: balance; }
 .pc-result + .note { margin-top: 10px; }
-/* The brackets sit inside the loop ("(94%)", ProofCard circled()). The scorecard's tighter loop and a little room on
-   the left keep the pen clear of the word before it. */
-.pc-result .pen-circle { margin-left: 4px; }
+/* The brackets sit inside the loop ("(94%)", ProofCard circled()). The scorecard's tighter loop, and a little room on
+   the left where words come before it (a loop in the sub, not one that opens the bold name), keep the pen clear. */
+.pc-result > .pen-circle { margin-left: 4px; }
 .pc-result .pen-circle svg { left: -10px; width: calc(100% + 20px); }
 /* What a circle means: a legend under the result, no arrow (like the drawing's "circled: a gate."). */
 .pc-legend { margin: 12px 0 12px; }

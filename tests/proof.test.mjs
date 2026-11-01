@@ -152,7 +152,7 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
   for (const slug of HOME_CARDS) {
     const c = PROOF[slug];
     const card = cardHtml(band, slug);
-    assert.match(card, new RegExp(`<h3 class="h3">${c.title.replace(/'/g, "(?:'|&#x27;)")}</h3>`), `${slug}: no h3 title`);
+    assert.match(decode(card), new RegExp(`<h3 class="h3">${c.title}</h3>`), `${slug}: no h3 title`);
     for (const line of c.before.lines) {
       assert.ok(decode(card).includes(`<s class="pen-strike">${line}</s>`), `${slug}: "${line}" is not struck through`);
     }
@@ -167,8 +167,9 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
     const loop = decode(card.match(/<p class="pc-result">[\s\S]*?<\/p>/)[0].match(/pen-circle">(?:<!-- -->)?((?:[^<]|<!-- -->)*)<svg/)?.[1] ?? "").replace(/<!-- -->/g, "");
     assert.equal(loop.replace(/^\(|\)$/g, ""), result.circle, `${slug}: the result's circle`);
     if (slug === "held-list") assert.equal(loop, "(94%)", "the brackets are outside the loop");
+    if (slug === "labelled-drawings") assert.match(card, /<span class="pc-nb"><span class="pen pen-circle">7 wrong of 419<svg[\s\S]*?<\/svg><\/span> values:<\/span><\/b>/, "\"values:\" can drop below its loop");
     // Review 2: a count never splits across lines ("194 of" / "194"): every "N of M" a card prints uses no-break spaces.
-    assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+/, `${slug}: a count can split across lines`);
+    assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, `${slug}: a count can split across lines`);
     // Review fix 4: what the circle means sits right under the result (and its note), then the footer, then the link.
     const order = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, 'class="small pc-foot"', 'class="links"'].map((s) => decode(card).indexOf(s));
     assert.ok(order.every((i) => i > 0), `${slug}: a part is missing: ${order}`);
@@ -195,7 +196,7 @@ test("/how-i-build: the full held-list card opens the page, five steps, both sam
   // Notes sit under the step they explain.
   assert.match(steps[2], /<p class="note">built from those 7 misses, so I tested it on a new sample<\/p>/);
   assert.match(steps[3], /<p class="note">a different 50 companies<\/p>/);
-  assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+/, "a count in the full card can split across lines");
+  assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, "a count in the full card can split across lines");
   assert.ok(card.includes("pen-brace") && card.includes('class="arr-left"'), "the full card lost its brace or its side note");
   assert.ok(!card.includes('class="links"'), "the full card links to itself");
   assert.ok(card.indexOf("pc-flow") < card.indexOf("circled: "), "the circle's meaning is not under the flow");

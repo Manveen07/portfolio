@@ -66,7 +66,8 @@ test("the first screen: the niche line, then the held-list card, and no paragrap
   assert.equal(squash(plain(hero.match(/<h1>([\s\S]*?)<\/h1>/)[1])), HOW.headline);
   const card = hero.indexOf('<article class="pc pc-full" id="held-list">');
   assert.ok(card > hero.indexOf("</h1>"), "the held-list card does not follow the niche line");
-  assert.match(hero, new RegExp(`<h2 class="h3">${PROOF["held-list"].title}</h2>`), "the card's title is not an h2 styled as h3");
+  // The card keeps "90% bar" on one line with a no-break space (review 2).
+  assert.match(hero.replace(/\u00a0/g, " "), new RegExp(`<h2 class="h3">${PROOF["held-list"].title}</h2>`), "the card's title is not an h2 styled as h3");
   assert.doesNotMatch(hero, /<dl class="tiles">|class="sketch"/, "the old tiles or the drawing are back in the first screen");
   // No paragraph above the fold outside the card: everything else the hero says in a <p> is a row of links.
   const rest = hero.replace(/<article class="pc[\s\S]*?<\/article>/g, "").replace(/<details[\s\S]*?<\/details>/g, "").replace(/<p class="kicker">[\s\S]*?<\/p>/, "");

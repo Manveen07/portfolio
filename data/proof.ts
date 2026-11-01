@@ -43,15 +43,15 @@ export type ProofCard = {
 export const PROOF = {
   // Agency work. Sources: gtm runs\preciseleads\2026-10-23-linkedin-test\STATUS.md lines 43 to 54; EVALS-2026-10-31.md
   // line 31 ("Labels by the Claude session", "B's 86% held the list"). Never "sent" or "released", never "first sample".
-  // Review 2 (1 Nov): "quote" alone read as a price quote; the quoted words come from the company's LinkedIn "About" or
-  // its site (gate/GATE.md line 18), so "the company's words", not "the website line".
+  // Review 2 (1 Nov): "their quote" read as a price quote; the quoted words come from the company's LinkedIn "About" or
+  // its site (gate/GATE.md line 18), so "the company's words", not "the website line". Short enough for one line.
   "held-list": {
     slug: "held-list",
     eyebrow: "Outbound agency work · a LinkedIn campaign list · Claude agents",
     title: "My AI check missed my 90% bar, so I held the list",
     before: {
       label: "what the sample caught",
-      lines: ["3 picks said more about the buyer than the company's words they quoted", "4 quoted lines weren't about who the company serves"],
+      lines: ["3 picks said more about the buyer than the company's words did", "4 quoted lines weren't about who the company serves"],
       note: "7 misses in 50, so the list waited",
     },
     steps: [
