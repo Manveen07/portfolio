@@ -34,7 +34,7 @@ export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = []
 export const RESUME = {
   pdf: "/resume.pdf",
   /** The PDF's own creation date (its metadata), so a reader knows how fresh it is. */
-  updated: "2026-10-31",
+  updated: "2026-11-01",
   name: "Manveen Singh",
   /** The line under the name: "AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows". */
   role: "AI & GTM Automation Engineer",
@@ -57,9 +57,9 @@ export const RESUME = {
       title: "GTM Automation Engineer (outbound agency), full-time",
       location: "New Delhi, India · Remote",
       bullets: [
-        "Built and run an always-on lead finder for 3 accounts: 31 Clay workflows post new people to n8n by webhook; a daily Python job screens mail servers, runs a Claygent ICP check and an email waterfall, and writes leads to client sheets. First 10 days: 2,205 new people found, 1,000+ delivered with verified emails.",
-        "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506 companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
-        "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a cost-ordered waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
+        "Built an always-on lead finder for 3 accounts: 31 Clay workflows posted new people to n8n by webhook; a daily Python job screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10 days: 2,205 new people found, 1,000+ delivered with verified emails.",
+        "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and checked 24,506 companies with Claygent at ~0.18 credits each (16,728 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
+        "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a multi-provider waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
         "Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.",
         "Built an unattended weekly Claude Code agent that ranks searches by lead quality and replies and swaps a weak one only after a gate passes, and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.",
       ],
@@ -111,7 +111,7 @@ export const RESUME = {
       stack: ["Python", "LLM classification", "GitHub Actions"],
       links: [{ label: "source", href: "https://github.com/Manveen07/tender-radar-showcase" }],
       date: "2026",
-      bullets: ["UK public-sector tender finder: pulls new notices, an LLM scores fit per client, and each client gets a digest."],
+      bullets: ["Daily UK public-sector tender finder: pulls new notices, and an LLM scores each one against 7 trade profiles."],
     },
   ] as ResumeProject[],
   education: [

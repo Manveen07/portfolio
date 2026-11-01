@@ -36,7 +36,10 @@ export const FAILURES: { intro: string; stories: Story[] } = {
   intro: "Each one: what broke, how I found it, and how I proved the fix before it went live. Open any of them.",
   stories: [
     {
-      // LOOM-TRANSCRIPT.md slides 3 to 7; resume bullet 2 and SOURCES.md (24,506 sent to Claygent, 17,056 fits).
+      // LOOM-TRANSCRIPT.md slides 3 to 7; resume bullet 2 and SOURCES.md (24,506 sent to Claygent, 16,728 fits;
+      // 1 Nov: qualified.csv's 17,056 includes 328 added later from AI Ark that were never among the 24,506).
+      // 1 Nov: the lead finder is told in the past tense (gtm pipelines/always-on-sourcing.md: all searches paused
+      // since 27 Oct).
       // 1 Nov, new 10x engineer money\research\EVALS-2026-10-31.md sections 1, 3, 5: the Loom's "Same 25: 100%" and
       // "30 it had never seen: also 100%" are retired. Only 10 of the 25 test rows carry his labels; the "100%" on the
       // 30 was scored against a cheap AI judge's answers. All 30 holdout rows were later labelled by him, after reading
@@ -46,20 +49,20 @@ export const FAILURES: { intro: string; stories: Story[] } = {
       // 0.786 failed, and the run went on: the production path never checked the gate's exit code).
       // 1 Nov, a reviewer's check: niche 5's pass came after a relabel. history.csv lines 26, 36 and 46 score the same
       // r6-n5.csv answers three times (14 ICP, 10 not, 1 review): lost_leads 1, 1, then 0, and gate False, False, then
-      // True. In r6-n5.csv the only labelled row the model rejected that isn't NOT_ICP is rapidise.co (r4 said ICP, r6
+      // True. In r6-n5.csv the only labelled row the model rejected that isn't NOT_ICP is one company (r4 said ICP, r6
       // NOT_ICP), now EITHER in gold-n5.csv:10, "toss-up, flipped between rounds". EVALS-2026-10-31.md row 38: "labels
       // written after reading the misses; edits moved 4 rows". So "tested" says the pass came after that relabel.
       id: "claygent",
       title: "A Claygent fit check kept rejecting the companies we wanted",
       result: "It rejected 4 good companies I'd labelled by hand. After the rewrite it kept all 18 good ones in 30 more I labelled, though I labelled those after seeing its answers.",
       broke:
-        "Before we pay to find anyone's email, Claygent (Clay's AI step that reads a company's website) decides if the company's a fit. It runs in our lead finder, the daily job that finds new people for each client. For one segment, systems integrators, it kept saying no to exactly the companies we wanted. And every answer looked reasonable, because each yes quoted the company's own site.",
+        "Before we pay to find anyone's email, Claygent (Clay's AI step that reads a company's website) decides if the company's a fit. It ran in our lead finder, the daily job that found new people for each client. For one segment, systems integrators, it kept saying no to exactly the companies we wanted. And every answer looked reasonable, because each yes quoted the company's own site.",
       found:
         "Before the big run on the whole market, I tested it on 25 companies. It threw out four good ones I'd labelled by hand: an engineering firm that sets up factory control systems, a business-software partner, and a distributor that builds its own control panels. They all do the work. None of them call themselves integrators. So I read every row where Claygent and I disagreed. The prompt was a rulebook: yes if the site says this, no if it says that. Claygent followed it to the letter, so the website's wording decided the answer, not the business. Reading wasn't the problem. The rules were.",
       tested:
         "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better), but it said no to one more I'd marked good, a borderline one. Then 30 more companies, every one labelled by me: it kept all 18 good ones. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. The bar I'd written down was 80% agreement with my labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote. This segment only cleared it after I changed that borderline company's label to a toss-up, with the same answers from the model, so I don't count that pass as proof.",
       changed:
-        "Then the big run, across five segments: it checked 24,506 companies, and 17,056 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Making it stop is the next fix. In the daily runs, a yes whose quote a script can't find on the saved page goes to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check runs every day on each new company the lead finder brings in.",
+        "Then the big run, across five segments: it checked 24,506 companies, and 16,728 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Making it stop is the next fix. In the daily runs, a yes whose quote a script couldn't find on the saved page went to a person. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts. Fix it once, fixed everywhere. The same check ran every day on each new company the lead finder brought in.",
     },
     {
       // SOURCES.md last row: A/B on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123 unique
@@ -173,12 +176,14 @@ export const PIPELINE_STEPS: { intro: string; label: string; note: string; steps
 export const CLAY = {
   intro: "Clay is where most of this starts. What I build in it and around it, in plain words:",
   items: [
-    "**31 Clay workflows across 3 accounts** run every day. Each finds new people for one of those accounts, writes them to Clay Audiences (Clay's saved lists) so nobody is found twice, and posts them to n8n by webhook.",
-    "**Search before spend.** I mapped a 34,044-company market from Clay's search for 0 data credits, then qualified 24,506 of them with Claygent at about 0.18 credits each.",
+    // 1 Nov: the lead finder in the past tense (all searches paused since 27 Oct); "checked 24,506", never "qualified";
+    // "multi-provider", never "cost-ordered" (the 12,030 batch ran LeadMagic first). Same fixes as the résumés.
+    "**31 Clay workflows across 3 accounts** ran every day. Each found new people for one of those accounts, wrote them to Clay Audiences (Clay's saved lists) so nobody was found twice, and posted them to n8n by webhook.",
+    "**Search before spend.** I mapped a 34,044-company market from Clay's search for 0 data credits, then checked 24,506 of them with Claygent at about 0.18 credits each.",
     // 1 Nov: "live only after it passes the gate" retired (two segments ran with a failed gate check; EVALS-2026-10-31.md).
     "**Claygent prompts as code.** A shared template, built by a script, and tested against companies I labelled by hand before it ran on 24,506 companies.",
-    "**Clay and n8n both ways.** Clay posts each new person to n8n for the daily job; n8n sends a company into Clay by webhook and gets its lookalikes back.",
-    "**A cost-ordered email waterfall** with a cap per provider: the next provider runs only on a miss, and every address is verified.",
+    "**Clay and n8n both ways.** Clay posted each new person to n8n for the daily job; n8n sends a company into Clay by webhook and gets its lookalikes back.",
+    "**A multi-provider email waterfall** with a cap per provider: the next provider runs only on a miss, and every address is verified.",
     // LOOM-TRANSCRIPT.md, the HubSpot line. Round A1: the page never mentioned a CRM. The gap is said plainly.
     "**The CRM side.** Reply events from the sending tool update HubSpot contact properties through n8n, like last reply date, campaign and lead category. I haven't run Salesforce in production yet.",
   ],

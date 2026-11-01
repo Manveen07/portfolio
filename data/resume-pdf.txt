@@ -1,5 +1,5 @@
-sha256: 357d0b1f8707ac08bf07f19501a43e4242af659f7260cfc5a3207feee3daac10
-created: D:20261031105724+00'00'
+sha256: d5abdaf0404eff5176f44a70e58395615f2773a198533ed7defdb3f84ff9f083
+created: D:20261101072109+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
@@ -8,53 +8,43 @@ LinkedIn
 github.com/Manveen07
 manveen.me
 Experience
-Precise Leads
-Nov. 2025 – Present
-GTM Automation Engineer (outbound agency), full-time
-New Delhi, India · Remote
-–  Built and run an always-on lead finder for 3 accounts: 31 Clay workflows post new people to n8n by webhook; a daily Python
-job screens mail servers, runs a Claygent ICP check and an email waterfall, and writes leads to client sheets. First 10 days: 2,205
-new people found, 1,000+ delivered with verified emails.
-–  Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and qualified 24,506
-companies with Claygent at ~0.18 credits each (17,056 fits), after rewriting the shared prompt template that rejected good fits
+Precise Leads · Nov. 2025 – Present
+GTM Automation Engineer (outbound agency), full-time · New Delhi, India · Remote
+–  Built an always-on lead finder for 3 accounts: 31 Clay workflows posted new people to n8n by webhook; a daily Python job
+screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10 days: 2,205 new
+people found, 1,000+ delivered with verified emails.
+–  Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and checked 24,506
+companies with Claygent at ~0.18 credits each (16,728 fits), after rewriting the shared prompt template that rejected good fits
 on wording and testing it on hand labels.
-–  Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a cost-ordered
+–  Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a multi-provider
 waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
 –  Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the
 result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.
 –  Built an unattended weekly Claude Code agent that ranks searches by lead quality and replies and swaps a weak one only after a
 gate passes, and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email
 had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.
-Caprae Capital Partners
-Aug. 2025 – Jan. 2026
-AI/ML Intern, internship
-Remote (Glendale, US)
+Caprae Capital Partners · Aug. 2025 – Jan. 2026
+AI/ML Intern, internship · Remote (Glendale, US)
 –  Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed
 ones out.
 –  Led a team of 3 building a recruitment automation platform: embeddings-based candidate ranking, an AI-scored video interview
 tool, and n8n automation of intake, scoring and scheduling.
 Projects
-drawing-proof | Python, Gemini, structured outputs, evals
-2026
+drawing-proof | Python, Gemini, structured outputs, evals · 2026
 –  Reads engineering-drawing PDFs into a quote sheet with the source text for every value, and flags what the drawing doesn't state
 instead of guessing. Hand-checked on 23 public drawings: 7 wrong of 419 values.
-leadlens | Python, Pydantic, LLM-as-judge · write-up
-2026
+leadlens | Python, Pydantic, LLM-as-judge · write-up · 2026
 –  LLM classifier for AI-engineering job posts. Fixed failure modes through the output schema instead of prompt rules, and caught
 answer leakage in my own eval, then published the lower score (a later audit found two more leaks, so it needs a re-run).
-Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs
-2026
+Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs · 2026
 –  Scheduled agents I run for myself: a Slack inbound monitor that reads 312 community channels plus Reddit and LinkedIn every
 day (an LLM judge went through 4,705 threads in one run) and emails me the few opportunities worth acting on; an Upwork
 alert judge that labels every job alert and drafts proposals for the good ones; and a task tracker with Slack buttons.
-Tender Radar | Python, LLM classification, GitHub Actions · source
-2026
-–  UK public-sector tender finder: pulls new notices, an LLM scores fit per client, and each client gets a digest.
+Tender Radar | Python, LLM classification, GitHub Actions · source · 2026
+–  Daily UK public-sector tender finder: pulls new notices, and an LLM scores each one against 7 trade profiles.
 Education
-Maharaja Surajmal Institute of Technology
-GPA 8.6/10
-Bachelor of Technology in Computer Science
-Nov. 2022 – Aug. 2026
+Maharaja Surajmal Institute of Technology · GPA 8.6/10
+Bachelor of Technology in Computer Science · Nov. 2022 – Aug. 2026
 Skills
 GTM & data: Clay (workflows, Claygent, Audiences, API/CLI, webhooks), n8n, Smartlead, HubSpot, BounceBan, LeadMagic, AI
 Ark, web scraping

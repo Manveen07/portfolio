@@ -216,7 +216,7 @@ test("the words match their sources: résumé numbers and the Loom story, as wri
   const t = text();
   for (const s of ["12,030", "78%", "34,044", "870+", "31", "149", "45"]) assert.ok(t.includes(s), `${s} is missing`);
   const all = unmark(md());
-  for (const s of ["2,800+", "28%", "8,649", "2,047", "2.1%", "17,056", "95.5%", "so I say after, not because"]) {
+  for (const s of ["2,800+", "28%", "8,649", "2,047", "2.1%", "16,728", "95.5%", "so I say after, not because"]) {
     assert.ok(all.includes(s), `${s} is missing from the page's full text`);
   }
   assert.match(all, /on nine mornings since 17 October a tender portal stopped answering/);
