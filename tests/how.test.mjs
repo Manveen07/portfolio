@@ -99,10 +99,14 @@ test("the charts show the published numbers, with red only where it means someth
   const html = page().replace(/<!--[\s\S]*?-->/g, "");
   const units = html.match(/<figure class="chart units"[\s\S]*?<\/figure>/)[0];
   const rows = [...units.matchAll(/<div class="urow[^"]*"[\s\S]*?<\/div>/g)].map((m) => m[0]);
-  // Visual round 1: one measure per comparison (good ones kept, before and after; then agreement, tuning set greyed).
-  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 30, 25]);
-  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 30, 25]);
-  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "tuned", "main", "tuned"]);
+  // Visual round 1: one measure per comparison (good ones kept, before and after, tuning set greyed; then the 30).
+  // 1 Nov: the rows "30 of 30" (30 it never saw) and "25 of 25" (the tuned set) were retired claims
+  // (new 10x engineer money/research/EVALS-2026-10-31.md); the last row is the 18 good ones in the 30 he labelled.
+  // 1 Nov, a reviewer's check: he labelled those 30 after reading the model's answers, so that row is greyed like the
+  // tuned set, and no row is styled as the headline result.
+  assert.deepEqual(rows.map((r) => (r.match(/<i class="(on|off)"/g) ?? []).length), [4, 4, 18]);
+  assert.deepEqual(rows.map((r) => (r.match(/class="on"/g) ?? []).length), [0, 4, 18]);
+  assert.deepEqual(rows.map((r) => r.match(/class="urow ?([a-z]*)"/)[1]), ["bad", "tuned", "tuned"]);
   const bars = [...html.matchAll(/<span class="blabel">([^<]*)<\/span><span class="btrack"><i class="(bar red|bar)" style="--w:([\d.]+)"/g)];
   assert.deepEqual(bars.map((b) => b[1]), ["Google", "Barracuda", "Mimecast", "My lists, before", "My lists, after", "Lists without the check"]);
   assert.deepEqual(bars.map((b) => b[2]), ["bar", "bar red", "bar red", "bar", "bar", "bar"]);
@@ -114,6 +118,18 @@ test("the charts show the published numbers, with red only where it means someth
   for (const s of ["+77", "2,376", "0.5%", "2.4%", "5.1%", "505,461", "2.7%", "0.7%", "2.1%", "95.5%", "15,514"]) assert.ok(text().includes(s), `${s} is missing`);
   // Red means a gate, a failure or "skipped", never a good result.
   assert.doesNotMatch(html, /class="hit"/);
+});
+
+test("retired eval claims stay off the page and its copy (EVALS-2026-10-31.md, 1 Nov)", () => {
+  // Each was checked against its source on 31 Oct and doesn't hold: the Claygent "30 it had never seen" and "25 of 25"
+  // (scored against an AI judge, or on rows he didn't label), "124 of 124" (no human column filled), the gate rules
+  // ("nothing moves on until its check passes", "live only after it passes the gate") and "every email" checked.
+  for (const s of [text(), unmark(md())]) {
+    assert.doesNotMatch(
+      s,
+      /never s(?:een|aw)|30 of 30|25 of 25|124 of 124|nothing moves on|had to match|hand-labelled 25|live only after|label 25 to 30|check every email|every email vs|only now/i,
+    );
+  }
 });
 
 test("the day job is described, never named, and nothing points into private work", () => {
@@ -200,7 +216,7 @@ test("the words match their sources: résumé numbers and the Loom story, as wri
   const t = text();
   for (const s of ["12,030", "78%", "34,044", "870+", "31", "149", "45"]) assert.ok(t.includes(s), `${s} is missing`);
   const all = unmark(md());
-  for (const s of ["2,800+", "28%", "8,649", "2,047", "2.1%", "17,056", "95.5%", "so I say after, not because"]) {
+  for (const s of ["2,800+", "28%", "8,649", "2,047", "2.1%", "16,728", "95.5%", "so I say after, not because"]) {
     assert.ok(all.includes(s), `${s} is missing from the page's full text`);
   }
   assert.match(all, /on nine mornings since 17 October a tender portal stopped answering/);

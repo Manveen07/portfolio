@@ -278,11 +278,12 @@ const resumeFlat = () => {
     `${r.location} · ${r.phone}`,
     ...r.links.map((l) => l.label),
     r.headings.experience,
-    ...r.experience.flatMap((j) => [j.org, j.dates, j.title, j.location, ...j.bullets]),
+    // Dates, places and the GPA print inline after a " · " (the PDF since 1 Nov 2026, rendered from the 23 Oct source).
+    ...r.experience.flatMap((j) => [`${j.org} · ${j.dates}`, `${j.title} · ${j.location}`, ...j.bullets]),
     r.headings.projects,
-    ...r.projects.flatMap((p) => [`${p.name} | ${p.stack.join(", ")}${p.links.map((l) => ` · ${l.label}`).join("")}`, p.date, ...p.bullets]),
+    ...r.projects.flatMap((p) => [`${p.name} | ${p.stack.join(", ")}${p.links.map((l) => ` · ${l.label}`).join("")} · ${p.date}`, ...p.bullets]),
     r.headings.education,
-    ...r.education.flatMap((e) => [e.school, e.gpa, e.degree, e.dates]),
+    ...r.education.flatMap((e) => [`${e.school} · ${e.gpa}`, `${e.degree} · ${e.dates}`]),
     r.headings.skills,
     ...r.skills.map((s) => `${s.name}: ${s.keywords.join(", ")}`),
   ].join("\n");
