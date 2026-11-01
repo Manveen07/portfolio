@@ -15,7 +15,7 @@ export const LLMS_INTRO = {
     "Manveen Singh, automation engineer, Delhi, India. Every week has a job that's the same clicks, in the same order. I make it run by itself, the same way every time.",
   /** Paragraphs under the summary. */
   details: [
-    "I spent a year automating lead-finding for an outbound agency, got good at it, got bored of it, and noticed the same missing piece everywhere: nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
+    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
     "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
   ],
   /** How to read this site. Draft, written by Claude on 22 Oct: rewrite it in your own words. */
