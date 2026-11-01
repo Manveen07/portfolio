@@ -14,7 +14,7 @@ export default async function Image() {
     readFile(join(process.cwd(), "app/Archivo-ExtraBold.ttf")),
     readFile(join(process.cwd(), "app/Archivo-Regular.ttf")),
   ]);
-  const [tests, testsLabel] = VISUAL.tiles[2];
+  const [tests, testsLabel] = VISUAL.share;
   return new ImageResponse(
     (
       <div

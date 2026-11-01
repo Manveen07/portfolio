@@ -10,6 +10,8 @@ import { fmtDay, runLine } from "@/lib/runs";
 import { radarText, RADAR_SOURCES, WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
 import { abs, mdHref, SITE } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
+import { PROOF, HOME_CARDS, HOME_BAND } from "@/data/proof";
+import { proofMarkdown } from "@/lib/md/proof";
 
 /** The words of the week sketch, as drawn. */
 function weekDrawing(): string {
@@ -86,6 +88,9 @@ export function homeMarkdown(pipe: PipelineData): string {
     para(weekDrawing()),
     ...HERO.how.map(para),
     para(ME.hours),
+
+    `## ${HOME_BAND.kicker}`,
+    ...HOME_CARDS.map((slug) => proofMarkdown(PROOF[slug], "compact", { level: 3, links: true, href: mdHref })),
 
     "## Running right now · Tender Radar",
     para(PIPELINE.intro),

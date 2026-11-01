@@ -271,14 +271,15 @@ test("work shows lead research, resume screening, leadlens and PresentAI only", 
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.equal(count(work, "<article"), 4);
   const t = text("index.html");
-  for (const s of ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h", "9 caught"]) {
+  for (const s of ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   // Final review: name what was measured, and say nothing the sources can't back.
-  // (Show the machine, Task 3: the two metric lines became the scorecard, so "9 of 11 ..." is gone.)
-  assert.doesNotMatch(t, /9 of 11/);
-  // The scorecard caption now says what was measured ("I hand-checked 72 postings" was cut with the detail paragraph).
-  assert.match(t, /Out of 72 postings I checked by hand:/);
+  // (Show the machine, Task 3: the two metric lines became the scorecard, so "9 of 11 ..." left the Work section.)
+  assert.doesNotMatch(plain(work), /9 of 11/);
+  // 1 Nov: the scorecard and its caption left the leadlens entry; the caught-my-own-test card says what was measured.
+  assert.doesNotMatch(t, /Out of 72 postings I checked by hand:/);
+  assert.match(t, /72 posts: 11 fake AI jobs, 61 real/);
   assert.doesNotMatch(t, /72 real postings/);
   assert.doesNotMatch(t, /82%/);
   assert.match(t, /spending about ten hours a week reading resumes by hand/);
@@ -370,8 +371,8 @@ test("the quote follows the Caprae card as a block of the Work section, with its
   assert.ok(capraeAt > 0, "no Caprae entry");
   assert.ok(capraeEnd < quoteAt && quoteAt < nextCardAt, "the quote is not between the Caprae entry and the next entry");
   assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
-  // The quote closes the Jobs group; leadlens opens Built on my own, with a note of its own, so its own annotated block.
-  assert.match(work, /<\/figure><\/div><aside class="note">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><div class="annotated"><div><article/);
+  // The quote closes the Jobs group; leadlens opens Built on my own, plain since 1 Nov (its note left with the scorecard).
+  assert.match(work, /<\/figure><\/div><aside class="note">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><article class="entry">/);
   assert.match(text("index.html"), /the bit that matters if you don't write code/);
   // The red underline is on the marked words.
   assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
@@ -393,7 +394,7 @@ test("one reading column, centred: header, sections and footer share its width a
   // Header, every section and the footer are wraps.
   const html = markup("index.html");
   assert.match(html, /<header class="wrap head">/);
-  assert.equal(count(html, /<section[^>]*class="wrap sec/), 5);
+  assert.equal(count(html, /<section[^>]*class="wrap sec/), 6);
   assert.match(html, /<footer class="wrap foot">/);
   // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
   assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
@@ -488,22 +489,23 @@ test("the people and incident sections are gone, with their copy", () => {
   }
   // The two failure stories that stay: the outage inside the Tender Radar section, and leadlens.
   assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
-  // (Told once, in the leadlens margin note; the card's detail paragraph that said it first is gone.)
-  assert.match(t, /my own notes leaked the answers/);
+  // (Told once, in the caught-my-own-test card since 1 Nov; the leadlens margin note that told it left the Work section.)
+  assert.match(t, /my notes to myself were in the test data/);
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
-test("sections appear in the agreed order: five, with the newest writing just before the pilot", () => {
+test("sections appear in the agreed order: six, the proof cards second, the newest writing just before the pilot", () => {
   // On 22 Oct Manveen added drawing-proof and the confidently-wrong notes between Work and the pilot, then asked for
   // the writing to be findable ("a person navigating the website will never lead to the writing section. I want them
   // to go to the writing section."), then moved both blocks into the writing: "these are the blogs"; "I want my
   // website to be not filled with balls of text". So Work is followed by a short Writing list.
   const html = markup("index.html");
-  const at = ["top", "proof", "work", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  // 1 Nov: the proof cards sit between the hero and Tender Radar (DESIGN-PLAN.md section 2).
+  const at = ["top", "proof-cards", "proof", "work", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
   for (const id of ["people", "broke", "drawings", "wrong"]) assert.ok(!html.includes(`id="${id}"`), `a removed section is back: #${id}`);
-  assert.equal(count(html, /<section[\s>]/), 5, "the home page does not have exactly five sections");
+  assert.equal(count(html, /<section[\s>]/), 6, "the home page does not have exactly six sections");
 });
 
 test("one Calendly link on the home page, at the bottom, and no buttons", () => {
@@ -578,13 +580,14 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
     m[1].replace(/<[^>]+>/g, "").replace(/&#x27;|&#39;/g, "'").trim(),
   );
   assert.deepEqual(h2, [
+    "How I check my AI",
     "Running right now · Tender Radar",
     "Work, and who vouches for it",
     "Writing",
     "How working with me goes",
   ]);
-  // Four work entries and the three newest posts.
-  assert.equal(count(html, /<h3[\s>]/), 7);
+  // Three proof cards, four work entries and the three newest posts.
+  assert.equal(count(html, /<h3[\s>]/), 10);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -595,7 +598,7 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.match(rule, /margin:0 0 14px/);
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
-  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 4);
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
 });
 
 /** A prose post up to its "More writing" list: the post's own headings. */
@@ -819,41 +822,43 @@ test("sketch red marks hide only under pen-js and never under reduced motion", (
 });
 
 // ── Show the machine, Task 3: real artifacts on the work cards ────────
-test("leadlens shows its real scorecard with the false alarms circled", () => {
-  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const card = work.match(/<table[^>]*class="scorecard"[\s\S]*?<\/table>/)?.[0] ?? "";
-  assert.ok(card, "no scorecard");
-  const t = card.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-  for (const s of ["9 caught", "2 missed", "0 false alarms", "61 left alone"]) assert.ok(t.includes(s), `missing "${s}"`);
-  assert.ok(card.includes("pen-circle"), "0 false alarms should be circled");
-  assert.equal(count(card, "pen-circle"), 1, "only the false alarms are circled");
-  assert.match(text("index.html"), /Out of 72 postings I checked by hand:/);
-  assert.match(text("index.html"), /it once scored 100%, because my own notes leaked the answers\. This is the score after I took them out\./);
+test("leadlens's real score is on its proof card, the score circled, with what was measured beside it", () => {
+  // 1 Nov (proof cards, review fix 3): the scorecard left the Work entry, so 9 of 11 and no false alarms show once,
+  // on the caught-my-own-test card two screens up. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+  const html = markup("index.html");
+  assert.ok(!html.includes('class="scorecard"'), "the scorecard is back: the card shows the same numbers");
+  const card = html.match(/<article class="pc pc-compact" id="caught-my-own-test">[\s\S]*?<\/article>/)?.[0] ?? "";
+  assert.ok(card, "no caught-my-own-test card");
+  const t = plain(card.replace(/<svg[\s\S]*?<\/svg>/g, ""));
+  for (const s of ["9 of 11 caught: no false alarms", "72 posts: 11 fake AI jobs, 61 real", "11 of 11 caught: a perfect score", "circled: the score I published"]) {
+    assert.ok(t.includes(s), `missing "${s}"`);
+  }
+  assert.equal(count(card, "pen-circle"), 1, "only the published score is circled");
+  assert.match(card, /<span class="pen pen-circle">9 of 11 caught<svg/);
+  assert.doesNotMatch(text("index.html"), /my own notes leaked the answers/);
 });
 
-test("the leadlens card goes lead, scorecard, stack, link: no detail paragraph, no metric lines", () => {
+test("the leadlens card goes lead, stack, link: no detail paragraph, no metric lines, no scorecard, no note", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  // The leadlens card is wrapped in its own annotated block, directly under the section.
-  assert.match(work, /<div class="annotated"><div><article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
+  // 1 Nov (proof cards, review fix 3): the scorecard and the margin note left; the description and the link stay.
+  assert.match(work, /<p class="group">Built on my own<\/p><article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
   const card = work.match(/<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
-  // The story is told once, in the margin note. The old detail paragraph (and its "I hand-checked 72 postings") is gone.
   assert.doesNotMatch(text("index.html"), /It scored a perfect 100%, which was the problem/);
   assert.ok(!card.includes("I hand-checked 72 postings"), "the old detail paragraph is still in the card");
-  // The only <p class="body"> in the card is the lead line, so nothing sits between it and the scorecard.
   assert.equal(count(card, '<p class="body">'), 1, "leadlens has a body paragraph besides its lead line");
-  const order = ["Reads a job posting", "<table", "<caption>", "</table>", "class=\"stack\"", "class=\"links\""].map((s) => card.indexOf(s));
+  const order = ["Reads a job posting", "class=\"stack\"", "class=\"links\""].map((s) => card.indexOf(s));
   assert.ok(order.every((i) => i >= 0), `a piece of the card is missing: ${order}`);
-  assert.deepEqual([...order].sort((a, b) => a - b), order, "the card is not lead, table (caption first), stack, link");
-  assert.match(card, /scam\.<\/p><table class="scorecard"><caption>/, "something sits between the lead line and the scorecard");
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "the card is not lead, stack, link");
+  assert.ok(!card.includes("<table"), "leadlens still has its scorecard");
   assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
   for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
-  // The note belongs to the card, outside the article, under it.
-  assert.match(work, /<\/article><\/div><aside class="note">it once scored 100%[^<]*<\/aside><\/div>/);
+  assert.match(card, /<a href="\/writing\/schema-as-eval-spec">How I tested it →<\/a>/);
 });
 
-test("the work section has two margin notes (the quote's and leadlens's) and PresentAI has none", () => {
+test("the work section has one margin note (the quote's) and PresentAI has none", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.equal(count(work, /<aside class="note/), 2, "the Work section should have exactly two margin notes");
+  // 1 Nov: leadlens's note left with its scorecard (its story is the caught-my-own-test card).
+  assert.equal(count(work, /<aside class="note/), 1, "the Work section should have exactly one margin note");
   assert.ok(work.lastIndexOf("<aside") < work.indexOf(">PresentAI<"), "PresentAI has a margin note");
 });
 
@@ -1211,6 +1216,8 @@ test("the home page lists the three newest posts after the work: a title and one
 });
 
 test("the two blocks left the home page whole: no crop, no scores, no pinned notes", () => {
+  // 1 Nov: the proof cards brought the drawings story back to the home page as a card (labelled-drawings: "7 wrong of
+  // 419", all text, no crop), and it uses none of the classes or strings below, so this still holds as written.
   const html = markup("index.html");
   const t = text("index.html");
   for (const s of ['class="tb-img"', 'class="pins"', 'class="pin"', 'class="exhibit"', 'class="marked"']) assert.ok(!html.includes(s), `the home page still has ${s}`);

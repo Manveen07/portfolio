@@ -197,31 +197,20 @@ export const CLAY = {
 // Voice, same day: "no that makes it human i want it edgey i don't want it to be safe make everything casual". So the
 // captions talk like he does to a peer: short, contractions, honest about what was annoying. Facts unchanged.
 export const VISUAL = {
-  // Three big tiles under the niche line (SOURCES.md rows).
-  tiles: [
-    ["12,030", "verified emails for 15,514 decision makers, in one batch (78%)"],
-    ["34,044", "companies mapped in Clay, 0 data credits"],
-    ["870+", "automated tests guarding the pipeline"],
-  ] as [string, string][],
+  // 1 Nov (proof cards, DESIGN-PLAN.md in new 10x engineer runs\2026-11-01-job-agent\site-visuals): the three tiles
+  // under the niche line gave way to the held-list card (data/proof.ts), which proves the headline's "hold the rest".
+  // 12,030 and 34,044 moved to the Clay tiles below; 870+ is on the "Automated tests" gate.
+  // The share card's circled number (app/how-i-build/opengraph-image.tsx), the old third tile's words, unchanged.
+  share: ["870+", "automated tests guarding the pipeline"] as [string, string],
   pipelineCaption: "Built at my day job, an outbound agency, since November 2025.",
   stepsSummary: "What each step won't let through",
   heroLinks: [
-    { label: "Hardest failure ↓", href: "#claygent" },
+    { label: "More proof ↓", href: "#proof" },
     { label: "45-test toy n8n repo ↗", href: "https://github.com/Manveen07/n8n-workflow-tests" },
   ],
-  // Three tiles: what GTM teams ask for, and where the closest version runs (the PATTERNS words, cut to one line).
-  patterns: [
-    // Visual round 1: each tile carries its number and links to where it's shown. The Slack flow is a day-job build
-    // (CAN-CLAIM.md, "Day-job n8n builds he may talk about"), so it says so; the link is labelled as his own tracker.
-    { num: "0 lost", head: "Replay before switching", line: "+77 on 2,376 past emails; unsure ones stay refused.", href: "#identity", link: "the story ↓" },
-    // Manveen, 29 Oct: "300 test emails; maybe a better number". His own freelance run instead (no employer data):
-    // money/applications/key-outreach/pipeline/STATUS.md, "76 two-email sequences" (152 emails), "NoGood failed
-    // grounding" and "Powills failed grounding", both fixed, "0 failed checks". Names stay off the page.
-    // 1 Nov: the note "My checker matched a human on 124 of 124 claims" is gone for good: the archived calibration
-    // sheet has 0 of 124 human calls filled (EVALS-2026-10-31.md section 5), so it can't be shown. Never cite it.
-    { num: "152", head: "Receipts for every claim", line: "emails in a 50-agency work sample, every fact sourced. The check blocked 2 till I fixed them.", href: "#testing", link: "how I check ↓" },
-    { num: "Approve first", head: "Fix it in Slack", line: "Day-job AI drafts wait in Slack for Send, Edit, Snooze or Stop.", href: "/writing/149-tests-for-a-few-slack-buttons", link: "my Slack button tests →" },
-  ] as { num: string; head: string; line: string; note?: string; href: string; link: string }[],
+  // 1 Nov: the three "What GTM teams ask for" tiles are cut (proof cards plan). "0 lost" is the identity story below;
+  // the 152-email line moved word for word onto the "Claim check, fresh eyes" gate; "Approve first" went (its Slack
+  // buttons post is linked from the "Automated tests" gate).
   // One picture and one caption per story; the full story stays in FAILURES behind a click.
   stories: {
     claygent: {
@@ -274,10 +263,13 @@ export const VISUAL = {
     },
   },
   readStory: "How it actually went",
-  // Section labels (the rail on wide screens).
+  // Section labels (the rail on wide screens). 1 Nov: proof and pipeline are placeholders in his casual voice, his to
+  // rename. The proof label names how it differs from the failures under it: his own project, scored on his labels,
+  // where the failures are the agency pipeline's; "where my test fell short" echoes the headline.
   kickers: {
-    patterns: "What GTM teams ask for",
+    proof: "My own project: where my test fell short",
     failures: "Three times it broke",
+    pipeline: "The pipeline underneath",
     testing: "Before it touches a real lead",
     clay: "Clay and friends",
     live: "Stuff you can actually click",
@@ -292,14 +284,20 @@ export const VISUAL = {
     { head: "Write the bar down", line: "before the run, not after" },
     { head: "Replay the past", line: "old vs new on real history" },
     { head: "Automated tests", line: "870+ on the pipeline, 149 on my n8n tracker", href: "/writing/149-tests-for-a-few-slack-buttons" },
-    { head: "Claim check, fresh eyes", line: "each email I upload vs its research" },
+    // 1 Nov: the 152 line moved here from the cut tiles, word for word. His own freelance run (no employer data):
+    // money/applications/key-outreach/pipeline/STATUS.md, "76 two-email sequences" (152 emails), two drafts failed
+    // grounding and were fixed, "0 failed checks". Names stay off the page. Never the retired "124 of 124".
+    { head: "Claim check, fresh eyes", line: "each email I upload vs its research. 152 emails in a 50-agency work sample, every fact sourced. The check blocked 2 till I fixed them." },
     { head: "Spend caps", line: "runs stop and ask first" },
   ],
   live: { head: "A real lead", line: "next. Not every step has all six yet." },
   after: { head: "Then watch it", line: "Tender Radar: 9 red mornings in Oct, fixed 29 Oct.", href: "/#proof" },
   gatesSummary: "The long version",
-  // Clay depth as tiles (CLAY above, cut to a line each).
+  // Clay depth as tiles (CLAY above, cut to a line each). 1 Nov: the first two came down from the old hero tiles
+  // (SOURCES.md rows), side by side.
   clay: [
+    ["12,030", "verified emails for 15,514 decision makers, in one batch (78%)"],
+    ["34,044", "companies mapped in Clay, 0 data credits"],
     ["31", "Clay workflows, 3 accounts, daily, no dupes"],
     ["5", "Claygent prompts, one template, built by a script"],
     ["2-way", "Clay and n8n by webhook: people out, lookalikes back"],

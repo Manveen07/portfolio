@@ -29,3 +29,26 @@ export function Underline({ children }: { children: ReactNode }) {
     </span>
   );
 }
+
+/** A red line through a run of text: what broke, on a proof card. Built like Underline (a background drawn on each
+    line box), so every wrapped line of a long run gets struck on a phone. The <s> says it to screen readers too. */
+export function Strike({ children }: { children: ReactNode }) {
+  const ref = useReveal<HTMLSpanElement>();
+  return (
+    <span ref={ref} className="pen">
+      <s className="pen-strike">{children}</s>
+    </span>
+  );
+}
+
+/** A red curly bracket that holds the struck lines together, like the hero's week. It stretches to their height. */
+export function Brace() {
+  const ref = useReveal<HTMLSpanElement>();
+  return (
+    <span ref={ref} className="pen pen-brace" aria-hidden="true">
+      <svg viewBox="0 0 16 64" preserveAspectRatio="none">
+        <path pathLength={1} d="M2 2 C10 2 6 24 13 32 C6 40 10 62 2 62" />
+      </svg>
+    </span>
+  );
+}

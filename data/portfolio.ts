@@ -78,7 +78,7 @@ export type WorkItem = {
   title: string;
   where: string;
   lead: string;
-  /** Optional: leadlens has none, its scorecard and margin note tell the story. */
+  /** Optional: leadlens has none; its story is the caught-my-own-test proof card (1 Nov). */
   detail?: string;
   metrics: [string, string][];
   stack: string[];
@@ -91,7 +91,7 @@ export type WorkItem = {
   scorecard?: { caught: number; missed: number; falseAlarms: number; leftAlone: number; caption: string };
   /** A real screenshot under /public (spec 3.3), with its true pixel size. */
   shot?: { src: string; alt: string; width: number; height: number };
-  /** A red margin note beside the card (wide screens) or under it (phones). The section allows two. */
+  /** A red margin note beside the card (wide screens) or under it (phones). None since 1 Nov; the quote has its own. */
   note?: string;
 };
 
@@ -136,17 +136,10 @@ export const OWN_WORK: WorkItem[] = [
     title: "leadlens",
     where: "My own project",
     lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
-    // No detail paragraph: the scorecard caption and the margin note say it (claims rows 41, 42, 45).
-    // The scorecard replaces the two metric lines. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+    // 1 Nov (proof cards): the scorecard (TP 9, FN 2, FP 0, TN 61) and the margin note ("it once scored 100%, because
+    // my own notes leaked the answers") left this entry. The caught-my-own-test card in the home page's proof band
+    // tells that story and shows the 9 of 11 two screens up; showing both would print the same numbers twice.
     metrics: [],
-    scorecard: {
-      caught: 9,
-      missed: 2,
-      falseAlarms: 0,
-      leftAlone: 61,
-      caption: "Out of 72 postings I checked by hand:",
-    },
-    note: "it once scored 100%, because my own notes leaked the answers. This is the score after I took them out.",
     stack: ["python", "gemini", "pydantic"],
     links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
   },
