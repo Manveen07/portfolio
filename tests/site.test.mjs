@@ -445,8 +445,11 @@ test("from 1100px the page is a side rail (photo, section labels) beside the rea
 // ── 1 Nov, proof cards review fix 1 (his yes needed before merge): the first screen says GTM and points at the AI checks ──
 test("the hero names the role above the h1 and links down to the proof cards", () => {
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  // His own words from the live /how-i-build headline ("GTM engineer."), not the old "automation engineer".
-  assert.ok(hero.indexOf('<p class="kicker hero-kicker">GTM engineer</p>') < hero.indexOf("<h1>"), "no role above the h1");
+  // His own words from the live /how-i-build headline ("GTM engineer."), not the old "automation engineer", then the AI
+  // edge (second review, hiring manager fix 1).
+  const kicker = hero.indexOf('<p class="kicker hero-kicker">GTM engineer · I build AI agents and measure what they get wrong</p>');
+  assert.ok(kicker > 0 && kicker < hero.indexOf("<h1>"), "no role and AI line above the h1");
+  assert.match(read(".next/server/app/index.md.body"), /^\*GTM engineer · I build AI agents and measure what they get wrong\*$/m);
   assert.doesNotMatch(text("index.html"), /automation engineer(?! ·)/i, "the old role is still on the page");
   // The link sits under the hero's paragraph and before the hours line, and points at the band right under the hero.
   const story = hero.indexOf("I spent a year automating");
@@ -475,7 +478,7 @@ test("the photo sits inside the column beside the h1 from 720px, above it below 
   for (const rule of styles.match(/\.photo\{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /position:(?:absolute|fixed)/, "the photo is positioned against layout constants");
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   // Photo, then the role (1 Nov), then h1, in one head block: stacked on a phone, side by side from 720px.
-  assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><p class="kicker hero-kicker">GTM engineer<\/p><h1>/);
+  assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><p class="kicker hero-kicker">GTM engineer · [^<]*<\/p><h1>/);
   const mid = mediaBlocks(styles, "720px").join("\n");
   assert.match(mid, /\.hero-head\{[^}]*display:grid/);
   assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 176px/);

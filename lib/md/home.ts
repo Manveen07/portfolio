@@ -4,7 +4,7 @@
 // So when a component's wording changes, change it here too, or the tests fail.
 
 import { NEWEST_FIRST } from "@/data/posts";
-import { ME, HERO, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, PILOT, OFF_CLOCK, type WorkItem } from "@/data/portfolio";
+import { ME, HERO, HERO_KICKER, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, PILOT, OFF_CLOCK, type WorkItem } from "@/data/portfolio";
 import type { PipelineData } from "@/lib/pipeline";
 import { fmtDay, runLine } from "@/lib/runs";
 import { radarText, RADAR_SOURCES, WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
@@ -82,7 +82,7 @@ export function homeMarkdown(pipe: PipelineData): string {
     ),
 
     PHOTO ? para(image(PHOTO.alt, abs(PHOTO.src))) : "",
-    para(`*${ME.role}*`),
+    para(`*${HERO_KICKER}*`),
     `## ${HERO.headline}`,
     para(`${HERO.answer} ${HERO.marked}`),
     para(pen(HERO.nerdNote)),

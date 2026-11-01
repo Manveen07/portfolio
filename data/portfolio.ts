@@ -23,6 +23,12 @@ export const ME = {
 // ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
 export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
 
+// ── The line above the hero's h1 (1 Nov, second review of the proof cards, hiring manager fix 1; his yes needed before
+// merge, and this commit can be dropped on its own). The first screen named the role but not the AI edge (Manveen, 1 Nov:
+// "we need to standup by our ai edge everybody in this space does this"). Not part of his approved hero below; ME.role
+// stays "GTM engineer" for the JSON-LD and the markdown title. ──
+export const HERO_KICKER = "GTM engineer · I build AI agents and measure what they get wrong";
+
 // ── Hero: Manveen's own words (approved 15 Oct, version A), keep the phrasing ──
 export const HERO = {
   headline: "Every week has a job that's the same clicks, in the same order.",
