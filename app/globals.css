@@ -415,8 +415,10 @@ ul.habits { list-style: disc; }
 .pc-nb { white-space: nowrap; }  /* a circled number stays with its brackets */
 .pc .note, .pc-scribble { text-wrap: balance; }
 .pc-line { text-wrap: pretty; }
-.pc-eyebrow { margin: 0 0 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.45; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
-.pc .h3 { margin-bottom: 16px; }
+/* Where the story comes from, in the pinned notes' date style (.pin-date): mono, dim, sentence case. Uppercase and
+   tracked it ran 3 to 4 lines on a phone, stacked under the section kicker and the "what broke" label (review 2). */
+.pc-eyebrow { margin: 0 0 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.45; letter-spacing: 0; text-transform: none; text-wrap: balance; color: var(--dim); }
+.pc .h3 { margin-bottom: 16px; text-wrap: balance; }  /* no one-word last line ("score", "bar") */
 .pc-before { margin: 0 0 20px; }
 .pc-label { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .pc-line { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 15px; line-height: 1.6; }
@@ -469,9 +471,12 @@ ul.habits { list-style: disc; }
 /* Compact: the check, an arrow, the result. */
 .pc-check { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; }
 .pc-check::after { content: "\2193" / ""; display: block; margin: 4px 0 0 2px; font-size: 16px; line-height: 1; color: var(--dim); }
-.pc-result { margin: 8px 0 0; font-size: 19px; line-height: 1.45; }
+.pc-result { margin: 8px 0 0; font-size: 19px; line-height: 1.45; text-wrap: balance; }
 .pc-result + .note { margin-top: 10px; }
-.pc-result .pc-nb > .pen-circle { margin: 0 -4px; }  /* the loop crosses the brackets, as a pen would, instead of pushing them apart */
+/* The brackets sit inside the loop ("(94%)", ProofCard circled()). The scorecard's tighter loop and a little room on
+   the left keep the pen clear of the word before it. */
+.pc-result .pen-circle { margin-left: 4px; }
+.pc-result .pen-circle svg { left: -10px; width: calc(100% + 20px); }
 /* What a circle means: a legend under the result, no arrow (like the drawing's "circled: a gate."). */
 .pc-legend { margin: 12px 0 12px; }
 .pc-legend::before { content: none; }

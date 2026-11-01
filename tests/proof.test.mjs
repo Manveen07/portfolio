@@ -21,8 +21,9 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
 const app = (rel) => read(`.next/server/app/${rel}`);
 
+// A no-break space reads as a space: the cards keep each "N of M" on one line with them (review 2, 1 Nov).
 const decode = (s) =>
-  s.replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;|&#160;/g, " ").replace(/&amp;/g, "&");
+  s.replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;|&#160;|\u00a0/g, " ").replace(/&amp;/g, "&");
 const plain = (html) =>
   decode(html.replace(/<!--[\s\S]*?-->/g, "").replace(/<svg[\s\S]*?<\/svg>/g, "").replace(/<\/?(?:a|b|strong|i|em|span|code|small|s)\b[^>]*>/g, "").replace(/<[^>]+>/g, " "));
 const squash = (s) => s.replace(/[  ]?[↑↓←→↗]/g, "").replace(/\s+/g, " ").trim();
@@ -162,7 +163,12 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
     assert.equal(squash(plain(card.match(/<p class="pc-check">([\s\S]*?)<\/p>/)?.[1] ?? "")), stepLine(c.steps[c.compact.check]));
     assert.equal(squash(plain(card.match(/<p class="pc-result">([\s\S]*?)<\/p>/)?.[1] ?? "")), stepLine(result));
     assert.equal((card.match(/pen-circle/g) ?? []).length, 1, `${slug}: one circle, on the result`);
-    assert.match(card.match(/<p class="pc-result">[\s\S]*?<\/p>/)[0], new RegExp(`pen-circle(?: tight)?">${result.circle}<svg`), `${slug}: the result's circle`);
+    // Review 2: on the result line the brackets touching the circled words sit inside the loop ("(94%)").
+    const loop = decode(card.match(/<p class="pc-result">[\s\S]*?<\/p>/)[0].match(/pen-circle">(?:<!-- -->)?((?:[^<]|<!-- -->)*)<svg/)?.[1] ?? "").replace(/<!-- -->/g, "");
+    assert.equal(loop.replace(/^\(|\)$/g, ""), result.circle, `${slug}: the result's circle`);
+    if (slug === "held-list") assert.equal(loop, "(94%)", "the brackets are outside the loop");
+    // Review 2: a count never splits across lines ("194 of" / "194"): every "N of M" a card prints uses no-break spaces.
+    assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+/, `${slug}: a count can split across lines`);
     // Review fix 4: what the circle means sits right under the result (and its note), then the footer, then the link.
     const order = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, 'class="small pc-foot"', 'class="links"'].map((s) => decode(card).indexOf(s));
     assert.ok(order.every((i) => i > 0), `${slug}: a part is missing: ${order}`);
@@ -187,8 +193,9 @@ test("/how-i-build: the full held-list card opens the page, five steps, both sam
   assert.deepEqual(steps.map((s) => squash(plain(s.match(/<p class="pc-pill">([\s\S]*?)<\/p>/)[1]))), PROOF["held-list"].steps.map((s) => `${s.name} ${s.sub}`));
   assert.deepEqual([...flow.matchAll(/pen-circle tight">([^<]*)<svg/g)].map((m) => m[1]), ["86%", "94%"]);
   // Notes sit under the step they explain.
-  assert.match(steps[2], /<p class="note">built from those 7 misses, so it gets a new sample<\/p>/);
+  assert.match(steps[2], /<p class="note">built from those 7 misses, so I tested it on a new sample<\/p>/);
   assert.match(steps[3], /<p class="note">a different 50 companies<\/p>/);
+  assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+/, "a count in the full card can split across lines");
   assert.ok(card.includes("pen-brace") && card.includes('class="arr-left"'), "the full card lost its brace or its side note");
   assert.ok(!card.includes('class="links"'), "the full card links to itself");
   assert.ok(card.indexOf("pc-flow") < card.indexOf("circled: "), "the circle's meaning is not under the flow");
@@ -221,6 +228,13 @@ test("a card is the tiles' wash, straight, no border or shadow; red comes only t
   assert.match(styles, /prefers-reduced-motion:reduce\)\{[^@]*\.pen-js \.pen:not\(\.in\) \.pen-strike\{background-size:100% 2px\}/);
   // The arrows in the flow are CSS with empty alt text, so screen readers read the steps, not the arrows.
   assert.match(styles, /\.pc-pill:after\{content:"→"\/""/);
+  // Review 2 (1 Nov): the eyebrow in the pinned notes' date style (sentence case, no tracking, balanced), titles and the
+  // result line balanced, and the result's loop no longer pulled over the brackets.
+  const eyebrow = styles.match(/\.pc-eyebrow\{[^}]*\}/)?.[0] ?? "";
+  for (const d of ["font-size:13px", "letter-spacing:0", "text-transform:none", "text-wrap:balance"]) assert.ok(eyebrow.includes(d), `.pc-eyebrow: no ${d}`);
+  assert.match(styles, /\.pc \.h3\{[^}]*text-wrap:balance/);
+  assert.match(styles, /\.pc-result\{[^}]*text-wrap:balance/);
+  assert.doesNotMatch(styles, /\.pen-circle\{margin:0 -4px\}/);
   // From 1100px the full card spans the rail and the column.
   assert.match(styles, /\.sec>\.pc-full\{grid-column:1\/-1\}/);
 });

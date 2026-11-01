@@ -79,8 +79,10 @@ test("the first screen: the niche line, then the held-list card, and no paragrap
 test("visible words stay at the count measured on 1 Nov, under the review's cap of 750", () => {
   // 509 before the proof cards (cap 533). With the held-list card and one compact card, 704 measured on 1 Nov; the
   // plan's second compact card took it to 823, so it went (data/proof.ts HOW_CARDS). Adding words means cutting some.
+  // Review 2 (1 Nov): the clarity fixes on the cards ("the company's words they quoted", "so I tested it on a new
+  // sample", the leadlens eyebrow) took it to 707.
   const n = visibleWords();
-  assert.ok(n <= 704, `the page shows ${n} words without a click`);
+  assert.ok(n <= 707, `the page shows ${n} words without a click`);
 });
 
 test("short blocks: no visible paragraph over 30 words outside a card, and each card under its cap", () => {
@@ -92,10 +94,11 @@ test("short blocks: no visible paragraph over 30 words outside a card, and each 
   }
   // Caps from the plan were estimates (130 full, 95 compact). Measured 1 Nov: full 128, compact 107 (the card words are
   // the application cards' word for word, plus the review's "circled:" line), so compact is capped at the largest
-  // compact card on the site, 118 (labelled-drawings, on the home page).
+  // compact card on the site, 118 (labelled-drawings, on the home page). Review 2 (1 Nov): held-list's clarity fixes
+  // took the full card to 133.
   for (const [a, cls] of html.matchAll(/<article class="pc (pc-full|pc-compact)"[\s\S]*?<\/article>/g)) {
     const n = squash(plain(a)).split(" ").filter(Boolean).length;
-    assert.ok(n <= (cls === "pc-full" ? 130 : 118), `a ${cls} card shows ${n} words`);
+    assert.ok(n <= (cls === "pc-full" ? 133 : 118), `a ${cls} card shows ${n} words`);
   }
 });
 

@@ -846,12 +846,13 @@ test("leadlens's real score is on its proof card, the score circled, with what w
   assert.ok(!html.includes('class="scorecard"'), "the scorecard is back: the card shows the same numbers");
   const card = html.match(/<article class="pc pc-compact" id="caught-my-own-test">[\s\S]*?<\/article>/)?.[0] ?? "";
   assert.ok(card, "no caught-my-own-test card");
-  const t = plain(card.replace(/<svg[\s\S]*?<\/svg>/g, ""));
+  // The card keeps each "N of M" on one line with no-break spaces (review 2): read them as spaces.
+  const t = plain(card.replace(/<svg[\s\S]*?<\/svg>/g, "")).replace(/\u00a0/g, " ");
   for (const s of ["9 of 11 caught: no false alarms", "72 posts: 11 fake AI jobs, 61 real", "11 of 11 caught: a perfect score", "circled: the score I published"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   assert.equal(count(card, "pen-circle"), 1, "only the published score is circled");
-  assert.match(card, /<span class="pen pen-circle">9 of 11 caught<svg/);
+  assert.match(card, /<span class="pen pen-circle">9\u00a0of\u00a011 caught<svg/);
   assert.doesNotMatch(text("index.html"), /my own notes leaked the answers/);
 });
 

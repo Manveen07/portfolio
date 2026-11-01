@@ -43,19 +43,21 @@ export type ProofCard = {
 export const PROOF = {
   // Agency work. Sources: gtm runs\preciseleads\2026-10-23-linkedin-test\STATUS.md lines 43 to 54; EVALS-2026-10-31.md
   // line 31 ("Labels by the Claude session", "B's 86% held the list"). Never "sent" or "released", never "first sample".
+  // Review 2 (1 Nov): "quote" alone read as a price quote; the quoted words come from the company's LinkedIn "About" or
+  // its site (gate/GATE.md line 18), so "the company's words", not "the website line".
   "held-list": {
     slug: "held-list",
     eyebrow: "Outbound agency work · a LinkedIn campaign list · Claude agents",
     title: "My AI check missed my 90% bar, so I held the list",
     before: {
       label: "what the sample caught",
-      lines: ["3 picks said more about the buyer than their quote did", "4 quotes weren't about who the company serves"],
+      lines: ["3 picks said more about the buyer than the company's words they quoted", "4 quoted lines weren't about who the company serves"],
       note: "7 misses in 50, so the list waited",
     },
     steps: [
       { name: "Claude agents pick", sub: "which companies fit the campaign" },
       { name: "Sample of 50", sub: "43 of 50 agree (86%)", circle: "86%" },
-      { name: "Second pass", sub: "rechecks each pick's evidence", note: "built from those 7 misses, so it gets a new sample" },
+      { name: "Second pass", sub: "rechecks each pick's evidence", note: "built from those 7 misses, so I tested it on a new sample" },
       { name: "New sample of 50", sub: "47 of 50 agree (94%)", circle: "94%", note: "a different 50 companies" },
       { name: "List signed off", sub: "504 people, one per company" },
     ],
@@ -68,7 +70,7 @@ export const PROOF = {
   // note on two more leaks. "two more", never "2 more".
   "caught-my-own-test": {
     slug: "caught-my-own-test",
-    eyebrow: "leadlens · my own project · an AI judge that spots fake AI job posts",
+    eyebrow: "leadlens · my own project · an AI judge that tells real AI job posts from fake ones",
     title: "I caught my own AI test cheating, and published the lower score",
     before: {
       label: "what broke",
@@ -90,6 +92,7 @@ export const PROOF = {
   // 14 to 19 and 91 to 106. Never "never guesses" (4 of the 93 unstated values were filled in), no process names.
   // Compact check is step 1, not the source check (review fix 5, 1 Nov): the source check passed both wrong boxes; his
   // hand labels found the 7.
+  // Review 2 (1 Nov): the header row is one of the 7 (EVAL.md "Every wrong value", #1), not an eighth error.
   "labelled-drawings": {
     slug: "labelled-drawings",
     eyebrow: "drawing-proof · my own project · an AI reads engineering drawings into a quote sheet",
@@ -103,7 +106,7 @@ export const PROOF = {
       { name: "23 public drawings", sub: "CAD PDFs, no scans" },
       { name: "AI reads each one", sub: "a value plus the text it came from" },
       { name: "Source check", sub: "value must be in that text and on the page", note: "where the drawing gives no value, it left 89 of 93 blank" },
-      { name: "7 wrong of 419", sub: "values, on its first run", circle: "7 wrong of 419", note: "parts lists: 194 of 194 fields right, plus 1 header row read as a part" },
+      { name: "7 wrong of 419 values", sub: "on its first run", circle: "7 wrong of 419", note: "parts lists: 194 of 194 fields right; 1 of the 7 was a header row read as a part" },
     ],
     circledLabel: "scored against my own labels",
     footer: "a cited source proves the text is on the drawing, not that it went in the right box",
