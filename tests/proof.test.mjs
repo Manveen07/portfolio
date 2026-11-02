@@ -5,17 +5,18 @@
 // to build proofs and they should be able to eaily undersatnd". Each card is one story: what broke (struck through in
 // red), the check, and the measured result (circled in red), in real text.
 //
-// What it pins: each card's title and its exact set of numbers (each one passed claims_check.py --strict-numbers in
-// new 10x engineer\runs\2026-11-01-job-agent\site-visuals\claims\, outside this repo), the application cards' banned
-// words, the retired eval claims on both pages and their copies, where the cards sit, and that a card is evidence on
-// the paper: no border, no shadow, no tilt, and red only through the pen.
+// What it pins: each card's title and its exact set of numbers (each one passed claims_check.py --strict-numbers in a
+// claims draft outside this repo), the application cards' banned words, the retired eval claims on both pages and their
+// copies, where the cards sit, and that a card is evidence on the paper: no border, no shadow, no tilt, and red only
+// through the pen. 2 Nov: held-list's limit line ("two AIs agreeing") travels with the card in both densities; since
+// the reviews it names the reviewer (the Claude session that wrote the rubric) and what wasn't sampled.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PROOF, HOME_CARDS, HOW_CARDS, HOME_BAND, stepLine } from "../data/proof.ts";
+import { PROOF, HOME_CARDS, HOME_BAND, stepLine } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -41,7 +42,7 @@ const cardHtml = (html, slug) => html.match(new RegExp(`<article class="pc pc-(?
 
 /** Every word a card holds, the way the site can show it. */
 const cardText = (c) =>
-  [c.eyebrow, c.title, c.before.label, ...c.before.lines, c.before.note, ...c.steps.flatMap((s) => [s.name, s.sub, s.note ?? ""]), `circled: ${c.circledLabel}`, c.footer, ...c.links.map((l) => l.label)].join("\n");
+  [c.eyebrow, c.title, c.before.label, ...c.before.lines, c.before.note, ...c.steps.flatMap((s) => [s.name, s.sub, s.note ?? ""]), `circled: ${c.circledLabel}`, c.footer, c.limit ?? "", ...c.links.map((l) => l.label)].join("\n");
 const numbers = (s) => [...new Set(s.match(/\d+(?:[.,]\d+)*%?/g) ?? [])].sort();
 
 // ── 1. The data ─────────────────────────────────────────────────────────
@@ -91,6 +92,11 @@ test("the site has exactly the three checked cards, each with its pinned title, 
       ["the score I published", "72 posts: 11 fake AI jobs, 61 real · the two it missed sit right on the line"],
       ["scored against my own labels", "a cited source proves the text is on the drawing, not that it went in the right box"],
     ],
+  );
+  // 2 Nov: who checked it, at body size, on held-list only (SOURCES.md row 34: the labels were a Claude session's).
+  assert.deepEqual(
+    Object.values(PROOF).map((c) => c.limit),
+    ["The reviewer was the Claude session that wrote the rubric: two AIs agreeing. Companies the agents dropped weren't sampled. Fifty is a small sample.", undefined, undefined],
   );
 });
 
@@ -171,9 +177,12 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
     // Review 2: a count never splits across lines ("194 of" / "194"): every "N of M" a card prints uses no-break spaces.
     assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, `${slug}: a count can split across lines`);
     // Review fix 4: what the circle means sits right under the result (and its note), then the footer, then the link.
-    const order = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, 'class="small pc-foot"', 'class="links"'].map((s) => decode(card).indexOf(s));
+    const parts = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, 'class="small pc-foot"', ...(c.limit ? ['class="pc-limit"'] : []), 'class="links"'];
+    const order = parts.map((s) => decode(card).indexOf(s));
     assert.ok(order.every((i) => i > 0), `${slug}: a part is missing: ${order}`);
-    assert.deepEqual([...order].sort((a, b) => a - b), order, `${slug}: not result, circled, footer, link`);
+    assert.deepEqual([...order].sort((a, b) => a - b), order, `${slug}: not result, circled, footer, ${c.limit ? "limit, " : ""}link`);
+    if (c.limit) assert.equal(squash(plain(card.match(/<p class="pc-limit">([\s\S]*?)<\/p>/)?.[1] ?? "")), c.limit);
+    else assert.ok(!card.includes("pc-limit"), `${slug}: a limit line it doesn't have`);
     for (const l of c.links) {
       assert.ok(card.includes(`href="${l.href}"`), `${slug}: no link to ${l.href}`);
       const p = l.href.split("#")[0];
@@ -183,7 +192,7 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
   }
 });
 
-// ── 5. /how-i-build: held-list in full in the first screen, one compact card under it ──
+// ── 5. /how-i-build: held-list in full in the first screen, the only card on the page (2 Nov) ──
 test("/how-i-build: the full held-list card opens the page, five steps, both samples circled, no link to itself", () => {
   const hero = how().match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   const card = cardHtml(hero, "held-list");
@@ -200,8 +209,11 @@ test("/how-i-build: the full held-list card opens the page, five steps, both sam
   assert.ok(card.includes("pen-brace") && card.includes('class="arr-left"'), "the full card lost its brace or its side note");
   assert.ok(!card.includes('class="links"'), "the full card links to itself");
   assert.ok(card.indexOf("pc-flow") < card.indexOf("circled: "), "the circle's meaning is not under the flow");
-  const proof = how().match(/<section id="proof" class="wrap sec">[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.deepEqual([...proof.matchAll(/<article class="pc pc-compact" id="([^"]+)">/g)].map((m) => m[1]), HOW_CARDS);
+  // 2 Nov: the circled subs read at a glance (has-circle), and the limit line comes after the footer.
+  assert.equal((flow.match(/<span class="pc-sub has-circle">/g) ?? []).length, 2, "the circled subs lost has-circle");
+  assert.ok(card.indexOf('class="pc-limit"') > card.indexOf('class="small pc-foot"'), "the limit line is not under the footer");
+  // His own projects are the page's habit rows now: no compact card on /how-i-build.
+  assert.ok(!how().includes('class="pc pc-compact"'), "a compact card is back on /how-i-build");
   // The Claygent story stays as it was (review fix 2): no card replaced it.
   assert.ok(!how().includes('id="cheap-check-first"'));
 });
@@ -238,6 +250,10 @@ test("a card is the tiles' wash, straight, no border or shadow; red comes only t
   assert.doesNotMatch(styles, /\.pen-circle\{margin:0 -4px\}/);
   // From 1100px the full card spans the rail and the column.
   assert.match(styles, /\.sec>\.pc-full\{grid-column:1\/-1\}/);
+  // 2 Nov: the limit line and the full card's footer at body size in ink; the circled subs at 15px ink.
+  assert.match(styles, /\.pc-limit\{[^}]*font-size:17px/);
+  assert.match(styles, /\.pc-full \.pc-sub\.has-circle\{[^}]*font-size:15px/);
+  assert.match(styles, /\.pc-full \.pc-foot\{[^}]*font-size:16px/);
 });
 
 // ── 7. The markdown copies say what the cards draw ─────────────────────
@@ -252,4 +268,9 @@ test("the markdown copies write the pen out: what is struck, what is circled, an
   }
   const howMd = unmark(app("how-i-build.md.body"));
   for (const s of PROOF["held-list"].steps) assert.ok(howMd.includes(`${s.name} ${s.sub}${s.circle ? `. Circled in red: ${s.circle}` : ""}`), `how-i-build.md: ${s.name}`);
+  // The limit line follows the footer in both copies.
+  for (const copy of [homeMd, howMd]) {
+    const c = PROOF["held-list"];
+    assert.ok(copy.includes(`${c.footer} ${c.limit}`), "the limit line does not follow the footer in a markdown copy");
+  }
 });

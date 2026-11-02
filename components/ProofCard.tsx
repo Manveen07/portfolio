@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Brace, Circle, Strike } from "@/components/Pen";
 import { stepLine, type ProofCard as Card, type ProofStep } from "@/data/proof";
+import { keep } from "@/lib/text";
 
 // A proof card (1 Nov): one story told as what broke (struck through in red), the check, and the measured result
 // (circled in red). All real text, no images, so it reflows on a phone and reads aloud. Words in data/proof.ts; the
@@ -11,11 +12,8 @@ import { stepLine, type ProofCard as Card, type ProofStep } from "@/data/proof";
 // - compact: two lines instead of the flow (the check, then the result), the note under the struck lines at every
 //   width, no brace: the hero's week already uses strike, brace and note, so the cards under it don't repeat it.
 // Red only through the pen (strike, brace, circle, notes). The box is the tiles' wash: no border, no shadow, no tilt.
-
-/** A count never splits across two lines ("194 of" / "194", "90%" / "bar"): the spaces in "N of M" and after a
-    percentage become no-break spaces when the card renders, so data/proof.ts stays word for word with the application
-    cards (review 2, 1 Nov). */
-const keep = (s: string) => s.replace(/(\d+) of (\d+)/g, "$1\u00a0of\u00a0$2").replace(/(\d+%) (?=\w)/g, "$1\u00a0");
+// 2 Nov: `limit` (what the number can't tell you) sits under the footer at body size in both densities, and in the
+// full flow a sub that holds the circle is set at 15px ink (has-circle), so "43 of 50 agree (86%)" reads at a glance.
 
 /** `text` with `circle` inside a red loop, its counts kept whole. The punctuation touching the circled words stays
     with them: brackets inside the loop on the big result line ("(94%)", review 2), anything else (and every bracket
@@ -103,10 +101,11 @@ function Flow({ steps }: { steps: ProofStep[] }) {
     <ol className="pc-flow">
       {steps.map((s) => {
         const [name, sub] = parts(s, true);
+        const subCircle = !!s.circle && !s.name.includes(s.circle);
         return (
           <li key={s.name} className="pc-step">
             <p className="pc-pill">
-              <span className="pc-name">{name}</span> <span className="pc-sub">{sub}</span>
+              <span className="pc-name">{name}</span> <span className={subCircle ? "pc-sub has-circle" : "pc-sub"}>{sub}</span>
             </p>
             {s.note && <p className="note">{keep(s.note)}</p>}
           </li>
@@ -154,6 +153,7 @@ export default function ProofCard({
       {full ? <Flow steps={c.steps} /> : <Pair c={c} />}
       <p className="note pc-legend">circled: {keep(c.circledLabel)}</p>
       <p className="small pc-foot">{keep(c.footer)}</p>
+      {c.limit && <p className="pc-limit">{keep(c.limit)}</p>}
       {links && c.links.length > 0 && (
         <p className="links">
           {c.links.map((l) => (

@@ -76,7 +76,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* Every hover colour, in one place. Only pointers that can hover get it: on a phone a tapped link
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
-  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label, .tile-more:hover { color: var(--red); }
+  .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label { color: var(--red); }
 }
 
 /* ── Header and footer ── */
@@ -328,10 +328,9 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .story > div { margin: 0 0 14px; }
 .story dt { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .story dd { margin: 0; font-size: 17px; line-height: 1.55; }
-.habits { padding-left: 22px; margin: 4px 0 8px; }
-ol.habits { list-style: decimal; }
-ul.habits { list-style: disc; }
-.habits li { margin-bottom: 12px; font-size: 17px; line-height: 1.55; }
+.nerd-list { list-style: disc; padding-left: 22px; margin: 4px 0 18px; }
+.nerd-list li { margin-bottom: 12px; font-size: 17px; line-height: 1.55; }
+.nerd-head { margin: 22px 0 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .steps-full { list-style: decimal; padding-left: 24px; margin: 4px 0 20px; }
 .steps-full li { margin-bottom: 12px; font-size: 16px; line-height: 1.5; }
 .steps-full .check { display: block; color: var(--dim); }
@@ -347,15 +346,6 @@ ul.habits { list-style: disc; }
 .tiles.mini dt { font-size: 30px; }
 .pipe { margin: 0; }
 .cap { margin: 2px 0 10px; font-size: 15px; line-height: 1.45; color: var(--dim); }
-.tilegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; list-style: none; padding: 0; margin: 4px 0 10px; }
-.tilegrid.three { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-.tilegrid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.tilegrid > li, .tilegrid > div { background: var(--wash); padding: 14px; }
-.tilegrid dt { font-size: 28px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
-.tilegrid dd { margin: 6px 0 0; font-size: 14px; line-height: 1.4; color: var(--dim); }
-.tile-link { display: block; height: 100%; text-decoration: none; }
-.tile-head { display: block; margin-bottom: 6px; font-size: 17px; font-weight: 800; line-height: 1.25; }
-.tile-line { display: block; font-size: 14px; line-height: 1.4; color: var(--dim); }
 .storycard { margin: 0 0 34px; }
 .storycard .h3 { margin-bottom: 12px; }
 .chart { margin: 0 0 4px; }
@@ -369,6 +359,7 @@ ul.habits { list-style: disc; }
 .urow.main .uval { font-size: 15px; font-weight: 800; }
 .uval { grid-column: 2; margin-top: 2px; font-size: 13.5px; font-weight: 600; }
 .brow { display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 12px; align-items: center; margin: 0 0 8px; }
+@media (min-width: 640px) { .brow { grid-template-columns: 200px minmax(0, 1fr); } }
 .blabel { font-size: 15px; }
 .btrack { display: flex; align-items: center; gap: 8px; min-height: 24px; border-left: 1px solid var(--rule); }
 .bar { display: block; flex: none; width: calc(var(--w) * 70%); height: 12px; border-radius: 0 4px 4px 0; background: var(--ink); }
@@ -376,32 +367,19 @@ ul.habits { list-style: disc; }
 .bval { font-size: 13.5px; white-space: nowrap; }
 .bsub { display: block; margin: 14px 0 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
 .bafter { display: block; margin-top: 4px; font-size: 14px; color: var(--dim); }
-.tile-num { display: block; margin-bottom: 4px; font-size: 26px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
-.tile-note { display: block; margin-top: 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.35; color: var(--red); }
-.tile-more { display: inline-block; margin-top: 8px; font-size: 13.5px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.gates { list-style: none; padding: 0; margin: 6px 0 10px; }
-.gates li { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; padding: 0 0 14px 36px; }
-.gates li::before { content: "\2713"; position: absolute; left: 0; top: 0; width: 23px; height: 23px; border: 1.5px solid var(--red); color: var(--red); font-size: 14px; line-height: 20px; text-align: center; }
-.gates li:not(:last-child)::after { content: ""; position: absolute; left: 11px; top: 26px; bottom: 2px; border-left: 1.5px solid var(--rule); }
-.gates .gate-live::before { content: "\2192"; background: var(--red); color: var(--paper); }
-.gates .gate-after::before { content: "\21BB"; }
-.gate-head { font-weight: 800; }
-.gate-line { font-size: 15px; color: var(--dim); }
 .linkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px 24px; list-style: none; padding: 0; margin: 4px 0 14px; }
 .linkgrid li { font-size: 15px; line-height: 1.4; }
-.linkgrid a { font-weight: 600; }
+.linkgrid a { display: inline-block; padding: 10px 0; margin: -10px 0; font-weight: 600; }
 .linkgrid span { display: block; color: var(--dim); font-size: 14px; }
+.linkgrid code { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; color: var(--ink); overflow-wrap: anywhere; }
 @media (max-width: 560px) {
   .tiles { gap: 6px; }
   .tiles > div { padding: 10px 8px; }
   .tiles dd { font-size: 12px; }
   .urow { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
   .bar { width: calc(var(--w) * 52%); }
-  .tilegrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tilegrid.three { grid-template-columns: minmax(0, 1fr); }
   .brow { grid-template-columns: 104px minmax(0, 1fr); }
   .blabel { font-size: 13.5px; }
-  .tilegrid dt { font-size: 24px; }
   .uval { grid-column: 1; }
 }
 
@@ -422,6 +400,9 @@ ul.habits { list-style: disc; }
 .pc-before { margin: 0 0 20px; }
 .pc-label { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .pc-line { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 15px; line-height: 1.6; }
+/* The cards' struck lines are evidence to read, so the pen's strike is lighter there (review, 2 Nov: the full red line
+   read as deleted text and made the first line on /how-i-build hard to read). Same colour, more paper through it. */
+.pc-line .pen-strike { background-image: linear-gradient(color-mix(in srgb, var(--red) 55%, transparent), color-mix(in srgb, var(--red) 55%, transparent)); }
 .pc-scribble { margin-top: 6px; }
 .pen-brace { display: none; }
 .pen-brace svg { display: block; width: 14px; height: 100%; overflow: visible; }
@@ -486,3 +467,76 @@ ul.habits { list-style: disc; }
 @media (min-width: 1100px) {
   .sec > .pc-full { grid-column: 1 / -1; }
 }
+
+/* ── /how-i-build v2 (2 Nov): the sub line, the agents' lanes, habit rows, skill rows, the corrections log ──
+   Design: the 2 Nov design doc (outside this repo), section 11. Red means the bar, a miss or a
+   decision, drawn by the pen; gaps, levels, tags, the log and links stay ink. */
+/* The sub line sits in the head block, right under the h1. */
+.how-sub { margin: 14px 0 0; font-size: 19px; line-height: 1.5; color: var(--ink); }
+/* Under 720px the photo sits right of the h1 at 72px, so the h1, the sub line and the card's title fit the first screen. */
+@media (max-width: 719px) {
+  .how .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 72px; column-gap: 14px; align-items: start; }
+  .how .photo { grid-column: 2; grid-row: 1; width: 72px; margin: 4px 0 0; }
+  .how .hero-head h1 { grid-column: 1; grid-row: 1; }
+  .how .how-sub { grid-column: 1 / -1; grid-row: 2; }
+}
+/* 720 to 1099px: home's grid (photo right at 176px), with the sub line under the h1 beside the photo. */
+@media (min-width: 720px) and (max-width: 1099px) {
+  .how .hero-head { grid-template-rows: auto auto 1fr; }
+  .how .photo { grid-row: 1 / span 3; }
+  .how .how-sub { grid-column: 1; grid-row: 3; }
+}
+@media (min-width: 1100px) {
+  /* The tilted photo's corner touched the card under it (review, 2 Nov): a small gap. */
+  .how .photo { width: 140px; margin-bottom: 10px; }
+  /* No kicker above this h1, so it takes the first row (home's h1 sits in row 2, under its kicker). */
+  .how .hero-head h1 { grid-row: auto; margin-bottom: 0; }
+  .how .how-sub { grid-column: 2; margin-bottom: 22px; }
+}
+
+/* A proof card's limit: what the number can't tell you, at body size under the footer. In the full flow the sub that
+   holds a circle is readable at a glance, and the footer names the review at body size. */
+.pc-limit { margin: 10px 0 0; font-size: 17px; line-height: 1.5; color: var(--ink); }
+.pc-full .pc-sub.has-circle { font-size: 15px; color: var(--ink); }
+.pc-full .pc-foot { font-size: 16px; color: var(--ink); }
+
+/* The lanes in the agents drawing. */
+.sketch .lane { stroke: var(--rule); stroke-width: 1.2; stroke-dasharray: 4 5; fill: none; }
+
+/* Habit rows: a wash box like a proof card, straight, no border or shadow; red only through the pen. */
+.habit { margin: 0 0 34px; padding: 20px; background: var(--wash); }
+.habit:last-child { margin-bottom: 0; }
+.habit-eyebrow { margin: 0 0 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.45; color: var(--dim); text-wrap: balance; }
+.habit .h3 { margin-bottom: 12px; text-wrap: balance; }
+.habit-exhibit { margin: 0 0 12px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 17px; line-height: 1.9; }
+.habit-exhibit .pen-circle { line-height: 1.25; }
+.habit-cap { margin: 0 0 10px; font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+.habit-tag { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; color: var(--ink); }
+.habit-tag a { display: inline-block; padding: 10px 0; margin: -10px 0; }
+
+/* Skill rows: the title, the receipt, the gap at the receipt's size. Ink only: no red in this section. */
+.skills { list-style: none; padding: 0; margin: 4px 0 6px; }
+.skill { padding: 16px 0; border-bottom: 1px dashed var(--rule); }
+.skill:first-child { padding-top: 2px; }
+.skill-title { margin: 0 0 4px; font-size: 17px; font-weight: 800; line-height: 1.5; letter-spacing: -0.01em; }
+.skill-proof { margin: 0 0 6px; font-size: 17px; line-height: 1.5; }
+.skill-proof a { padding: 11px 0; }
+.skill-gap { display: flex; align-items: baseline; gap: 10px; }
+.skill-gap-label { flex: none; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.skill-gap p { margin: 0; font-size: 17px; line-height: 1.5; }
+@media (min-width: 640px) {
+  .habit { padding: 22px; }
+  .skill { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 20px; }
+  .skill-title { margin: 0; }
+}
+
+/* The corrections log, behind one click: newest first, a date and one link each. */
+.fixlog { list-style: none; padding: 0; margin: 4px 0 18px; display: grid; gap: 14px; }
+.fixlog p { margin: 0; }
+.fixlog-date { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.4; color: var(--dim); }
+.fixlog-text { font-size: 17px; line-height: 1.5; }
+.fixlog a { display: inline-block; padding: 10px 0; margin: -10px 0; }
+
+/* The email story inside the skills click (cut 1): a story without its own click. */
+.nerd-story { margin: 26px 0 8px; }
+.nerd-story .story { margin-top: 12px; }

@@ -1,30 +1,16 @@
 import Sketch from "@/components/Sketch";
 import { PIPELINE_STEPS } from "@/data/how";
+import { loop, width } from "@/lib/sketch";
 
-// The twelve steps of the outbound pipeline on one wobbly line, for the page /how-i-build. Wide: a snake of three
-// rows of four (left to right, back, then on again). Tall (phones): one column. The gates get the red pen loop,
-// the only red marks, and they draw once like every sketch (.mark in globals.css). Words come from data/how.ts,
-// so the markdown copy prints exactly what is drawn.
+// The twelve steps of the outbound pipeline on one wobbly line, for the page /how-i-build (inside the skills click
+// since 2 Nov). Wide: a snake of three rows of four (left to right, back, then on again). Tall (phones): one column.
+// The gates get the red pen loop, the only red marks, and they draw once like every sketch (.mark in globals.css).
+// Words come from data/how.ts, so the markdown copy prints exactly what is drawn.
 
 const STEPS = PIPELINE_STEPS.steps;
-/** IBM Plex Mono advances 0.6 em per character. */
-const width = (s: string, size: number) => s.length * size * 0.6;
-const r1 = (n: number) => Math.round(n * 10) / 10;
 
-/** A hand-drawn loop around a line of text that starts at x, sits on baseline y and is w wide. */
-function loop(x: number, y: number, w: number): string {
-  const l = x - 13;
-  const r = x + w + 11;
-  const t = y - 16;
-  const b = y + 7;
-  const mid = (l + r) / 2;
-  return [
-    `M${r1(l + 3)} ${r1(y - 1)}`,
-    `C${r1(l - 2)} ${r1(t + 3)} ${r1(mid - w * 0.25)} ${r1(t - 2)} ${r1(mid + w * 0.1)} ${r1(t)}`,
-    `C${r1(r + 3)} ${r1(t + 1)} ${r1(r + 4)} ${r1(b - 3)} ${r1(mid + w * 0.2)} ${r1(b + 1)}`,
-    `C${r1(mid - w * 0.25)} ${r1(b + 3)} ${r1(l - 1)} ${r1(b)} ${r1(l + 1)} ${r1(y - 7)}`,
-  ].join(" ");
-}
+/** The wide drawing's text size: 14.2 in the 720 viewBox renders at 13px in the 660px column beside the rail. */
+const WIDE = 14.2;
 
 const label = (i: number) => `${i + 1} ${STEPS[i].name}`;
 
@@ -32,8 +18,10 @@ const label = (i: number) => `${i + 1} ${STEPS[i].name}`;
 const CUT = PIPELINE_STEPS.note.indexOf(". ") + 1;
 const NOTE_TALL = [PIPELINE_STEPS.note.slice(0, CUT), PIPELINE_STEPS.note.slice(CUT + 1)];
 
-// Wide: dots in four columns; row 2 runs right to left, so its steps sit in reverse column order.
-const COLS = [60, 232, 404, 576];
+// Wide: dots in four columns; row 2 runs right to left, so its steps sit in reverse column order. 2 Nov: the columns
+// moved apart for the bigger text, so "10 wording variants" clears the loop around "11 launch" and "5 research
+// signals" ends inside the drawing.
+const COLS = [48, 205, 395, 560];
 const ROWS = [34, 114, 194];
 const wideAt = (i: number) => {
   const row = Math.floor(i / 4);
@@ -55,8 +43,8 @@ const chevrons = STEPS.slice(0, -1).flatMap((_, i) => {
 export default function PipelineSketch() {
   return (
     <Sketch label={PIPELINE_STEPS.label}>
-      <svg className="sketch-wide" viewBox="0 0 720 250" aria-hidden="true" fontSize="13">
-        <path className="ink" d="M30 34 C220 31 420 37 620 34 C700 33 700 114 620 114 C420 111 220 117 60 114 C0 115 0 194 60 194 C260 191 460 197 690 194" />
+      <svg className="sketch-wide" viewBox="0 0 720 250" aria-hidden="true" fontSize={WIDE}>
+        <path className="ink" d="M30 34 C220 31 420 37 620 34 C700 33 700 114 620 114 C420 111 220 117 48 114 C-6 115 -6 194 48 194 C260 191 460 197 690 194" />
         {chevrons.map((d) => (
           <path key={d} className="ink" d={d} />
         ))}
@@ -68,11 +56,11 @@ export default function PipelineSketch() {
             <g key={s.name}>
               <circle cx={x} cy={y} r="5" className="dot" />
               <text x={tx} y={ty}>{label(i)}</text>
-              {s.gate && <path className="mark" pathLength={1} d={loop(tx, ty, width(label(i), 13))} />}
+              {s.gate && <path className="mark" pathLength={1} d={loop(tx, ty, width(label(i), WIDE), WIDE)} />}
             </g>
           );
         })}
-        <text x="30" y="244" className="red">{PIPELINE_STEPS.note}</text>
+        <text x="30" y="246" className="red">{PIPELINE_STEPS.note}</text>
       </svg>
       <svg className="sketch-tall" viewBox="0 0 300 418" aria-hidden="true" fontSize="13">
         <path className="ink" d="M16 10 C14 120 18 250 16 352" />

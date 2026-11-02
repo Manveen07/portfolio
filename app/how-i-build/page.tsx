@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { HOW, FAILURES, TESTING, PIPELINE_STEPS, CLAY, VISUAL, type Story } from "@/data/how";
-import { ME } from "@/data/portfolio";
-import { PROOF, HOW_CARDS } from "@/data/proof";
+import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, NERD, LIVE, CONTACT, VISUAL, type Story } from "@/data/how";
+import { ME, PHOTO } from "@/data/portfolio";
+import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
+import A from "@/components/A";
 import ProofCard from "@/components/ProofCard";
+import HabitRow from "@/components/HabitRow";
+import SkillRows from "@/components/SkillRows";
+import FixLog from "@/components/FixLog";
+import OpenOnHash from "@/components/OpenOnHash";
+import AgentLanes from "@/components/sketches/AgentLanes";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
 import { ClaygentUnits, IdentityTiles, BounceBars } from "@/components/HowCharts";
 
-// How Manveen builds and tests GTM systems, for hiring managers. Visual-first since the evening of 29 Oct: numbers and
-// pictures carry the page, each caption is a line, and every longer text sits behind a <details> (no JavaScript).
-// Words in data/how.ts (VISUAL for what shows, FAILURES / TESTING / CLAY / PIPELINE_STEPS behind the clicks);
-// markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
-// 1 Nov, proof cards (new 10x engineer runs\2026-11-01-job-agent\site-visuals\DESIGN-PLAN.md and its review): the
-// first screen is the niche line and the held-list card, which proves "hold the rest"; then two compact cards from his
-// own projects, the failures, and the pipeline drawing as what sits underneath. Card words in data/proof.ts.
+// How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
+// about 30 seconds (2 Nov 2026; design: the 2 Nov design doc, outside this repo). Order: the h1
+// and one miss he acted on (the held-list card), his agents and where a person approves, a habit from his own
+// project, two day-job failures, what he can do with a gap per row (the pipeline, the email story and the details
+// behind one click), what to click, and how to reach him. Numbers and pictures carry the page; every longer text sits
+// behind a <details> (no JavaScript needed to open one).
+// Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
 
-const DESCRIPTION = HOW.headline;
+const DESCRIPTION = `${HOW.headline} ${HOW.sub}`;
 
 export const metadata: Metadata = {
   title: `${HOW.title} | Manveen Singh`,
@@ -26,20 +33,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: HOW.title, description: DESCRIPTION },
 };
 
-/** A link: same tab inside the site or the page, a new tab outside it. */
-function A({ href, children, className = "link" }: { href: string; children: React.ReactNode; className?: string }) {
-  return href.startsWith("/") || href.startsWith("#") ? (
-    <a className={className} href={href}>
-      {children}
-    </a>
-  ) : (
-    <a className={className} href={href} target="_blank" rel="noopener">
-      {children}
-    </a>
-  );
-}
-
-function StoryText({ s }: { s: Story }) {
+/** A story's four parts: what broke, how I found it, how I proved the fix, what it changed. */
+function StoryParts({ s }: { s: Story }) {
   const parts: [string, string][] = [
     ["What broke", s.broke],
     ["How I found it", s.found],
@@ -47,28 +42,33 @@ function StoryText({ s }: { s: Story }) {
     ["What it changed", s.changed],
   ];
   return (
+    <dl className="story">
+      {parts.map(([k, v]) => (
+        <div key={k}>
+          <dt>{k}</dt>
+          <dd>
+            <Inline s={v} linkClass="link" />
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function StoryText({ s }: { s: Story }) {
+  return (
     <details className="more">
       <summary>
         <span className="more-line more-label">{VISUAL.readStory}</span>
         <span className="more-hint" aria-hidden="true" />
       </summary>
-      <dl className="story">
-        {parts.map(([k, v]) => (
-          <div key={k}>
-            <dt>{k}</dt>
-            <dd>
-              <Inline s={v} />
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <StoryParts s={s} />
     </details>
   );
 }
 
 const CHARTS: Record<string, () => React.ReactElement> = {
   claygent: ClaygentUnits,
-  identity: IdentityTiles,
   bounces: BounceBars,
 };
 
@@ -77,22 +77,41 @@ export default function HowIBuild() {
   return (
     <>
       <section id="top" className="wrap sec hero how">
-        <p className="kicker">{HOW.title}</p>
-        <h1>{HOW.headline}</h1>
+        <div className="hero-head">
+          {PHOTO && (
+            // 72px beside the h1 on a phone, 176px from 720px, in the rail from 1100px (globals.css, .how .photo).
+            <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} sizes="(max-width: 719px) 72px, 176px" priority />
+          )}
+          <h1>{HOW.headline}</h1>
+          {/* In the head block, so it sits right under the h1 beside the photo (globals.css, .how .how-sub). */}
+          <p className="how-sub">{HOW.sub}</p>
+        </div>
         <ProofCard c={PROOF["held-list"]} density="full" level={2} links={false} />
-        <p className="links">
-          {VISUAL.heroLinks.map((l) => (
-            <A key={l.href} href={l.href} className="">
-              {l.label}
-            </A>
-          ))}
-        </p>
+        {VISUAL.heroLinks.length > 0 && (
+          <p className="links">
+            {VISUAL.heroLinks.map((l) => (
+              <A key={l.href} href={l.href} className="">
+                {l.label}
+              </A>
+            ))}
+          </p>
+        )}
       </section>
 
-      <section id="proof" className="wrap sec">
-        <h2 className="kicker">{K.proof}</h2>
-        {HOW_CARDS.map((slug) => (
-          <ProofCard key={slug} c={PROOF[slug]} density="compact" level={3} />
+      <section id="agents" className="wrap sec">
+        <h2 className="kicker">{K.agents}</h2>
+        <AgentLanes />
+        {AGENTS.lines.map((line) => (
+          <p key={line} className="body">
+            {line}
+          </p>
+        ))}
+      </section>
+
+      <section id="habits" className="wrap sec">
+        <h2 className="kicker">{K.habits}</h2>
+        {HABITS.map((h) => (
+          <HabitRow key={h.id} h={h} />
         ))}
       </section>
 
@@ -112,17 +131,18 @@ export default function HowIBuild() {
         })}
       </section>
 
-      <section id="pipeline" className="wrap sec">
-        <h2 className="kicker">{K.pipeline}</h2>
-        <figure className="pipe">
-          <PipelineSketch />
-          <figcaption className="cap">{VISUAL.pipelineCaption}</figcaption>
-        </figure>
-        <details className="more">
+      <section id="skills" className="wrap sec">
+        <h2 className="kicker">{K.skills}</h2>
+        <SkillRows />
+        <details className="more" id="nerd">
           <summary>
-            <span className="more-line more-label">{VISUAL.stepsSummary}</span>
+            <span className="more-line more-label">{NERD.summary}</span>
             <span className="more-hint" aria-hidden="true" />
           </summary>
+          <figure className="pipe">
+            <PipelineSketch />
+            <figcaption className="cap">{NERD.caption}</figcaption>
+          </figure>
           <ol className="steps-full">
             {PIPELINE_STEPS.steps.map((s) => (
               <li key={s.name}>
@@ -130,63 +150,26 @@ export default function HowIBuild() {
               </li>
             ))}
           </ol>
-        </details>
-      </section>
-
-      <section id="testing" className="wrap sec">
-        <h2 className="kicker">{K.testing}</h2>
-        <ol className="gates">
-          {VISUAL.gates.map((g) => (
-            <li key={g.head}>
-              <span className="gate-head">{"href" in g && g.href ? <A href={g.href}>{g.head}</A> : g.head}</span>{" "}
-              <span className="gate-line">{g.line}</span>
-            </li>
-          ))}
-          <li className="gate-live">
-            <span className="gate-head">{VISUAL.live.head}</span>{" "}
-            <span className="gate-line">{VISUAL.live.line}</span>
-          </li>
-          <li className="gate-after">
-            <span className="gate-head">
-              <A href={VISUAL.after.href}>{VISUAL.after.head}</A>
-            </span>{" "}
-            <span className="gate-line">{VISUAL.after.line}</span>
-          </li>
-        </ol>
-        <details className="more">
-          <summary>
-            <span className="more-line more-label">{VISUAL.gatesSummary}</span>
-            <span className="more-hint" aria-hidden="true" />
-          </summary>
-          <ol className="habits">
-            {TESTING.items.map((t) => (
-              <li key={t.lead}>
-                <b>{t.lead}</b> <Inline s={t.text} />
+          {/* Cut 1 (2 Nov): the email story, open with the click; the skills row links here. */}
+          <article id={EMAILS.id} className="storycard nerd-story">
+            <h3 className="h3">{VISUAL.stories.identity.head}</h3>
+            <IdentityTiles />
+            <p className="cap">{VISUAL.stories.identity.caption}</p>
+            <StoryParts s={EMAILS} />
+          </article>
+          <h3 className="nerd-head">{NERD.testingHead}</h3>
+          <ul className="nerd-list">
+            {NERD.testing.map((t) => (
+              <li key={t}>
+                <Inline s={t} linkClass="link" />
               </li>
             ))}
-          </ol>
-        </details>
-      </section>
-
-      <section id="clay" className="wrap sec">
-        <h2 className="kicker">{K.clay}</h2>
-        <dl className="tilegrid two">
-          {VISUAL.clay.map(([n, line], i) => (
-            <div key={i}>
-              <dt>{n}</dt>
-              <dd>{line}</dd>
-            </div>
-          ))}
-        </dl>
-        <details className="more">
-          <summary>
-            <span className="more-line more-label">{VISUAL.clayDetails}</span>
-            <span className="more-hint" aria-hidden="true" />
-          </summary>
-          <ul className="habits">
-            {CLAY.items.map((t) => (
+          </ul>
+          <h3 className="nerd-head">{NERD.clayHead}</h3>
+          <ul className="nerd-list">
+            {NERD.clay.map((t) => (
               <li key={t}>
-                <Inline s={t} />
+                <Inline s={t} linkClass="link" />
               </li>
             ))}
           </ul>
@@ -196,27 +179,45 @@ export default function HowIBuild() {
       <section id="live" className="wrap sec">
         <h2 className="kicker">{K.live}</h2>
         <ul className="linkgrid">
-          {VISUAL.live_items.map((l) => (
-            <li key={l.href}>
+          {LIVE.items.map((l) => (
+            <li key={l.id} id={l.id}>
               <A href={l.href}>{l.label}</A>
               <span className="sr-only">: </span>
-              <span>{l.text}</span>
+              <span>
+                {l.code && (
+                  <>
+                    <code>{l.code}</code>{" "}
+                  </>
+                )}
+                {l.text}
+              </span>
+              {l.extra && (
+                <>
+                  {" "}
+                  <A href={l.extra.href}>{l.extra.label}</A>
+                </>
+              )}
             </li>
           ))}
         </ul>
-        <p className="small">{VISUAL.privacy}</p>
+        <p className="small">{LIVE.privacy}</p>
+        <FixLog />
       </section>
 
       <section id="contact" className="wrap sec">
         <h2 className="kicker">{K.contact}</h2>
-        <p className="body">{VISUAL.ask}</p>
+        <p className="body">{CONTACT.ask}</p>
         <p className="mail-line">
           <a className="mail" href={`mailto:${ME.email}`}>
             {ME.email}
           </a>
         </p>
-        <p className="small">{ME.hours}</p>
+        <p className="small">{CONTACT.where}</p>
+        <p className="small">{CONTACT.results}</p>
         <p className="cta-row" style={{ marginTop: 28 }}>
+          <A href={ME.linkedin}>LinkedIn ↗</A>
+          <A href={ME.github}>GitHub ↗</A>
+          <A href="/resume.pdf">Résumé (PDF)</A>
           <Link className="link" href="/">
             ← Home
           </Link>
@@ -225,6 +226,7 @@ export default function HowIBuild() {
           </Link>
         </p>
       </section>
+      <OpenOnHash />
     </>
   );
 }

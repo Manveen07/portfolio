@@ -53,8 +53,9 @@ function tokenize(s: string): Token[] {
   return tokens;
 }
 
-/** Inline syntax only (**bold**, *italic*, `code`, [text](url)); also used by the page /how-i-build. */
-export function Inline({ s }: { s: string }) {
+/** Inline syntax only (**bold**, *italic*, `code`, [text](url)); also used by the page /how-i-build, which passes
+    `linkClass="link"` so its links are ink, not the posts' red (on that page red belongs to the pen). */
+export function Inline({ s, linkClass = "prose-link" }: { s: string; linkClass?: string }) {
   const tokens = tokenize(s);
   return (
     <>
@@ -74,11 +75,11 @@ export function Inline({ s }: { s: string }) {
         if (tk.type === "link")
           // A link to another page of this site, or to a part of this page, opens in the same tab.
           return tk.href?.startsWith("/") || tk.href?.startsWith("#") ? (
-            <a key={k} href={tk.href} className="prose-link">
+            <a key={k} href={tk.href} className={linkClass}>
               {tk.value}
             </a>
           ) : (
-            <a key={k} href={tk.href} target="_blank" rel="noopener" className="prose-link">
+            <a key={k} href={tk.href} target="_blank" rel="noopener" className={linkClass}>
               {tk.value}
             </a>
           );

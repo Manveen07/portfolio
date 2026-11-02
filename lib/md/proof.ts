@@ -29,6 +29,7 @@ export function proofMarkdown(
     if (result.note) out.push(para(pen(result.note)));
   }
   out.push(para(pen(`circled: ${c.circledLabel}`)), para(c.footer));
+  if (c.limit) out.push(para(c.limit));
   if (opts.links && c.links.length) out.push(list(c.links.map((l) => link(l.label, opts.href(l.href)))));
   return out.join("\n\n");
 }
