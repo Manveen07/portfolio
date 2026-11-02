@@ -514,20 +514,20 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .habit-tag { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 14px; line-height: 1.5; color: var(--ink); }
 .habit-tag a { display: inline-block; padding: 10px 0; margin: -10px 0; }
 
-/* Skill rows: the title, the receipt, the gap at the receipt's size. Ink only: no red in this section. */
-.skills { list-style: none; padding: 0; margin: 4px 0 6px; }
-.skill { padding: 16px 0; border-bottom: 1px dashed var(--rule); }
+/* Skill rows (v2.1, 2 Nov): the skill in a hiring manager's words, then one plain sentence of what I did; the gaps are
+   one "Not yet" line in the same two columns. Ink only: no red in this section. */
+.skills { list-style: none; padding: 0; margin: 4px 0 0; }
+.skill { padding: 14px 0; border-bottom: 1px dashed var(--rule); }
 .skill:first-child { padding-top: 2px; }
-.skill-title { margin: 0 0 4px; font-size: 17px; font-weight: 800; line-height: 1.5; letter-spacing: -0.01em; }
-.skill-proof { margin: 0 0 6px; font-size: 17px; line-height: 1.5; }
-.skill-proof a { padding: 11px 0; }
-.skill-gap { display: flex; align-items: baseline; gap: 10px; }
-.skill-gap-label { flex: none; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
-.skill-gap p { margin: 0; font-size: 17px; line-height: 1.5; }
+.skill-title { margin: 0 0 2px; font-size: 17px; font-weight: 800; line-height: 1.5; letter-spacing: -0.01em; }
+.skill-line { margin: 0; font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+.skill-line a { padding: 11px 0; }
+.skills-notyet { margin: 0 0 6px; padding: 14px 0; font-size: 17px; line-height: 1.5; }
+.skills-notyet-label { display: block; margin: 0 0 2px; font-weight: 800; letter-spacing: -0.01em; }
 @media (min-width: 640px) {
   .habit { padding: 22px; }
-  .skill { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 20px; }
-  .skill-title { margin: 0; }
+  .skill, .skills-notyet { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 20px; }
+  .skill-title, .skills-notyet-label { margin: 0; }
 }
 
 /* The corrections log, behind one click: newest first, a date and one link each. */
@@ -537,6 +537,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .fixlog-text { font-size: 17px; line-height: 1.5; }
 .fixlog a { display: inline-block; padding: 10px 0; margin: -10px 0; }
 
-/* The email story inside the skills click (cut 1): a story without its own click. */
-.nerd-story { margin: 26px 0 8px; }
-.nerd-story .story { margin-top: 12px; }
+/* The habit card's own click (v2.1): its story under the tag, the dashed rule above it, none below in the wash. */
+.habit .more { margin: 14px 0 -8px; border-top: 1px dashed var(--rule); border-bottom: 0; }
+.habit .more summary { padding: 12px 40px 10px 0; }
+.habit .more-hint { top: 10px; }

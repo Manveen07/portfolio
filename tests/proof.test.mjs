@@ -212,7 +212,7 @@ test("/how-i-build: the full held-list card opens the page, five steps, both sam
   // 2 Nov: the circled subs read at a glance (has-circle), and the limit line comes after the footer.
   assert.equal((flow.match(/<span class="pc-sub has-circle">/g) ?? []).length, 2, "the circled subs lost has-circle");
   assert.ok(card.indexOf('class="pc-limit"') > card.indexOf('class="small pc-foot"'), "the limit line is not under the footer");
-  // His own projects are the page's habit rows now: no compact card on /how-i-build.
+  // The habit row is a day-job event since v2.1 (2 Nov), told in its own card style: no compact card on /how-i-build.
   assert.ok(!how().includes('class="pc pc-compact"'), "a compact card is back on /how-i-build");
   // The Claygent story stays as it was (review fix 2): no card replaced it.
   assert.ok(!how().includes('id="cheap-check-first"'));

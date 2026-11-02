@@ -3,36 +3,32 @@
 // is written out (what is struck, what is circled), so nothing is only a picture. tests/how.test.mjs checks every block
 // and number against the built page.
 
-import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, NERD, LIVE, CONTACT, VISUAL, logSummary, shortDate, type Story } from "@/data/how";
+import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, LIVE, CONTACT, VISUAL, logSummary, shortDate, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, pen } from "@/lib/md/format";
-import { claygentLabel, identityLabel, bounceLabel } from "@/components/HowCharts";
+import { claygentLabel, bounceLabel } from "@/components/HowCharts";
 import { proofMarkdown } from "@/lib/md/proof";
 
 /** Site links to their markdown copies; anchors on this page to their full address. */
 const href = (h: string) => (h.startsWith("#") ? abs(`/how-i-build${h}`) : mdHref(h));
 const md = (s: string) => s.replace(/\]\(([/#][^)]*)\)/g, (_, h: string) => `](${href(h)})`);
 const bare = (s: string) => s.replace(/\s*[↑↓→↗]$/, "");
-/** A sentence ends once: no full stop after one that already ends in punctuation. */
-const stop = (s: string) => (/[.!?]$/.test(s) ? s : `${s}.`);
+const CHART: Record<string, () => string> = { claygent: claygentLabel, bounces: bounceLabel };
 
-const CHART: Record<string, () => string> = { claygent: claygentLabel, identity: identityLabel, bounces: bounceLabel };
+/** A story's four parts, as its click opens them. */
+const parts = (s: Story) => [
+  para(`**What broke:** ${md(s.broke)}`),
+  para(`**How I found it:** ${md(s.found)}`),
+  para(`**How I proved the fix:** ${md(s.tested)}`),
+  para(`**What it changed:** ${md(s.changed)}`),
+];
 
-/** A story's chart, caption and four parts, under a heading of `level`. */
-const story = (s: Story, level: number, click: boolean) => {
+/** A failure's chart, caption and four parts, under a heading of `level`, its click a level below. */
+const story = (s: Story, level: number) => {
   const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
-  return [
-    `${"#".repeat(level)} ${v.head}`,
-    para(`Chart: ${CHART[s.id]()}`),
-    para(v.caption),
-    ...(click ? [`${"#".repeat(level + 1)} ${VISUAL.readStory}`] : []),
-    para(`**What broke:** ${md(s.broke)}`),
-    para(`**How I found it:** ${md(s.found)}`),
-    para(`**How I proved the fix:** ${md(s.tested)}`),
-    para(`**What it changed:** ${md(s.changed)}`),
-  ];
+  return [`${"#".repeat(level)} ${v.head}`, para(`Chart: ${CHART[s.id]()}`), para(v.caption), `${"#".repeat(level + 1)} ${VISUAL.readStory}`, ...parts(s)];
 };
 
 export function howMarkdown(): string {
@@ -56,29 +52,24 @@ export function howMarkdown(): string {
       const marks = `${x.struck ? ` Struck through in red: ${x.struck}.` : ""} Circled in red: ${x.circled}.`;
       return [
         `### ${h.head}`,
-        ...(h.eyebrow ? [para(`*${h.eyebrow}*`)] : []),
         para(`${shown}.${marks}`),
-        para(h.cap),
-        para(`${h.checked} · ${link(h.link.label, href(h.link.href))}`),
+        ...h.lines.map(para),
+        para(h.link ? `${h.checked} · ${link(h.link.label, href(h.link.href))}` : h.checked),
+        ...(h.story ? [`#### ${VISUAL.readStory}`, ...parts(h.story)] : []),
       ];
     }),
 
     `## ${K.failures}`,
-    ...FAILURES.stories.flatMap((s) => story(s, 3, true)),
+    ...FAILURES.stories.flatMap((s) => story(s, 3)),
 
     `## ${K.skills}`,
-    list(
-      SKILLS.map((s) => {
-        const proof = s.proof ? `: ${stop(`${md(s.proof)}${s.to ? ` (${link(s.to.aria, href(s.to.href))})` : ""}`)}` : ".";
-        return `**${s.title}**${proof} Gap: ${s.gap}`;
-      }),
-    ),
+    list(SKILLS.map((s) => `**${s.title}**: ${md(s.line)}`)),
+    para(`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`),
     `### ${NERD.summary}`,
     para(`Drawing: ${PIPELINE_STEPS.label}`),
     para(pen(PIPELINE_STEPS.note)),
     para(NERD.caption),
     PIPELINE_STEPS.steps.map((s, i) => `${i + 1}. **${s.name}${s.gate ? " (gate)" : ""}.** ${s.what} Check: ${s.check}`).join("\n"),
-    ...story(EMAILS, 4, false),
     `#### ${NERD.testingHead}`,
     list(NERD.testing.map(md)),
     `#### ${NERD.clayHead}`,

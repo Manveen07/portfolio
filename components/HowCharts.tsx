@@ -1,10 +1,9 @@
 import { VISUAL } from "@/data/how";
 
-// The three small charts on /how-i-build, one per failure story. Plain HTML and CSS (no chart library), so they
+// The two small charts on /how-i-build, one per failure story. Plain HTML and CSS (no chart library), so they
 // reflow on a phone and their numbers stay crisp text. Built to the dataviz skill's rules:
-// - form: a unit chart where the counts are small (4, 18), stat tiles where the story is two numbers (the identity
-//   replay: the published numbers are +77 and 0, with no base count, so bars would be invented), horizontal bars for
-//   the bounce rates;
+// - form: a unit chart where the counts are small (4, 18), horizontal bars for the bounce rates (v2.1, 2 Nov: the
+//   identity replay's stat tiles went with its story to the habit card, which shows its numbers with the pen);
 // - colour: highlight encoding, ink for the rest and the site's red for the one thing that matters, never colour
 //   alone: every red mark also says what it is in words ("skipped", "0 of 4");
 // - marks: thin bars with 4px round ends from the baseline, a 2px gap between units, values as direct labels, a
@@ -34,24 +33,6 @@ export function ClaygentUnits() {
           <span className="uval">{r.value}</span>
         </div>
       ))}
-    </figure>
-  );
-}
-
-export const identityLabel = () =>
-  `Email identity check, old and new rules replayed side by side: ${C.identity.tiles.map(([n, l]) => `${n} ${l}`).join(", ")}.`;
-
-export function IdentityTiles() {
-  return (
-    <figure className="chart" role="img" aria-label={identityLabel()}>
-      <dl className="tiles mini">
-        {C.identity.tiles.map(([n, label]) => (
-          <div key={label}>
-            <dt>{n}</dt>
-            <dd>{label}</dd>
-          </div>
-        ))}
-      </dl>
     </figure>
   );
 }

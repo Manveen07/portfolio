@@ -24,6 +24,12 @@
 // 30-second reader can't parse, then his voice. To stay near the budget with the longer truth lines: the sub line's
 // tool list gave way to the 82-step line (so the skills row says only the 40), the agents section's "I haven't graded
 // the drafts yet" lives in the skills row only, and the privacy line lost its call offer (Say hi has one).
+//
+// v2.1 (2 Nov, his feedback on the live page; the fixes are the session's calls, not his picks). The habit card: "i
+// think this is not related to my gtm work maybe you can reword this so it aligns with gtm", so the habit is now a
+// day-job one, the email check replayed before switching, and its story moved out of the skills click to sit behind
+// the card's own click (told once). The skills rows: "i was not sure what we are going for in this", so each skill is
+// now one plain sentence of what he did, with its number, and the gaps are one "Not yet" line under the rows.
 
 export const HOW = {
   title: "How I build GTM systems",
@@ -64,44 +70,79 @@ export const AGENTS: { label: string; note: string; lanes: { agents: string; per
   ],
   lines: [
     "Since 16 Oct my Claude Code agents have run daily, drafting follow-ups to leads who replied with interest to our outbound.",
-    // "I haven't graded the drafts yet" is the AI agents skill row's gap, and the sub line says 40 steps have no test.
+    // "a graded test on my agents' drafts" is in the skills section's Not yet line, and the sub line says 40 steps have
+    // no test.
     "A person edits and approves each draft before it sends.",
   ],
 };
 
-// ── Habits, with receipts: two of his own public projects, scored on his own labels ──
-// The eval inventory (31 Oct) line 10 names the leadlens labels as his; SOURCES.md row 26 records his 1 Nov yes that
-// the drawing-proof labels are his. leadlens: "needs a re-run", never clean; "two more", never "2 more"; "posts",
-// never "real job posts". drawing-proof: "labelled before its first run", never "held-out" or "test set"; the 7 are
-// real text in the wrong box, never "invented". champion-move-checker is rules code with AI-written labels, so it sits
-// in the Python skill row, not here.
+// ── One habit, with receipts: one past event from the day job, the old number struck and the new one circled ──
+// v2.1 (2 Nov). Manveen, on the leadlens card that stood here: "i think this is not related to my gtm work maybe you
+// can reword this so it aligns with gtm". The session's call: the habit is replaying past data before switching a
+// rule, and its receipt is the email identity check, told once, here (it was a story inside the skills click). The
+// leadlens story left this page; it stays in the corrections log below and in its post.
+// SOURCES.md row 32 and the identity audit of 13 Oct (line 11): the check had refused 154 provider emails (123
+// distinct) in 21 runs, and 0 passed on replay; after one rule per pattern, 70 of the 123 pass, each with a recorded
+// reason, and 53 stay refused. Old and new side by side on all 2,376 past provider emails: 77 gained, 0 earlier passes
+// lost. "Costs twice": the audit's cost line and the email step's own lesson (a refused correct email is billed, then
+// the next provider bills again for the same person). Never "A/B" (a replay of past emails; the 31 Oct jury), and the
+// heading tells one past event, never "I replay the past" as a standing rule. The limit line: the side-by-side
+// compares the new rules with the old ones and holds no labels, so it can't say whether the 77 are the right people,
+// and the audit records no check of them (the recovered emails it verified were checked for delivery only).
+
+// The four parts behind the card's click. Its id ("identity") keeps old links to #identity working: OpenOnHash opens
+// the click. The rules in plain words, from the day-job identity audit (read for accuracy only; nothing copied).
+export const EMAILS: Story = {
+  // SOURCES.md row 32: old and new replayed on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123
+  // unique refusals pass after the fix (0 of 154 before). The rules in plain words, from the day-job identity
+  // audit (read for accuracy only; nothing copied). Review (2 Nov, truth): a shared brand name also passes a match
+  // (the audit's brand-word rule passed 6 domains no website confirmed), so "website" alone was wrong.
+  id: "identity",
+  broke:
+    "When a provider hands back an email, a check asks: is this really the same person, at the same company? It was rejecting real people: people who go by a short version of their name, put their department in their address, or work somewhere whose parent company owns the mail domain. And every wrong rejection costs twice: you throw away a result you paid for, then pay the next provider to look again.",
+  found:
+    "I pulled every email it had refused in past runs, 154 of them (123 distinct addresses), and ran them back through: zero passed. Read in a row, a lot were obviously the right person, and the same few patterns kept showing up.",
+  tested:
+    "One rule per pattern, each one writing down why it let a match through: short names, a department tag, the spelling on the person's LinkedIn, a shared brand name, website evidence that two domains are one company. Then two checks before switching anything. On the refusals I'd pulled, 70 of the 123 distinct addresses now pass, each with its reason, and 53 stay refused. On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and didn't lose a single old pass.",
+  changed:
+    "It still doesn't guess: if neither a website nor a shared brand name links two domains, the email stays refused.",
+};
+
 export type Habit = {
   id: string;
-  /** Where it comes from, in small mono above the heading (folded into the heading for now: cut 2). */
-  eyebrow?: string;
   head: string;
+  /** Struck in red, an arrow, then circled in red with the words that belong to the circled number. */
   exhibit: { struck?: string; circled: string; rest?: string };
-  cap: string;
+  /** Two or three short lines under the exhibit; the last says what the check can't show. */
+  lines: string[];
   checked: string;
-  link: { href: string; label: string };
+  link?: { href: string; label: string };
+  /** The four parts, behind a "How it actually went" click on the card. */
+  story?: Story;
 };
 
 export const HABITS: Habit[] = [
   {
-    id: "habit-perfect-score",
-    // Review (2 Nov): "my fake AI job judge" read as a fake judge, and the caption never said why 11 of 11 was
-    // suspicious. The heading is the eyebrow's own words; the caption's first line is his, from the post.
-    head: "A perfect score from my AI judge for fake AI job posts made me suspicious",
-    exhibit: { struck: "11 of 11 caught", circled: "9 of 11", rest: ", needs a re-run" },
-    cap: "My own notes in the test data were giving it the answers. With them cut, no false alarms on the same 72 posts. A later audit found two more leaks.",
-    checked: "checked against: my labels",
-    link: { href: "/writing/schema-as-eval-spec", label: "The write-up ↗" },
+    id: "habit-replay",
+    // Reviews (2 Nov): "email check" read as an email verifier, so "email match check" (is this the person, at this
+    // company?). The cost names both payments (find-emails SKILL.md: "its hit is billed, then the next provider bills
+    // again"). Line 2 has an actor and names the 2,376 as a wider set than the 123, so 70 and 77 don't read as a typo.
+    // The limit covers the circled 70 as well as the 77 ("all 2,376" and "those 123" keep the two sets apart): the rules were written from those 123 refusals, after2.csv
+    // and ab_old_new.py hold no labels, and the audit (line 17) says the brand-word rule passed 6 domains no website
+    // confirmed.
+    head: "Our email match check refused the right people, so I re-ran its refusals before changing it",
+    exhibit: { struck: "0 of 123 passed", circled: "70 of 123", rest: " pass" },
+    lines: [
+      "Each wrong refusal costs twice: we paid for that email, then pay the next provider.",
+      "Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost.",
+      "The rules came from those 123, and neither run shows the new passes are the right people.",
+    ],
+    checked: "checked against: the old rules' answers",
+    story: EMAILS,
   },
-  // Cut 6 (2 Nov): the drawing-proof row ("7 wrong of 419 values, 23 drawings", labelled before its first run) is on the
-  // home page as its proof card, and its correction stays in the log below.
 ];
 
-// ── Three failures, each: what broke, how I found it, how I proved the fix, what it changed ──
+// ── Two failures, each: what broke, how I found it, how I proved the fix, what it changed ──
 export type Story = {
   id: string;
   broke: string;
@@ -110,7 +151,7 @@ export type Story = {
   changed: string;
 };
 
-// Cut 1 (2 Nov): the email identity story moved into the skills click (EMAILS below), so two stories show here.
+// Cut 1 (2 Nov): the email identity story left the failures; since v2.1 it is the habit card's story (EMAILS above).
 export const FAILURES: { stories: Story[] } = {
   stories: [
     {
@@ -158,23 +199,6 @@ export const FAILURES: { stories: Story[] } = {
   ],
 };
 
-// ── The email check, told in the skills click (cut 1, 2 Nov): its chart and its four parts, open with the click ──
-export const EMAILS: Story = {
-  // SOURCES.md row 32: old and new replayed on 2,376 past emails, 77 more accepted, 0 earlier passes lost; 70 of 123
-  // unique refusals pass after the fix (0 of 154 before). The rules in plain words, from the day-job identity
-  // audit (read for accuracy only; nothing copied). Review (2 Nov, truth): a shared brand name also passes a match
-  // (the audit's brand-word rule passed 6 domains no website confirmed), so "website" alone was wrong.
-  id: "identity",
-  broke:
-    "When a provider hands back an email, a check asks: is this really the same person, at the same company? It was rejecting real people: people who go by a short version of their name, put their department in their address, or work somewhere whose parent company owns the mail domain. And every wrong rejection costs twice: you throw away a result you paid for, then pay the next provider to look again.",
-  found:
-    "I pulled every email it had refused in past runs, 154 of them (123 distinct addresses), and ran them back through: zero passed. Read in a row, a lot were obviously the right person, and the same few patterns kept showing up.",
-  tested:
-    "One rule per pattern, each one writing down why it let a match through: short names, a department tag, the spelling on the person's LinkedIn, a shared brand name, website evidence that two domains are one company. Then two checks before switching anything. On the refusals I'd pulled, 70 of the 123 distinct addresses now pass, each with its reason, and 53 stay refused. On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and didn't lose a single old pass.",
-  changed:
-    "It still doesn't guess: if neither a website nor a shared brand name links two domains, the email stays refused.",
-};
-
 // ── The pipeline in plain words, behind the skills click. What each step does and the check on what comes out. ──
 // From the day-job repo's step folders (read 29 Oct for accuracy only; no names, numbers or wording copied).
 // `gate`: circled in red on the drawing. 2 Nov: three step names in plain words (fit check, list check, wording
@@ -207,51 +231,59 @@ export const PIPELINE_STEPS: { label: string; note: string; steps: Step[] } = {
   ],
 };
 
-// ── What I can do, and what I can't yet: one row per skill, a receipt and a gap at the same size ──
-// No bars, no percentages, no "expert" (no source backs a level number). Cut 5 (2 Nov): the level pills went; the
-// receipts say where the work ran ("our sends", "one sync", the public repo), and the SQL row claims nothing. "Daily"
-// only where it is true today (the follow-up agents); the lead finder has been paused since 27 Oct. The order is what
-// screeners test first and what pays: the AI work, then Clay, emails, bounce data, CRM, n8n, Python, SQL.
+// ── What I can do: one row per skill, the skill in a hiring manager's words and one plain sentence of what I did ──
+// v2.1 (2 Nov). Manveen, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
+// The session's call: one sentence per skill, with its number, readable on its own (no arrow-only links; a link sits at
+// the end of a full sentence), and the gaps said once, in one "Not yet" line under the rows. No bars, no levels, no
+// "expert". "Daily" only where it is true today (the follow-up agents); the lead finder has been paused since 27 Oct,
+// so no row leans on it. Order: the AI work first, then Clay, emails, deliverability, n8n, CRM, Python.
 
 export type Skill = {
   id: string;
+  /** The skill, the way a hiring manager writes it in a job post. */
   title: string;
-  /** The receipt: a number with its n, or a link to the receipt higher up the page. Inline [text](url) links. */
-  proof?: string;
-  /** An arrow-only link after the receipt, with the words a screen reader says for it. */
-  to?: { href: string; aria: string };
-  gap: string;
+  /** One plain sentence of what he did, with its number. An inline [text](url) link sits at its end. */
+  line: string;
 };
 
 export const SKILLS: Skill[] = [
-  // SOURCES.md row 33.
-  { id: "skill-agents", title: "AI agents", proof: "Daily since 16 Oct, with a person approving each draft", to: { href: "#agents", aria: "how the agents work, above" }, gap: "No graded test on the drafts yet." },
-  // The eval inventory (31 Oct), line 7 and its count line: 82 steps, 11 solid, 31 partial, 40 none. Decision 1 (2 Nov):
-  // published with no fallback; since the reviews it is the sub line under the h1, so this gap says the 40 only.
-  // Review (Hormozi): the receipt names the held list instead of "the receipts above".
-  { id: "skill-evals", title: "Measuring AI steps", proof: "[The list I held, above ↑](#held-list)", gap: "40 of my 82 AI steps have no test yet." },
-  // SOURCES.md rows 11 and 13; the gap from the Claygent loop's history (review, 2 Nov: on the final prompt's first
-  // scoring no segment cleared both sets; 1, 4 and 5 did after relabels, 2 and 3 never) and the eval inventory (n2 and
-  // n3 ran 8 Oct with the gate failed; its exit code was never checked in production). SOURCES.md row 14 still says
-  // "2 of 5" and needs the same correction.
-  { id: "skill-clay", title: "Lists in Clay", proof: "34,044 companies mapped for 0 data credits, then Claygent checked 24,506", to: { href: "#claygent", aria: "the Claygent story, above" }, gap: "No segment cleared my full bar until I relabelled borderline companies; then three did. The other two still ran: the run never checked the gate." },
-  // Cut 1 (2 Nov): the email story's row. SOURCES.md row 32 (the replay); the gap is the audit's open item: real
-  // parent-company emails stay refused when neither homepage states the link (review: say the limit plainly).
-  { id: "skill-emails", title: "Finding emails", proof: "[2,376 past emails replayed before a switch ↓](#identity)", gap: "It still refuses a real person when nothing links the two domains." },
-  // SOURCES.md row 21. Bounces only, never replies; no sender setup shown.
-  { id: "skill-bounces", title: "Bounce data", proof: "[505,461 of our sends by mail server ↑](#bounces)", gap: "I measure bounces. I can't show sender setup yet." },
-  // SOURCES.md's HubSpot section (2 Nov); past tense (review, 2 Nov): nothing has come in since 2 Oct.
-  { id: "skill-crm", title: "CRM", proof: "One sync: reply events went into HubSpot through n8n.", gap: "Salesforce: not yet." },
-  // SOURCES.md row 74: 40 is the 14 Oct count. The gap says the design limit of failure alerts.
-  { id: "skill-n8n", title: "n8n", proof: "Error alerts on 40 live workflows (the 14 Oct count).", gap: "Alerts catch failed runs, and miss wrong answers." },
-  // The public README (snapshot of 31 Oct, lines 9 and 27 to 29): 60 tests, a release gate in CI, three blind sets of
-  // 31 scored once before any fix (23, 25 and 20 of 31). Rules code with AI-written labels on made-up data. Review (2
-  // Nov): "sets that failed it" read as the sets failing; the checker failed its own gate on each.
-  { id: "skill-python", title: "Python and tests", proof: "[champion-move-checker](#live-champion): 60 tests, and a CI gate it failed on three blind sets of 31 first time (74%, 81%, 65%).", gap: "AI agents wrote the labels, on made-up data." },
-  { id: "skill-sql", title: "SQL", gap: "Nothing to show yet." },
+  // SOURCES.md row 33 and the follow-up step (line 13: "daily 09:00 IST since 16 Oct"; the 16 Oct run has drafts).
+  // Never "every morning". Review (2 Nov, truth): the approval is a gate ("approves each draft before it sends"), not a
+  // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
+  { id: "skill-agents", title: "AI agents", line: "My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes." },
+  // SOURCES.md row 34 (the held list, told in full by the card under the h1): agreement with a separate Claude review,
+  // never hand labels; 43 of 50 under the 90% bar, then a second pass and a new sample of 50 at 47. Reviews (2 Nov):
+  // the hero card's terms ("Claude agents pick"), never "fit check", the Claygent step's name on this page; and the
+  // fix is named (EVALS 3a: "until a fix passed 50 fresh rows at 47 of 50"), so it can't read as resampling.
+  { id: "skill-checking", title: "Checking AI output", line: "My agents' company picks agreed with a Claude review on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones." },
+  // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
+  // 17,056.
+  { id: "skill-clay", title: "Clay", line: "I mapped a 34,044-company market in Clay for 0 data credits; Claygent checked 24,506 at about 0.18 credits each." },
+  // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
+  { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },
+  // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
+  // résumé does, "after", never "because" (with gateway leads out of both periods his drop is 1.31% to 0.49%). The
+  // inbox checks: the capabilities index (the DNS auth checker, the daily setup audit with its warm-up checks, the
+  // placement testing suite), his own commits from July to November.
+  { id: "skill-deliverability", title: "Deliverability", line: "After I screened out high-bounce mail servers, bounces on my lists went from 2.7% to 0.7%; I built DNS, inbox placement and warm-up checks." },
+  // SOURCES.md row 74: 40 is the 14 Oct count (the error workflow was linked that day). The public repo's README: 45
+  // tests.
+  { id: "skill-n8n", title: "n8n", line: "On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests." },
+  // SOURCES.md's HubSpot section (2 Nov): "a reply-event sync into HubSpot through n8n", past tense (nothing has come
+  // in since 2 Oct); never "HubSpot admin" or CRM work beyond it.
+  { id: "skill-crm", title: "CRM", line: "I built a reply-event sync into HubSpot through n8n." },
+  // The public README (snapshot of 31 Oct, line 9): 60 tests and a release gate in CI. Rules code with AI-written labels
+  // on made-up data, so it backs no claim about AI steps; its README says so itself.
+  { id: "skill-python", title: "Python and tests", line: "My public Python repo has 60 tests and a release gate in CI: [champion-move-checker](https://github.com/Manveen07/champion-move-checker)." },
 ];
 
+// The gaps, said once, under the rows. Salesforce: his profile ("No Salesforce."); SQL: his profile lists PostgreSQL,
+// and the knowledge map's gaps line says "SQL unproven at work", so "SQL at work"; the drafts: the follow-up writer has
+// no graded test (SOURCES.md row 33).
+export const SKILLS_NOT_YET = { label: "Not yet:", text: "Salesforce, SQL at work, and a graded test on my agents' drafts." };
+
 // ── The click under the skills: the pipeline drawing, how he tests, Clay in depth ──
+// v2.1 (2 Nov): the email story and its one-line twin in How I test left this click; the habit card tells it once.
 // 2 Nov: present-tense "every"/"each" claims scoped to what a source backs (the builder check): tests for mistakes that
 // reached a draft, a list check that blocks a list, each paid provider in his pipeline.
 export const NERD = {
@@ -260,8 +292,6 @@ export const NERD = {
   testingHead: "How I test",
   clayHead: "Clay in depth",
   testing: [
-    // SOURCES.md row 32 (the identity replay). Review (2 Nov): one past event, never "I replay the past" as a habit.
-    "Before I switched the email check, I ran the old and new rules side by side on all 2,376 past emails, and the new one went in once it lost nothing.",
     // SOURCES.md row 79 and the public README (45 tests, a stand-in for the private one).
     "My own n8n task tracker has 149 automated tests: the JavaScript inside each n8n step is tested in Node exactly as n8n runs it, recorded Slack clicks are replayed against the webhook, and deploys run from a script. [The write-up](/writing/149-tests-for-a-few-slack-buttons), and [a public version with 45 tests](https://github.com/Manveen07/n8n-workflow-tests).",
     // SOURCES.md row 25: "full suite 872 passed, 6 skipped", 19 Oct. Never "870+" as today's count.
@@ -420,15 +450,6 @@ export const VISUAL = {
         { label: "30 more, labelled after its answers", n: 18, filled: 18, value: "18 of 18 good ones", kind: "tuned" },
       ],
     },
-    identity: {
-      head: "The email check that refused real people",
-      caption: "Replayed on past emails before switching. It still refuses what it can't explain.",
-      tiles: [
-        ["2,376", "past emails replayed"],
-        ["+77", "more accepted"],
-        ["0", "earlier passes lost"],
-      ] as [string, string][],
-    },
     bounces: {
       head: "Mail servers that bounce you anyway",
       caption: "505,461 of our sends by receiving server. Red ones get skipped before any paid lookup.",
@@ -454,9 +475,10 @@ export const VISUAL = {
   kickers: {
     agents: "Me and my agents",
     habits: "One habit, with receipts",
-    // Cut 1: two stories show here; the third, the email check, is in the skills click.
+    // Cut 1: two stories show here; the third, the email check, is the habit card's (v2.1).
     failures: "Two times it broke",
-    skills: "What I can do, and what I can't yet",
+    // v2.1 (2 Nov): the gaps are one "Not yet" line under the rows, so the kicker names what he can do.
+    skills: "What I can do",
     live: "Check it yourself",
     contact: "Say hi",
   },

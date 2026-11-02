@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, NERD, LIVE, CONTACT, VISUAL, type Story } from "@/data/how";
+import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, NERD, LIVE, CONTACT, VISUAL } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
+import { StoryText } from "@/components/StoryParts";
 import A from "@/components/A";
 import ProofCard from "@/components/ProofCard";
 import HabitRow from "@/components/HabitRow";
@@ -13,13 +14,14 @@ import FixLog from "@/components/FixLog";
 import OpenOnHash from "@/components/OpenOnHash";
 import AgentLanes from "@/components/sketches/AgentLanes";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
-import { ClaygentUnits, IdentityTiles, BounceBars } from "@/components/HowCharts";
+import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
 
 // How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
 // about 30 seconds (2 Nov 2026; design: the 2 Nov design doc, outside this repo). Order: the h1
-// and one miss he acted on (the held-list card), his agents and where a person approves, a habit from his own
-// project, two day-job failures, what he can do with a gap per row (the pipeline, the email story and the details
-// behind one click), what to click, and how to reach him. Numbers and pictures carry the page; every longer text sits
+// and one miss he acted on (the held-list card), his agents and where a person approves, a habit from the day job (the
+// email check, replayed before switching, its story behind the card's click), two day-job failures, what he can do in
+// one sentence per skill and one "Not yet" line (the pipeline and the details behind one click), what to click, and
+// how to reach him. Numbers and pictures carry the page; every longer text sits
 // behind a <details> (no JavaScript needed to open one).
 // Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
 
@@ -32,40 +34,6 @@ export const metadata: Metadata = {
   openGraph: { title: HOW.title, description: DESCRIPTION, url: "/how-i-build", type: "website", siteName: "Manveen Singh" },
   twitter: { card: "summary_large_image", title: HOW.title, description: DESCRIPTION },
 };
-
-/** A story's four parts: what broke, how I found it, how I proved the fix, what it changed. */
-function StoryParts({ s }: { s: Story }) {
-  const parts: [string, string][] = [
-    ["What broke", s.broke],
-    ["How I found it", s.found],
-    ["How I proved the fix", s.tested],
-    ["What it changed", s.changed],
-  ];
-  return (
-    <dl className="story">
-      {parts.map(([k, v]) => (
-        <div key={k}>
-          <dt>{k}</dt>
-          <dd>
-            <Inline s={v} linkClass="link" />
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function StoryText({ s }: { s: Story }) {
-  return (
-    <details className="more">
-      <summary>
-        <span className="more-line more-label">{VISUAL.readStory}</span>
-        <span className="more-hint" aria-hidden="true" />
-      </summary>
-      <StoryParts s={s} />
-    </details>
-  );
-}
 
 const CHARTS: Record<string, () => React.ReactElement> = {
   claygent: ClaygentUnits,
@@ -150,13 +118,6 @@ export default function HowIBuild() {
               </li>
             ))}
           </ol>
-          {/* Cut 1 (2 Nov): the email story, open with the click; the skills row links here. */}
-          <article id={EMAILS.id} className="storycard nerd-story">
-            <h3 className="h3">{VISUAL.stories.identity.head}</h3>
-            <IdentityTiles />
-            <p className="cap">{VISUAL.stories.identity.caption}</p>
-            <StoryParts s={EMAILS} />
-          </article>
           <h3 className="nerd-head">{NERD.testingHead}</h3>
           <ul className="nerd-list">
             {NERD.testing.map((t) => (
