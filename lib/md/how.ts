@@ -3,7 +3,7 @@
 // is written out (what is struck, what is circled), so nothing is only a picture. tests/how.test.mjs checks every block
 // and number against the built page.
 
-import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
@@ -25,6 +25,35 @@ const parts = (s: Story) => [
   para(`**What it changed:** ${md(s.changed)}`),
 ];
 
+/** components/sketches/OnItsOwn.tsx (3 Nov): the click under the agents lines, both columns in the order they play (the
+    page shows them all; the motion only reveals them), the red written out (its one red is the person's head), then the
+    caption. */
+function onItsOwn(): string[] {
+  return [
+    `### ${VISUAL.clicks[SPLIT.id]}`,
+    `#### ${SPLIT.heads.bots}`,
+    list(SPLIT.bots),
+    `#### ${SPLIT.heads.person}`,
+    para(`*The "${SPLIT.heads.person}" head is in red on the page.*`),
+    list(SPLIT.person.map((c) => `**${c.call}**${c.why ? `: ${c.why}` : ""}`)),
+    para(SPLIT.note),
+  ];
+}
+
+/** components/sketches/FreeCheckFirst.tsx (3 Nov): the funnel under Clay in depth, each row's name, line and number, the
+    red cut written out, each caveat beside its number, then the bounce row. */
+function freeCheck(): string[] {
+  const F = FREE_CHECK;
+  const cut = F.rows.find((r) => r.cut);
+  const R = F.result;
+  return [
+    `##### ${F.head}`,
+    para(`Drawn as bars, each to scale of the first row's ${F.rows[0].value}${cut ? `; the ${cut.value} cut is hatched in red` : ""}.`),
+    F.rows.map((r, i) => `${i + 1}. **${r.name}** (${r.sub}): ${r.value}${r.note ? `. ${r.note}` : ""}`).join("\n"),
+    para(`**${R.name}** (${R.sub}): ${R.lines.join("; ")}. ${R.note}`),
+  ];
+}
+
 /** A failure's chart, caption and four parts, under a heading of `level`, its click a level below. */
 const story = (s: Story, level: number) => {
   const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
@@ -44,6 +73,8 @@ export function howMarkdown(): string {
     para(`Drawing: ${AGENTS.label}`),
     para(pen(AGENTS.note)),
     ...AGENTS.lines.map(para),
+    // 3 Nov: the click under the agents lines, as on the page.
+    ...onItsOwn(),
 
     `## ${K.skills}`,
     list(SKILLS.map((s) => `**${s.title}**: ${md(s.line)}`)),
@@ -59,6 +90,8 @@ export function howMarkdown(): string {
     `#### ${NERD.testingHead}`,
     list(NERD.testing.map(md)),
     `#### ${NERD.clayHead}`,
+    // 3 Nov: the free check figure sits under the heading, before the list, as on the page.
+    ...freeCheck(),
     list(NERD.clay.map(md)),
 
     // 3 Nov: the inbox fleet, after the skills and their clicks, as on the page; the drawing as its reading.

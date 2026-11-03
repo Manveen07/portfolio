@@ -1,8 +1,11 @@
-// All copy for the home page, and the words of the two posts drawn by components (DRAWINGS, WRONG).
+// All copy for the home page, and the words of the three posts drawn by components (DRAWINGS, WRONG, NAMESAKE).
 // Components read from here; edit words here.
 // Rules for every string: spec section 5 (no dashes, no sales words, Manveen's
 // own phrasing where spec 5a has it). Every figure needs a source: see
 // docs/superpowers/specs/2026-10-13-claims.md.
+
+// Types only (erased when it runs, so the tests can load this file on its own): NAMESAKE's story is prose blocks.
+import type { Block } from "./posts";
 
 // ── Identity ─────────────────────────────────────────────────────────
 export const ME = {
@@ -58,9 +61,88 @@ export const HERO = {
   headline: "I build AI agents for outbound and measure what they get wrong.",
   how: [
     "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
-    "So now I build that missing piece too.",
+    // 3 Nov evening, his yes: four of four blind readers flagged "So now I build that missing piece too." as
+    // AI-written; the missing piece is the measuring the first block names, so it says what it is.
+    "So now I build the checks too.",
   ],
 } as const;
+
+// ── Five things I do (3 Nov 2026): a short strip in the home hero, after the link down and the hours line, that plays
+// once when it comes into view (components/sketches/FiveHabits.tsx), his pick of the animation mockups that day ("sure
+// ggo with 2"). His aim for it, 2 and 3 Nov: show how he works, visually, so a reader sees the difference without being
+// told ("without stating it like we are better"). One step each, each with an example from a different change, every
+// line already on the site in its own words:
+// 1. data/how.ts NERD.clay: "Claygent prompts live as code: one shared template, five segments, built by a script".
+// 2. data/how.ts SKILLS, skill-checking: "My agents' company picks matched a second Claude session on 43 of 50, under
+//    my 90% bar; I held the list until a fix passed 47 of 50 new ones". The 86% is the held-list card's (data/proof.ts:
+//    "agrees on 43 (86%)", "my bar: 90% agreement"). "until a fix passed", never "a second pass and a new 50", which
+//    reads as resampling until it passed. Review (3 Nov, truth): the line names whose picks and who reviewed (it said
+//    "a review agrees", which read as an independent review), in the row's past tense.
+// 3. data/how.ts HABITS, the email match check, in the card's own fuller words ("On all 2,376 past provider emails ... I
+//    ran old and new side by side"): home has no email match card, so "match rules" and "provider emails" say what was
+//    replayed (review, 3 Nov). Its caveat goes with it, in the caption, in the card's words ("no one has checked yet
+//    whether the 77 are the right people").
+// 4. data/how.ts SKILLS, skill-n8n: "On 14 Oct I put error alerts on 40 live workflows" (the n8n row, so "n8n").
+// 5. JOBS below, the Precise Leads points: "A merge once put emails on the wrong people; now the list check blocks one
+//    address on two people." Its second half is NERD.testing's plainer telling ("blocks a list where one address sits on
+//    two people"), with "email": 3 of 4 readers found "one address on two people" cryptic (3 Nov). 3 Nov evening, his yes: the
+//    JOBS point says "one email address" too.
+// Step 2's caveats travel with it in the caption, all three of the held-list card's limit (that session wrote the
+// rubric, the dropped companies were never sampled, fifty is a small sample): master pins them together. Never "Every
+// change runs the same loop": these are four different changes, and two Claygent segments ran past a failed gate.
+// 3 Nov, the four blind readers: the heading "Five habits, each with a real example", the eyebrow's "as an engineer" and
+// the step name "a mistake becomes a check" (a habit told as a rule, wording the site retired on 2 Nov) read as
+// AI-written, so the heading says it plainly and step 5 is an action like the other four. `keys` are set in ink, darker
+// than the rest of their line; `stamp` is the strip's one red mark, after its line. tests/site.test.mjs holds each line
+// to its source.
+export type HabitStep = {
+  name: string;
+  /** The example, one short line each, in the order they appear. */
+  lines: string[];
+  /** Words in a line set in ink (the numbers a skimmer should catch). */
+  keys?: string[];
+  /** The red stamp, after line `line`. */
+  stamp?: { line: number; word: string };
+};
+
+export const FIVE_HABITS: { id: string; eyebrow: string; head: string; steps: HabitStep[]; notes: string[]; replay: string } = {
+  id: "five-habits",
+  eyebrow: "how I work on outbound",
+  head: "Five things I do, and a time I did each",
+  steps: [
+    {
+      name: "build it in code",
+      lines: ["Claygent prompts live as code: one shared template, five segments, built by a script"],
+      keys: ["built by a script"],
+    },
+    {
+      name: "check a sample against my bar",
+      lines: ["my agents' company picks matched a second Claude session on 43 of 50; my bar is 90%", "86%, under the bar:", "until a fix passed 47 of 50 new ones"],
+      keys: ["43 of 50", "90%", "86%", "47 of 50"],
+      stamp: { line: 1, word: "held" },
+    },
+    {
+      name: "replay old data before switching",
+      lines: ["I ran old and new match rules on all 2,376 past provider emails: 77 more passed and no old pass was lost"],
+      keys: ["2,376 past provider emails", "77 more passed"],
+    },
+    {
+      name: "ship, then watch the runs",
+      lines: ["on 14 Oct I put error alerts on 40 live n8n workflows"],
+      keys: ["40 live n8n workflows"],
+    },
+    {
+      name: "turn a mistake into a check",
+      lines: ["a merge once put emails on the wrong people", "now the list check blocks a list where one email address sits on two people"],
+      keys: ["one email address sits on two people"],
+    },
+  ],
+  notes: [
+    "step 2: the second Claude session also wrote the rubric · neither sample included companies the agents dropped · fifty is a small sample",
+    "step 3: no one has checked yet whether the 77 are the right people",
+  ],
+  replay: "replay",
+};
 
 // ── Manveen's own words (approved 15 Oct, version A), keep the phrasing. The home hero until 2 Nov; since round 2 of the
 // verify loop they open "How working with me goes", above the week sketch, where its ask ("Tell me one task you repeat
@@ -178,7 +260,7 @@ export const JOBS: WorkItem[] = [
     points: [
       "Since 16 Oct my Claude Code agents have drafted follow-ups to interested leads; a person approves each before it sends.",
       "Each draft I upload myself is checked claim by claim against the research.",
-      "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
+      "A merge once put emails on the wrong people; now the list check blocks one email address on two people.",
       // 3 Nov (his ask): was "I also built the Slack bot that buys and warms up the sending inboxes.", untrue as written
       // (the bot's checked inventory: a teammate started it, a person places every order, and Smartlead does the
       // warming). The bot's git history: 365 of its 386 commits are his, the health scores and the order code all his.
@@ -399,6 +481,142 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
       what: "An AI agent reading job adverts for me wrote up a firm as one that matches proof of delivery paperwork, POD for short. The only POD in the advert it quoted was inside the word chiropody.",
       now: "no sentence, no claim. A lead only counts if the exact sentence behind it is saved next to it, and POD has to be a whole word.",
     },
+  ],
+};
+
+// ── Spot the namesake: the post about champion-move-checker (3 Nov 2026) ──
+// His pick of the 3 Nov animation mockups: option 2 on home, "other can be in their respected blogs", so option 3 (the
+// visitor calls three champion moves, then the real gate output plays) is this post. The repo had no write-up on the
+// site, only a link in the skills row and the "things you can check" list. Every case, number and line below is from
+// its public README (github.com/Manveen07/champion-move-checker, read 3 Nov at commit c7ac598fc568, "README: correct
+// the blind-set bound"), in its words or close to them; the data in it is made up, and the page says so.
+// components/Namesake.tsx draws it, lib/md/posts.ts prints the same words, tests/site.test.mjs holds them.
+export type NamesakeCall = "MATCH" | "HOLD" | "NO_MATCH";
+export type NamesakeCase = { crm: string; signal: string; call: NamesakeCall; why: string };
+
+export const NAMESAKE: {
+  title: string;
+  lede: string;
+  id: string;
+  eyebrow: string;
+  head: string;
+  intro: string;
+  tags: { crm: string; signal: string; call: string };
+  picks: { call: NamesakeCall; label: string }[];
+  howToPlay: string;
+  verdict: { same: string; differ: string };
+  cases: NamesakeCase[];
+  gate: { id: string; intro: string; run: string; replay: string; lines: string; stamped: string; rule: string };
+  after: Block[];
+} = {
+  title: "A champion tracker that can say it isn't sure",
+  // README line 3: "When a past champion changes jobs, this finds them at the new company. When it isn't sure it's the
+  // same person, it holds the match for a person instead of guessing."
+  lede: "When a past champion changes jobs, my checker finds them at the new company. When it isn't sure it's them, it holds the match for a person instead of guessing.",
+  id: "spot-the-namesake",
+  // The README's sample run: `python -m champion run data` (15 champions, 22 job-change signals), "made-up data".
+  eyebrow: "made-up data, three cases from my public repo's sample run",
+  head: "Spot the namesake",
+  intro: "A past champion changed jobs. Is it really them? Make your call on each one, then see the checker's.",
+  tags: { crm: "in the CRM:", signal: "signal:", call: "the checker:" },
+  // README "What it decides": MATCH, HOLD, NO_MATCH. The buttons say them in plain words.
+  picks: [
+    { call: "MATCH", label: "match" },
+    { call: "HOLD", label: "hold" },
+    { call: "NO_MATCH", label: "not a match" },
+  ],
+  // Markdown only: the page has the buttons this sentence describes.
+  howToPlay: "On the page you pick match, hold or not a match for each case, and your pick shows the checker's call and whether it is the same as yours.",
+  // 3 Nov, all four blind readers: a pick never said whether it matched the checker's. Both lines are in the server HTML
+  // under every call; CSS shows the one that fits once a pick is made (data-result), so no word exists only in JavaScript.
+  verdict: { same: "you picked the same", differ: "you picked differently" },
+  // README "What it decides", the sample run's table: rows 1, 4 and 7. Review (3 Nov): all four blind readers called the
+  // game unfair, because case 1's answer rested on evidence the signal never showed, so its signal carries the profile
+  // URL the way the README's row 2 does ("Anna Kowalski at Orbitly, same profile URL"). Case 3's reason spells out the
+  // README's "(the real one, now at Proseware, is an alert)": four readers asked where Proseware came from (the sample
+  // run's 22 signals include the real Priya Raman's move).
+  cases: [
+    { crm: "Robert Chen, Northwind Travel", signal: "Bob Chen, now CFO at Fabrikam, same profile URL as the CRM's", call: "MATCH", why: "same profile URL as the CRM record" },
+    { crm: "James Smith, Woodgrove", signal: "two James Smiths, both ex-Woodgrove", call: "HOLD", why: "2 signals look like James Smith: a person picks" },
+    { crm: "Priya Raman, Contoso", signal: "Priya Raman, a designer at Litware, never at Contoso", call: "NO_MATCH", why: "a namesake; the real Priya Raman is in another signal, now at Proseware, and that one is an alert" },
+  ],
+  gate: {
+    id: "the-gate",
+    // README "How it's tested": "29 dev cases (cases/dev.jsonl), written and labelled while building ... The careful
+    // matcher passes them by construction, so they prove little on their own." Review (3 Nov, truth): the 29/29 = 100%
+    // showed without that caveat, so it sits right above the output.
+    intro: "Then the real gate output from the README, on the 29 cases written and labelled while building. Mine passes them by construction, so they prove little on their own.",
+    run: "run the gate",
+    replay: "replay",
+    // README lines 10 to 18, the code block under the badge, exactly (its spacing kept).
+    lines: [
+      "$ python -m champion gate cases/dev.jsonl --matcher naive      # the naive version",
+      "agreement with labels  8/29 = 28%",
+      "  wrong alerts          12       must be 0",
+      "  lost moves             9       must be 0",
+      "BLOCKED",
+      "",
+      "$ python -m champion gate cases/dev.jsonl                      # this one",
+      "agreement with labels  29/29 = 100%",
+      "PASS",
+    ].join("\n"),
+    // The one red on the page: the naive version's verdict, stamped.
+    stamped: "BLOCKED",
+    // README "How it's tested", the release gate, word for word.
+    rule: "A matcher ships only with 0 wrong alerts, 0 lost moves, needless holds on at most 20% of signals, and no alert on a name alone.",
+  },
+  // The story under the game, as prose blocks (components/Prose.tsx draws them; lib/md/posts.ts prints them).
+  after: [
+    { t: "h2", s: "Why I built it" },
+    // README "Why this exists", near word for word; the session line is README line 7 ("built in one session (about 90
+    // minutes, 29 Oct 2026) with Claude Code"). "29 Oct" with no year: the post is dated 3 November 2026.
+    { t: "p", s: "A GTM engineer hiring post asked for a champion tracker that holds uncertain matches. I can't share my day-job code, so I built a small public one on made-up data." },
+    { t: "p", s: "I built it the way I build the real ones: labelled cases first, then a gate that has to block the naive version, then fixes until it passes." },
+    // Review (3 Nov): "It took one session" read as the testing alone; the README's 90 minutes is the whole build.
+    { t: "p", s: "Then I tested it on cases the code had never seen. The whole build took one session with Claude Code, about 90 minutes, on 29 Oct." },
+    { t: "h2", s: "What the naive version gets wrong" },
+    // README "The failure it's built around", split into short paragraphs.
+    { t: "p", s: "The naive version says: same name, different company, so they moved. It's in the repo on purpose. On 29 labelled signals it agreed with 8." },
+    { t: "p", s: "It would have told account owners that 12 people had moved when they were namesakes or hadn't moved, like a designer in Chennai who shares a champion's name." },
+    { t: "p", s: "It read \"Litware Inc.\" and \"Litware\" as two companies. And it silently dropped 9 real moves: Bob for Robert, José written Jose, a new surname after marriage." },
+    // 3 Nov: all four blind readers flagged "A name alone is never proof" as AI-written; the release gate's own words
+    // ("no alert on a name alone") say the same plainly.
+    { t: "p", s: "The fix weighs evidence, strongest first, and never alerts on a name alone: every alert rests on the same profile URL or the old company in their history." },
+    { t: "h2", s: "Three blind test sets" },
+    // README's table at the top and "What the blind tests caught": first runs 23/31, 25/31, 20/31, all BLOCKED; after
+    // fixing what each found, 28/31, 27/31, 25/31. holdout-1's two lost moves (Yevgenia and Evgeniya); holdout-2's wrong
+    // alert (the new job started nine months before the champion last replied from the old company) and its lost move
+    // (Becky for Rebecca); holdout-3's 10 needless holds (32%, over the 20% budget), the LLP and K.K. suffixes and its
+    // lost move (Shcherbinina and Scherbinina). "fitted, not proof" and "only the first-run numbers count as blind".
+    { t: "p", s: "A separate AI agent wrote each set of 31 signals from the decision rules only, never the code. All three were BLOCKED on their first run." },
+    {
+      t: "ul",
+      items: [
+        "**holdout-1:** 23/31 = 74%. Two lost moves, one of them \"Yevgenia\" and \"Evgeniya\" Kharitonova, read as two people. Now 28/31.",
+        "**holdout-2:** 25/31 = 81%. A lost move, \"Becky\" for \"Rebecca\", and a wrong alert: the new job started before the champion's last reply from the old company. Now 27/31.",
+        "**holdout-3:** 20/31 = 65%. \"LLP\" and \"K.K.\" company suffixes, Shcherbinina and Scherbinina (a lost move), and 10 needless holds: 32%, over my 20% budget. Now 25/31.",
+      ],
+    },
+    // 3 Nov: all four blind readers flagged "fitted, not proof" as AI-written; README line 29's own words ("The after-fix
+    // scores are fitted to the sets") keep the caveat whole.
+    { t: "p", s: "Those later scores come after I fixed what each set caught, so they are fitted to that set. Only the first runs count as blind." },
+    { t: "h2", s: "Why it holds so much" },
+    // README "What the misses say", word for word but the first sentence's order. Review (3 Nov, truth): "That's on
+    // purpose" said the misses were deliberate (holdout-3 was BLOCKED for them); the README says the design leans that way.
+    { t: "p", s: "Across the 93 blind signals on first runs: 1 wrong alert, 4 lost moves, and the rest of the misses were extra holds. The design leans towards holding on purpose." },
+    { t: "quote", s: "A wrong alert costs a champion's trust; a hold costs a reviewer a click." },
+    { t: "p", s: "holdout-3 shows the price: a third of its signals held for no reason." },
+    { t: "h2", s: "What it can't claim" },
+    // README "Limits" (made-up data) and "How it's tested" (who labelled the blind sets; too few to claim a rate, the
+    // line corrected 31 Oct 2026, the README commit above).
+    { t: "p", s: "Made-up data. Real job-change data is messier: missing fields, stale profiles, many more namesakes." },
+    { t: "p", s: "The blind labels come from AI agents, not people, and the agents had similar briefs, so they can share blind spots." },
+    { t: "p", s: "1 wrong alert in 93 blind signals is too few to claim a rate. Real labelled data would give one." },
+    { t: "h2", s: "Run it yourself" },
+    // README line 7 ("Python 3.11+, nothing to install") and "Run it"; "How I'd run it in Clay" is a README section.
+    { t: "p", s: "It's on GitHub: [champion-move-checker](https://github.com/Manveen07/champion-move-checker). Python 3.11+, nothing to install. The README has the rules, the blind sets and how I'd run it in Clay." },
+    { t: "code", lang: "shell", s: "python -m champion gate cases/dev.jsonl --matcher naive" },
+    { t: "p", s: "It prints BLOCKED. Drop `--matcher naive` and it prints PASS." },
   ],
 };
 

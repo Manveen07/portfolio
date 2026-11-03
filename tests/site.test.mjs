@@ -7,8 +7,9 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE } from "../data/portfolio.ts";
-import { HOW, CONTACT, VISUAL, LIVE } from "../data/how.ts";
+import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE, FIVE_HABITS, JOBS, NAMESAKE } from "../data/portfolio.ts";
+import { HOW, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS } from "../data/how.ts";
+import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -199,7 +200,7 @@ test("hero leads with the AI edge and his 15 Oct story, his week (with its red n
   // his ask (was "So now I build the thing, and the test for the thing.").
   assert.deepEqual(HERO.how, [
     "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
-    "So now I build that missing piece too.",
+    "So now I build the checks too.",
   ]);
   assert.ok(t.includes(HERO.how.join(" ")), "the hero's two blocks are not on the page, in order");
   assert.doesNotMatch(t, /Of my 82 steps where/, "the round 4 line is back");
@@ -360,7 +361,7 @@ test("the Precise Leads entry: meta, title, a lead, short points, three metrics,
     "Each draft I upload myself is checked claim by claim against the research.",
     // Round 6 (2 Nov, 2 of 3 jurors): the past event itself (3 of 4 round 5 readers flagged "Each new kind of mistake
     // becomes a check before upload, like ..."); the event is /how-i-build's How I test line (data/how.ts NERD.testing).
-    "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
+    "A merge once put emails on the wrong people; now the list check blocks one email address on two people.",
     // 3 Nov (his ask): the old inbox-bot point was untrue as written; the bot's git history backs the new one ("are
     // mine": 22 of the 365 are his pull-request merges, so never "I wrote 365").
     "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and orders a person approves.",
@@ -462,7 +463,7 @@ test("the hero is the h1, two short paragraphs, the link down and the hours; /wo
   assert.ok(hero.indexOf("</h1>") < story && story < link && link < hours, "the hero is not h1, sentence, link, hours");
   // Round 6 (2 Nov): his story's last sentence is its own paragraph, after the first and before the link (the 82-step
   // line held this place in rounds 4 and 5; it is on /how-i-build only now).
-  const so = hero.indexOf("So now I build that missing piece too.");
+  const so = hero.indexOf("So now I build the checks too.");
   assert.ok(story < so && so < link, "his 'So now' line is not between the story and the link");
   assert.equal(count(hero, '<p class="body">'), 2, "the hero does not have two paragraphs");
   assert.ok(!hero.includes('class="sketch') && !hero.includes('class="lede"'), "the week or its lede is still in the hero");
@@ -540,6 +541,161 @@ test("the photo sits inside the column beside the h1 from 720px, above it below 
   assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 176px/);
   // The minifier folds grid-column 2 / grid-row 1 into grid-area:1/2.
   assert.match(mid, /\.photo\{[^}]*grid-(?:column:2|area:1\/2)/);
+});
+
+// ── 3 Nov: five things I do (his pick of the animation mockups, option 2: "sure ggo with 2"), a strip at the end of the
+// hero that plays once in view (components/sketches/FiveHabits.tsx). Fix round, 3 Nov: after the link down and the hours
+// line (so the first screen keeps the link), about 3.5 seconds (four of four readers: 15 was too slow), the caveats last. ──
+/** The strip, cut from the built hero, and where it starts. */
+const fiveHabits = () => {
+  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const at = hero.indexOf(`<figure id="${FIVE_HABITS.id}"`);
+  return { hero, at, fig: at < 0 ? "" : hero.slice(at, hero.indexOf("</figure>", at) + "</figure>".length) };
+};
+
+test("five things I do: at the end of the hero, every step and its example in the server HTML, in order", () => {
+  const { hero, at, fig } = fiveHabits();
+  const H = FIVE_HABITS;
+  assert.ok(at > 0, "no five habits strip in the hero");
+  // Code review (3 Nov): between his lines and the link, the strip pushed the link down and the hours line below the
+  // first screen of a 1440x900 laptop, against HOME_BAND's approved rule (the first screen ends on the link).
+  const so = hero.indexOf("So now I build the checks too.");
+  const link = hero.indexOf('class="links hero-links"');
+  const hours = hero.indexOf("I can work US or UK hours");
+  assert.ok(so > 0 && so < link && link < hours && hours < at, `the strip is not after his lines, the link down and the hours: ${[so, link, hours, at]}`);
+  // 3 Nov, four of four blind readers: "Five habits, each with a real example" read as AI-written; "as an engineer" too.
+  assert.equal(H.eyebrow, "how I work on outbound");
+  assert.equal(H.head, "Five things I do, and a time I did each");
+  assert.match(
+    fig,
+    new RegExp(`^<figure id="${H.id}" class="loop" aria-labelledby="${H.id}-head"><div class="loop-top"><div><p class="loop-eyebrow">${H.eyebrow}</p><h2 id="${H.id}-head" class="loop-head">${H.head}</h2></div><button type="button" class="replay">${H.replay}</button></div><ol class="loop-steps" role="list">`),
+  );
+  // Step 5 is an action like the other four: "a mistake becomes a check" was a habit told as a rule (retired 2 Nov).
+  assert.deepEqual(H.steps.map((s) => s.name), ["build it in code", "check a sample against my bar", "replay old data before switching", "ship, then watch the runs", "turn a mistake into a check"]);
+  const steps = [...fig.matchAll(/<li class="loop-step"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
+  assert.equal(steps.length, 5, "not five steps");
+  steps.forEach((html, i) => {
+    const s = H.steps[i];
+    // Every word is in the HTML from the server, so no-JS readers and AI agents get it; the motion only reveals it.
+    const blocks = [...html.matchAll(/<p class="(?:loop-name|loop-rc)"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]).trim());
+    assert.deepEqual(blocks, [s.name, ...s.lines.map((l, k) => (s.stamp?.line === k ? `${l} ${s.stamp.word}` : l))], `step ${i + 1}`);
+    // The dot's number is a CSS counter, not a word; the <ol> numbers the steps for screen readers.
+    assert.match(html, /^<span class="loop-node" aria-hidden="true"><\/span>/, `step ${i + 1}: the dot`);
+    for (const k of s.keys ?? []) assert.ok(s.lines.some((l) => l.includes(k)), `step ${i + 1}: "${k}" is in none of its lines`);
+  });
+  // The HELD stamp: the strip's one red mark, at step 2, right after "86%, under the bar:".
+  assert.equal(count(fig, 'class="loop-stamp"'), 1);
+  assert.match(steps[1], /<b>86%<\/b>, under the bar:(?:<!-- -->)? <span class="loop-stamp" style="--at:[\d.]+s">held<\/span>/);
+  // The caption keeps step 2's caveats (the held-list card's) and step 3's (the email match card's); its separators stay
+  // with the word before them (no-break spaces), so a phone never starts a line with "·".
+  const cap = fig.match(/<figcaption class="loop-cap">([\s\S]*?)<\/figcaption>/)?.[1] ?? "";
+  assert.deepEqual([...cap.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]).trim()), H.notes);
+  assert.ok(cap.includes("rubric\u00a0· neither") && !/ ·/.test(cap), "a caption separator can start a line");
+  // Short blocks: none over 30 words.
+  for (const b of [H.eyebrow, H.head, ...H.steps.flatMap((s) => [s.name, ...s.lines]), ...H.notes]) assert.ok(b.split(" ").length <= 30, `over 30 words: ${b}`);
+  // It plays in reading order and lasts about 3.5 seconds: every delay, in page order, is at or after the one before,
+  // so the caption's caveats come after every step they point at (all four readers saw them before their steps).
+  const delays = [...fig.matchAll(/--(?:dot|at):([\d.]+)s/g)].map((m) => +m[1]);
+  assert.ok(delays.length > 10 && delays.every((d, i) => i === 0 || d >= delays[i - 1]), `delays out of order: ${delays}`);
+  assert.ok(Math.max(...delays) >= 2.5 && Math.max(...delays) <= 4, `the last part starts at ${Math.max(...delays)} s`);
+  const capDelays = [...cap.matchAll(/--at:([\d.]+)s/g)].map((m) => +m[1]);
+  assert.equal(capDelays.length, H.notes.length, "a caveat has no delay");
+  // The stamp is the beat that waits: it lands within a second and a half, before step 3 starts.
+  const stampAt = +(steps[1].match(/class="loop-stamp" style="--at:([\d.]+)s"/)?.[1] ?? NaN);
+  assert.ok(stampAt <= 1.5, `HELD lands at ${stampAt} s`);
+});
+
+test("five habits: every example is already on the site, in its words, with its caveat beside it", () => {
+  const [code, sample, replay, ship, mistake] = FIVE_HABITS.steps;
+  const skill = (id) => SKILLS.find((s) => s.id === id)?.line ?? "";
+  // 1. Clay in depth (/how-i-build).
+  assert.ok(NERD.clay.some((l) => l.startsWith(`${code.lines[0]},`)), "step 1 is not the Clay line's words");
+  // 2. The Checking AI output row and the held-list card: the picks, 43 of 50 (86%) against a 90% bar, held until a fix
+  // passed 47 of 50 new ones. Never "a second pass and a new 50" (it reads as resampling until it passed).
+  assert.match(skill("skill-checking"), /a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones\.$/);
+  assert.ok(skill("skill-checking").includes(sample.lines[2]));
+  const card = PROOF["held-list"];
+  assert.equal(card.steps[0].name, "Claude agents pick");
+  assert.equal(card.steps[1].sub, "a second Claude session agrees on 43 (86%)");
+  assert.equal(card.circledLabel, "my bar: 90% agreement");
+  assert.match(card.limit, /fifty is a small sample\.$/);
+  // Review (3 Nov, truth): "a review agrees on 43 of 50 picks" read as an independent review; the line now names whose
+  // picks and who reviewed, in the row's own words and tense.
+  assert.deepEqual(sample.lines, ["my agents' company picks matched a second Claude session on 43 of 50; my bar is 90%", "86%, under the bar:", "until a fix passed 47 of 50 new ones"]);
+  assert.ok(skill("skill-checking").startsWith(`M${sample.lines[0].split(";")[0].slice(1)}, under my 90% bar;`), "step 2 is not the row's words");
+  // All three of the card's caveats travel with it, the way master pins them (that session wrote the rubric, the dropped
+  // companies were never sampled, fifty is a small sample).
+  assert.equal(FIVE_HABITS.notes[0], "step 2: the second Claude session also wrote the rubric · neither sample included companies the agents dropped · fifty is a small sample");
+  assert.equal(card.limit, "That session also wrote the rubric. Neither sample included companies the agents dropped, and fifty is a small sample.");
+  // 3. The email match story, in its fuller words (home has no card to say what was replayed), and its caveat in the
+  // caption, in the habit card's words.
+  const email = HABITS.find((h) => h.lines.some((l) => l.includes("2,376")))?.lines ?? [];
+  assert.equal(replay.lines[0], "I ran old and new match rules on all 2,376 past provider emails: 77 more passed and no old pass was lost");
+  assert.ok(email.some((l) => l.includes("I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost")), "the habit card lost its line");
+  assert.ok(EMAILS.tested.includes("On all 2,376 past provider emails, a wider set, I ran old and new side by side: the new one accepted 77 more and didn't lose a single old pass."), "the match story lost its line");
+  assert.ok(email.some((l) => l.includes(FIVE_HABITS.notes[1].replace(/^step 3: /, ""))), "step 3's caveat is not the card's");
+  // 4. The n8n row (the row is n8n's, so the strip says "n8n workflows").
+  assert.ok(skill("skill-n8n").startsWith(`${ship.lines[0].replace(/^on/, "On").replace(" n8n workflows", " workflows")};`), "step 4 is not the n8n row's words");
+  // 5. The Precise Leads points (home's Work section), the merge that put emails on the wrong people; its second half in
+  // the testing line's plainer words, with "email" (3 of 4 readers found "one address on two people" cryptic). 3 Nov evening,
+  // his yes: the Work point says "one email address" too.
+  assert.ok(JOBS[0].points?.includes(`A${mistake.lines[0].slice(1)}; now the list check blocks one email address on two people.`), "step 5 is not the Work point's merge");
+  assert.ok(NERD.testing.some((l) => l.includes("and now the list check blocks a list where one address sits on two people.")), "the testing line lost its words");
+  assert.equal(mistake.lines[1], "now the list check blocks a list where one email address sits on two people");
+  // Retired wordings: the mockup's untrue caption (four different changes, and two Claygent segments ran past a failed
+  // gate), the resampling read, a count told as a quality claim.
+  assert.doesNotMatch(JSON.stringify(FIVE_HABITS), /every change|same loop|second pass and a new 50|qualified|\b0 lost\b|becomes a check|a review agrees/i);
+});
+
+test("five habits: plays once in view and holds its last frame; no JavaScript or reduced motion get the last frame, still", () => {
+  const styles = css();
+  // Each (prefers-reduced-motion: no-preference) block, whole.
+  const blocks = [];
+  for (const m of styles.matchAll(/@media \(prefers-reduced-motion:no-preference\)[^{]*\{/g)) {
+    let depth = 1;
+    let i = m.index + m[0].length;
+    for (; i < styles.length && depth > 0; i++) depth += styles[i] === "{" ? 1 : styles[i] === "}" ? -1 : 0;
+    blocks.push(styles.slice(m.index, i));
+  }
+  const motion = blocks.filter((b) => b.includes(".loop")).join("\n");
+  // The waiting state needs JavaScript (pen-js) and waits for the observer (.in); the play starts on .in, held at the end.
+  assert.match(motion, /\.pen-js \.loop:not\(\.in\) \.loop-rc[,{]/);
+  // The examples and the caveats rise in like the /how-i-build figures' lines (one shared keyframe, rise-in).
+  for (const [part, name, delay] of [["loop-rc", "rise-in", "at"], ["loop-cap p", "rise-in", "at"], ["loop-stamp", "loop-stamp", "at"], ["loop-node:after", "loop-dot", "dot"], ["loop-step:after", "loop-draw", "draw"]]) {
+    assert.match(motion, new RegExp(`\\.loop\\.in \\.${part}(?:,[^{}]*)?\\{animation:${name} [^}]*var\\(--${delay}\\) ?both\\}`), `${part}: not played on .in, held at the end`);
+  }
+  assert.match(motion, /\.pen-js \.loop:not\(\.in\) \.loop-cap p[,{]/, "the caveats don't wait for their steps");
+  // Seen in Edge, 3 Nov: a different animation-name from 720px restarted the finished ink lines whenever the width
+  // crossed 720px (a tablet turned), so they vanished and drew again. Now one keyframe; only its fold (--fold) changes.
+  assert.doesNotMatch(motion, /animation-name/, "an animation changes name across a breakpoint");
+  assert.match(motion, /\.loop-step:after\{--fold:scaleY\(0\)\}[\s\S]*\.loop-step:after\{--fold:scaleX\(0\)\}/);
+  // Outside those blocks nothing of the strip waits unseen or moves: no-JS readers and reduced motion see the last frame.
+  let rest = styles;
+  for (const b of blocks) rest = rest.replace(b, "");
+  for (const [, sel, body] of rest.matchAll(/([^{}]*\.loop[^{}]*)\{([^}]*)\}/g)) {
+    assert.doesNotMatch(body, /opacity:0|scale[XY]?\(0\)|animation/, `${sel.trim()} hides or moves the strip outside no-preference`);
+  }
+  // Only opacity and transform move.
+  const frames = [...styles.matchAll(/@keyframes (loop-[a-z]+)\{((?:[^{}]*\{[^}]*\})+)\}/g)];
+  assert.deepEqual(frames.map((m) => m[1]).sort(), ["loop-dot", "loop-draw", "loop-stamp"]);
+  for (const [, name, body] of frames) {
+    for (const [, decls] of body.matchAll(/\{([^}]*)\}/g)) for (const d of decls.split(";").filter(Boolean)) assert.match(d, /^(?:opacity|transform):/, `${name}: ${d}`);
+  }
+  // Phones: one column, the five columns only from 720px.
+  assert.ok(mediaBlocks(styles, "720px").some((b) => /\.loop-steps\{[^}]*grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/.test(b)), "no five columns from 720px");
+  assert.doesNotMatch(outsideMedia(styles), /\.loop-steps\{[^}]*grid-template-columns/, "the five columns apply on phones");
+  // Replay: the shared .replay of the /how-i-build figures (code review, 3 Nov: it was a copy rule for rule), shown once
+  // the strip has played, a visible focus ring, gone under reduced motion (nothing to replay).
+  assert.doesNotMatch(styles, /loop-replay|@keyframes loop-in\b/, "the strip's copies of .replay or rise-in are back");
+  assert.match(styles, /\.loop\.in \.replay(?:,[^{}]*)?\{visibility:visible\}/);
+  assert.match(styles, /(?<![\w-])\.replay:focus-visible\{outline:2px solid var\(--red\)/);
+  assert.match(styles, /@media \(prefers-reduced-motion:reduce\)\{[^@]*(?<![\w-])\.replay\{display:none\}/);
+  // No timers or listeners to leak (the delays are CSS; the observer is useReveal's, disconnected on unmount), and no
+  // words that only JavaScript writes.
+  const src = read("components/sketches/FiveHabits.tsx");
+  assert.match(src, /useReveal<HTMLElement>\(\)/);
+  assert.match(src, /import \{ secs, replay \} from "@\/lib\/motion";/, "the strip keeps its own copy of the motion helpers");
+  assert.doesNotMatch(src, /setTimeout|setInterval|requestAnimationFrame|addEventListener|textContent|innerHTML|innerText/);
 });
 
 test("work entries sit on the paper: no wash box, a short pencil tick between them, plain lead line", () => {
@@ -695,6 +851,9 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
     m[1].replace(/<[^>]+>/g, "").replace(/&#x27;|&#39;/g, "'").trim(),
   );
   assert.deepEqual(h2, [
+    // 3 Nov: the strip at the end of the hero (his pick of the animation mockups, option 2) is a sub-part of the hero, so
+    // its heading is an h2 under the h1, before the first section's kicker. Not a kicker: it stays in the column.
+    "Five things I do, and a time I did each",
     "How I check my AI",
     "Work",
     "AI checks on my own projects",
@@ -1263,13 +1422,16 @@ test("the home page lists the three newest posts after the work: the titles only
   assert.equal(count(w, "<li>"), 3, "not three posts, or a post has more than its title");
   assert.doesNotMatch(w, /<p class="body">/, "a line is back under a title");
   // 25 Oct: the n8n testing post is the newest, so the eval post now sits behind "All writing".
-  assert.deepEqual(items.map((m) => m[1]), ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong"], "not the three newest, newest first");
-  assert.equal(items[0][2], "How I test an n8n workflow before it goes live");
+  // 3 Nov: the champion-move-checker post (option 3 of his animation mockups) is the newest, so the notes post moves
+  // behind "All writing" the same way; its list title stays on the writing index.
+  assert.deepEqual(items.map((m) => m[1]), ["a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework"], "not the three newest, newest first");
+  assert.equal(items[0][2], "A champion tracker that can say it isn&#x27;t sure");
+  assert.equal(items[1][2], "How I test an n8n workflow before it goes live");
   assert.doesNotMatch(plain(w), /because of one week of green ticks|still crashed every morning/, "a flagged line is back");
-  assert.match(items[1][2], /^Marking the AI(?:'|&#x27;)s homework$/);
-  // Round 4 (2 Nov): two round 3 readers flagged "Things AI got confidently wrong" as AI-sounding; the list says how many
+  assert.match(items[2][2], /^Marking the AI(?:'|&#x27;)s homework$/);
+  // Round 4 (2 Nov): two round 3 readers flagged "Things AI got confidently wrong" as AI-sounding; the lists say how many
   // (the post pins exactly four, tested below), and the post keeps its own title.
-  assert.equal(items[2][2], "Four AI mistakes I caught");
+  assert.match(markup("writing.html"), /<h2 class="h3">Four AI mistakes I caught<\/h2>/);
   assert.match(markup("writing/things-ai-got-confidently-wrong.html"), /<h1>Things AI got confidently wrong<\/h1>/);
   // "Not filled with balls of text": titles only, no dates, no read times.
   assert.doesNotMatch(w, /min read|<time/, "the list carries dates or read times");
@@ -1292,6 +1454,7 @@ test("the writing index lists every post newest first, with the date each one sh
   const html = markup("writing.html");
   const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(items, [
+    ["a-champion-tracker-that-can-say-it-isnt-sure", "3 November 2026 · 3 min read"],
     ["149-tests-for-a-few-slack-buttons", "25 October 2026 · 3 min read"],
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
     ["things-ai-got-confidently-wrong", "Last entry 19 Sep 2026 · 2 min read"],
@@ -1313,7 +1476,7 @@ test("the writing pages link back home, and a post links the rest of the writing
     assert.match(post, /<a class="link" href="\/writing">← all writing<\/a><a class="link" href="\/">Home<\/a><a class="link" href="\/#contact">Write to me<\/a>/);
     const more = post.slice(post.indexOf("More writing"));
     const listed = [...more.matchAll(/<a href="\/writing\/([a-z0-9-]+)">/g)].map((m) => m[1]);
-    assert.deepEqual(listed, ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
+    assert.deepEqual(listed, ["a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
   }
 });
 
@@ -1369,4 +1532,204 @@ test("one IndexNow key file, saying its own name, for scripts/indexnow.mjs", () 
   assert.equal(keys.length, 1, `IndexNow key files: ${keys.join(", ")}`);
   assert.equal(read(`public/${keys[0]}`).trim(), keys[0].replace(".txt", ""));
   assert.match(JSON.parse(read("package.json")).scripts.indexnow, /scripts\/indexnow\.mjs/);
+});
+
+// ── 3 Nov: the champion-move-checker post, "spot the namesake" (his pick of the animation mockups: option 2 on home,
+// "other can be in their respected blogs"; this is option 3). Its words are NAMESAKE in data/portfolio.ts, each from
+// the repo's public README at commit c7ac598 (read 3 Nov). ──
+const NS_SLUG = "a-champion-tracker-that-can-say-it-isnt-sure";
+
+test("spot the namesake: the game first, every call and gate line in the server HTML, the README's own cases and output", () => {
+  const N = NAMESAKE;
+  const body = postBody(NS_SLUG);
+  assert.ok(body.startsWith(`<div class="post-body"><figure id="${N.id}" class="ns" aria-labelledby="${N.id}-head"><p class="ns-eyebrow">${N.eyebrow.replace("'", "&#x27;")}</p><h2 id="${N.id}-head" class="ns-head">${N.head}</h2>`), "the game is not the first thing in the post");
+  // The data is made up, and the page says so before anything else.
+  assert.match(N.eyebrow, /^made-up data,/);
+  // Three rows of the README's sample-run table (README "What it decides"). Fix round, 3 Nov (all four blind readers):
+  // case 1's signal shows the profile URL its call rests on, the way the README's row 2 writes one ("Anna Kowalski at
+  // Orbitly, same profile URL"), and case 3's reason says where Proseware comes from (the README: "(the real one, now at
+  // Proseware, is an alert)").
+  assert.deepEqual(
+    N.cases.map((c) => [c.crm, c.signal, c.call, c.why]),
+    [
+      ["Robert Chen, Northwind Travel", "Bob Chen, now CFO at Fabrikam, same profile URL as the CRM's", "MATCH", "same profile URL as the CRM record"],
+      ["James Smith, Woodgrove", "two James Smiths, both ex-Woodgrove", "HOLD", "2 signals look like James Smith: a person picks"],
+      ["Priya Raman, Contoso", "Priya Raman, a designer at Litware, never at Contoso", "NO_MATCH", "a namesake; the real Priya Raman is in another signal, now at Proseware, and that one is an alert"],
+    ],
+  );
+  // The 29/29 = 100% sits under its caveat (review, 3 Nov: the careful matcher passes the dev cases by construction).
+  assert.match(N.gate.intro, /on the 29 cases written and labelled while building\. Mine passes them by construction, so they prove little on their own\.$/);
+  // Each case: the record, the signal, three buttons, and the checker's call with its reason already in the HTML (CSS
+  // hides it until a pick, only when JavaScript runs), so no-JS readers, crawlers and the markdown copy have it.
+  const cases = [...body.matchAll(/<li class="ns-case"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
+  assert.equal(cases.length, 3, "not three cases");
+  cases.forEach((html, i) => {
+    const c = N.cases[i];
+    const ps = [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]).trim());
+    assert.deepEqual(ps, [`in the CRM: ${c.crm}`, `signal: ${c.signal}`, `the checker: ${c.call}, ${c.why}`], `case ${i + 1}`);
+    const buttons = [...html.matchAll(/<button type="button" class="ns-pick" aria-pressed="false">([^<]*)<\/button>/g)].map((m) => m[1]);
+    assert.deepEqual(buttons, ["match", "hold", "not a match"], `case ${i + 1}: the picks`);
+    assert.match(html, new RegExp(`<div class="ns-picks" role="group" aria-labelledby="${N.id}-${i + 1}">`), `case ${i + 1}: the picks are not named by the record`);
+    assert.match(html, /<div class="ns-callbox" aria-live="polite"><p class="ns-call">/, `case ${i + 1}: the call is not read out when it appears`);
+    // A pick says whether it is the checker's call (all four readers missed that): both lines in the server HTML, in the
+    // live region, outside any paragraph (they are not text a no-JS reader needs).
+    assert.ok(html.includes(`<div class="ns-verdict"><span class="ns-same">${N.verdict.same}</span><span class="ns-differ">${N.verdict.differ}</span></div></div>`), `case ${i + 1}: no verdict under the call`);
+  });
+  assert.deepEqual(N.verdict, { same: "you picked the same", differ: "you picked differently" });
+  // The gate: README lines 10 to 18, every line in the HTML, the spacing kept; the first command shows while it waits.
+  const gate = body.match(/<div id="the-gate" class="ns-gate">[\s\S]*?<p class="ns-gate-cap">[\s\S]*?<\/p>/)?.[0] ?? "";
+  assert.match(gate, /<button type="button" class="replay ns-run"><span class="ns-labels"><span class="ns-run-label">run the gate<\/span><span class="ns-replay-label">replay<\/span><\/span><\/button>/);
+  const term = gate.match(/<div class="ns-term">([\s\S]*?)<\/div>/)?.[1] ?? "";
+  const lines = [...term.matchAll(/<p class="ns-tl[^"]*"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]).trim());
+  assert.deepEqual(lines, [
+    "$ python -m champion gate cases/dev.jsonl --matcher naive # the naive version",
+    "agreement with labels 8/29 = 28%",
+    "wrong alerts 12 must be 0",
+    "lost moves 9 must be 0",
+    "BLOCKED",
+    "$ python -m champion gate cases/dev.jsonl # this one",
+    "agreement with labels 29/29 = 100%",
+    "PASS",
+  ]);
+  assert.deepEqual(N.gate.lines.split("\n").filter(Boolean).map((l) => l.replace(/\s+/g, " ").trim()), lines, "the data is not the lines drawn");
+  for (const raw of ["agreement with labels  8/29 = 28%", "  wrong alerts          12       must be 0", "  lost moves             9       must be 0"]) {
+    assert.ok(N.gate.lines.split("\n").includes(raw) && term.includes(raw), `the README's spacing is lost: ${raw.trim()}`);
+  }
+  assert.match(term, /^<p class="ns-tl"><span class="ns-w">\$<\/span> <span class="ns-w">python<\/span>/, "the first command does not wait on screen");
+  // A command's words stay whole (a phone wraps it at a space, never after "--").
+  assert.match(term, /<span class="ns-w">--matcher<\/span> <span class="ns-w">naive<\/span>/);
+  assert.match(css(), /\.ns-w\{white-space:nowrap\}/);
+  // BLOCKED is the one red, stamped; it plays in reading order, about 4.5 seconds, and holds.
+  assert.equal(count(body, 'class="ns-blocked"'), 1);
+  assert.match(term, /<p class="ns-tl"><span class="ns-blocked" style="--at:[\d.]+s">BLOCKED<\/span><\/p>/);
+  const delays = [...term.matchAll(/--at:([\d.]+)s/g)].map((m) => +m[1]);
+  assert.equal(delays.length, 7, "not every printed line has its delay");
+  assert.ok(delays.every((d, i) => i === 0 || d > delays[i - 1]), `delays out of order: ${delays}`);
+  assert.ok(Math.max(...delays) >= 3.5 && Math.max(...delays) <= 5, `the last line prints at ${Math.max(...delays)} s`);
+  assert.ok(plain(gate).includes(N.gate.rule), "the gate's rule is not under it");
+  assert.equal(N.gate.rule, "A matcher ships only with 0 wrong alerts, 0 lost moves, needless holds on at most 20% of signals, and no alert on a name alone.");
+});
+
+test("spot the namesake: the story's facts and caveats sit together, in short lines, and the markdown copy has the game", () => {
+  const N = NAMESAKE;
+  const t = plain(postBody(NS_SLUG));
+  const heads = [...postBody(NS_SLUG).matchAll(/<h2\b[^>]*>([^<]*)<\/h2>/g)].map((m) => plain(m[1]).trim());
+  assert.deepEqual(heads, ["Spot the namesake", "Why I built it", "What the naive version gets wrong", "Three blind test sets", "Why it holds so much", "What it can't claim", "Run it yourself"]);
+  // The README's numbers, each with its caveat in the same or the next block.
+  for (const s of ["23/31 = 74%", "25/31 = 81%", "20/31 = 65%", "Now 28/31", "Now 27/31", "Now 25/31", "On 29 labelled signals it agreed with 8", "12 people", "9 real moves", "about 90 minutes, on 29 Oct"]) {
+    assert.ok(t.includes(s), `missing "${s}"`);
+  }
+  const at = N.after.findIndex((b) => b.t === "ul");
+  // 3 Nov: "fitted, not proof" read as AI-written to all four readers; README line 29's own words keep the caveat.
+  assert.match(N.after[at + 1].s, /so they are fitted to that set\. Only the first runs count as blind\.$/, "the after-fix scores lost their caveat");
+  // Review (3 Nov, truth): the misses weren't on purpose (holdout-3 was BLOCKED for them); the design leans that way.
+  assert.ok(N.after.some((b) => b.s?.endsWith("were extra holds. The design leans towards holding on purpose.")));
+  assert.ok(N.after.some((b) => b.s?.includes("The whole build took one session with Claude Code, about 90 minutes")), "the 90 minutes read as the testing alone");
+  assert.doesNotMatch(JSON.stringify(N), /That's on purpose|A name alone is never proof|fitted, not proof/);
+  assert.ok(N.after.some((b) => b.s === "1 wrong alert in 93 blind signals is too few to claim a rate. Real labelled data would give one."));
+  assert.ok(N.after.some((b) => b.s?.startsWith("The blind labels come from AI agents, not people")));
+  assert.ok(N.after.some((b) => b.t === "quote" && b.s === "A wrong alert costs a champion's trust; a hold costs a reviewer a click."));
+  assert.ok(N.after.some((b) => b.s === "holdout-3 shows the price: a third of its signals held for no reason."), "the design call lost its price");
+  // Ends with the repo and the one command.
+  const last = N.after.slice(-3);
+  assert.match(last[0].s, /\[champion-move-checker\]\(https:\/\/github\.com\/Manveen07\/champion-move-checker\)/);
+  assert.equal(last[1].s, "python -m champion gate cases/dev.jsonl --matcher naive");
+  // Short: no visible line over 30 words; 2 to 3 minutes; his plain voice.
+  const visible = [N.lede, N.eyebrow, N.head, N.intro, N.gate.intro, N.gate.rule, ...N.cases.flatMap((c) => [c.signal, c.why]), ...N.after.flatMap((b) => (b.t === "ul" ? b.items : [b.s]))];
+  for (const s of visible) assert.ok(s.split(/\s+/).length <= 30, `over 30 words: ${s}`);
+  assert.match(markup(`writing/${NS_SLUG}.html`), /· 3 min read · python, testing, gtm<\/p>/);
+  assert.doesNotMatch(t, /qualified|leverage|seamless|robust|delve|unlock|elevate|game-changer|honest|Here's the thing|[—–]/i);
+  // The markdown copy: every case with the checker's call, the README's block whole, and the red stamp said in words.
+  const md = read(`.next/server/app/md/writing/${NS_SLUG}.body`).replace(/\r\n/g, "\n");
+  for (const c of N.cases) assert.ok(md.includes(`${c.crm} · signal: ${c.signal} · the checker: **${c.call}**, ${c.why}`), `markdown: ${c.crm}`);
+  assert.ok(md.includes("```text\n" + N.gate.lines + "\n```"), "markdown: the gate output is not the README's block");
+  assert.ok(md.includes(`*On the page ${N.gate.stamped} is stamped in red.*`));
+});
+
+test("spot the namesake: plays only when allowed, holds its last frame, no timers; no JavaScript or reduced motion get every word", () => {
+  const styles = css();
+  const blocks = [];
+  for (const m of styles.matchAll(/@media \(prefers-reduced-motion:no-preference\)[^{]*\{/g)) {
+    let depth = 1;
+    let i = m.index + m[0].length;
+    for (; i < styles.length && depth > 0; i++) depth += styles[i] === "{" ? 1 : styles[i] === "}" ? -1 : 0;
+    blocks.push(styles.slice(m.index, i));
+  }
+  const motion = blocks.filter((b) => b.includes(".ns-")).join("\n");
+  // The later lines wait unseen only with JavaScript and until the gate runs (.in); then they print, held at the end.
+  assert.match(motion, /\.pen-js \.ns-gate:not\(\.in\) \.ns-tl\[data-out\],\.pen-js \.ns-gate:not\(\.in\) \.ns-blocked\{opacity:0\}/);
+  assert.match(motion, /\.ns-gate\.in \.ns-tl\[data-out\]\{animation:ns-print [^}]*var\(--at\) ?both\}/);
+  assert.match(motion, /\.ns-gate\.in \.ns-blocked\{animation:ns-stamp [^}]*var\(--at\) ?both\}/);
+  // A picked call rises in with a transition (picks can come fast), only when motion is allowed.
+  assert.match(motion, /\.ns-call\{transition:opacity \.2s var\(--ease-out\),transform \.2s var\(--ease-out\)\}/);
+  // Outside those blocks no line of the terminal waits unseen or moves.
+  let rest = styles;
+  for (const b of blocks) rest = rest.replace(b, "");
+  for (const [, sel, body] of rest.matchAll(/([^{}]*\.ns-(?:gate|term|tl|blocked|cmt|pass)\b[^{}]*)\{([^}]*)\}/g)) {
+    assert.doesNotMatch(body, /opacity:0|animation|transition/, `${sel.trim()} hides or moves the gate outside no-preference`);
+  }
+  // Before a pick the call waits in its place (visibility keeps the space), only with JavaScript and motion allowed:
+  // reduced motion gets the last frame, every call shown (code review, 3 Nov: it hid them and dropped the run button).
+  assert.match(motion, /\.pen-js \.ns-case\[data-open\] \.ns-call\{[^}]*visibility:hidden/);
+  assert.doesNotMatch(rest, /\.ns-call\{[^}]*(?:visibility:hidden|opacity:0)/, "a call waits unseen under reduced motion");
+  // The verdict line keeps its place before a pick (both lines in one cell) and shows only with JavaScript.
+  // (The build reorders declarations, so each is matched on its own.)
+  assert.match(rest, /\.ns-verdict\{[^}]*display:none/);
+  assert.match(rest, /\.pen-js \.ns-verdict\{display:grid\}/);
+  assert.match(rest, /\.ns-verdict>span\{[^}]*grid-area:1\/1/);
+  assert.match(rest, /\.ns-verdict>span\{[^}]*visibility:hidden/);
+  assert.match(rest, /\.ns-case\[data-result="?same"?\] \.ns-same,\.ns-case\[data-result="?differ"?\] \.ns-differ\{visibility:visible\}/);
+  // When the third pick starts the gate, it waits 1.2 s more, so BLOCKED lands after that call is read (code review).
+  assert.match(motion, /\.ns-gate\.in\[data-auto\] \.ns-tl\[data-out\],\.ns-gate\.in\[data-auto\] \.ns-blocked\{animation-delay:calc\(var\(--at\) \+ 1\.2s\)\}/);
+  assert.match(rest, /\.ns-picks\{[^}]*visibility:hidden/);
+  assert.match(rest, /\.pen-js \.ns-picks\{visibility:visible\}/);
+  assert.match(rest, /\.pen-js \.ns-run\{visibility:visible\}/);
+  // Seen in Edge at 390px, 3 Nov: swapping "run the gate" for the narrower "replay" re-wrapped the line beside it (the
+  // figure got 26px shorter). Both labels now share one grid cell and only their visibility changes.
+  assert.match(rest, /\.ns-labels\{display:grid\}/);
+  assert.match(rest, /\.ns-labels>span\{grid-area:1\/1\}/);
+  assert.match(rest, /\.ns-replay-label,\.ns-gate\.in \.ns-run-label\{visibility:hidden\}/);
+  assert.doesNotMatch(rest, /\.ns-(?:run|replay)-label[^{]*\{[^}]*display:/, "a label is taken out of the layout");
+  // Only opacity and transform move; never from nothing.
+  const frames = [...styles.matchAll(/@keyframes (ns-[a-z]+)\{((?:[^{}]*\{[^}]*\})+)\}/g)];
+  assert.deepEqual(frames.map((m) => m[1]).sort(), ["ns-print", "ns-stamp"]);
+  for (const [, name, body] of frames) {
+    for (const [, decls] of body.matchAll(/\{([^}]*)\}/g)) for (const d of decls.split(";").filter(Boolean)) assert.match(d, /^(?:opacity|transform):/, `${name}: ${d}`);
+    assert.doesNotMatch(body, /scale\(0\)/, `${name} starts from nothing`);
+  }
+  // Red is the pen, once: the BLOCKED stamp (and the shared focus ring).
+  const reds = [...styles.matchAll(/([^{}]*\.ns-[^{}]*)\{([^}]*)\}/g)].filter((m) => /--red|#c4161c/i.test(m[2])).map((m) => m[1].trim());
+  assert.deepEqual([...new Set(reds)].sort(), [".ns-blocked", ".ns-pick:focus-visible"]);
+  // Phones: no sideways scroll (the README's lines wrap, its comment drops under its command); two columns from 640px.
+  // (The build reorders declarations, so each is matched on its own.)
+  assert.match(styles, /\.ns-tl\{[^}]*white-space:pre-wrap/);
+  assert.match(styles, /\.ns-tl\{[^}]*overflow-wrap:anywhere/);
+  assert.match(outsideMedia(styles), /\.ns-cmt\{[^}]*display:block/);
+  assert.ok(mediaBlocks(styles, "720px").some((b) => /\.ns-cmt\{display:inline\}/.test(b)), "the comment never rejoins its command");
+  assert.doesNotMatch(outsideMedia(styles), /\.ns-case\{[^}]*grid-template-columns:minmax\(0,1fr\) auto/, "the picks sit beside the case on phones");
+  assert.ok(mediaBlocks(styles, "640px").some((b) => /\.ns-case\{[^}]*grid-template-columns:minmax\(0,1fr\) auto/.test(b)), "no two columns from 640px");
+  // Buttons: a visible focus ring; the run button shares .replay, so reduced motion drops it (nothing to run or replay).
+  assert.match(styles, /\.ns-pick:focus-visible\{outline:2px solid var\(--red\)/);
+  assert.match(styles, /@media \(prefers-reduced-motion:reduce\)\{[^@]*(?<![\w-])\.replay\{display:none\}/);
+  // No timers or listeners to leak, no words that only JavaScript writes, and the one observer disconnects.
+  const src = read("components/sketches/SpotTheNamesake.tsx");
+  assert.doesNotMatch(src, /setTimeout|setInterval|requestAnimationFrame|addEventListener|textContent|innerHTML|innerText/);
+  assert.match(src, /data-auto=\{armed && !ran \? "" : undefined\}/);
+  assert.equal(count(src, "io.disconnect()"), 2, "the observer is not disconnected both when it fires and on unmount");
+});
+
+// ── 3 Nov, code review: the figures that play once in view hide real words (not only pen marks) until they play. If the
+// page's JavaScript never runs, pen-js (set inline) would hide them for good, so they show after 5 seconds on any page
+// without pen-live, which components/PenLive.tsx adds once React runs. ──
+test("the figures' hidden words show after 5 seconds if the page's JavaScript never runs", () => {
+  const styles = css();
+  // The build writes the shorthand with the name last ("0s 5s both pen-failsafe"): no duration, a 5 s delay, held.
+  const rule = styles.match(/([^{}]*)\{animation:(?:pen-failsafe 0s 5s both|0s 5s both pen-failsafe)\}/)?.[1] ?? "";
+  for (const part of [".loop:not(.in) .loop-rc", ".loop:not(.in) .loop-cap p", ".loop:not(.in) .loop-stamp", ".fc:not(.in) .fc-val", ".fc:not(.in) .fc-bar", ".split:not(.in) .split-bots li", ".split:not(.in) .split-calls p", ".ns-case[data-open] .ns-call", ".ns-gate:not(.in) .ns-tl[data-out]", ".ns-gate:not(.in) .ns-blocked"]) {
+    assert.ok(rule.includes(`.pen-js:not(.pen-live) ${part}`), `no failsafe for ${part}`);
+  }
+  const to = styles.match(/@keyframes pen-failsafe\{(?:to|100%)\{([^}]*)\}\}/)?.[1] ?? "";
+  assert.deepEqual(to.split(";").sort(), ["opacity:1", "transform:none", "visibility:visible"]);
+  assert.match(read("components/PenLive.tsx"), /useEffect\(\(\) => \{\s*document\.documentElement\.classList\.add\("pen-live"\);\s*\}, \[\]\);/);
+  assert.match(read("app/layout.tsx"), /<PenLive \/>/);
 });

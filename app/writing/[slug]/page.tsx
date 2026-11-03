@@ -6,6 +6,7 @@ import { POSTS, NEWEST_FIRST, getPost, postDate, type PostComponent } from "@/da
 import Prose from "@/components/Prose";
 import Drawings from "@/components/Drawings";
 import Wrong from "@/components/Wrong";
+import Namesake from "@/components/Namesake";
 import { postJsonLd } from "@/lib/md/person";
 import { abs } from "@/lib/site";
 
@@ -13,6 +14,7 @@ import { abs } from "@/lib/site";
 const BODIES: Record<PostComponent, ComponentType> = {
   "drawing-proof": Drawings,
   "confidently-wrong": Wrong,
+  "champion-namesake": Namesake,
 };
 
 export function generateStaticParams() {

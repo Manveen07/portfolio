@@ -4,7 +4,7 @@
 // So when a component's wording changes, change it here too, or the tests fail.
 
 import { NEWEST_FIRST } from "@/data/posts";
-import { ME, HERO, HERO_KICKER, SAY_HI, PHOTO, REFERENCE, NOW_LINE, JOBS, OFF_CLOCK, FREELANCE, type WorkItem } from "@/data/portfolio";
+import { ME, HERO, HERO_KICKER, SAY_HI, PHOTO, REFERENCE, NOW_LINE, JOBS, OFF_CLOCK, FREELANCE, FIVE_HABITS, type WorkItem } from "@/data/portfolio";
 import { CONTACT } from "@/data/how";
 import { abs, mdHref, SITE } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
@@ -33,6 +33,15 @@ function entry(w: WorkItem): string {
   return out.join("\n\n");
 }
 
+/** components/sketches/FiveHabits.tsx (3 Nov): the strip at the end of the hero, every step with its example in the
+    order it plays (the page shows them all; the motion only reveals them), the red stamp written out, then the caption. */
+function fiveHabits(): string[] {
+  const H = FIVE_HABITS;
+  const lines = (s: (typeof H.steps)[number]) =>
+    s.lines.map((l, k) => (s.stamp?.line === k ? `${l} ${s.stamp.word} (stamped in red)` : l)).join(" · ");
+  return [para(`*${H.eyebrow}*`), `### ${H.head}`, H.steps.map((s, i) => `${i + 1}. **${s.name}** · ${lines(s)}`).join("\n"), ...H.notes.map(para)];
+}
+
 /** components/Writing.tsx: the three newest posts, titles only (round 5, 2 Nov), and the way to the rest. */
 function latestWriting(): string[] {
   const latest = NEWEST_FIRST.slice(0, 3);
@@ -59,6 +68,8 @@ export function homeMarkdown(): string {
     ...HERO.how.map(para),
     list([link(HOME_BAND.link.label, mdHref(HOME_BAND.link.href))]),
     para(ME.hours),
+    // 3 Nov: the strip after the link down and the hours line, as on the page.
+    ...fiveHabits(),
 
     `## ${HOME_BAND.kicker}`,
     ...HOME_CARDS.map((slug) => proofMarkdown(PROOF[slug], "compact", { level: 3, links: true, href: mdHref })),

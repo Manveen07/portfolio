@@ -87,6 +87,60 @@ export const AGENTS: { label: string; note: string; lanes: { agents: string; per
   ],
 };
 
+// ── What runs on its own, and what waits for a person (3 Nov 2026): a click under the agents lines, two columns ──
+// Option 5 of that day's animation mockups; his pick: "sure ggo with 2 but other can be in their respected blogs". His
+// aim (2 and 3 Nov): show how he works, visually, "without stating it like we are better", so the mockup's heading ("My
+// agents do the volume. I set the bar and decide.") is out, and so are its scrolling feed lines (made-up examples: a
+// company count, inbox scores, a reseller, a Mimecast skip). Every line here is already on this page, in its words.
+// The left column plays like a log, so it runs in the order things ran: the free check before the Claygent spend, as
+// the free check figure under Clay in depth shows (review, 3 Nov).
+// - bots[0]: NERD.clay[1] ("a free mail-server check cut 28% of it") and the bounces story ("On the 34,044-company
+//   market it cut 28% before a single credit was spent").
+// - bots[1]: NERD.clay[1], "Claygent checked 24,506 companies at about 0.18 credits each". Never "qualified".
+// - bots[2]: SKILLS skill-agents ("My Claude Code agents have drafted follow-ups since 16 Oct").
+// - bots[3]: the inbox fleet's score stage ("scores it 0 to 100") and its caption ("About 350 sending inboxes tracked, as
+//   of 2 Nov"). No "daily" in this section: the follow-up agents' 1 and 2 Nov runs failed, and a "daily" beside them
+//   would read as theirs (tests/how.test.mjs keeps the word out of #agents).
+// - bots[4]: SKILLS skill-n8n ("On 14 Oct I put error alerts on 40 live workflows"); 40 is the 14 Oct count, so "as of".
+// - bots[5]: the list check step's check ("Blocks duplicates, one address on two people, do-not-contact, recent contact
+//   and shared addresses like info@; a person reads a sample"). Review (3 Nov, truth): its "what" ("Reads the whole list
+//   before anything uses it"), moved under "runs on its own", read as the retired "nothing moves on" (ticked rows reach a
+//   running campaign without these gates) and hid the person who reads a sample. Never "every list".
+// - person[0]: SKILLS skill-checking, split at its semicolon ("matched a second Claude session on 43 of 50, under my 90%
+//   bar; I held the list until a fix passed 47 of 50 new ones"). Its caveats are the caption, the held-list card's limit.
+// - person[1]: SKILLS skill-agents ("each send needs a person's yes"); never "I approve" or the approver's name.
+// - person[2]: the inbox fleet's lead and its never line.
+// - person[3]: the day job's point on home (data/portfolio.ts JOBS: "A merge once put emails on the wrong people"),
+//   its second half in NERD.testing's plainer words ("blocks a list where one address sits on two people") with
+//   "email", as on the home strip: 3 of 4 readers found "one address on two people" cryptic. The call is the home
+//   strip's step name for it ("turn a mistake into a check"), an action, never the retired rule "a mistake becomes a
+//   check".
+// - note: the held-list card's limit, its three caveats in its words, naming the session (one reader: "that session"
+//   had nothing to point at inside the click).
+// The red, once (review, 3 Nov: four red edges were four red moments): the "a person" head, the lane the drawing above
+// circles in red. Each call's edge draws in ink as its turn comes.
+export const SPLIT = {
+  id: "on-its-own",
+  heads: { bots: "agents and bots", person: AGENTS.lanes.person },
+  bots: [
+    "a free mail-server check cut 28% of a 34,044-company market before a single credit was spent",
+    "Claygent checked 24,506 companies at about 0.18 credits each",
+    "my Claude Code agents have drafted follow-ups since 16 Oct",
+    "our inbox bot scores every sending inbox 0 to 100; about 350 are tracked, as of 2 Nov",
+    "error alerts on 40 live n8n workflows, as of 14 Oct",
+    "the list check blocks duplicates, do-not-contact and recent contact; a person reads a sample",
+  ],
+  person: [
+    { call: "My 90% bar on a sample of 50", why: "my agents' company picks matched a second Claude session on 43 of 50, so I held the list until a fix passed 47 of 50 new ones" },
+    { call: "Each follow-up send needs a person's yes" },
+    { call: "A person decides what we buy and what we retire", why: "the bot never orders, renews or retires anything by itself" },
+    { call: "Turning a mistake into a check", why: "a merge once put emails on the wrong people; now the list check blocks a list where one email address sits on two people" },
+  ] as { call: string; why?: string }[],
+  // The held-list card's limit (data/proof.ts), its three caveats in its own words.
+  note: "On the held list, the second Claude session also wrote the rubric. Neither sample included companies the agents dropped, and fifty is a small sample.",
+  replay: "replay",
+};
+
 // ── Before I change a rule (the habit row; "One habit, with receipts" until 2 Nov): one past event from the day job, the
 // old number struck and the new one circled ──
 // v2.1 (2 Nov). Manveen, on the leadlens card that stood here: "i think this is not related to my gtm work maybe you
@@ -340,9 +394,8 @@ export const NERD = {
     // SOURCES.md row 9 (31 loops enabled across 3 accounts); the lead finder in the past tense, paused 27 Oct. 2 Nov: no
     // "every day" (the builder check: two runs were killed and one task paused, so a day was missed).
     "31 Clay workflows across 3 accounts found new people on a schedule until 27 Oct, when the searches were paused to save search quota. Each served one account, wrote its people to Clay Audiences (Clay's saved lists) so nobody was found twice, and posted them to n8n by webhook.",
-    // SOURCES.md rows 11, 12, 13 and 15. 24,506 is what went to Claygent, not what the mail-server cut left (24,492), so
-    // the two are told as two facts. "checked 24,506", never "qualified"; never beside 17,056.
-    "I mapped a 34,044-company market from Clay's search for 0 data credits, and a free mail-server check cut 28% of it. Claygent checked 24,506 companies at about 0.18 credits each, and 16,728 passed.",
+    // 3 Nov evening, his yes: the line that said the free check figure's numbers in words is cut; the figure above
+    // carries every number and caveat it had (FREE_CHECK; tests/how.test.mjs keeps the line as its source).
     // SOURCES.md rows 17 and 18: one batch, never a rate. "multi-provider", never "cheapest first".
     "In one batch, verified emails for 12,030 of 15,514 decision makers (78%), from a multi-provider waterfall with a cap per provider.",
     "Claygent prompts live as code: one shared template, five segments, built by a script, and tested against companies I labelled by hand, after reading its misses, before the 24,506-company run.",
@@ -352,6 +405,58 @@ export const NERD = {
     // SOURCES.md's HubSpot section (2 Nov). Past tense: nothing received since 2 Oct. "No Salesforce" (his profile).
     "Reply events from the sending tool updated HubSpot contact properties through n8n: last reply date, campaign and lead category. I haven't used Salesforce yet.",
   ],
+};
+
+// ── The free check before the AI spend (3 Nov 2026): a figure under Clay in depth, before the list ──
+// Option 4 of that day's animation mockups (his pick: "other can be in their respected blogs"). NERD.clay[1] says this
+// funnel in words; the figure draws it, one market top to bottom, then the bounces after. SOURCES.md rows 11, 12, 13 and
+// 15: each bar is its share of the 34,044 (the red hatch on row 2 is the 28% the free mail-server check cut). 24,506 is
+// what went to Claygent, its own count, not what the cut left (24,492), so no line says one comes from the other and the
+// figure prints no 72%. Drawn to scale, row 3's bar (24,506) is 71.98% of row 1 and the cut leaves 72% (24,492): the 14
+// companies between them are under a pixel at this width, so the stack is accepted as drawn (review, 3 Nov), and no line
+// says one number came from the other. "16,728 passed" across five segments (the Claygent story's own words). Never
+// "qualified", never beside 17,056.
+// The bounce row is the bounces story's sentence (SOURCES.md row 31: every lead he loaded, 1 Aug to 15 Oct), the
+// teammate's lists beside mine. Review (3 Nov, truth): under "Checked by Claygent" and a head saying "On one market",
+// "after the check went in" read as Claygent's drop on that market, so the row says which check (the mail-server
+// check, the story's DNS check) and that it covers all the lists he built.
+// Each caveat sits under its number, in the site's words: the fit check's is SOURCES.md's short form of the segment
+// results ("none of the 5 niches cleared my full bar until I relabelled borderline companies; then 3 did") with the
+// Claygent story's "so I don't count those passes as proof" and "Two ran with one check short" (review, 3 Nov: "Not
+// every segment had passed its bar" understated it, and 3 of 4 readers could not decode it); the bounces' is their
+// story's "so I say after, not because", naming the check. The mockup's "195 companies I labelled" had no source and is
+// out.
+// `n` is drawn to scale of the first row's; `cut` is a percent of it, hatched in red, the figure's one red mark.
+export type FunnelRow = { name: string; sub: string; value: string; n?: number; cut?: number; note?: string };
+
+export const FREE_CHECK: {
+  id: string;
+  head: string;
+  rows: FunnelRow[];
+  result: { name: string; sub: string; lines: [string, string]; note: string };
+  replay: string;
+} = {
+  id: "free-check-first",
+  head: "On one market, I ran the free check before the AI spend",
+  rows: [
+    { name: "Companies in the market", sub: "mapped with Clay's search, 0 data credits", value: "34,044", n: 34044 },
+    { name: "Cut by a free mail-server check", sub: "before a single credit was spent", value: "28%", cut: 28 },
+    { name: "Checked by Claygent", sub: "about 0.18 credits each", value: "24,506", n: 24506 },
+    {
+      name: "Passed",
+      sub: "across five segments",
+      value: "16,728",
+      n: 16728,
+      note: "No segment cleared my full bar until I relabelled borderline companies; three then did, which I don't count as proof, and two ran with one check short.",
+    },
+  ],
+  result: {
+    name: "Bounces on all the lists I built",
+    sub: "after the mail-server check went in",
+    lines: ["2.74% (8,649 leads) to 0.73% (2,047 leads)", "a teammate's lists, loaded without it: 2.26% to 2.09%"],
+    note: "Not all of that drop is the mail-server check, so I say after, not because.",
+  },
+  replay: "replay",
 };
 
 // ── The inbox fleet (3 Nov 2026): the agency's inbox bot, stage by stage, and where a person decides ──
@@ -661,6 +766,8 @@ export const VISUAL = {
     bounces: "How the mail-server split went",
     "caught-my-own-test": "How the leadlens test actually went",
     "labelled-drawings": "How the drawing test actually went",
+    // 3 Nov: the click under the agents lines (SPLIT above).
+    "on-its-own": "What runs on its own, and what waits for a person",
   } as Record<string, string>,
   // The rail on wide screens, read top to bottom as one story.
   kickers: {

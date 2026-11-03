@@ -11,15 +11,17 @@
 // never named, and the source files name no private folder; the markdown copy says everything the page says, charts,
 // drawings and cards included, and nothing else. The cards' own words and numbers are pinned in tests/proof.test.mjs.
 // 3 Nov: the inbox fleet (the agency's inbox bot, stage by stage, a person deciding at three of them) sits after the
-// skills and their clicks; its own test is at the end of this file.
+// skills and their clicks; its own test is near the end of this file. The same day, two figures that play once in view
+// (his pick of the animation mockups, options 4 and 5): the free check under Clay in depth, and what runs on its own
+// behind a click under the agents lines; their tests close the file.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
-import { HERO } from "../data/portfolio.ts";
+import { HOW, AGENTS, SPLIT, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
+import { HERO, JOBS, FIVE_HABITS } from "../data/portfolio.ts";
 import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -113,7 +115,10 @@ test("the first screen: the photo, the kicker, the h1, two sub lines (the role, 
 
 // 3 Nov, final jury: +10 words on the Tender Radar link (its AI step is down since September), a truth fix.
 // 3 Nov, his ask: the inbox fleet (kicker, lead line, caption, credit, click label): 679.
-const VISIBLE_CAP = 679;
+// 3 Nov, his pick of the animation mockups (option 5): the new click under the agents lines adds its 11-word label
+// ("What runs on its own, and what waits for a person"); everything inside it, and the free check figure inside the
+// pipeline click, sits behind a click. Measured 687 (676 before).
+const VISIBLE_CAP = 687;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -220,8 +225,9 @@ test("every click names what it opens, and no two on a page share a label (round
     assert.equal(new Set(list).size, list.length, `${name}: two clicks share a label: ${list.join(" | ")}`);
     assert.ok(!list.includes("How it actually went"), `${name}: a click with the old shared label`);
   }
-  assert.deepEqual(Object.keys(VISUAL.clicks).sort(), ["bounces", "caught-my-own-test", "claygent", "held-list", "identity", "labelled-drawings"]);
-  for (const k of ["held-list", "identity", "claygent", "bounces"]) assert.ok(how.includes(VISUAL.clicks[k]), `/how-i-build: no click "${VISUAL.clicks[k]}"`);
+  // 3 Nov: "on-its-own", the click under the agents lines (option 5 of the animation mockups).
+  assert.deepEqual(Object.keys(VISUAL.clicks).sort(), ["bounces", "caught-my-own-test", "claygent", "held-list", "identity", "labelled-drawings", "on-its-own"]);
+  for (const k of ["held-list", "identity", "claygent", "bounces", "on-its-own"]) assert.ok(how.includes(VISUAL.clicks[k]), `/how-i-build: no click "${VISUAL.clicks[k]}"`);
   for (const k of ["caught-my-own-test", "labelled-drawings"]) assert.ok(home.includes(VISUAL.clicks[k]), `home: no click "${VISUAL.clicks[k]}"`);
   assert.ok(!("readStory" in VISUAL), "the shared label is back in the data");
 });
@@ -672,4 +678,245 @@ test("the inbox fleet: seven stages in order, the person's three circled in red,
   for (const s of [text(), copy]) {
     assert.doesNotMatch(s, /\bautomat\w*\b[^.]{0,80}\b(?:order|renew|retir|kill)\w*|\b(?:order|renew|retir|kill)\w*\b[^.]{0,80}\bautomat\w*/i, "automated beside ordering, renewing, retiring or killing");
   }
+});
+
+// ── 3 Nov: two figures that play once in view (his pick of the animation mockups: "sure ggo with 2 but other can be in
+// their respected blogs"; options 4 and 5 live here) ──────────────────────────────────────────────────────────────
+/** Each `--at` delay in a piece of markup, in page order. */
+const delays = (html) => [...html.matchAll(/--at:([\d.]+)s/g)].map((m) => Number(m[1]));
+const inOrder = (d) => d.every((x, i) => i === 0 || x >= d[i - 1]);
+/** The CSS outside every (min-width: 640px) block. */
+const outsideMedia640 = (styles) => {
+  let rest = styles;
+  for (let at = rest.indexOf("@media (min-width:640px){"); at !== -1; at = rest.indexOf("@media (min-width:640px){")) {
+    let depth = 1;
+    let i = at + "@media (min-width:640px){".length;
+    for (; i < rest.length && depth > 0; i++) depth += rest[i] === "{" ? 1 : rest[i] === "}" ? -1 : 0;
+    rest = rest.slice(0, at) + rest.slice(i);
+  }
+  return rest;
+};
+
+// The Clay line as master had it (data/how.ts NERD.clay[1] until 3 Nov evening, when his yes cut it from under the
+// figure that draws it): the free check's numbers and wording are pinned to it.
+const CLAY_LINE = "I mapped a 34,044-company market from Clay's search for 0 data credits, and a free mail-server check cut 28% of it. Claygent checked 24,506 companies at about 0.18 credits each, and 16,728 passed.";
+
+test("the free check (3 Nov): under Clay in depth, every bar to scale of the market, the cut the one red, each caveat beside its number", () => {
+  const F = FREE_CHECK;
+  const nerd = section("skills").match(/<details class="more" id="nerd">[\s\S]*?<\/details>/)?.[0] ?? "";
+  const open = `<figure id="${F.id}" class="fc" aria-labelledby="${F.id}-head">`;
+  const at = nerd.indexOf(open);
+  assert.ok(at > 0, "no free check figure in the pipeline click");
+  // Under the Clay heading and before its list (whose line saying this funnel in words was cut, 3 Nov evening).
+  const head = nerd.indexOf(`<h3 class="nerd-head">${NERD.clayHead}</h3>`);
+  assert.ok(head >= 0 && head < at && at < nerd.indexOf('<ul class="nerd-list">', head), "the figure is not between Clay in depth and its list");
+  const fig = nerd.slice(at, nerd.indexOf("</figure>", at) + "</figure>".length);
+  assert.ok(decode(fig).startsWith(`${open}<div class="fc-top"><h4 id="${F.id}-head" class="fc-head">${F.head}</h4><button type="button" class="replay">${F.replay}</button></div><ol class="fc-rows" role="list">`));
+  // Its markdown copy sits in the same place.
+  const mdAt = [`#### ${NERD.clayHead}\n`, `##### ${F.head}\n`, `- ${NERD.clay[0]}`].map((s) => md().indexOf(s));
+  assert.ok(mdAt.every((i) => i >= 0) && inOrder(mdAt), `the copy is not in page order: ${mdAt}`);
+
+  // Every row's words in the server HTML, and its bar to scale of the market; the cut row draws what's left in ink and the
+  // cut hatched in red.
+  const market = F.rows[0].n;
+  const rows = [...fig.matchAll(/<li class="fc-row[^"]*">([\s\S]*?)<\/li>/g)].map((m) => m[1]);
+  assert.equal(rows.length, 4);
+  rows.forEach((html, i) => {
+    const r = F.rows[i];
+    const blocks = [...html.matchAll(/<p class="(fc-[a-z]+)"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => [m[1], squash(plain(m[2]))]);
+    assert.deepEqual(blocks, [["fc-name", r.name], ["fc-sub", r.sub], ["fc-val", r.value], ...(r.note ? [["fc-note", r.note]] : [])], `row ${i + 1}`);
+    const w = [...html.matchAll(/<i class="(fc-bar|fc-cut)" aria-hidden="true" style="[^"]*--w:([\d.]+)/g)].map((m) => [m[1], Number(m[2])]);
+    const want = r.cut ? [["fc-bar", 1 - r.cut / 100], ["fc-cut", r.cut / 100]] : [["fc-bar", r.n / market]];
+    assert.deepEqual(w.map((x) => x[0]), want.map((x) => x[0]), `row ${i + 1}: its bars`);
+    w.forEach((x, k) => assert.ok(Math.abs(x[1] - want[k][1]) < 0.0001, `row ${i + 1}: ${x[0]} is ${x[1]}, not ${want[k][1]}`));
+    if (r.n) assert.equal(r.value, r.n.toLocaleString("en-US"));
+  });
+  assert.equal((fig.match(/class="fc-cut"/g) ?? []).length, 1, "not one red cut");
+  assert.match(rows[1], /^<p class="fc-name">Cut by a free mail-server check<\/p>/);
+
+  // The numbers are the Clay line's (CLAY_LINE), told as two facts: the cut is 28% of the market, and 24,506 is what
+  // went to Claygent (its own count, not what the cut left), so the figure prints no 72%. Never "qualified".
+  assert.ok(!NERD.clay.includes(CLAY_LINE) && NERD.clay.every((l) => !l.startsWith("I mapped a 34,044")), "the cut Clay line is back");
+  for (const r of F.rows) assert.ok(CLAY_LINE.includes(r.value), `${r.value} is not in the Clay line`);
+  assert.deepEqual(F.rows.map((r) => r.sub).filter((s) => /credit/.test(s)), ["mapped with Clay's search, 0 data credits", "before a single credit was spent", "about 0.18 credits each"]);
+  const [claygent, bounces] = FAILURES.stories;
+  assert.ok(bounces.tested.includes(`On the 34,044-company market it cut 28% ${F.rows[1].sub}`), "the cut's line is not the bounces story's");
+  assert.ok(claygent.changed.includes(`${F.rows[3].sub}: it checked 24,506 companies, and 16,728 passed.`), "what passed is not the Claygent story's");
+  assert.doesNotMatch(squash(plain(fig)), /\b72%|24,492|qualified|\b195\b/i, "a derived 72%, the cut's remainder, 'qualified' or the mockup's unsourced 195");
+  // The fit check's caveat, beside what passed, in the site's words: the Claygent story, the 2 Nov corrections log and
+  // the claims table's short form ("none of the 5 niches cleared my full bar until I relabelled borderline companies;
+  // then 3 did"). Review (3 Nov, truth): "Not every segment had passed its bar" understated it (none had, before the
+  // relabels), and 3 of 4 readers could not decode the old line.
+  assert.equal(F.rows.findIndex((r) => r.note), 3, "the caveat is not beside what passed");
+  assert.ok(claygent.changed.includes("Two ran with one check short"));
+  assert.ok(claygent.tested.includes("only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof."));
+  assert.ok(LIVE.log.some((e) => e.text.endsWith("It said one segment cleared my bar only after a relabel; three did.")));
+  assert.equal(F.rows[3].note, "No segment cleared my full bar until I relabelled borderline companies; three then did, which I don't count as proof, and two ran with one check short.");
+  assert.doesNotMatch(F.rows[3].note, /Not every segment/);
+
+  // The bounce row: the bounces story's sentence, the teammate's lists beside mine, and its "after, not because".
+  // Review (3 Nov, truth): under "Checked by Claygent" and a head saying "On one market", "the check" read as Claygent's,
+  // on that market; the story's check is the DNS mail-server check, on every list he built, so the row says both.
+  const R = F.result;
+  const result = fig.slice(fig.indexOf('<div class="fc-result">'));
+  assert.deepEqual(
+    [...result.matchAll(/<p class="(fc-[a-z]+)"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => [m[1], squash(plain(m[2]))]),
+    [["fc-name", R.name], ["fc-sub", R.sub], ["fc-line", R.lines[0]], ["fc-line", R.lines[1]], ["fc-note", R.note]],
+  );
+  assert.equal(R.name, "Bounces on all the lists I built");
+  assert.equal(R.sub, "after the mail-server check went in");
+  assert.ok(bounces.changed.includes(`Bounces on the lists I built went from ${R.lines[0]} after the check went in.`), "the bounce line is not the story's");
+  assert.ok(bounces.tested.startsWith("Now a DNS check (a free lookup of which mail server a company uses) runs before any paid email lookup"), "the story's check is not the mail-server check");
+  assert.equal(R.lines[1].split(": ")[0], "a teammate's lists, loaded without it");
+  assert.ok(bounces.changed.includes(`A teammate's lists, loaded without it, went from ${R.lines[1].split(": ")[1]} over the same weeks.`), "the teammate's line is not the story's");
+  assert.ok(bounces.changed.endsWith(R.note.replace("the mail-server check", "this one check")), "the bounce caveat is not the story's");
+
+  // Short blocks, played in reading order, about 9 seconds.
+  for (const b of [F.head, ...F.rows.flatMap((r) => [r.name, r.sub, r.value, r.note ?? ""]), R.name, R.sub, ...R.lines, R.note]) assert.ok(words(b) <= 30, `over 30 words: ${b}`);
+  const d = delays(fig);
+  assert.equal(d.length, 13, "not one delay per bar, number, line and caveat");
+  assert.ok(inOrder(d), `delays out of order: ${d}`);
+  assert.ok(Math.max(...d) >= 7 && Math.max(...d) <= 10, `the last part starts at ${Math.max(...d)} s`);
+});
+
+test("what runs on its own (3 Nov): its own click under the agents lines, two columns, real lines only, each in the site's words", () => {
+  const S = SPLIT;
+  const sec = section("agents");
+  const clicks = [...sec.matchAll(/<details[\s\S]*?<\/details>/g)].map((m) => m[0]);
+  assert.equal(clicks.length, 1, "#agents should hold one click");
+  const click = clicks[0];
+  assert.ok(sec.indexOf(AGENTS.lines[1]) < sec.indexOf("<details"), "the click is not under the agents lines");
+  assert.equal(VISUAL.clicks[S.id], "What runs on its own, and what waits for a person");
+  assert.ok(
+    decode(click).startsWith(
+      `<details class="more" id="${S.id}"><summary><span class="more-line more-label">${VISUAL.clicks[S.id]}</span><span class="more-hint" aria-hidden="true"></span></summary><div class="split"><div class="split-top"><button type="button" class="replay">${S.replay}</button></div><div class="split-cols">`,
+    ),
+    "the click is not styled like the page's other clicks, or its figure doesn't open it",
+  );
+  // The columns: the drawing's lane name for the person; every line in the server HTML, in order.
+  assert.deepEqual([...click.matchAll(/<h3 class="split-head[^"]*">([^<]*)<\/h3>/g)].map((m) => decode(m[1])), ["agents and bots", "a person"]);
+  assert.match(click, /<h3 class="split-head split-head-person">a person<\/h3>/, "the person's head is not the one red");
+  assert.equal(S.heads.person, AGENTS.lanes.person);
+  const list = (cls) => click.match(new RegExp(`<ul class="${cls}" role="list">([\\s\\S]*?)</ul>`))?.[1] ?? "";
+  assert.deepEqual([...list("split-bots").matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => squash(plain(m[1]))), S.bots);
+  const calls = [...list("split-calls").matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => [...m[1].matchAll(/<p class="split-(?:call|why)">([\s\S]*?)<\/p>/g)].map((p) => squash(plain(p[1]))));
+  assert.deepEqual(calls, S.person.map((c) => [c.call, ...(c.why ? [c.why] : [])]));
+  assert.equal(squash(plain(click.match(/<p class="split-cap">([\s\S]*?)<\/p>/)?.[1] ?? "")), S.note);
+  // The copy prints it under the agents lines, before What I can do.
+  const mdAt = [`## ${VISUAL.kickers.agents}\n`, `### ${VISUAL.clicks[S.id]}\n`, `#### ${S.heads.bots}\n`, `#### ${S.heads.person}\n`, `## ${VISUAL.kickers.skills}\n`].map((s) => md().indexOf(s));
+  assert.ok(mdAt.every((i) => i >= 0) && inOrder(mdAt), `the copy is not in page order: ${mdAt}`);
+
+  // Left: every line is already on this page, in its words, in the order things ran (review, 3 Nov: the free check
+  // before the Claygent spend, as the free check figure shows).
+  const skill = (id) => SKILLS.find((s) => s.id === id)?.line ?? "";
+  const [cutLine, claygentLine, agentsLine, inboxLine, alertsLine, listLine] = S.bots;
+  assert.ok(CLAY_LINE.includes(`${claygentLine}, and 16,728 passed.`), "the Claygent line is not the Clay line's");
+  assert.ok(CLAY_LINE.includes("a free mail-server check cut 28% of it"));
+  assert.ok(FAILURES.stories[1].tested.includes("On the 34,044-company market it cut 28% before a single credit was spent"));
+  assert.equal(cutLine, "a free mail-server check cut 28% of a 34,044-company market before a single credit was spent");
+  assert.ok(skill("skill-agents").startsWith(`M${agentsLine.slice(1)}; `), "the agents line is not the AI agents row's");
+  assert.match(INBOX.stages.find((s) => s.name === "score")?.detail ?? "", /scores it 0 to 100/);
+  assert.equal(INBOX.caption, "About 350 sending inboxes tracked, as of 2 Nov.");
+  assert.equal(inboxLine, "our inbox bot scores every sending inbox 0 to 100; about 350 are tracked, as of 2 Nov");
+  // 40 is the 14 Oct count, so "as of", never "since".
+  assert.match(skill("skill-n8n"), /^On 14 Oct I put error alerts on 40 live workflows;/);
+  assert.equal(alertsLine, "error alerts on 40 live n8n workflows, as of 14 Oct");
+  // Review (3 Nov, truth): the step's "what" ("Reads the whole list before anything uses it"), under "runs on its own",
+  // read as the retired "nothing moves on" and hid the person who reads a sample; the line is its check's own words.
+  const listCheck = PIPELINE_STEPS.steps.find((s) => s.name === "list check")?.check ?? "";
+  assert.equal(listLine, "the list check blocks duplicates, do-not-contact and recent contact; a person reads a sample");
+  assert.ok(listCheck.startsWith("Blocks duplicates, ") && listCheck.includes("do-not-contact, recent contact") && listCheck.endsWith("; a person reads a sample."), "the list check line is not its step's check");
+
+  // Right: the calls that stay with a person, each in its source's words; the held list's caveats in the caption.
+  const [bar, yes, buy, mistake] = S.person;
+  assert.equal(bar.why, skill("skill-checking").replace(/^My/, "my").replace(", under my 90% bar;", ", so").replace(/\.$/, ""));
+  assert.equal(bar.call, "My 90% bar on a sample of 50");
+  assert.equal(PROOF["held-list"].steps[1].name, "Sample of 50");
+  assert.ok(skill("skill-agents").endsWith("each send needs a person's yes."));
+  assert.equal(yes.call, "Each follow-up send needs a person's yes");
+  assert.ok(INBOX.lead.endsWith(`; ${buy.call[0].toLowerCase()}${buy.call.slice(1)}.`), "the buy and retire call is not the inbox fleet's lead");
+  assert.equal(INBOX.never, `T${buy.why.slice(1)}.`);
+  // The merge from home's Work point, its second half in the testing line's plainer words with "email" (3 of 4 readers
+  // found "one address on two people" cryptic); the call is the home strip's step 5, an action, never the retired rule.
+  assert.ok(JOBS[0].points?.some((p) => p.startsWith("A merge once put emails on the wrong people; ")), "the mistake's example is not the Work point's");
+  assert.ok(NERD.testing.some((l) => l.includes("now the list check blocks a list where one address sits on two people.")));
+  assert.equal(mistake.why, "a merge once put emails on the wrong people; now the list check blocks a list where one email address sits on two people");
+  assert.equal(mistake.call, "Turning a mistake into a check");
+  assert.equal(FIVE_HABITS.steps[4].name, "turn a mistake into a check");
+  // The caption names the session it means (one reader: "that session" had nothing to point at inside the click).
+  assert.equal(S.note, `On the held list, the second Claude session ${PROOF["held-list"].limit.replace(/^That session /, "")}`);
+
+  // Retired: the mockup's heading (he said not to brag) and its made-up feed lines; no "daily" here (the follow-up agents'
+  // runs failed on 1 and 2 Nov), no "every list" (ticked rows skip the gates), no "since 14 Oct" for a count of that day.
+  for (const s of [squash(plain(click)), unmark(md())]) {
+    assert.doesNotMatch(s, /do the volume|I set the bar and decide|company 1,2\d\d|\b(?:87|41|92)\/100\b|a reseller|Mimecast · skipped|waits for a person's yes|reads the thread first/i);
+  }
+  assert.doesNotMatch(squash(plain(click)), /\bdaily\b|\bevery list\b|since 14 Oct|before anything uses it|becomes a check/i);
+
+  for (const b of [VISUAL.clicks[S.id], ...S.bots, ...S.person.flatMap((c) => [c.call, c.why ?? ""]), S.note]) assert.ok(words(b) <= 30, `over 30 words: ${b}`);
+  // The left lines first, then each call in turn, about 4 seconds (3 Nov, two of four readers: at 7.5 the calls sat
+  // dimmed so long they looked switched off).
+  const d = delays(click);
+  assert.equal(d.length, S.bots.length + S.person.length);
+  assert.ok(inOrder(d), `delays out of order: ${d}`);
+  assert.ok(Math.max(...d) >= 3 && Math.max(...d) <= 4.5, `the last call lights at ${Math.max(...d)} s`);
+});
+
+test("the two figures (3 Nov) play once in view and hold their last frame; no JavaScript or reduced motion get it still", () => {
+  const styles = css();
+  // Each (prefers-reduced-motion: no-preference) block, whole.
+  const blocks = [];
+  for (const m of styles.matchAll(/@media \(prefers-reduced-motion:no-preference\)[^{]*\{/g)) {
+    let depth = 1;
+    let i = m.index + m[0].length;
+    for (; i < styles.length && depth > 0; i++) depth += styles[i] === "{" ? 1 : styles[i] === "}" ? -1 : 0;
+    blocks.push(styles.slice(m.index, i));
+  }
+  const motion = blocks.filter((b) => /\.(?:fc|split)\b/.test(b)).join("\n");
+  // The waiting state needs JavaScript (pen-js) and waits for the observer (.in); the play starts on .in, held at the end.
+  for (const sel of [".fc-val", ".fc-note", ".fc-line"]) assert.match(motion, new RegExp(`\\.pen-js \\.fc:not\\(\\.in\\) \\${sel}[,{]`));
+  assert.match(motion, /\.pen-js \.split:not\(\.in\) \.split-bots li[,{]/);
+  assert.match(motion, /\.pen-js \.split:not\(\.in\) \.split-calls p\{opacity:0?\.3\}/);
+  for (const [sel, name] of [["\\.fc\\.in \\.fc-bar", "fc-grow"], ["\\.fc\\.in \\.fc-cut", "fc-grow"], ["\\.split\\.in \\.split-bots li", "rise-in"], ["\\.fc\\.in \\.fc-val", "rise-in"], ["\\.split\\.in \\.split-calls p", "split-on"], ["\\.split\\.in \\.split-calls li:{1,2}before", "split-mark"]]) {
+    assert.match(motion, new RegExp(`${sel}[^{]*\\{animation:${name} [^}]*var\\(--at\\) ?both\\}`), `${sel}: not played on .in, held at the end`);
+  }
+  // Outside those blocks nothing of the two figures waits unseen or moves: no-JS readers and reduced motion see the last frame.
+  let rest = styles;
+  for (const b of blocks) rest = rest.replace(b, "");
+  for (const [, sel, body] of rest.matchAll(/([^{}]*\.(?:fc|split)\b[^{}]*)\{([^}]*)\}/g)) {
+    assert.doesNotMatch(body, /opacity:(?:0|\.\d)|scale[XY]?\(0\)|animation/, `${sel.trim()} hides or moves a figure outside no-preference`);
+  }
+  // Only opacity and transform move.
+  const frames = [...styles.matchAll(/@keyframes (fc-grow|rise-in|split-on|split-mark)\{((?:[^{}]*\{[^}]*\})+)\}/g)];
+  assert.deepEqual(frames.map((m) => m[1]).sort(), ["fc-grow", "rise-in", "split-mark", "split-on"]);
+  for (const [, name, body] of frames) {
+    for (const [, decls] of body.matchAll(/\{([^}]*)\}/g)) for (const dcl of decls.split(";").filter(Boolean)) assert.match(dcl, /^(?:opacity|transform):/, `${name}: ${dcl}`);
+  }
+  // Red is the pen, one mark each: the cut and its number; the "a person" head (code review, 3 Nov: four red call edges
+  // were four red moments, so the edges draw in ink).
+  const reds = [...styles.matchAll(/([^{}]*\.(?:fc|split)\b[^{}]*)\{([^}]*)\}/g)].filter((m) => /--red|#c4161c/i.test(m[2])).map((m) => m[1].trim().replace(/::?before/, ":before"));
+  assert.deepEqual([...new Set(reds)].sort(), [".fc-cut", ".fc-cutrow .fc-val", ".split-head-person"]);
+  assert.match(styles, /\.split-calls li:{1,2}before\{[^}]*background:var\(--ink\)/);
+  // The bounce row's sub line sits right under its name from 640px (it floated 38px down).
+  assert.match(styles, /\.fc-result\{grid-template-rows:auto 1fr\}/);
+  assert.match(styles, /\.fc-sub\{[^}]*text-wrap:balance/);
+  // Hyphenated words in the split stay whole when a line wraps ("do-" / "not-contact", seen in Edge on 3 Nov).
+  assert.match(styles, /\.split \.nw\{white-space:nowrap\}/);
+  assert.match(section("agents"), /<span class="nw">do-not-contact<\/span>/);
+  // Phones: one column; the free check's two columns and the split's only from 640px.
+  assert.doesNotMatch(outsideMedia640(styles), /\.split-cols\{[^}]*grid-template-columns/, "the split's two columns apply on phones");
+  assert.match(styles, /\.split-cols\{[^}]*grid-template-columns:minmax\(0,1\.15fr\) ?minmax\(0,1fr\)/, "no two columns from 640px");
+  assert.doesNotMatch(outsideMedia640(styles), /\.fc-row,\.fc-result\{[^}]*grid-template-columns:240px/, "the free check's two columns apply on phones");
+  assert.match(styles, /\.fc-row,\.fc-result\{[^}]*grid-template-columns:240px minmax\(0,1fr\)/, "no two columns from 640px");
+  // Replay: shown once the figure has played, a visible focus ring, gone under reduced motion (nothing to replay).
+  assert.match(styles, /\.fc\.in \.replay,\.split\.in \.replay(?:,[^{}]*)?\{visibility:visible\}/);
+  assert.match(styles, /\.replay:focus-visible\{outline:2px solid var\(--red\)/);
+  assert.match(styles, /@media \(prefers-reduced-motion:reduce\)\{[^@]*(?<![\w-])\.replay\{display:none\}/);
+  // No timers or listeners to leak (the delays are CSS; the observer is useReveal's, disconnected on unmount), and no
+  // words that only JavaScript writes.
+  for (const f of ["components/sketches/FreeCheckFirst.tsx", "components/sketches/OnItsOwn.tsx", "lib/motion.ts"]) {
+    assert.doesNotMatch(read(f), /setTimeout|setInterval|requestAnimationFrame|addEventListener|textContent|innerHTML|innerText/, f);
+  }
+  assert.match(read("components/sketches/FreeCheckFirst.tsx"), /useReveal<HTMLElement>\(\)/);
+  assert.match(read("components/sketches/OnItsOwn.tsx"), /useReveal<HTMLDivElement>\(\)/);
 });

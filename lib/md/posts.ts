@@ -1,10 +1,10 @@
 // The writing pages as markdown: /writing.md (the list) and /writing/<slug>.md (each post).
 // Post bodies already use markdown's inline syntax (**bold**, *italic*, `code`, [text](url)), so blocks print as is.
-// The two posts drawn by components (drawing-proof, the confidently-wrong notes) are written out here from the same
+// The posts drawn by components (drawing-proof, the confidently-wrong notes, the namesake game) are written out from the same
 // data the components render; tests/ai.test.mjs checks every block, alt text and number against the built page.
 
 import { NEWEST_FIRST, postDate, type Block, type Post, type PostComponent } from "@/data/posts";
-import { ME, DRAWINGS as D, WRONG, type Pin } from "@/data/portfolio";
+import { ME, DRAWINGS as D, WRONG, NAMESAKE as N, type Pin } from "@/data/portfolio";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
 
@@ -64,9 +64,26 @@ function pin(p: Pin): string {
   ].join("\n\n");
 }
 
+/** components/Namesake.tsx, top to bottom (3 Nov): the game with every case and the checker's call (the page shows a
+    call once it is picked), the README's gate output whole with the red stamp written out, then the prose. */
+function namesake(): string[] {
+  return [
+    para(`*${N.eyebrow}*`),
+    `## ${N.head}`,
+    para(N.intro),
+    para(`*${N.howToPlay}*`),
+    list(N.cases.map((c) => `${N.tags.crm} ${c.crm} · ${N.tags.signal} ${c.signal} · ${N.tags.call} **${c.call}**, ${c.why}`)),
+    para(N.gate.intro),
+    ["```text", N.gate.lines, "```"].join("\n"),
+    para(`*On the page ${N.gate.stamped} is stamped in red.* ${N.gate.rule}`),
+    ...N.after.map(block),
+  ];
+}
+
 const COMPONENT_MD: Record<PostComponent, () => string[]> = {
   "drawing-proof": drawingProof,
   "confidently-wrong": () => WRONG.pins.map(pin),
+  "champion-namesake": namesake,
 };
 
 /** The line under a post's title, as the page shows it. */

@@ -12,6 +12,9 @@
   --red:   #c4161c;
   --col:   720px;  /* reading column (660px beside the rail from 1100px) */
   --rail:  190px;  /* left rail from 1100px: the photo and each section's label */
+  /* Motion curves (3 Nov, the animate skill's): things arriving ease out; a line drawing across the page eases in and out. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   /* the wobbly pencil line above each section and the footer; used by .sec and .foot */
   --divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 820 14' preserveAspectRatio='none'%3E%3Cpath d='M2 8 C120 5 210 10 330 7 S560 5 680 8 S790 9 818 6' fill='none' stroke='%23b9b2a2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
@@ -77,6 +80,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
    would otherwise stay red, as if it were selected. */
 @media (hover: hover) {
   .link:hover, .links a:hover, .head-cta:hover, .head-link:hover, .mail:hover, .post-list a:hover .h3, .latest a:hover .h3, .more summary:hover .h3, .more summary:hover .more-label { color: var(--red); }
+  .replay:hover { border-color: var(--ink); }  /* the replay button of the figures that play once (3 Nov): its pencil border inks in */
+  .ns-pick:hover { background: var(--wash); }  /* the namesake game's picks (3 Nov); a picked one stays ink */
 }
 
 /* ── Header and footer ── */
@@ -552,3 +557,278 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .own-line { margin: 0 0 2px; }
 .own-check .pc-full { margin: 4px 0 16px; }
 .held-click .pc-full { margin: 4px 0 16px; }  /* /how-i-build's held-list card behind its click (round 5, 2 Nov) */
+
+/* ── /how-i-build's two figures that play once in view (3 Nov): the free check under Clay in depth (components/sketches/
+   FreeCheckFirst.tsx) and what runs on its own, behind the click under the agents lines (components/sketches/
+   OnItsOwn.tsx). On the paper, no box. Ink, dim and the pencil rule; one red each: the hatched cut, the calls' edges.
+   Every word takes its place from the first paint: the motion is opacity and transform only, so nothing shifts. */
+/* Their replay button, and the home strip's: shown once the figure has played (so never without JavaScript); its place
+   is kept either way. */
+.replay {
+  flex: none; visibility: hidden; min-height: 32px; padding: 0 12px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1; color: var(--ink);
+  background: none; border: 1px solid var(--rule); border-radius: 4px; cursor: pointer;
+  transition: border-color 150ms ease;
+}
+.fc.in .replay, .split.in .replay, .loop.in .replay { visibility: visible; }
+.replay:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+/* The free check: one row per stage, its name and grey line, then its bar to scale with the number. Phones stack the bar
+   under the name; from 640px it sits beside it. A bar takes up to 75% of its track, so the number always fits. */
+.fc { margin: 8px 0 26px; }
+.fc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 0 16px; }
+.fc-head { margin: 2px 0 0; font-size: 19px; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; }
+.fc-rows { list-style: none; padding: 0; margin: 0; }
+.fc-row, .fc-result { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 0 14px; }
+.fc-name { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.3; }
+.fc-sub { margin: 1px 0 5px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.4; color: var(--dim); text-wrap: balance; }  /* two even lines: no lone "credits" or "0" at a line's end (seen 3 Nov) */
+.fc-track { display: flex; align-items: center; gap: 8px; min-height: 24px; border-left: 1px solid var(--rule); }
+.fc-bar, .fc-cut { display: block; flex: none; width: calc(var(--w) * 75%); height: 12px; border-radius: 0 4px 4px 0; transform-origin: left; }
+.fc-bar { background: var(--ink); }
+.fc-cutrow .fc-bar { border-radius: 0; }
+/* The cut: hatched in red right after what's left, the way the pen strikes a line out. */
+.fc-cut { margin-left: -8px; background: repeating-linear-gradient(-45deg, var(--red) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1.5px var(--red); }
+.fc-val { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13.5px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+.fc-cutrow .fc-val { color: var(--red); }
+.fc-note { margin: 5px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.45; color: var(--dim); text-wrap: pretty; }
+.fc-result { margin: 20px 0 0; padding-top: 14px; border-top: 1px dashed var(--rule); }
+.fc-line { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.5; color: var(--dim); text-wrap: balance; }  /* on a phone, "to 0.73% (2,047 leads)" moves down whole */
+.fc-line:first-child { font-size: 15px; font-weight: 500; color: var(--ink); }
+/* What runs on its own: the left lines on small ink dots, like the drawing's agents; on the right, each call on a pencil
+   rule that its ink edge covers when its turn comes, under the one red: the "a person" head. Stacked on phones, two
+   columns from 640px. */
+.split { margin: 0 0 20px; }
+.split-top { display: flex; justify-content: flex-end; margin: 0 0 4px; }
+.split-cols { display: grid; row-gap: 24px; }
+.split-head { margin: 0 0 10px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.split-head-person { color: var(--red); }
+.split .nw { white-space: nowrap; }  /* a hyphenated word stays whole: never "do-" / "not-contact" */
+.split-bots { list-style: none; padding: 0; margin: 0; }
+.split-bots li { position: relative; margin: 0 0 9px; padding-left: 18px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13.5px; line-height: 1.5; text-wrap: pretty; }
+.split-bots li::before { content: ""; position: absolute; left: 1px; top: 0.55em; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+.split-calls { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.split-calls li { position: relative; padding: 1px 0 2px 14px; border-left: 2px solid var(--rule); }
+.split-calls li::before { content: ""; position: absolute; left: -2px; top: 0; bottom: 0; width: 2px; background: var(--ink); transform-origin: top; }
+.split-call { margin: 0; font-size: 16px; font-weight: 800; line-height: 1.3; text-wrap: balance; }
+.split-why { margin: 3px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.45; color: var(--dim); text-wrap: pretty; }
+.split-cap { margin: 18px 0 0; padding-top: 8px; border-top: 1px dashed var(--rule); font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.5; color: var(--dim); }
+@media (min-width: 640px) {
+  .fc-row, .fc-result { grid-template-columns: 240px minmax(0, 1fr); column-gap: 16px; }  /* each name on one line */
+  .fc-name { grid-column: 1; grid-row: 1; }
+  .fc-sub { grid-column: 1; grid-row: 2; margin-bottom: 0; }
+  .fc-track, .fc-lines { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  .fc-note { grid-column: 2; grid-row: 3; }
+  /* The bounce row's two lines span both name rows: the name's row stays its own height and the second takes the rest,
+     so the sub line sits right under its name (it floated 38px down, review 3 Nov). */
+  .fc-result { grid-template-rows: auto 1fr; }
+  .split-cols { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: 30px; }
+}
+/* The play: once, when the figure is in view (`.in`), each part at the delay its component sets (--at), held at the end
+   (fill both). Until then, and only when JavaScript runs and motion is allowed, the numbers, bars, lines and red edges
+   wait unseen and the calls wait dimmed. */
+@media (prefers-reduced-motion: no-preference) {
+  .pen-js .fc:not(.in) .fc-val,
+  .pen-js .fc:not(.in) .fc-note,
+  .pen-js .fc:not(.in) .fc-line,
+  .pen-js .split:not(.in) .split-bots li { opacity: 0; }
+  .pen-js .fc:not(.in) .fc-bar,
+  .pen-js .fc:not(.in) .fc-cut { transform: scaleX(0); }
+  .pen-js .split:not(.in) .split-calls p { opacity: 0.3; }
+  .pen-js .split:not(.in) .split-calls li::before { transform: scaleY(0); }
+  .fc.in .fc-bar { animation: fc-grow 700ms var(--ease-out) var(--at) both; }
+  .fc.in .fc-cut { animation: fc-grow 500ms var(--ease-in-out) var(--at) both; }
+  .fc.in .fc-val, .fc.in .fc-note, .fc.in .fc-line, .split.in .split-bots li { animation: rise-in 450ms var(--ease-out) var(--at) both; }
+  .split.in .split-calls p { animation: split-on 400ms var(--ease-out) var(--at) both; }
+  .split.in .split-calls li::before { animation: split-mark 450ms var(--ease-out) var(--at) both; }
+}
+/* Reduced motion: the last frame, still, and nothing to replay. */
+@media (prefers-reduced-motion: reduce) {
+  .replay { display: none; }
+}
+@keyframes fc-grow { from { transform: scaleX(0); } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes split-on { from { opacity: 0.3; } }
+@keyframes split-mark { from { transform: scaleY(0); } }
+
+/* ── Five things I do (3 Nov): the strip at the end of the home hero (components/sketches/FiveHabits.tsx). On the paper
+   like a drawing, no box. Phones: the steps run down the left edge, the line joining their dots. From 720px: five
+   columns, the line running across the dots. Ink, dim and the pencil rule; the HELD stamp is the one red. Every word
+   takes its place from the first paint: the motion is opacity and transform only, so nothing shifts. Its replay is the
+   shared .replay above. */
+.loop { margin: 26px 0 24px; }
+.loop-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 0 18px; }
+.loop-eyebrow { margin: 0 0 4px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.45; color: var(--dim); }
+.loop-head { font-size: 21px; font-weight: 800; line-height: 1.2; text-wrap: balance; }
+.loop-top .replay { margin-top: 2px; }
+.loop-steps { list-style: none; padding: 0; margin: 0; counter-reset: loop; }
+.loop-step { position: relative; counter-increment: loop; min-height: 46px; padding: 0 0 18px 42px; }
+.loop-step:last-child { padding-bottom: 0; }
+/* The dot: an open ring with its number, and the ink disc that covers it when the step's turn comes. */
+.loop-node { position: absolute; left: 0; top: 0; z-index: 1; width: 28px; height: 28px; }
+.loop-node::before, .loop-node::after {
+  content: counter(loop); position: absolute; inset: 0; border-radius: 50%;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 24px; text-align: center;
+}
+.loop-node::before { border: 2px solid var(--rule); background: var(--paper); color: var(--dim); }
+.loop-node::after { border: 2px solid var(--ink); background: var(--ink); color: var(--paper); }
+/* The line from this step's dot to the next one's: the pencil track, and the ink that fills it. */
+.loop-step:not(:last-child)::before, .loop-step:not(:last-child)::after { content: ""; position: absolute; left: 13px; top: 14px; width: 2px; height: 100%; }
+.loop-step:not(:last-child)::before { background: var(--rule); }
+.loop-step:not(:last-child)::after { background: var(--ink); transform-origin: top; }
+.loop-name { margin: 3px 0 4px; font-size: 16px; font-weight: 800; line-height: 1.3; }
+.loop-rc { margin: 0 0 4px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.5; color: var(--dim); text-wrap: pretty; }
+.loop-rc:last-child { margin-bottom: 0; }
+.loop-rc b { font-weight: 500; color: var(--ink); }
+.loop-stamp {
+  display: inline-block; margin-left: 2px; padding: 1px 6px 0;
+  font-family: var(--font-sans), Archivo, sans-serif; font-size: 13px; font-weight: 900; line-height: 1.35;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--red);
+  border: 2px solid var(--red); border-radius: 3px; transform: rotate(-8deg);
+}
+.loop-cap { margin: 18px 0 0; padding-top: 8px; border-top: 1px dashed var(--rule); font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.5; color: var(--dim); }
+.loop-cap p { margin: 0; }
+@media (min-width: 720px) {
+  .loop-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 14px; }
+  .loop-step, .loop-step:last-child { min-height: 0; padding: 0; }
+  .loop-node { position: relative; display: block; margin-bottom: 10px; }
+  .loop-step:not(:last-child)::before, .loop-step:not(:last-child)::after { left: 14px; top: 13px; width: calc(100% + 14px); height: 2px; }
+  .loop-step:not(:last-child)::after { transform-origin: left; }
+  .loop-name { margin: 0 0 6px; font-size: 15px; line-height: 1.25; text-wrap: balance; }
+  .loop-rc { font-size: 12.5px; line-height: 1.45; }
+}
+/* The play: once, when the strip is in view (`.in`), each piece at its own delay (the --dot, --draw and --at the
+   component sets), held at the end (fill both), about 3.5 seconds. Until then, and only when JavaScript runs and motion
+   is allowed, the examples, the ink discs, the ink line, the stamp and the caption's caveats wait unseen. */
+@media (prefers-reduced-motion: no-preference) {
+  .pen-js .loop:not(.in) .loop-rc,
+  .pen-js .loop:not(.in) .loop-stamp,
+  .pen-js .loop:not(.in) .loop-cap p,
+  .pen-js .loop:not(.in) .loop-node::after { opacity: 0; }
+  /* The ink line folds along its own length: down on phones, across from 720px. One keyframe for both, with only the
+     fold swapped, so turning a tablet across 720px never restarts a finished line (a new animation-name would). */
+  .loop-step::after { --fold: scaleY(0); }
+  .pen-js .loop:not(.in) .loop-step::after { transform: var(--fold); }
+  .loop.in .loop-rc { animation: rise-in 450ms var(--ease-out) var(--at) both; }
+  .loop.in .loop-cap p { animation: rise-in 450ms var(--ease-out) var(--at) both; }
+  .loop.in .loop-stamp { animation: loop-stamp 260ms var(--ease-out) var(--at) both; }
+  .loop.in .loop-node::after { animation: loop-dot 300ms var(--ease-out) var(--dot) both; }
+  .loop.in .loop-step::after { animation: loop-draw 400ms var(--ease-in-out) var(--draw) both; }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 720px) {
+  .loop-step::after { --fold: scaleX(0); }
+}
+/* Reduced motion: the last frame, still, and nothing to replay (the shared .replay rule above). */
+@keyframes loop-dot { from { opacity: 0; transform: scale(0.9); } }
+@keyframes loop-stamp { from { opacity: 0; transform: rotate(-8deg) scale(1.25); } }
+@keyframes loop-draw { from { transform: var(--fold); } }
+
+/* ── Spot the namesake (3 Nov): the game that opens the champion-move-checker post (components/sketches/
+   SpotTheNamesake.tsx). Three cases on the paper between pencil rules, three buttons each; the checker's call waits,
+   in its place, until a pick or the gate runs. Then the README's gate output in a wash box, like the posts' code blocks.
+   Ink, dim and the pencil rule; the one red is the BLOCKED stamp. Without JavaScript (no `pen-js`) the buttons are
+   hidden and every call and line shows. Hidden words keep their place, so nothing shifts. */
+.ns { margin: 8px 0 44px; }
+.ns-eyebrow { margin: 0 0 4px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.45; color: var(--dim); }
+.ns-head { margin: 0 0 6px; font-size: 26px; font-weight: 800; line-height: 1.15; }
+.ns-intro { margin: 0 0 14px; font-size: 17px; line-height: 1.5; }
+.ns-cases { list-style: none; padding: 0; margin: 0; border-top: 1px dashed var(--rule); }
+.ns-case { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 6px; padding: 14px 0; border-bottom: 1px dashed var(--rule); }
+.ns-crm, .ns-sig { margin: 0; font-size: 17px; line-height: 1.4; }
+.ns-crm { font-weight: 800; }
+.ns-tag { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; font-weight: 400; color: var(--dim); }
+.ns-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; visibility: hidden; }
+.pen-js .ns-picks { visibility: visible; }
+.ns-pick {
+  min-height: 36px; padding: 0 14px;
+  font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--ink); border-radius: 4px; cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.ns-pick[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.ns-pick:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+.ns-call { margin: 2px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13.5px; line-height: 1.45; text-wrap: pretty; }
+.ns-call b { font-weight: 500; }
+/* After a pick: the line under the call says whether it is yours. Both lines share one cell, so its place is kept before
+   a pick; without JavaScript there is no pick, so it takes no space at all. */
+.ns-verdict { display: none; margin: 1px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.45; color: var(--dim); }
+.pen-js .ns-verdict { display: grid; }
+.ns-verdict > span { grid-area: 1 / 1; visibility: hidden; }
+.ns-case[data-result="same"] .ns-same, .ns-case[data-result="differ"] .ns-differ { visibility: visible; }
+.ns-differ { color: var(--ink); font-weight: 500; }
+/* The gate: the line before it, its run button (the shared .replay look, shown only with JavaScript; it says "replay"
+   once the gate has run), the terminal, the gate's rule under it. */
+.ns-gate { margin: 30px 0 0; }
+.ns-gate-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.ns-gate-intro { margin: 0; font-size: 17px; line-height: 1.5; }
+.pen-js .ns-run { visibility: visible; }
+/* Both labels in one cell: the button is as wide as "run the gate" before and after, so nothing beside it re-wraps.
+   The hidden one is left out of the button's name. */
+.ns-labels { display: grid; }
+.ns-labels > span { grid-area: 1 / 1; }
+.ns-replay-label, .ns-gate.in .ns-run-label { visibility: hidden; }
+.ns-gate.in .ns-replay-label { visibility: visible; }
+.ns-term { padding: 12px 14px; background: var(--wash); border: 1px solid var(--rule); font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.6; }
+/* The README's own spacing, wrapping on a phone instead of scrolling sideways. */
+.ns-tl { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ns-w { white-space: nowrap; }  /* a command's words stay whole: phones wrap at its spaces, not after "--" */
+.ns-gap { margin-top: 1.6em; }  /* the blank line between the two runs */
+.ns-cmt { display: block; color: var(--dim); }  /* phones: the README comment under its command */
+.ns-pass { font-weight: 500; }
+.ns-blocked {
+  display: inline-block; margin: 3px 0; padding: 0 6px;
+  font-weight: 500; letter-spacing: 0.08em; color: var(--red);
+  border: 2px solid var(--red); border-radius: 3px; transform: rotate(-4deg);
+}
+.ns-gate-cap { margin: 10px 0 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.5; color: var(--dim); text-wrap: pretty; }
+@media (min-width: 640px) {
+  .ns-case { grid-template-columns: minmax(0, 1fr) auto; column-gap: 18px; }
+  .ns-crm, .ns-sig { grid-column: 1; }
+  .ns-picks { grid-column: 2; grid-row: 1 / span 2; align-self: center; flex-wrap: nowrap; margin: 0; }
+  .ns-callbox { grid-column: 1 / -1; }
+}
+@media (min-width: 720px) {
+  .ns-term { padding: 14px 18px; font-size: 12.5px; }
+  .ns-cmt { display: inline; }  /* the README's line, whole: 82 characters fit the column from here */
+}
+/* The motion, only when it's allowed: before a pick the call waits unseen in its place (hidden from screen readers too,
+   until the live region reads it), and a pick makes it rise into place; the terminal's later lines wait unseen until the
+   gate runs (`.in`), then print at the delays the component sets (--at) and hold (fill both); BLOCKED stamps down.
+   When the third pick starts the gate (`data-auto`), it waits 1.2 s more, so the stamp lands after that call is read.
+   Reduced motion: every call shows from the start (the last frame, review 3 Nov), a pick still says whether it is the
+   checker's, the whole output is there, and nothing to run or replay. */
+@media (prefers-reduced-motion: no-preference) {
+  .ns-call { transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+  .pen-js .ns-case[data-open] .ns-call { visibility: hidden; opacity: 0; transform: translateY(4px); }
+  .ns-pick { transition: background-color 150ms ease, color 150ms ease, transform 120ms var(--ease-out); }
+  .ns-pick:active { transform: scale(0.97); }
+  .pen-js .ns-gate:not(.in) .ns-tl[data-out],
+  .pen-js .ns-gate:not(.in) .ns-blocked { opacity: 0; }
+  .ns-gate.in .ns-tl[data-out] { animation: ns-print 160ms var(--ease-out) var(--at) both; }
+  .ns-gate.in .ns-blocked { animation: ns-stamp 260ms var(--ease-out) var(--at) both; }
+  .ns-gate.in[data-auto] .ns-tl[data-out], .ns-gate.in[data-auto] .ns-blocked { animation-delay: calc(var(--at) + 1.2s); }
+}
+@keyframes ns-print { from { opacity: 0; } }
+@keyframes ns-stamp { from { opacity: 0; transform: rotate(-4deg) scale(1.25); } }
+
+/* ── If the page's JavaScript never runs (3 Nov, code review). The inline head script sets pen-js before any bundle loads,
+   so the waiting states above would hide these words for good if the bundle then failed. components/PenLive.tsx adds
+   pen-live to <html> once React runs; until it does, each waiting part shows itself after 5 seconds. On a working page
+   pen-live lands first, this rule stops matching, and it never plays. */
+@media (prefers-reduced-motion: no-preference) {
+  .pen-js:not(.pen-live) .loop:not(.in) .loop-rc,
+  .pen-js:not(.pen-live) .loop:not(.in) .loop-stamp,
+  .pen-js:not(.pen-live) .loop:not(.in) .loop-cap p,
+  .pen-js:not(.pen-live) .loop:not(.in) .loop-node::after,
+  .pen-js:not(.pen-live) .loop:not(.in) .loop-step::after,
+  .pen-js:not(.pen-live) .fc:not(.in) .fc-val,
+  .pen-js:not(.pen-live) .fc:not(.in) .fc-note,
+  .pen-js:not(.pen-live) .fc:not(.in) .fc-line,
+  .pen-js:not(.pen-live) .fc:not(.in) .fc-bar,
+  .pen-js:not(.pen-live) .fc:not(.in) .fc-cut,
+  .pen-js:not(.pen-live) .split:not(.in) .split-bots li,
+  .pen-js:not(.pen-live) .split:not(.in) .split-calls p,
+  .pen-js:not(.pen-live) .split:not(.in) .split-calls li::before,
+  .pen-js:not(.pen-live) .ns-case[data-open] .ns-call,
+  .pen-js:not(.pen-live) .ns-gate:not(.in) .ns-tl[data-out],
+  .pen-js:not(.pen-live) .ns-gate:not(.in) .ns-blocked { animation: pen-failsafe 0s 5s both; }
+}
+@keyframes pen-failsafe { to { opacity: 1; transform: none; visibility: visible; } }

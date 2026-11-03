@@ -1,7 +1,7 @@
 // /llms.txt (the llmstxt.org format, checked 22 Oct 2026) and /llms-full.txt.
 // Manveen's words come first (data/llms-intro.ts); every section after them is generated from the site's data.
 
-import { ME, PIPELINE, JOBS, DRAWINGS as D, WRONG, PILOT, FREELANCE, type WorkItem } from "@/data/portfolio";
+import { ME, PIPELINE, JOBS, DRAWINGS as D, WRONG, NAMESAKE, PILOT, FREELANCE, type WorkItem } from "@/data/portfolio";
 import { NEWEST_FIRST, postDate, type Post } from "@/data/posts";
 import { RESUME } from "@/data/resume";
 import { LLMS_INTRO } from "@/data/llms-intro";
@@ -33,10 +33,18 @@ function workLine(w: WorkItem): string {
   return `${link(w.title, home)}: ${where}. ${w.lead ?? w.detail ?? ""}${nums.length ? ` Numbers: ${nums.join("; ")}.` : ""}`;
 }
 
-/** What a post's line adds after its summary: drawing-proof's scores, the dates and titles of the notes. */
+/** What a post's line adds after its summary: drawing-proof's scores, the dates and titles of the notes, the gate's two
+    runs from the champion-move-checker README with its caveat, and the blind sets' first runs (review, 3 Nov: the line
+    gave only 29/29 = 100%, which the careful matcher gets by construction, so an agent would have quoted it alone). */
 function postFacts(p: Post): string {
   if (Array.isArray(p.body)) return "";
   if (p.body.component === "drawing-proof") return ` Numbers: ${D.marks.map(([n, l]) => `${n} ${l}`).join("; ")}.`;
+  if (p.body.component === "champion-namesake") {
+    const [naive, mine] = NAMESAKE.gate.lines.split("\n").filter((l) => l.startsWith("agreement")).map((l) => l.replace(/^agreement with labels\s+/, ""));
+    const blind = NAMESAKE.after.flatMap((b) => (b.t === "ul" ? b.items : [])).flatMap((s) => /^\*\*holdout-\d:\*\* (\d+\/\d+)/.exec(s)?.[1] ?? []);
+    const runs = `${blind.slice(0, -1).join(", ")} and ${blind[blind.length - 1]}`;
+    return ` Numbers: the naive version ${naive}, ${NAMESAKE.gate.stamped}; this one ${mine}, PASS, on dev cases it passes by construction; blind first runs ${runs}, all ${NAMESAKE.gate.stamped}.`;
+  }
   return ` ${WRONG.pins.map((n) => `${n.date}, ${n.title}`).join("; ")}.`;
 }
 

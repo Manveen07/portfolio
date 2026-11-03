@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ME, HERO, HERO_KICKER, PHOTO } from "@/data/portfolio";
 import { HOME_BAND } from "@/data/proof";
+import FiveHabits from "@/components/sketches/FiveHabits";
 
 export default function Hero() {
   return (
@@ -25,6 +26,10 @@ export default function Hero() {
         <a href={HOME_BAND.link.href}>{HOME_BAND.link.label}</a>
       </p>
       <p className="small">{ME.hours}</p>
+      {/* 3 Nov (his pick of the animation mockups, option 2): five things I do, each with a real example. After the link
+          down and the hours line, so the first screen still holds the link on a 1440x900 laptop (data/proof.ts
+          HOME_BAND, review fix 1, his yes): placed between his lines and the link, the strip pushed both below it. */}
+      <FiveHabits />
     </section>
   );
 }

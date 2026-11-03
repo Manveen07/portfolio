@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
@@ -15,6 +15,8 @@ import OpenOnHash from "@/components/OpenOnHash";
 import AgentLanes from "@/components/sketches/AgentLanes";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
 import InboxFleet from "@/components/sketches/InboxFleet";
+import FreeCheckFirst from "@/components/sketches/FreeCheckFirst";
+import OnItsOwn from "@/components/sketches/OnItsOwn";
 import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
 
 // How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
@@ -87,6 +89,15 @@ export default function HowIBuild() {
             {line}
           </p>
         ))}
+        {/* 3 Nov (option 5 of the animation mockups): what runs on its own and what waits for a person, behind its own
+            click so the first screen and its word count stay as they were. Words in data/how.ts (SPLIT). */}
+        <details className="more" id={SPLIT.id}>
+          <summary>
+            <span className="more-line more-label">{VISUAL.clicks[SPLIT.id]}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <OnItsOwn />
+        </details>
       </section>
 
       <section id="skills" className="wrap sec">
@@ -126,6 +137,8 @@ export default function HowIBuild() {
             ))}
           </ul>
           <h3 className="nerd-head">{NERD.clayHead}</h3>
+          {/* 3 Nov (option 4 of the animation mockups): the funnel the Clay list's second line tells in words, drawn. */}
+          <FreeCheckFirst />
           <ul className="nerd-list">
             {NERD.clay.map((t) => (
               <li key={t}>

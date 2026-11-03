@@ -1,7 +1,7 @@
 // Blog / writing content. Block-based so we render without any markdown dep.
 // Inline syntax supported by the renderer: **bold**, `code`, *italic*, [text](url).
 
-import { DRAWINGS, WRONG, type Pin } from "./portfolio";
+import { DRAWINGS, WRONG, NAMESAKE, type Pin } from "./portfolio";
 
 export type Block =
   | { t: "h2"; s: string }
@@ -15,7 +15,7 @@ export type Block =
 
 /** A post drawn by its own component instead of prose blocks. Its words stay in data/portfolio.ts;
     app/writing/[slug]/page.tsx picks the component and lib/md/posts.ts writes its markdown copy. */
-export type PostComponent = "drawing-proof" | "confidently-wrong";
+export type PostComponent = "drawing-proof" | "confidently-wrong" | "champion-namesake";
 
 export type Post = {
   slug: string;
@@ -36,6 +36,18 @@ export type Post = {
 };
 
 export const POSTS: Post[] = [
+  {
+    // Written 3 Nov 2026: option 3 of his animation mockups that day ("other can be in their respected blogs"), the
+    // write-up his public repo champion-move-checker didn't have on the site. Its words and their sources are
+    // NAMESAKE in data/portfolio.ts (the repo's README at commit c7ac598fc568).
+    slug: "a-champion-tracker-that-can-say-it-isnt-sure",
+    title: NAMESAKE.title,
+    date: "2026-11-03",
+    readMins: 3,
+    tags: ["python", "testing", "gtm"],
+    summary: NAMESAKE.lede,
+    body: { component: "champion-namesake" },
+  },
   {
     // Written 25 Oct 2026 (Manveen: "create a good blog make sure it quirky and it is usefull as a social proff and
     // not boring for viewer"). Paths are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\ ; D = daily-log.
