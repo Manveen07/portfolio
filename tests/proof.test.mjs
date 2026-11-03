@@ -8,15 +8,17 @@
 // What it pins: each card's title and its exact set of numbers (each one passed claims_check.py --strict-numbers in a
 // claims draft outside this repo), the application cards' banned words, the retired eval claims on both pages and their
 // copies, where the cards sit, and that a card is evidence on the paper: no border, no shadow, no tilt, and red only
-// through the pen. 2 Nov: held-list's limit line ("two AIs agreeing") travels with the card in both densities; since
-// the reviews it names the reviewer (the Claude session that wrote the rubric) and what wasn't sampled.
+// through the pen. 2 Nov: held-list's limit line travels with the card in both densities; since the reviews it names
+// the reviewer (the Claude session that wrote the rubric) and what wasn't sampled. Since round 4 the sample's own line
+// says who agrees ("a second Claude session agrees on 43 (86%)").
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PROOF, HOME_CARDS, HOME_BAND, stepLine } from "../data/proof.ts";
+import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS, stepLine } from "../data/proof.ts";
+import { VISUAL } from "../data/how.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -42,13 +44,13 @@ const cardHtml = (html, slug) => html.match(new RegExp(`<article class="pc pc-(?
 
 /** Every word a card holds, the way the site can show it. */
 const cardText = (c) =>
-  [c.eyebrow, c.title, c.before.label, ...c.before.lines, c.before.note, ...c.steps.flatMap((s) => [s.name, s.sub, s.note ?? ""]), `circled: ${c.circledLabel}`, c.footer, c.limit ?? "", ...c.links.map((l) => l.label)].join("\n");
+  [c.eyebrow, c.title, c.before.label, ...c.before.lines, c.before.note, ...c.steps.flatMap((s) => [s.name, s.sub, s.note ?? ""]), `circled: ${c.circledLabel}`, c.footer, c.limit ?? "", ...c.links.map((l) => l.label), c.line ?? ""].join("\n");
 const numbers = (s) => [...new Set(s.match(/\d+(?:[.,]\d+)*%?/g) ?? [])].sort();
 
 // ── 1. The data ─────────────────────────────────────────────────────────
 const PINNED = {
   "held-list": {
-    title: "My AI check missed my 90% bar, so I held the list",
+    title: "My agents' picks missed my 90% bar, so I held the list",
     numbers: ["3", "4", "7", "43", "47", "50", "86%", "90%", "94%", "504"],
     circles: ["86%", "94%"],
   },
@@ -82,22 +84,32 @@ test("the site has exactly the three checked cards, each with its pinned title, 
   // Review fix 5: the drawings card's check line is the AI reading with its source text, not the source check (which
   // passed both wrong boxes; his hand labels found the 7).
   assert.equal(stepLine(PROOF["labelled-drawings"].steps[PROOF["labelled-drawings"].compact.check]), "AI reads each one: a value plus the text it came from");
-  assert.equal(stepLine(PROOF["held-list"].steps[PROOF["held-list"].compact.check]), "Second pass: rechecks each pick's evidence");
+  // Round 3 (2 Nov): home's compact card shows the 86% sample, then the new one (the cto: "The home-page card never shows
+  // the first sample's score"). Round 4: who agrees is in the line (all 4 round 3 readers asked "agree with what?").
+  assert.equal(stepLine(PROOF["held-list"].steps[PROOF["held-list"].compact.check]), "Sample of 50: a second Claude session agrees on 43 (86%)");
+  assert.equal(stepLine(PROOF["held-list"].steps[PROOF["held-list"].compact.result]), "New sample of 50: it agrees on 47 (94%)");
   assert.equal(stepLine(PROOF["caught-my-own-test"].steps[PROOF["caught-my-own-test"].compact.check]), "Notes removed: same judge, same 72 posts");
   // The truth qualifiers beside each circle (review fix 4): agreement with a Claude review, the published score, his labels.
+  // 2 Nov (verify loop round 2): held-list's circled label and footer are one line, so "90% of what" is answered where
+  // the eye lands (three round 1 readers asked; one thought he had sampled by hand).
   assert.deepEqual(
     Object.values(PROOF).map((c) => [c.circledLabel, c.footer]),
     [
-      ["measured against my 90% bar", "agree = same verdict as a separate Claude review of the same 50 companies"],
+      ["my bar: 90% agreement", undefined],
       ["the score I published", "72 posts: 11 fake AI jobs, 61 real · the two it missed sit right on the line"],
       ["scored against my own labels", "a cited source proves the text is on the drawing, not that it went in the right box"],
     ],
   );
   // 2 Nov: who checked it, at body size, on held-list only (SOURCES.md row 34: the labels were a Claude session's).
+  // Round 4: "so it's two AIs agreeing" is out (the steps say a second Claude session agrees); every caveat stays.
   assert.deepEqual(
     Object.values(PROOF).map((c) => c.limit),
-    ["The reviewer was the Claude session that wrote the rubric: two AIs agreeing. Companies the agents dropped weren't sampled. Fifty is a small sample.", undefined, undefined],
+    ["That session also wrote the rubric. Neither sample included companies the agents dropped, and fifty is a small sample.", undefined, undefined],
   );
+  // Round 3 (2 Nov): his own projects' cards carry one plain line for the home page, 30 words or fewer, its numbers the
+  // card's own (the numbers pin above holds them, since cardText reads the line).
+  assert.deepEqual(Object.values(PROOF).map((c) => c.line === undefined), [true, false, false]);
+  for (const c of Object.values(PROOF).filter((x) => x.line)) assert.ok(c.line.split(" ").length <= 30, `${c.slug}: the line is over 30 words`);
 });
 
 // ── 2. The application cards' banned words (ai-job-search assets/proof-cards/check_cards.py, BANNED and BANNED_ON) ──
@@ -126,7 +138,7 @@ test("no card says what the application cards may never say", () => {
 });
 
 // ── 3. Retired claims, on both pages and both markdown copies ────────────
-test("retired eval claims stay off the home page, /how-i-build and their markdown copies", () => {
+test("retired eval claims stay off the home page, /how-i-build, their markdown copies and the resume", () => {
   const RETIRED = [
     // "Not every AI step I've built has a test like this yet" (data/how.ts TESTING) is the honest version; it stays.
     /(?<!not )\b(?:every|all|any) AI steps?\b/i,
@@ -136,31 +148,75 @@ test("retired eval claims stay off the home page, /how-i-build and their markdow
     /tested like software before they touch a real lead/i,
     // tests/how.test.mjs's list (EVALS-2026-10-31.md, 1 Nov), now on the home page too.
     /never s(?:een|aw)|30 of 30|25 of 25|124 of 124|nothing moves on|had to match|hand-labelled 25|live only after|label 25 to 30|check every email|every email vs|only now/i,
+    // Round 6 (2 Nov, the round 5 jury's adversary): claims_check's RETIRED row on the weekly agent (paused since 27 Oct;
+    // its one full run swapped nothing: past tense only), and Tender Radar's LLM step in the present tense (its key was
+    // suspended in September). The resume said both until round 6.
+    /\bweekly (?:claude code |ai )?agent,? (?:that |which )?(?:ranks|swaps|replaces)\b/i,
+    /\ban LLM scores each\b/i,
   ];
   const copies = [
     ["home", squash(plain(home()))],
     ["/how-i-build", squash(plain(how()))],
     ["index.md", unmark(app("index.md.body"))],
     ["how-i-build.md", unmark(app("how-i-build.md.body"))],
+    // Round 6 (2 Nov): the resume's three copies (the PDF's own text, /resume.md, /resume.json).
+    ["resume.pdf", squash(read("data/resume-pdf.txt"))],
+    ["resume.md", unmark(app("resume.md.body"))],
+    ["resume.json", squash(app("resume.json.body"))],
   ];
   for (const [name, s] of copies) for (const re of RETIRED) assert.doesNotMatch(s, re, `${name}: ${re}`);
 });
 
-// ── 4. Home: three compact cards between the hero and Tender Radar ─────
-test("home: the proof band sits between the hero and Tender Radar and holds the three cards, AI stories first", () => {
+// ── 4. Home: the held-list card under the hero, his own projects' two cards after Work (2 Nov, verify loop round 2);
+// since round 3 each of those two is its line, with the full card behind a click (named for its card since round 6) ──
+test("home: his own projects' cards are a line each, the full card behind a closed click", () => {
+  const own = home().match(new RegExp(`<section id="${HOME_OWN_BAND.id}" class="wrap sec">[\\s\\S]*?</section>`))?.[0] ?? "";
+  assert.ok(!own.includes("pc-compact"), "a compact card is back in the second band");
+  assert.doesNotMatch(own, /<details[^>]* open/, "a click starts open");
+  const items = [
+    ...own.matchAll(
+      /<div class="own-check"><p class="body own-line">([\s\S]*?)<\/p><details class="more"><summary><span class="more-line more-label">([^<]*)<\/span><span class="more-hint" aria-hidden="true"><\/span><\/summary>(<article class="pc pc-full" id="([^"]+)">[\s\S]*?<\/article>)<\/details><\/div>/g,
+    ),
+  ];
+  assert.deepEqual(items.map((m) => m[4]), HOME_OWN_CARDS);
+  for (const [, line, label, card, slug] of items) {
+    const c = PROOF[slug];
+    assert.equal(squash(plain(line)), c.line, `${slug}: the line`);
+    // Round 6 (2 Nov): the click says what it opens ("How it actually went" on every click until then).
+    assert.equal(decode(label), VISUAL.clicks[slug], `${slug}: the click's label`);
+    assert.match(decode(card), new RegExp(`<h3 class="h3">${c.title}</h3>`), `${slug}: no h3 title`);
+    assert.ok(card.includes('class="pc-flow"') && card.includes("pen-brace"), `${slug}: not the full card`);
+    for (const l of c.before.lines) assert.ok(decode(card).includes(`<span class="pen-under">${l}</span>`), `${slug}: "${l}" is not underlined`);
+    assert.doesNotMatch(card, /pen-strike/, `${slug}: a struck line is back`);
+    assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, `${slug}: a count can split across lines`);
+    for (const l of c.links) {
+      assert.ok(card.includes(`href="${l.href}"`), `${slug}: no link to ${l.href}`);
+      assert.ok(existsSync(path.join(root, `.next/server/app${l.href}.html`)), `${l.href} was not built`);
+    }
+  }
+});
+
+test("home: held-list sits right under the hero, the other two cards after Work", () => {
   const html = home();
-  const at = ['id="top"', 'id="proof-cards"', 'id="proof"'].map((s) => html.indexOf(s));
-  assert.ok(at.every((i) => i >= 0) && at[0] < at[1] && at[1] < at[2], `the band is not between the hero and Tender Radar: ${at}`);
+  // Tender Radar (#proof) followed the second band until round 6 (2 Nov), when it left the home page.
+  const at = ['id="top"', 'id="proof-cards"', 'id="work"', `id="${HOME_OWN_BAND.id}"`].map((s) => html.indexOf(s));
+  assert.ok(at.every((i) => i >= 0) && at.every((v, i) => i === 0 || at[i - 1] < v), `the bands are out of order: ${at}`);
   const band = html.match(/<section id="proof-cards" class="wrap sec">[\s\S]*?<\/section>/)?.[0] ?? "";
+  const own = html.match(new RegExp(`<section id="${HOME_OWN_BAND.id}" class="wrap sec">[\\s\\S]*?</section>`))?.[0] ?? "";
   assert.match(band, new RegExp(`^<section id="proof-cards" class="wrap sec"><h2 class="kicker">${HOME_BAND.kicker}</h2>`));
+  assert.match(own, new RegExp(`^<section id="${HOME_OWN_BAND.id}" class="wrap sec"><h2 class="kicker">${HOME_OWN_BAND.kicker}</h2>`));
   assert.deepEqual([...band.matchAll(/<article class="pc pc-compact" id="([^"]+)">/g)].map((m) => m[1]), HOME_CARDS);
-  assert.deepEqual(HOME_CARDS, ["held-list", "caught-my-own-test", "labelled-drawings"]);
+  assert.deepEqual([...own.matchAll(/<article class="pc pc-full" id="([^"]+)">/g)].map((m) => m[1]), HOME_OWN_CARDS);
+  assert.deepEqual(HOME_CARDS, ["held-list"]);
+  assert.deepEqual(HOME_OWN_CARDS, ["caught-my-own-test", "labelled-drawings"]);
+  // The compact card: held-list only since round 3 (the other two are full cards behind clicks, tested above).
   for (const slug of HOME_CARDS) {
     const c = PROOF[slug];
     const card = cardHtml(band, slug);
     assert.match(decode(card), new RegExp(`<h3 class="h3">${c.title}</h3>`), `${slug}: no h3 title`);
+    // Round 3 (2 Nov): underlined in red, no longer struck through (two round 2 readers read the strike as "deleted").
     for (const line of c.before.lines) {
-      assert.ok(decode(card).includes(`<s class="pen-strike">${line}</s>`), `${slug}: "${line}" is not struck through`);
+      assert.ok(decode(card).includes(`<span class="pen-under">${line}</span>`), `${slug}: "${line}" is not underlined`);
     }
     // Compact: no brace, the note under the struck lines pointing up at every width, then the check and the result.
     assert.ok(!card.includes("pen-brace") && !card.includes("arr-left") && card.includes('class="arr-up"'), `${slug}: compact note or brace`);
@@ -168,19 +224,24 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
     const result = c.steps[c.compact.result];
     assert.equal(squash(plain(card.match(/<p class="pc-check">([\s\S]*?)<\/p>/)?.[1] ?? "")), stepLine(c.steps[c.compact.check]));
     assert.equal(squash(plain(card.match(/<p class="pc-result">([\s\S]*?)<\/p>/)?.[1] ?? "")), stepLine(result));
+    // Round 6 (2 Nov, 2 of 3 jurors): the pair leaves out the second pass, so 86% to 94% could read as resampling until it
+    // passed; the compact card's note says what changed between the samples, in the card's own words (steps 2 and 3).
+    const note = c.compact.note ?? result.note;
+    if (note) assert.ok(decode(card).includes(`<p class="note">${note}</p>`), `${slug}: the result's note`);
+    if (slug === "held-list") assert.equal(c.compact.note, "a different 50 companies, after a second pass that rechecks each pick's evidence");
     assert.equal((card.match(/pen-circle/g) ?? []).length, 1, `${slug}: one circle, on the result`);
     // Review 2: on the result line the brackets touching the circled words sit inside the loop ("(94%)").
     const loop = decode(card.match(/<p class="pc-result">[\s\S]*?<\/p>/)[0].match(/pen-circle">(?:<!-- -->)?((?:[^<]|<!-- -->)*)<svg/)?.[1] ?? "").replace(/<!-- -->/g, "");
     assert.equal(loop.replace(/^\(|\)$/g, ""), result.circle, `${slug}: the result's circle`);
     if (slug === "held-list") assert.equal(loop, "(94%)", "the brackets are outside the loop");
-    if (slug === "labelled-drawings") assert.match(card, /<span class="pc-nb"><span class="pen pen-circle">7 wrong of 419<svg[\s\S]*?<\/svg><\/span> values:<\/span><\/b>/, "\"values:\" can drop below its loop");
     // Review 2: a count never splits across lines ("194 of" / "194"): every "N of M" a card prints uses no-break spaces.
     assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, `${slug}: a count can split across lines`);
     // Review fix 4: what the circle means sits right under the result (and its note), then the footer, then the link.
-    const parts = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, 'class="small pc-foot"', ...(c.limit ? ['class="pc-limit"'] : []), 'class="links"'];
+    const parts = ['class="pc-result"', `circled: <!-- -->${c.circledLabel}`, ...(c.footer ? ['class="small pc-foot"'] : []), ...(c.limit ? ['class="pc-limit"'] : []), 'class="links"'];
     const order = parts.map((s) => decode(card).indexOf(s));
     assert.ok(order.every((i) => i > 0), `${slug}: a part is missing: ${order}`);
-    assert.deepEqual([...order].sort((a, b) => a - b), order, `${slug}: not result, circled, footer, ${c.limit ? "limit, " : ""}link`);
+    assert.deepEqual([...order].sort((a, b) => a - b), order, `${slug}: not result, circled, ${c.footer ? "footer, " : ""}${c.limit ? "limit, " : ""}link`);
+    if (!c.footer) assert.ok(!card.includes("pc-foot"), `${slug}: a footer it doesn't have`);
     if (c.limit) assert.equal(squash(plain(card.match(/<p class="pc-limit">([\s\S]*?)<\/p>/)?.[1] ?? "")), c.limit);
     else assert.ok(!card.includes("pc-limit"), `${slug}: a limit line it doesn't have`);
     for (const l of c.links) {
@@ -192,11 +253,22 @@ test("home: the proof band sits between the hero and Tender Radar and holds the 
   }
 });
 
-// ── 5. /how-i-build: held-list in full in the first screen, the only card on the page (2 Nov) ──
-test("/how-i-build: the full held-list card opens the page, five steps, both samples circled, no link to itself", () => {
-  const hero = how().match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const card = cardHtml(hero, "held-list");
-  assert.ok(card.startsWith('<article class="pc pc-full" id="held-list">'), "no full held-list card in the first screen");
+// ── 5. /how-i-build: held-list in full, the only card on the page (2 Nov); behind a click under the skills rows since round 5 ──
+test("/how-i-build: the full held-list card sits behind a closed click under the skills rows, five steps, both samples circled, no link to itself", () => {
+  // Round 4 (2 Nov): in the first screen until then; three round 3 readers thought home's link "hadn't changed pages".
+  // Round 5 (2 Nov): a section of its own after the skills in round 4; now a click right under the rows (all 4 round 4
+  // readers said its story repeats), which home's link opens through OpenOnHash (the card keeps id="held-list").
+  assert.ok(!cardHtml(how().match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? "", "held-list"), "the card is back in the first screen");
+  const skills = how().match(/<section id="skills"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const held = skills.match(/<details class="more held-click" id="held">[\s\S]*?<\/details>/)?.[0] ?? "";
+  assert.ok(held, "the card's click is not in the skills section");
+  const [notYet, click, nerd] = ['class="skills-notyet"', 'id="held"', 'id="nerd"'].map((s) => skills.indexOf(s));
+  assert.ok(notYet < click && click < nerd, "the click is not right under the skills rows, above the pipeline click");
+  assert.match(held, /^<details class="more held-click" id="held"><summary><span class="more-line more-label">How the held list actually went<\/span>/);
+  assert.ok(!how().includes('<section id="held"'), "the card has its own section again");
+  const card = cardHtml(held, "held-list");
+  assert.ok(card.startsWith('<article class="pc pc-full" id="held-list">'), "no full held-list card behind the click");
+  assert.ok(decode(card).includes(`<h3 class="h3">${PROOF["held-list"].title}</h3>`), "the card's title is not an h3 under the click");
   const flow = card.match(/<ol class="pc-flow">[\s\S]*?<\/ol>/)?.[0] ?? "";
   const steps = [...flow.matchAll(/<li class="pc-step">([\s\S]*?)<\/li>/g)].map((m) => m[1]);
   assert.equal(steps.length, 5);
@@ -207,11 +279,16 @@ test("/how-i-build: the full held-list card opens the page, five steps, both sam
   assert.match(steps[3], /<p class="note">a different 50 companies<\/p>/);
   assert.doesNotMatch(card.replace(/<[^>]+>/g, ""), /\d+ of \d+|\d+% \w/, "a count in the full card can split across lines");
   assert.ok(card.includes("pen-brace") && card.includes('class="arr-left"'), "the full card lost its brace or its side note");
+  // Round 3 (2 Nov): the lines under "what the sample caught" are underlined in red, not struck through.
+  for (const line of PROOF["held-list"].before.lines) assert.ok(decode(card).includes(`<span class="pen-under">${line}</span>`), `"${line}" is not underlined`);
+  assert.doesNotMatch(card, /pen-strike/, "a struck line is back on the held-list card");
   assert.ok(!card.includes('class="links"'), "the full card links to itself");
   assert.ok(card.indexOf("pc-flow") < card.indexOf("circled: "), "the circle's meaning is not under the flow");
-  // 2 Nov: the circled subs read at a glance (has-circle), and the limit line comes after the footer.
+  // 2 Nov: the circled subs read at a glance (has-circle), and the limit line comes right after the circled line (the
+  // footer merged into it, verify loop round 2).
   assert.equal((flow.match(/<span class="pc-sub has-circle">/g) ?? []).length, 2, "the circled subs lost has-circle");
-  assert.ok(card.indexOf('class="pc-limit"') > card.indexOf('class="small pc-foot"'), "the limit line is not under the footer");
+  assert.ok(!card.includes("pc-foot"), "held-list's footer is back");
+  assert.ok(card.indexOf('class="pc-limit"') > card.indexOf("circled: "), "the limit line is not under the circled line");
   // The habit row is a day-job event since v2.1 (2 Nov), told in its own card style: no compact card on /how-i-build.
   assert.ok(!how().includes('class="pc pc-compact"'), "a compact card is back on /how-i-build");
   // The Claygent story stays as it was (review fix 2): no card replaced it.
@@ -257,20 +334,31 @@ test("a card is the tiles' wash, straight, no border or shadow; red comes only t
 });
 
 // ── 7. The markdown copies say what the cards draw ─────────────────────
-test("the markdown copies write the pen out: what is struck, what is circled, and what a circle means", () => {
+test("the markdown copies write the pen out: what is underlined, what is circled, and what a circle means", () => {
   const homeMd = unmark(app("index.md.body"));
   for (const slug of HOME_CARDS) {
     const c = PROOF[slug];
     const r = c.steps[c.compact.result];
-    for (const s of [`${c.before.label} (struck through in red): ${c.before.lines.join(" ")}`, stepLine(c.steps[c.compact.check]), `${stepLine(r)}. Circled in red: ${r.circle}`, `circled: ${c.circledLabel}`, c.footer]) {
+    for (const s of [`${c.before.label} (underlined in red): ${c.before.lines.join(" ")}`, stepLine(c.steps[c.compact.check]), `${stepLine(r)}. Circled in red: ${r.circle}`, ...(c.compact.note ? [c.compact.note] : []), `circled: ${c.circledLabel}`, ...(c.footer ? [c.footer] : [])]) {
       assert.ok(homeMd.includes(s), `index.md: ${s}`);
     }
   }
+  // Round 3 (2 Nov): his own projects' cards are their line, then the full card their click opens.
+  for (const slug of HOME_OWN_CARDS) {
+    const c = PROOF[slug];
+    const steps = c.steps.map((s) => `${s.name} ${s.sub}${s.circle ? `. Circled in red: ${s.circle}` : ""}`);
+    for (const s of [c.line, `${c.before.label} (underlined in red): ${c.before.lines.join(" ")}`, ...steps, `circled: ${c.circledLabel}`, ...(c.footer ? [c.footer] : [])]) {
+      assert.ok(homeMd.includes(s), `index.md: ${s}`);
+    }
+    // Round 6 (2 Nov): caught-my-own-test's line opens with its card's title, so its card is the title after the line.
+    const lineAt = homeMd.indexOf(c.line);
+    assert.ok(lineAt >= 0 && homeMd.indexOf(c.title, lineAt + c.line.length) > lineAt, `index.md: ${slug}'s line is not before its card`);
+  }
   const howMd = unmark(app("how-i-build.md.body"));
   for (const s of PROOF["held-list"].steps) assert.ok(howMd.includes(`${s.name} ${s.sub}${s.circle ? `. Circled in red: ${s.circle}` : ""}`), `how-i-build.md: ${s.name}`);
-  // The limit line follows the footer in both copies.
+  // The limit line follows the circled line in both copies (held-list has no footer since 2 Nov).
   for (const copy of [homeMd, howMd]) {
     const c = PROOF["held-list"];
-    assert.ok(copy.includes(`${c.footer} ${c.limit}`), "the limit line does not follow the footer in a markdown copy");
+    assert.ok(copy.includes(`circled: ${c.circledLabel} ${c.limit}`), "the limit line does not follow the circled line in a markdown copy");
   }
 });

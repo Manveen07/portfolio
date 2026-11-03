@@ -150,8 +150,14 @@ export const POSTS: Post[] = [
     // Was the home page's pinned notes until 22 Oct. Dated by its newest note, 19 Sep 2026; each note keeps its own date.
     slug: "things-ai-got-confidently-wrong",
     title: WRONG.title,
-    // The lede's second sentence, word for word: under this title on the home page, "Pinned here" would point nowhere.
-    line: "Each one came back sounding sure of itself, and each one changed what I check.",
+    // Round 4 (2 Nov): two round 3 readers flagged "Things AI got confidently wrong" as AI-sounding. The lists say how
+    // many: the post pins exactly four, dated 25 May, 7 Jul, 11 Aug and 19 Sep (tests/site.test.mjs holds the count).
+    // The post's own title stays.
+    cardTitle: "Four AI mistakes I caught",
+    // Its line under this title on the home page. Until 2 Nov the lede's second sentence ("Each one came back sounding
+    // sure of itself, and each one changed what I check."), which a round 1 reader flagged as AI-sounding; now one of
+    // the post's own notes (11 Aug, "12 of 12, and down for three weeks"), in the words /how-i-build uses for it.
+    line: "Tender Radar passed 12 of 12 tests and still crashed every morning for three weeks.",
     date: "2026-09-19",
     dateLabel: "Last entry",
     readMins: 2,

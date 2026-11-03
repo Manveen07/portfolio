@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { ME, HERO, HERO_KICKER, PHOTO } from "@/data/portfolio";
 import { HOME_BAND } from "@/data/proof";
-import Annotated from "@/components/Annotated";
-import { Underline } from "@/components/Pen";
-import WeekSketch from "@/components/sketches/WeekSketch";
 
 export default function Hero() {
   return (
@@ -14,16 +11,11 @@ export default function Hero() {
           // priority: it is the largest thing in the first screen, so it is fetched first; every other image is lazy.
           <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} sizes="176px" priority />
         )}
-        {/* 1 Nov: the role and the AI edge first (review fixes), so the first screen says GTM and AI before the week's story. */}
+        {/* The role, then the AI edge as the h1 (2 Nov, verify loop round 2: the /how-i-build h1). The week's story and
+            its sketch moved to "How working with me goes", its own page since round 3 (/working-with-me). */}
         <p className="kicker hero-kicker">{HERO_KICKER}</p>
         <h1>{HERO.headline}</h1>
       </div>
-      <Annotated note={HERO.nerdNote}>
-        <p className="lede">
-          {HERO.answer} <Underline>{HERO.marked}</Underline>
-        </p>
-      </Annotated>
-      <WeekSketch />
       {HERO.how.map((line) => (
         <p key={line} className="body">
           {line}

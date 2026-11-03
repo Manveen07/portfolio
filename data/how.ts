@@ -39,15 +39,24 @@ export const HOW = {
   // screens later; review (Hormozi): a tool list is the "person that uses claude" line. The tools are named below
   // (Claude Code in the agents section, Clay, n8n and Python in the skill rows); New Delhi is in Say hi.
   // 2 Nov (his call, "we want to have our ai edge"): the line stays under the h1, said as a measurement he made
-  // ("I counted": the inventory ran on 31 Oct).
+  // ("I counted": the inventory ran on 31 Oct). Round 4 (2 Nov): two lines, the role and then home's 82-step line, which
+  // says what an AI step is (all 4 round 3 readers asked); each line is 30 words or fewer. Round 5 (2 Nov): the line
+  // says where the 82 steps are (data/portfolio.ts HERO, the same sentence).
+  // Round 6 (2 Nov, 2 of 3 jurors): a kicker above the h1, so the page doesn't read as the home page reloaded (the h1
+  // is the same on both pages; three round 5 readers thought the link was broken). The nav link's own words.
+  kicker: "How I build",
   headline: "I build AI agents for outbound and measure what they get wrong.",
-  sub: "GTM engineer at an outbound agency since November 2025. I counted my 82 AI steps: 11 have a solid test, 31 a partial one, 40 none yet.",
+  sub: [
+    "GTM engineer at an outbound agency since November 2025.",
+    "Across the agency's tools and my own projects, 82 steps have an AI deciding or writing: 11 have a solid test, 31 a partial one, 40 none yet.",
+  ] as [string, string],
 } as const;
 
 // ── Me and my agents: what runs each day, where a person approves ──
 // SOURCES.md row 33 and the day-job follow-up step (line 13: "daily 09:00 IST since 16 Oct"). Never "every morning"
-// (one run folder, 19 Oct, is missing), never "I approve" or the approver's name, never Slack buttons or cards (none
-// since 26 Oct), no quality claim: the drafts have no graded test yet, and the page says so.
+// (one run folder, 19 Oct, is missing), and since 2 Nov never "daily" (the 1 and 2 Nov runs failed: the sending tool
+// answered 401, "Plan expired"), never "I approve" or the approver's name, never Slack buttons or cards (none since
+// 26 Oct), no quality claim: the drafts have no graded test yet, and the page says so.
 // Step 6 (review, 2 Nov): email goes out through the sending tool after the approval, and LinkedIn through a
 // computer-use agent from the approval sheet, so the person never sends by hand. It sits in the lower row after the
 // gate, and its name says who sends.
@@ -57,8 +66,11 @@ export const AGENTS: { label: string; note: string; lanes: { agents: string; per
   label:
     "How the follow-up agents work, in order. Agents: 1 a lead replies with interest, 2 the agent reads the thread, 3 it drafts the next message, 4 a rule check runs. A person: 5 edits and approves each draft, circled in red as the gate. 6 Then the sending tool sends it.",
   // His own words for how he works (voice notes, line 18): "i ike to check first asess what happend and then come up
-  // with plans and i put gaurdrails so same thing does not happen twice".
-  note: "check first, then a guardrail so it doesn't happen twice",
+  // with plans and i put gaurdrails so same thing does not happen twice". Cut in round 2 (2 Nov: 3 of 4 round 1 readers
+  // flagged it as a slogan) without his yes; back in round 6 (2 Nov), his keep or cut asked. 3 Nov: reworded at his
+  // ask (was "check first, then a guardrail so it doesn't happen twice"); step 5 is the drawing's gate, where a person
+  // edits and approves.
+  note: "if step 5 catches a mistake, I add a check for it",
   lanes: { agents: "agents", person: "a person" },
   steps: [
     { name: "positive reply", lane: "agents" },
@@ -69,14 +81,15 @@ export const AGENTS: { label: string; note: string; lanes: { agents: string; per
     { name: "sent by the tool", lane: "tool" },
   ],
   lines: [
-    "Since 16 Oct my Claude Code agents have run daily, drafting follow-ups to leads who replied with interest to our outbound.",
+    "Since 16 Oct my Claude Code agents have drafted follow-ups to leads who replied with interest to our outbound.",
     // "a graded test on my agents' drafts" is in the skills section's Not yet line, and the sub line says 40 steps have
     // no test.
     "A person edits and approves each draft before it sends.",
   ],
 };
 
-// ── One habit, with receipts: one past event from the day job, the old number struck and the new one circled ──
+// ── Before I change a rule (the habit row; "One habit, with receipts" until 2 Nov): one past event from the day job, the
+// old number struck and the new one circled ──
 // v2.1 (2 Nov). Manveen, on the leadlens card that stood here: "i think this is not related to my gtm work maybe you
 // can reword this so it aligns with gtm". The session's call: the habit is replaying past data before switching a
 // rule, and its receipt is the email identity check, told once, here (it was a story inside the skills click). The
@@ -130,12 +143,22 @@ export const HABITS: Habit[] = [
     // The limit covers the circled 70 as well as the 77 ("all 2,376" and "those 123" keep the two sets apart): the rules were written from those 123 refusals, after2.csv
     // and ab_old_new.py hold no labels, and the audit (line 17) says the brand-word rule passed 6 domains no website
     // confirmed.
-    head: "Our email match check refused the right people, so I re-ran its refusals before changing it",
-    exhibit: { struck: "0 of 123 passed", circled: "70 of 123", rest: " pass" },
+    // Round 3 (2 Nov): all 4 round 2 readers stumbled on "email match check" (match what?), so the head says what it
+    // matches (email_identity.py: "Does an email belong to this person at this company?") in the same 16 words; "before
+    // changing it" gave way, as the label right above says "Before I change a rule". "real people" is the story's own
+    // wording ("It was rejecting real people"). The limit: the cto read "neither run shows the new passes are the right
+    // people" as contradicting the head. The 70 are in-sample ("The rules came from those 123"), and nobody checked the
+    // 77 (the audit records delivery checks only); one word shorter. Round 4 (2 Nov): said in the first person (the round
+    // 3 founder flagged it), the caveat still beside its numbers.
+    // Round 5 (2 Nov): the exhibit was "0 of 123 passed → 70 of 123 pass"; all 4 round 4 readers needed two reads, and
+    // the struck 0 was true by construction (these were the check's own refusals). Now "123 refused → 70 of them pass
+    // the new rules": the same fact (the identity audit, line 11: "After the fix: 70 of 123 unique refusals pass").
+    head: "Our email match check (right person, right company) refused real people, so I re-ran its refusals",
+    exhibit: { struck: "123 refused", circled: "70 of them", rest: " pass the new rules" },
     lines: [
       "Each wrong refusal costs twice: we paid for that email, then pay the next provider.",
       "Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost.",
-      "The rules came from those 123, and neither run shows the new passes are the right people.",
+      "I built the rules from those 123, and no one has checked yet whether the 77 are the right people.",
     ],
     checked: "checked against: the old rules' answers",
     story: EMAILS,
@@ -235,8 +258,8 @@ export const PIPELINE_STEPS: { label: string; note: string; steps: Step[] } = {
 // v2.1 (2 Nov). Manveen, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
 // The session's call: one sentence per skill, with its number, readable on its own (no arrow-only links; a link sits at
 // the end of a full sentence), and the gaps said once, in one "Not yet" line under the rows. No bars, no levels, no
-// "expert". "Daily" only where it is true today (the follow-up agents); the lead finder has been paused since 27 Oct,
-// so no row leans on it. Order: the AI work first, then Clay, emails, deliverability, n8n, CRM, Python.
+// "expert". No "daily": the lead finder has been paused since 27 Oct, and the follow-up agents' 1 and 2 Nov runs failed
+// (the sending tool's 401, "Plan expired"), so no row leans on a daily run. Order: the AI work first, then Clay, emails, deliverability, n8n, CRM, Python.
 
 export type Skill = {
   id: string;
@@ -251,14 +274,16 @@ export const SKILLS: Skill[] = [
   // Never "every morning". Review (2 Nov, truth): the approval is a gate ("approves each draft before it sends"), not a
   // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
   { id: "skill-agents", title: "AI agents", line: "My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes." },
-  // SOURCES.md row 34 (the held list, told in full by the card under the h1): agreement with a separate Claude review,
+  // SOURCES.md row 34 (the held list, told in full by the card after these rows): agreement with a separate Claude review,
   // never hand labels; 43 of 50 under the 90% bar, then a second pass and a new sample of 50 at 47. Reviews (2 Nov):
   // the hero card's terms ("Claude agents pick"), never "fit check", the Claygent step's name on this page; and the
-  // fix is named (EVALS 3a: "until a fix passed 50 fresh rows at 47 of 50"), so it can't read as resampling.
-  { id: "skill-checking", title: "Checking AI output", line: "My agents' company picks agreed with a Claude review on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones." },
+  // fix is named (EVALS 3a: "until a fix passed 50 fresh rows at 47 of 50"), so it can't read as resampling. Round 4
+  // (2 Nov): "a second Claude session", as on the card; "matched" keeps the row at 30 words.
+  { id: "skill-checking", title: "Checking AI output", line: "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones." },
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
-  // 17,056.
-  { id: "skill-clay", title: "Clay", line: "I mapped a 34,044-company market in Clay for 0 data credits; Claygent checked 24,506 at about 0.18 credits each." },
+  // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
+  // row 11: "70,508 rows in 382 queries, search quota only"). 23 words.
+  { id: "skill-clay", title: "Clay", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
   // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
   { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },
   // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
@@ -287,7 +312,9 @@ export const SKILLS_NOT_YET = { label: "Not yet:", text: "Salesforce, SQL at wor
 // 2 Nov: present-tense "every"/"each" claims scoped to what a source backs (the builder check): tests for mistakes that
 // reached a draft, a list check that blocks a list, each paid provider in his pipeline.
 export const NERD = {
-  summary: "The pipeline, and nerd details",
+  // Round 4 (2 Nov): the click's own three sub-heads ("The pipeline, and nerd details" until then; a round 3 reader
+  // flagged it).
+  summary: "The pipeline, how I test, and Clay in depth",
   caption: "Built at my day job, an outbound agency, since November 2025.",
   testingHead: "How I test",
   clayHead: "Clay in depth",
@@ -301,9 +328,10 @@ export const NERD = {
     "On campaigns I upload myself, each email's names and numbers are traced to the research behind it, and a fresh AI reader with no context reads it cold, as the prospect would. My scripts can't upload, start or resume a campaign until that check passes. That reader has no known-answer test yet.",
     // Resume bullet 3 ("per-provider caps and a spend ledger").
     "Each paid provider in my pipeline has a cap and every lookup goes into a spend ledger, so a run stops and asks before it goes over.",
-    // things-ai-got-confidently-wrong, 11 Aug note; the home page bars. 2 Nov: the October outage line is out until it
-    // has a claims-table row. Review (2 Nov): the bars are the snapshot of 15 Oct, refreshed by hand, so past tense.
-    "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. Its runs to 15 Oct [sit on my home page](/#proof) as bars, red when one failed. [The three-week story](/writing/things-ai-got-confidently-wrong)",
+    // things-ai-got-confidently-wrong, 11 Aug note. 2 Nov: the October outage line is out until it has a claims-table
+    // row. Round 6 (2 Nov): the bars left the home page (its runs showed green while its AI step failed on every new
+    // notice since September, a suspended API key), so the line says that instead of pointing at them.
+    "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. From September its AI step failed on every new notice and no run went red for it, so it came off my home page. [The three-week story](/writing/things-ai-got-confidently-wrong)",
   ],
   clay: [
     // SOURCES.md row 9 (31 loops enabled across 3 accounts); the lead finder in the past tense, paused 27 Oct. 2 Nov: no
@@ -325,9 +353,9 @@ export const NERD = {
 
 // ── Check it yourself: what to click, and what you'll see ──
 // The public READMEs, as snapshotted 29 to 31 Oct: champion-move-checker lines 12 to 16 ("8/29", BLOCKED);
-// n8n-workflow-tests line 9 (45 tests); tender-radar-showcase lines 35 and 56 (104 mornings since 4 July, as saved 15
-// Oct; the three weeks it crashed, 21 July to 11 August). His GitHub profile README, line 3 (read 2 Nov).
-export type LiveItem = { id: string; href: string; label: string; code?: string; text: string; extra?: { href: string; label: string } };
+// n8n-workflow-tests line 9 (45 tests); tender-radar-showcase line 56 (the three weeks it crashed, 21 July to 11
+// August). His GitHub profile README, line 3 (read 2 Nov).
+export type LiveItem = { id: string; href: string; label: string; code?: string; text?: string; extra?: { href: string; label: string } };
 export type LogEntry = { id: string; date: string; text: string; link?: { href: string; label: string } };
 
 export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
@@ -350,16 +378,19 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
       id: "live-radar",
       href: "https://github.com/Manveen07/tender-radar-showcase",
       label: "Tender Radar ↗",
-      // 2 Nov: no "each morning" (the builder check: nine mornings failed in October). Cut 4: shorter, the dates kept.
-      // Review (2 Nov): "Its Limits list" read as a broken phrase; the README's section is called Limits.
-      text: "UK tenders. It started on its own 104 mornings, 4 July to 15 Oct; its README lists a three-week crash.",
+      // 2 Nov: no "each morning" (the builder check: nine mornings failed in October). Review (2 Nov): "Its Limits list"
+      // read as a broken phrase; the README's section is called Limits. Verify loop round 2 (2 Nov): the morning count is
+      // out ("104 mornings, 4 July to 15 Oct" from the README beside the home page's live count: all 4 readers flagged
+      // the two numbers as disagreeing).
+      text: "UK tenders; its AI step has been down since September, and its README lists an earlier three-week crash.",
       extra: { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Its 5-minute video ↗" },
     },
     {
+      // Round 4 (2 Nov): the link only. Its gloss ("where I've measured it, each project says how often it's wrong",
+      // from the profile README) was flagged as AI-sounding by 3 of 4 round 3 readers; the repos above show it.
       id: "live-profile",
       href: "https://github.com/Manveen07",
       label: "My GitHub profile ↗",
-      text: "where I've measured it, each project says how often it's wrong",
     },
   ],
   // Review (2 Nov, truth): no screen share of day-job tools, so no demo offer; Say hi offers the call.
@@ -368,6 +399,13 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
   // records; tests/how.test.mjs warns when the newest is more than 21 days old. The two 1 Nov entries carry no commit
   // link: that commit's diff shows old comments with internal folder names (decision 4).
   log: [
+    {
+      // Round 6 (2 Nov, the round 5 jury's blocker): the 1 Nov run ended "success" with 8,274 403 errors (a suspended
+      // key), and the classified total has stood at 3,671 since 3 Sep. The session's wording.
+      id: "log-2026-11-03-tender-radar",
+      date: "2026-11-03",
+      text: "Took Tender Radar off my home page: its AI step had been failing on every new notice since September (a suspended API key), and no run went red for it.",
+    },
     {
       // The reviews of 2 Nov: the live page said one segment (5) cleared only after a relabel; segments 1 and 4 did too.
       id: "log-2026-11-02-claygent",
@@ -414,14 +452,16 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 /** "2 Nov" from "2026-11-02", the way the log shows a date. */
 export const shortDate = (iso: string) => `${Number(iso.slice(8, 10))} ${MONTHS[Number(iso.slice(5, 7)) - 1]}`;
-/** The log's summary line names its newest entry, so a reader can see it is kept up. */
-export const logSummary = () => `Where I corrected myself (newest: ${shortDate(LIVE.log[0].date)})`;
+/** The log's summary line names its newest entry, so a reader can see it is kept up. Round 5 (2 Nov): "Where I
+    corrected myself (newest: …)" until then (the round 4 founder flagged it). */
+export const logSummary = () => `My corrections log (last entry ${shortDate(LIVE.log[0].date)})`;
 
 // ── Say hi ──
 // 2 Nov: "our process stops at the reply, so there's no meetings number" is cut (decision 3); the hours line says
 // where he is (home keeps its own hours line).
+// Round 5 (2 Nov): the ask without the question (data/portfolio.ts SAY_HI.ask, held equal by a test).
 export const CONTACT = {
-  ask: "Hiring a GTM engineer? Tell me about the role.",
+  ask: "If you're hiring a GTM engineer, email me about the role.",
   where: "I'm in New Delhi and can work US or UK hours.",
   results: "I'll walk you through campaign results on a call.",
 };
@@ -467,16 +507,35 @@ export const VISUAL = {
         { label: "Teammate's, before", value: 2.26, shown: "2.26%", skipped: false },
         { label: "Teammate's, after", value: 2.09, shown: "2.09%", skipped: false },
       ],
-      after: "After, not because: not all of the drop is the screen.",
+      // Round 3 (2 Nov): "After, not because:" is cut (two round 2 readers flagged it, two called it cryptic); the
+      // teammate's bars carry the control, and the story behind the click still says "after, not because". Round 5 (2 Nov):
+      // "Not all of the drop is the screen." read as a tagline to the round 4 recruiter; the line now says what the
+      // teammate's bars show (SOURCES.md row 31: "a teammate's unscreened uploads 2.26% then 2.09%", "so not all of the
+      // drop is the screen").
+      after: "The teammate's list fell a little too, so the screen isn't the whole cause.",
     },
   },
-  readStory: "How it actually went",
+  // Each click says what it opens (round 6, 2 Nov, 2 of 3 jurors: "How it actually went" on all six read as a template,
+  // and nothing told a reader which one was worth opening). His phrase starts the label where it fits. Keyed by the
+  // story's id or the card's slug.
+  clicks: {
+    "held-list": "How the held list actually went",
+    identity: "How the re-run actually went",
+    claygent: "How the Claygent rewrite went",
+    bounces: "How the mail-server split went",
+    "caught-my-own-test": "How the leadlens test actually went",
+    "labelled-drawings": "How the drawing test actually went",
+  } as Record<string, string>,
   // The rail on wide screens, read top to bottom as one story.
   kickers: {
     agents: "Me and my agents",
-    habits: "One habit, with receipts",
-    // Cut 1: two stories show here; the third, the email check, is the habit card's (v2.1).
-    failures: "Two times it broke",
+    // Verify loop round 2 (2 Nov): was "One habit, with receipts" (4 of 4 round 1 readers flagged it as a slogan); now a
+    // plain label for what the row shows.
+    habits: "Before I change a rule",
+    // Cut 1: two stories show here; the third, the email check, is the habit card's (v2.1). Round 5 (2 Nov): "Two times it
+    // broke" until then; the round 4 agency reader called the bounce chart under it his strongest deliverability proof,
+    // and the old label undersold it.
+    failures: "What broke, and what I changed",
     // v2.1 (2 Nov): the gaps are one "Not yet" line under the rows, so the kicker names what he can do.
     skills: "What I can do",
     live: "Check it yourself",

@@ -3,8 +3,8 @@
 //
 // What it pins (v2, 2 Nov 2026; design: the 2 Nov design doc, kept outside this public repo). Manveen, 2 Nov:
 // "make sure tis page is easily undersatnble and helps us in building social proof", "they understand my skills". The
-// first screen is the AI-edge h1, one sub line and the held-list card (one miss he acted on); then his agents and
-// where a person approves, a habit from the day job (the email check, replayed before switching, its story behind the
+// first screen is the AI-edge h1, two sub lines (the role, then what an AI step is and how many have a test) and his
+// agents and where a person approves (round 5: the held-list card, one miss he acted on, sits behind a click under the skills rows); a habit from the day job (the email check, replayed before switching, its story behind the
 // card's click; v2.1), two day-job failures as charts with their stories behind a click, eight skill rows of one plain
 // sentence each and one "Not yet" line (v2.1; the pipeline and the details behind one click), links a stranger can
 // check with a dated corrections log, and how to reach him. The visible words stay at the count measured at the build; the day job is described,
@@ -17,6 +17,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, LIVE, VISUAL, logSummary } from "../data/how.ts";
+import { HERO } from "../data/portfolio.ts";
 import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -63,8 +64,8 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.match(head, /<meta property="og:image" content="https:\/\/manveen\.me\/how-i-build\/opengraph-image/);
   assert.ok(head.includes(`<link rel="alternate" type="text/markdown" href="${SITE}/how-i-build.md"/>`));
   assert.ok(head.includes('<link rel="describedby" href="/llms.txt" type="text/plain"/>'));
-  // The description is the h1 and the sub line (2 Nov).
-  assert.ok(decode(head).includes(`<meta name="description" content="${HOW.headline} ${HOW.sub}"/>`), "the description is not the h1 and the sub line");
+  // The description is the h1 and the sub lines (2 Nov; two lines since round 4).
+  assert.ok(decode(head).includes(`<meta name="description" content="${HOW.headline} ${HOW.sub.join(" ")}"/>`), "the description is not the h1 and the sub lines");
   assert.ok(existsSync(path.join(root, ".next/server/app/how-i-build/opengraph-image.body")), "no share card");
   assert.equal(JSON.parse(app("how-i-build.md.meta")).headers["content-type"], "text/markdown; charset=utf-8");
   assert.match(app("sitemap.xml.body"), /<loc>https:\/\/manveen\.me\/how-i-build<\/loc>/);
@@ -73,39 +74,57 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.ok(app("llms-full.txt.body").includes(md().trim()), "llms-full.txt does not hold the copy whole");
 });
 
-test("the first screen: the h1, the photo, one sub line, then the held-list card, and no other paragraph", () => {
+test("the first screen: the photo, the kicker, the h1, two sub lines (the role, then what an AI step is), no card, then Me and my agents", () => {
   const hero = section("top");
   assert.equal((page().match(/<h1[\s>]/g) ?? []).length, 1);
   assert.equal(squash(plain(hero.match(/<h1>([\s\S]*?)<\/h1>/)[1])), HOW.headline);
-  assert.match(hero, /<div class="hero-head"><img[^>]*alt="Manveen Singh"[^>]*class="photo"[^>]*\/?><h1>|<div class="hero-head"><img[^>]*class="photo"[^>]*alt="Manveen Singh"[^>]*\/?><h1>/, "the photo is not in the head block before the h1");
-  assert.doesNotMatch(hero, /<p class="kicker">/, "a kicker is back above the h1");
-  const subs = [...hero.matchAll(/<p class="how-sub">([\s\S]*?)<\/p>/g)];
-  assert.equal(subs.length, 1, "not exactly one sub line");
-  assert.equal(squash(plain(subs[0][1])), HOW.sub);
-  assert.ok(words(HOW.sub) <= 30, "the sub line is over 30 words");
+  // Round 6 (2 Nov, 2 of 3 jurors): a kicker, the nav link's words, between the photo and the h1, as home has "GTM
+  // engineer": the h1 is the same on both pages, and three round 5 readers thought the link had reloaded home.
+  assert.equal(HOW.kicker, "How I build");
+  assert.match(hero, /<div class="hero-head"><img[^>]*alt="Manveen Singh"[^>]*class="photo"[^>]*\/?><p class="kicker hero-kicker">How I build<\/p><h1>/, "not the photo, the kicker, then the h1 in the head block");
+  // Round 4 (2 Nov): one block of two lines, each 30 words or fewer: the role, then home's 82-step line, which says what
+  // an AI step is (all 4 round 3 readers asked; the eval inventory counts model steps only).
+  const sub = hero.match(/<div class="how-sub">([\s\S]*?)<\/div>/)?.[1] ?? "";
+  assert.equal((hero.match(/class="how-sub"/g) ?? []).length, 1, "not exactly one sub block");
+  assert.deepEqual([...sub.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => squash(plain(m[1]))), [...HOW.sub]);
+  for (const l of HOW.sub) assert.ok(words(l) <= 30, `a sub line is over 30 words: ${l}`);
+  assert.equal(HOW.sub[0], "GTM engineer at an outbound agency since November 2025.");
   // Review (2 Nov): the h1's limit sits on the same screen as the h1 (the eval inventory's count line), and no tool list.
-  // 2 Nov: said as a measurement he made ("I counted"), not a confession.
-  assert.match(HOW.sub, /I counted my 82 AI steps: 11 have a solid test, 31 a partial one, 40 none yet\.$/);
-  assert.doesNotMatch(HOW.sub, /Clay, n8n and Python/, "the tool list is back in the sub line");
-  const card = hero.indexOf('<article class="pc pc-full" id="held-list">');
-  assert.ok(card > hero.indexOf('<p class="how-sub">'), "the held-list card does not follow the sub line");
-  // The card keeps "90% bar" on one line with a no-break space (review 2).
-  assert.match(hero.replace(/ /g, " "), new RegExp(`<h2 class="h3">${PROOF["held-list"].title}</h2>`), "the card's title is not an h2 styled as h3");
-  // No paragraph outside the card and the sub line: anything else the hero says in a <p> is a row of links.
-  const rest = hero.replace(/<article class="pc[\s\S]*?<\/article>/g, "").replace(/<p class="how-sub">[\s\S]*?<\/p>/, "");
+  // Round 5 (2 Nov): it says where the 82 steps are (all 4 round 4 readers asked "steps of what?").
+  assert.match(HOW.sub[1], /^Across the agency's tools and my own projects, 82 steps have an AI deciding or writing: 11 have a solid test, 31 a partial one, 40 none yet\.$/);
+  // Round 6 (2 Nov): home's hero has his 15 Oct story back where this line stood; the 82-step line is on this page only.
+  assert.ok(!HERO.how.includes(HOW.sub[1]), "the 82-step line is in home's hero again");
+  assert.doesNotMatch(HOW.sub.join(" "), /Clay, n8n and Python/, "the tool list is back in the sub line");
+  // Round 4: the held-list card left the first screen (three round 3 readers thought home's link "hadn't changed pages"),
+  // so Me and my agents follows the hero.
+  assert.ok(!hero.includes('class="pc '), "a proof card is back in the first screen");
+  assert.deepEqual([...page().matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]).slice(0, 2), ["top", "agents"]);
+  // No paragraph outside the sub block: anything else the hero says in a <p> is a row of links.
+  const rest = hero.replace(/<div class="how-sub">[\s\S]*?<\/div>/, "").replace(/<p class="kicker hero-kicker">[^<]*<\/p>/, "");
   for (const [, p] of rest.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
     assert.ok(!squash(plain(p.replace(/<a\b[\s\S]*?<\/a>/g, ""))), `a paragraph in the first screen: ${squash(plain(p)).slice(0, 60)}`);
   }
   for (const l of VISUAL.heroLinks) assert.ok(hero.includes(`href="${l.href}"`), `the hero has no link to ${l.href}`);
 });
 
-const VISIBLE_CAP = 749;
+// 3 Nov, final jury: +10 words on the Tender Radar link (its AI step is down since September), a truth fix.
+const VISIBLE_CAP = 618;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
   // all six steps) to about 750 or fewer ("easily undersatnble"), keeping every skills gap and every caveat. Measured
   // after the cuts: 740. After the five reviews' truth and clarity fixes, trimmed (2 Nov): 749. v2.1 (2 Nov): the GTM
-  // habit card and the one-sentence skill rows, trimmed inside those two sections: 749. Adding words means cutting some.
+  // habit card and the one-sentence skill rows, trimmed inside those two sections: 749. Verify loop round 2 (2 Nov):
+  // net cuts only (the held-list card's circled line and footer merged, Tender Radar's morning count out, "daily" out,
+  // the habit label plain): 727. Verify loop round 3 (2 Nov): net cuts only (the held-list limit in 20 words, "After, not
+  // because:" out, the habit's limit one word shorter, its head the same 16 words, the skills moved up): 719. Verify loop
+  // round 4 (2 Nov): net cuts (the GitHub profile's gloss out, the circled line down to its bar, the held-list limit one
+  // word shorter; in: what an AI step is, the click's three sub-heads, the habit limit in the first person): 717. Verify
+  // loop round 5 (2 Nov): the held-list card went behind a click under the skills rows (all 4 round 4 readers said its
+  // story repeats); in: where the 82 steps are, why the Clay map cost 0 data credits, the bounce caveat pointing at the
+  // teammate's bars, the plain habit exhibit, the failures label, the contact ask without its question: 600. Round 6
+  // (2 Nov, the round 5 jury): the "How I build" kicker and each click's own label: 608 (the cap is 760, CHECK.md C9).
+  // Adding words means cutting some.
   const n = visibleWords();
   t.diagnostic(`visible words: ${n}`);
   assert.ok(n <= VISIBLE_CAP, `the page shows ${n} words without a click`);
@@ -128,18 +147,32 @@ test("short blocks: no visible paragraph over 30 words outside a card, and each 
   }
 });
 
-test("sections in order: agents, habits, failures, skills, live, contact, each holding its own picture", () => {
+test("sections in order: agents, skills (the held-list card behind a click under the rows), habits, failures, live, contact, each holding its own picture", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
   const K = VISUAL.kickers;
-  assert.deepEqual(h2, [K.agents, K.habits, K.failures, K.skills, K.live, K.contact]);
+  // Verify loop round 3 (2 Nov): What I can do right after Me and my agents, no word changed (the round 2 recruiter gave
+  // up in Two times it broke before reaching it; three readers called it the most useful part for a hirer).
+  assert.deepEqual(h2, [K.agents, K.skills, K.habits, K.failures, K.live, K.contact]);
+  // Round 5 (2 Nov): the held-list card, in full, sits behind a click right under the skills rows (its label since round 6:
+  // "How the held list actually went")
+  // (all 4 round 4 readers said its story repeats); round 4 gave it a section of its own after What I can do.
+  const at = ["agents", "skills", "habits", "failures", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
+  assert.ok(at.every((i) => i >= 0), `a section is missing: ${at}`);
+  assert.deepEqual([...at].sort((a, b) => a - b), at, "the sections are out of order");
+  assert.ok(!html.includes('<section id="held"'), "the held-list card has its own section again");
+  const mdAt = [`## ${K.agents}`, `## ${K.skills}`, `### ${VISUAL.clicks["held-list"]}`, `#### ${PROOF["held-list"].title}`, `### ${NERD.summary}`, `## ${K.habits}`, `## ${K.failures}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
+  assert.ok(mdAt.every((i) => i >= 0), `a section is missing from the copy: ${mdAt}`);
+  assert.deepEqual([...mdAt].sort((a, b) => a - b), mdAt, "the copy is not in page order");
   assert.ok(sketch(section("agents"), AGENTS.label), "#agents does not hold the agents drawing");
   assert.deepEqual([...section("habits").matchAll(/<article class="habit" id="([^"]+)">/g)].map((m) => m[1]), HABITS.map((h) => h.id));
   const skills = section("skills");
   assert.deepEqual([...skills.matchAll(/<li id="([^"]+)" class="skill">/g)].map((m) => m[1]), SKILLS.map((s) => s.id));
   assert.match(skills, /<ul class="skills">/);
-  const nerd = [...skills.matchAll(/<details[\s\S]*?<\/details>/g)];
-  assert.equal(nerd.length, 1, "#skills should hold one click");
+  // Two clicks since round 5: the held-list card's, right under the rows, then the pipeline and the details.
+  const [held, ...nerd] = [...skills.matchAll(/<details[\s\S]*?<\/details>/g)];
+  assert.equal(nerd.length, 1, "#skills should hold two clicks");
+  assert.match(held[0], /^<details class="more held-click" id="held"><summary><span class="more-line more-label">How the held list actually went<\/span><span class="more-hint" aria-hidden="true"><\/span><\/summary><article class="pc pc-full" id="held-list">/);
   assert.equal(squash(plain(nerd[0][0].match(/<summary>([\s\S]*?)<\/summary>/)[1])), NERD.summary);
   assert.ok(sketch(nerd[0][0], PIPELINE_STEPS.label), "the pipeline drawing is not inside the skills click");
   // v2.1 (2 Nov): the email story is told once, behind the habit card's own click (its id keeps #identity links
@@ -150,7 +183,7 @@ test("sections in order: agents, habits, failures, skills, live, contact, each h
   const habit = section("habits").match(/<article class="habit" id="habit-replay">[\s\S]*?<\/article>/)?.[0] ?? "";
   const click = habit.match(/<details class="more" id="identity">[\s\S]*?<\/details>/)?.[0] ?? "";
   assert.ok(click, "the habit card has no click with the email story");
-  assert.match(click, /<summary><span class="more-line more-label">How it actually went<\/span>/);
+  assert.match(click, /<summary><span class="more-line more-label">How the re-run actually went<\/span>/);
   const parts = click.match(/<dl class="story">[\s\S]*?<\/dl>/)?.[0] ?? "";
   assert.deepEqual([...parts.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]), ["What broke", "How I found it", "How I proved the fix", "What it changed"]);
   assert.equal((html.match(/2,376 past provider emails/g) ?? []).length, 1, "the side-by-side on 2,376 emails is told in more than one story");
@@ -162,11 +195,29 @@ test("sections in order: agents, habits, failures, skills, live, contact, each h
     assert.match(card, /<figure class="chart[^"]*" role="img" aria-label="[^"]{40,}"/, `${s.id}: no chart with a reading`);
     const caption = squash(plain(card.match(/<p class="cap">([\s\S]*?)<\/p>/)?.[1] ?? ""));
     assert.ok(caption && caption.split(" ").length <= 25, `${s.id}: caption is missing or long (${caption})`);
-    assert.match(card, /<summary><span class="more-line more-label">How it actually went<\/span>/);
+    assert.ok(card.includes(`<summary><span class="more-line more-label">${VISUAL.clicks[s.id]}</span>`), `${s.id}: the click is not labelled for its story`);
     const story = card.match(/<details[\s\S]*?<\/details>/)?.[0] ?? "";
     const dts = [...story.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]);
     assert.deepEqual(dts, ["What broke", "How I found it", "How I proved the fix", "What it changed"], `${s.id}: parts`);
   }
+});
+
+test("every click names what it opens, and no two on a page share a label (round 6, 2 Nov)", () => {
+  // "How it actually went" labelled all six story clicks until round 6; two round 5 readers called it a template, and the
+  // round 5 cto said nothing told him which one was worth opening. His phrase starts each label where it fits.
+  const labels = (html) => [...html.matchAll(/<span class="more-line more-label">([^<]*)<\/span>/g)].map((m) => decode(m[1]));
+  const how = labels(page());
+  const homeHtml = app("index.html");
+  const home = labels(homeHtml.slice(homeHtml.indexOf("<main"), homeHtml.indexOf("</main>")));
+  for (const [name, list] of [["/how-i-build", how], ["home", home]]) {
+    assert.ok(list.length > 0, `${name}: no clicks`);
+    assert.equal(new Set(list).size, list.length, `${name}: two clicks share a label: ${list.join(" | ")}`);
+    assert.ok(!list.includes("How it actually went"), `${name}: a click with the old shared label`);
+  }
+  assert.deepEqual(Object.keys(VISUAL.clicks).sort(), ["bounces", "caught-my-own-test", "claygent", "held-list", "identity", "labelled-drawings"]);
+  for (const k of ["held-list", "identity", "claygent", "bounces"]) assert.ok(how.includes(VISUAL.clicks[k]), `/how-i-build: no click "${VISUAL.clicks[k]}"`);
+  for (const k of ["caught-my-own-test", "labelled-drawings"]) assert.ok(home.includes(VISUAL.clicks[k]), `home: no click "${VISUAL.clicks[k]}"`);
+  assert.ok(!("readStory" in VISUAL), "the shared label is back in the data");
 });
 
 test("the charts show the published numbers, with red only where it means something and words beside it", () => {
@@ -207,6 +258,11 @@ test("retired claims stay off the page and its copy", () => {
     for (const [, after] of s.matchAll(/0\.73%(.{0,60})/g)) assert.doesNotMatch(after, /(?<!not )\bbecause\b/, "a because after the bounce drop");
   }
   assert.doesNotMatch(squash(plain(section("agents"))), /\bevery morning\b/i);
+  // 2 Nov (verify loop round 2): no "daily" for the agents (the 1 and 2 Nov runs failed: the sending tool's 401, "Plan
+  // expired"), and no Tender Radar morning count here (the home page counts live; the README's 104 read as a clash).
+  assert.doesNotMatch(squash(plain(section("agents"))), /\bdaily\b/i);
+  assert.match(AGENTS.lines[0], /^Since 16 Oct my Claude Code agents have drafted follow-ups to leads who replied with interest to our outbound\.$/);
+  for (const s of [text(), unmark(md())]) assert.doesNotMatch(s, /\b104 mornings\b|\bruns to 15 Oct\b/);
 });
 
 test("the day job is described, never named, and nothing points into private work", () => {
@@ -257,6 +313,7 @@ test("the site's word rules: no dashes, no sales words, no superlatives", () => 
 test("the drawings: every step in both layouts, the gates circled, every drawn word in the copy", () => {
   const copy = unmark(md());
   const check = (html, label, steps, note, marks) => {
+    // note: the drawing's red note, or null for a drawing without one (the agents', since 2 Nov).
     const s = sketch(html, label);
     assert.ok(s, `no drawing: ${label.slice(0, 40)}`);
     for (const cls of ["sketch-wide", "sketch-tall"]) {
@@ -268,13 +325,23 @@ test("the drawings: every step in both layouts, the gates circled, every drawn w
       for (const w of drawn.filter((d) => !/^\d+ /.test(d))) assert.ok(copy.includes(w), `${cls}: "${w}" is drawn but not in the copy`);
     }
     assert.ok(copy.includes(label), "the drawing's reading is not in the copy");
-    assert.ok(copy.includes(note), "the red note is not in the copy");
+    if (note) assert.ok(copy.includes(note), "the red note is not in the copy");
+    else assert.ok(!/class="red"/.test(s), "a red note is drawn");
   };
   // The pipeline sits inside the skills click since 2 Nov, with three steps in plain words.
   check(section("skills"), PIPELINE_STEPS.label, PIPELINE_STEPS.steps, PIPELINE_STEPS.note, 4);
   assert.deepEqual(PIPELINE_STEPS.steps.map((s) => s.name).filter((n) => /qualify|list QA|spintax/.test(n)), []);
-  // Me and my agents: six steps, one red loop (the person who approves) per drawing.
+  // Me and my agents: six steps, one red loop (the person who approves) per drawing, and his red note, his own words for
+  // how he works ("check first, then a guardrail so it doesn't happen twice"): cut in round 2 (2 Nov) on blind readers'
+  // flags without his yes, back since round 6 (the round 5 jury). Each layout draws it whole (the tall one on two lines).
+  // 3 Nov: reworded at his ask (step 5 is the gate); the tall layout splits it at its comma.
   check(section("agents"), AGENTS.label, AGENTS.steps, AGENTS.note, 1);
+  assert.equal(AGENTS.note, "if step 5 catches a mistake, I add a check for it");
+  for (const cls of ["sketch-wide", "sketch-tall"]) {
+    const svg = sketch(section("agents"), AGENTS.label).match(new RegExp(`<svg class="${cls}"[\\s\\S]*?</svg>`))[0];
+    const red = [...svg.matchAll(/<text[^>]*class="red"[^>]*>([^<]*)<\/text>/g)].map((m) => decode(m[1])).join(" ");
+    assert.equal(red, AGENTS.note, `${cls}: the red note is not drawn whole`);
+  }
 });
 
 test("the markdown copy has every block and every chart reading of the page, and the same numbers both ways", () => {
@@ -327,15 +394,15 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
   ];
   for (const l of want) assert.ok(html.includes(`href="${l.href}"`), `${l.href} is missing`);
   for (const id of ["skills", "live", "agents", "habits", "claygent", "bounces", "live-champion", "corrections"]) assert.ok(html.includes(`id="${id}"`), `no #${id}`);
-  // "/#proof" points at the home page's Tender Radar section, which must still exist.
-  assert.match(app("index.html"), /<section id="proof"/);
+  // Round 6 (2 Nov): nothing links "/#proof" any more (Tender Radar's section left the home page).
+  assert.ok(!html.includes('href="/#proof"'), "a link points at the home page's old Tender Radar section");
   // The deep-link helper ships: a link to a log entry opens its click.
   assert.ok(read("app/how-i-build/page.tsx").includes("<OpenOnHash />"));
 });
 
 test("the words match their sources, as written down in data/how.ts", () => {
   const t = text();
-  for (const s of [`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`, "34,044", "24,506", "505,461", "two AIs agreeing"]) assert.ok(t.includes(s), `${s} is missing`);
+  for (const s of [`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`, "34,044", "24,506", "505,461", "a second Claude session agrees on 43"]) assert.ok(t.includes(s), `${s} is missing`);
   const all = unmark(md());
   for (const s of ["2,800+", "28%", "8,649", "2,047", "16,728", "12,030", "15,514", "872", "149", "45", "so I say after, not because"]) {
     assert.ok(all.includes(s), `${s} is missing from the page's full text`);
@@ -346,8 +413,14 @@ test("the words match their sources, as written down in data/how.ts", () => {
   assert.match(claygent.tested, /no good company thrown out, 80% agreement with the labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote/);
   assert.match(claygent.tested, /This segment, like two others, only cleared it after I changed borderline companies' labels to toss-ups/);
   assert.match(claygent.tested, /27 of the 29 it decided/);
-  // The held list's reviewer is named in the card's limit line and on the share card.
-  assert.match(PROOF["held-list"].limit, /the Claude session that wrote the rubric[\s\S]*two AIs agreeing[\s\S]*Companies the agents dropped weren't sampled/);
+  // The held list's reviewer is named in the card's numbers and limit line, and on the share card. Round 4 (2 Nov): who
+  // agrees is in the sample's own line (all 4 round 3 readers asked "agree with what?"), the circled line says only the
+  // bar, and the limit keeps every caveat: that session wrote the rubric, dropped companies weren't sampled, fifty is small.
+  assert.equal(PROOF["held-list"].steps[1].sub, "a second Claude session agrees on 43 (86%)");
+  assert.equal(PROOF["held-list"].steps[3].sub, "it agrees on 47 (94%)");
+  // Round 5 (2 Nov): the bar is on agreement, said plainly (the round 4 cto read it as accuracy).
+  assert.equal(PROOF["held-list"].circledLabel, "my bar: 90% agreement");
+  assert.match(PROOF["held-list"].limit, /^That session also wrote the rubric\. Neither sample included companies the agents dropped, and fifty is a small sample\.$/);
   assert.match(VISUAL.share[1], /the Claude session that wrote the rubric/);
 });
 
@@ -388,10 +461,12 @@ test("skills: eight rows, one plain sentence each with its number, then one Not 
   assert.match(row("skill-agents"), /My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes\./);
   assert.doesNotMatch(row("skill-agents"), /approves each/, "the agents row claims every draft was approved");
   // The held list (SOURCES.md row 34): agreement with a Claude review, never hand labels; under the bar, then a fix and
-  // 47 on new rows. Review (2 Nov): the hero card's terms, never "fit check" (the Claygent step's name on this page).
-  assert.match(row("skill-checking"), /My agents' company picks agreed with a Claude review on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones\./);
+  // 47 on new rows. Review (2 Nov): the card's terms, never "fit check" (the Claygent step's name on this page). Round 4:
+  // "a second Claude session", as on the card.
+  assert.match(row("skill-checking"), /My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones\./);
   assert.doesNotMatch(row("skill-checking"), /fit check/, "the held list is called the fit check");
-  assert.match(row("skill-clay"), /34,044-company market in Clay for 0 data credits; Claygent checked 24,506 at about 0\.18 credits each\./);
+  // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
+  assert.match(row("skill-clay"), /I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0\.18 credits each\./);
   assert.match(row("skill-emails"), /verified emails for 12,030 of 15,514 decision-makers \(78%\) in one batch\./);
   assert.match(row("skill-deliverability"), /^Deliverability After I screened out high-bounce mail servers, bounces on my lists went from 2\.7% to 0\.7%/);
   assert.doesNotMatch(row("skill-deliverability"), /\bbecause\b/, "the bounce drop said as because");
@@ -410,24 +485,53 @@ test("skills: eight rows, one plain sentence each with its number, then one Not 
   assert.equal(VISUAL.kickers.skills, "What I can do");
 });
 
+test("labels say what the section is: no slogans (verify loop round 2, 2 Nov)", () => {
+  // Round 1: 4 of 4 readers flagged "One habit, with receipts" (a build session's label). Round 6 (2 Nov): no ban on "not
+  // just": "you see every miss, not just a score" is his own (claims row 56), back on /working-with-me.
+  assert.equal(VISUAL.kickers.habits, "Before I change a rule");
+  for (const s of [text(), unmark(md())]) assert.doesNotMatch(s, /One habit, with receipts/i);
+  // Round 3 (2 Nov): the bounce chart's line lost "After, not because:" (two round 2 readers flagged it); the story
+  // behind its click still says "so I say after, not because".
+  // Round 5 (2 Nov): "Not all of the drop is the screen." read as a tagline (the round 4 recruiter); the line points at the
+  // teammate's bars that show it.
+  assert.equal(VISUAL.stories.bounces.after, "The teammate's list fell a little too, so the screen isn't the whole cause.");
+  assert.doesNotMatch(text(), /After, not because|Not all of the drop is the screen/);
+  // Round 5: "Two times it broke" undersold the bounce chart under it (the round 4 agency reader).
+  assert.equal(VISUAL.kickers.failures, "What broke, and what I changed");
+  assert.doesNotMatch(text(), /Two times it broke/);
+  // Round 4 (2 Nov): the click is named by its own three sub-heads, and the GitHub profile is a link only (its gloss was
+  // flagged by 3 of 4 round 3 readers; the repos above it show what can be checked).
+  assert.equal(NERD.summary, "The pipeline, how I test, and Clay in depth");
+  const profile = LIVE.items.find((l) => l.id === "live-profile");
+  assert.ok(profile && !profile.text && !profile.code, "the GitHub profile has a gloss again");
+  assert.match(section("live"), /<li id="live-profile"><a class="link" href="https:\/\/github\.com\/Manveen07" target="_blank" rel="noopener">My GitHub profile ↗<\/a><\/li>/);
+  for (const s of [text(), unmark(md())]) assert.doesNotMatch(s, /each project says how often it's wrong|nerd details/i);
+});
+
 test("habit: the email check replayed before switching, struck and circled, with its limit and its story (v2.1)", () => {
   // Manveen, 2 Nov, on the leadlens card: "i think this is not related to my gtm work maybe you can reword this so it
   // aligns with gtm". The leadlens story stays in the corrections log and its post, off the main page.
   assert.deepEqual(HABITS.map((h) => h.id), ["habit-replay"]);
   const h = HABITS[0];
-  assert.deepEqual(h.exhibit, { struck: "0 of 123 passed", circled: "70 of 123", rest: " pass" });
+  // Round 5 (2 Nov): "0 of 123 passed → 70 of 123 pass" needed two reads for all 4 round 4 readers, and its struck 0 was
+  // true by construction (they were the check's own refusals).
+  assert.deepEqual(h.exhibit, { struck: "123 refused", circled: "70 of them", rest: " pass the new rules" });
   assert.ok(h.lines.length >= 2 && h.lines.length <= 3, "two or three short lines");
-  // Reviews (2 Nov): "email match check", never a bare "email check" (it read as an email verifier).
-  assert.match(h.head, /^Our email match check refused the right people, so I re-ran its refusals before changing it$/);
+  // Reviews (2 Nov): "email match check", never a bare "email check" (it read as an email verifier). Round 3: it says what
+  // it matches (all 4 round 2 readers stumbled on it), in the same 16 words.
+  assert.match(h.head, /^Our email match check \(right person, right company\) refused real people, so I re-ran its refusals$/);
+  assert.ok(h.head.split(" ").length <= 16, "the habit head grew");
   assert.match(h.lines.join(" "), /costs twice: we paid for that email, then pay the next provider\./);
   assert.match(h.lines.join(" "), /Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost\./);
-  // The limit, said last, covers both numbers: the rules came from the 123, and neither run holds labels.
-  assert.equal(h.lines.at(-1), "The rules came from those 123, and neither run shows the new passes are the right people.");
+  // The limit, said last, covers both numbers: the 70 came from the same 123 the rules did, and nobody checked the 77
+  // (round 3: the cto read the old line as contradicting the head). Round 4: in the first person.
+  assert.equal(h.lines.at(-1), "I built the rules from those 123, and no one has checked yet whether the 77 are the right people.");
   assert.match(h.checked, /^checked against: the old rules' answers$/);
   assert.equal(h.story, EMAILS);
   const card = section("habits").match(/<article class="habit" id="habit-replay">[\s\S]*?<\/article>/)?.[0] ?? "";
-  assert.ok(card.includes('<s class="pen-strike">0 of 123 passed</s>'.replace(/ of /g, " of ")), "0 of 123 is not struck through");
-  assert.match(card, /<span class="pc-nb"><span class="pen pen-circle">70 of 123<svg[\s\S]*?<\/svg><\/span> pass<\/span>/);
+  assert.ok(card.includes('<s class="pen-strike">123 refused</s>'), "123 refused is not struck through");
+  // The circle keeps the one word after it, and the rest wraps (the whole phrase is wider than a phone's line).
+  assert.match(card, /<span class="pc-nb"><span class="pen pen-circle">70 of them<svg[\s\S]*?<\/svg><\/span> pass<\/span> the new rules<\/p>/);
   assert.ok(card.indexOf('class="habit-tag"') < card.indexOf("<details"), "the click is not under the tag");
   for (const s of [squash(plain(section("habits"))), squash(plain(section("habits").replace(/<details[\s\S]*?<\/details>/g, "")))]) {
     assert.doesNotMatch(s, /fake AI job|11 of 11|leadlens|\bA\/B\b/, "the leadlens story or an A/B is on the habit card");
@@ -445,7 +549,8 @@ test("the corrections log: newest first, dated anchors, the summary names the ne
   const details = live.match(/<details class="more" id="corrections">[\s\S]*?<\/details>/)?.[0] ?? "";
   assert.ok(details, "no corrections click");
   assert.equal(squash(plain(details.match(/<summary>([\s\S]*?)<\/summary>/)[1])), logSummary());
-  assert.match(logSummary(), /\(newest: \d{1,2} [A-Z][a-z]{2}\)$/);
+  // Round 5 (2 Nov): "Where I corrected myself (newest: ...)" until then (the round 4 founder flagged it).
+  assert.match(logSummary(), /^My corrections log \(last entry \d{1,2} [A-Z][a-z]{2}\)$/);
   assert.deepEqual([...details.matchAll(/<li id="([^"]+)">/g)].map((m) => m[1]), log.map((e) => e.id));
   assert.deepEqual([...details.matchAll(/<time dateTime="([\d-]+)">/g)].map((m) => m[1]), log.map((e) => e.date));
   // A quiet month never blocks a deploy, but a stale log gets said out loud.

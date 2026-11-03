@@ -16,7 +16,8 @@ type RadarNumbers = { trades: number; checks: number; bid: number; maybe: number
 export function radarText({ trades, checks, bid, maybe }: RadarNumbers) {
   return {
     label: `${RADAR_SOURCES.length} public tender sites feed my script every morning. Each notice is checked for ${trades} trades: ${maybe} worth a look, ${bid} worth bidding, out of ${fmtCount(checks)} checks. The sites: ${RADAR_SOURCES.join(", ")}.`,
-    script: ["my script", "every morning,", "no one presses go"],
+    // Round 4 (2 Nov): "on a timer" ("no one presses go" until then; a round 3 reader flagged it).
+    script: ["my script", "every morning,", "on a timer"],
     checked: "each notice, checked",
     forTrades: `for ${trades} trades`,
     look: `${maybe} worth a look`,

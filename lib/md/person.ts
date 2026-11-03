@@ -23,7 +23,7 @@ export function homeJsonLd() {
   };
 }
 
-/** Who this is. The description is the paragraph under the hero, word for word. */
+/** Who this is. The description is the lines under the hero, word for word. */
 function person() {
   const [locality, country] = ME.location.split(",").map((s) => s.trim());
   return {
@@ -31,7 +31,7 @@ function person() {
     "@id": PERSON_ID,
     name: ME.name,
     jobTitle: RESUME.role,
-    description: HERO.how[0],
+    description: HERO.how.join(" "),
     url: abs("/"),
     email: `mailto:${ME.email}`,
     ...(PHOTO ? { image: abs(PHOTO.src) } : {}),

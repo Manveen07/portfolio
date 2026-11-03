@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Brace, Circle, Strike } from "@/components/Pen";
+import { Brace, Circle, Underline } from "@/components/Pen";
 import { stepLine, type ProofCard as Card, type ProofStep } from "@/data/proof";
 import { keep } from "@/lib/text";
 
-// A proof card (1 Nov): one story told as what broke (struck through in red), the check, and the measured result
+// A proof card (1 Nov): one story told as what broke (underlined in red since 2 Nov, verify loop round 3; struck through
+// until then, which two round 2 readers read as "deleted, not true"), the check, and the measured result
 // (circled in red). All real text, no images, so it reflows on a phone and reads aloud. Words in data/proof.ts; the
 // markdown copies print the same card through lib/md/proof.ts.
 // - full: once the card is 760px wide (on a laptop), the whole flow as a row of steps and the struck lines held by a
@@ -82,7 +83,7 @@ function Before({ c, full }: { c: Card; full: boolean }) {
       <div className="pc-struck">
         {c.before.lines.map((l) => (
           <p key={l} className="pc-line">
-            <Strike>{keep(l)}</Strike>
+            <Underline>{keep(l)}</Underline>
           </p>
         ))}
       </div>
@@ -118,6 +119,8 @@ function Flow({ steps }: { steps: ProofStep[] }) {
 function Pair({ c }: { c: Card }) {
   const check = c.steps[c.compact.check];
   const result = c.steps[c.compact.result];
+  // The compact card's own note, if the card has one (round 6: held-list's says what changed between its two samples).
+  const note = c.compact.note ?? result.note;
   // The colon sits inside the bold name, so a circled name keeps it on its line (": on its first run" was a line).
   const [name, sub] = parts({ ...result, name: `${result.name}:` }, false);
   return (
@@ -126,7 +129,7 @@ function Pair({ c }: { c: Card }) {
       <p className="pc-result">
         <b>{name}</b> {sub}
       </p>
-      {result.note && <p className="note">{keep(result.note)}</p>}
+      {note && <p className="note">{keep(note)}</p>}
     </>
   );
 }
@@ -152,7 +155,7 @@ export default function ProofCard({
       <Before c={c} full={full} />
       {full ? <Flow steps={c.steps} /> : <Pair c={c} />}
       <p className="note pc-legend">circled: {keep(c.circledLabel)}</p>
-      <p className="small pc-foot">{keep(c.footer)}</p>
+      {c.footer && <p className="small pc-foot">{keep(c.footer)}</p>}
       {c.limit && <p className="pc-limit">{keep(c.limit)}</p>}
       {links && c.links.length > 0 && (
         <p className="links">

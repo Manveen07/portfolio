@@ -6,7 +6,8 @@ import { loop, width } from "@/lib/sketch";
 // two lanes on one wobbly line. Wide (from 640px): the agents' four steps run left to right along the top, the line
 // curves down and runs back right to left through the person's two steps. Tall (phones): one column, the agents'
 // steps, a dashed rule, then the person's. One red loop per drawing (the gate: a person edits and approves) and one
-// red note, his own words for how he works. Words come from data/how.ts, so the markdown copy prints what is drawn.
+// red note, his own words for how he works (cut in round 2 on reader flags, back in round 6, 2 Nov; reworded in
+// his voice 3 Nov, his ask). Words come from data/how.ts, so the markdown copy prints what is drawn.
 
 const STEPS = AGENTS.steps;
 const label = (i: number) => `${i + 1} ${STEPS[i].name}`;
@@ -23,8 +24,8 @@ const AGENT_X = [72, 218, 364, 510];
 // The person's steps sit right to left from the curve; 6 is pulled left so its label stays clear of the gate's loop.
 const PERSON_X = [550, 330];
 
-// The tall note splits after "guardrail" (two lines in a 300-wide drawing).
-const CUT = AGENTS.note.indexOf("guardrail") + "guardrail".length;
+// The tall note splits after its comma (two lines in a 300-wide drawing).
+const CUT = AGENTS.note.indexOf(",") + 1;
 const NOTE_TALL = [AGENTS.note.slice(0, CUT), AGENTS.note.slice(CUT + 1)];
 
 const chevron = (x: number, y: number, d: number) => `M${x - 4 * d} ${y - 4.5} L${x + 2 * d} ${y} L${x - 4 * d} ${y + 4.5}`;

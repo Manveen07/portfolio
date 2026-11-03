@@ -17,15 +17,19 @@ import PipelineSketch from "@/components/sketches/PipelineSketch";
 import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
 
 // How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
-// about 30 seconds (2 Nov 2026; design: the 2 Nov design doc, outside this repo). Order: the h1
-// and one miss he acted on (the held-list card), his agents and where a person approves, a habit from the day job (the
-// email check, replayed before switching, its story behind the card's click), two day-job failures, what he can do in
-// one sentence per skill and one "Not yet" line (the pipeline and the details behind one click), what to click, and
-// how to reach him. Numbers and pictures carry the page; every longer text sits
-// behind a <details> (no JavaScript needed to open one).
+// about 30 seconds (2 Nov 2026; design: the 2 Nov design doc, outside this repo). Order: the h1 and its two sub lines,
+// his agents and where a person approves, what he can do in one sentence per skill and one "Not yet" line (the pipeline
+// and the details behind one click; right after the agents since the verify loop's round 3, 2 Nov: the round 2
+// recruiter gave up in "Two times it broke" before reaching it, and three readers called it the most useful part for a
+// hirer), one miss he acted on (the held-list card, in the first screen until round 4, 2 Nov: three round 3 readers
+// thought the home page's link "hadn't changed pages"; its own section after the skills in round 4; since round 5,
+// behind a "How it actually went" click right under the skills rows, as all 4 round 4 readers said its story repeats
+// what home and the Checking AI output row already tell), a habit from the day job (the email check, replayed before
+// switching, its story behind the card's click), two day-job failures, what to click, and how to reach him. Numbers
+// and pictures carry the page; every longer text sits behind a <details> (no JavaScript needed to open one).
 // Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
 
-const DESCRIPTION = `${HOW.headline} ${HOW.sub}`;
+const DESCRIPTION = `${HOW.headline} ${HOW.sub.join(" ")}`;
 
 export const metadata: Metadata = {
   title: `${HOW.title} | Manveen Singh`,
@@ -50,11 +54,17 @@ export default function HowIBuild() {
             // 72px beside the h1 on a phone, 176px from 720px, in the rail from 1100px (globals.css, .how .photo).
             <Image className="photo" src={PHOTO.src} alt={PHOTO.alt} width={PHOTO.width} height={PHOTO.height} sizes="(max-width: 719px) 72px, 176px" priority />
           )}
+          {/* Round 6 (2 Nov): a kicker above the h1, as home has, so the page doesn't read as home reloaded. */}
+          <p className="kicker hero-kicker">{HOW.kicker}</p>
           <h1>{HOW.headline}</h1>
-          {/* In the head block, so it sits right under the h1 beside the photo (globals.css, .how .how-sub). */}
-          <p className="how-sub">{HOW.sub}</p>
+          {/* In the head block, so it sits right under the h1 beside the photo (globals.css, .how .how-sub). Two lines
+              since round 4 (2 Nov), each 30 words or fewer. */}
+          <div className="how-sub">
+            {HOW.sub.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </div>
         </div>
-        <ProofCard c={PROOF["held-list"]} density="full" level={2} links={false} />
         {VISUAL.heroLinks.length > 0 && (
           <p className="links">
             {VISUAL.heroLinks.map((l) => (
@@ -76,32 +86,18 @@ export default function HowIBuild() {
         ))}
       </section>
 
-      <section id="habits" className="wrap sec">
-        <h2 className="kicker">{K.habits}</h2>
-        {HABITS.map((h) => (
-          <HabitRow key={h.id} h={h} />
-        ))}
-      </section>
-
-      <section id="failures" className="wrap sec">
-        <h2 className="kicker">{K.failures}</h2>
-        {FAILURES.stories.map((s) => {
-          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
-          const Chart = CHARTS[s.id];
-          return (
-            <article key={s.id} id={s.id} className="storycard">
-              <h3 className="h3">{v.head}</h3>
-              <Chart />
-              <p className="cap">{v.caption}</p>
-              <StoryText s={s} />
-            </article>
-          );
-        })}
-      </section>
-
       <section id="skills" className="wrap sec">
         <h2 className="kicker">{K.skills}</h2>
         <SkillRows />
+        {/* Round 5 (2 Nov): the held-list card in full, behind its own click under the rows. The card keeps its id,
+            held-list, so home's "The whole flow →" opens the click (components/OpenOnHash.tsx), as #identity does. */}
+        <details className="more held-click" id="held">
+          <summary>
+            <span className="more-line more-label">{VISUAL.clicks["held-list"]}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <ProofCard c={PROOF["held-list"]} density="full" level={3} links={false} />
+        </details>
         <details className="more" id="nerd">
           <summary>
             <span className="more-line more-label">{NERD.summary}</span>
@@ -137,21 +133,48 @@ export default function HowIBuild() {
         </details>
       </section>
 
+      <section id="habits" className="wrap sec">
+        <h2 className="kicker">{K.habits}</h2>
+        {HABITS.map((h) => (
+          <HabitRow key={h.id} h={h} />
+        ))}
+      </section>
+
+      <section id="failures" className="wrap sec">
+        <h2 className="kicker">{K.failures}</h2>
+        {FAILURES.stories.map((s) => {
+          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
+          const Chart = CHARTS[s.id];
+          return (
+            <article key={s.id} id={s.id} className="storycard">
+              <h3 className="h3">{v.head}</h3>
+              <Chart />
+              <p className="cap">{v.caption}</p>
+              <StoryText s={s} />
+            </article>
+          );
+        })}
+      </section>
+
       <section id="live" className="wrap sec">
         <h2 className="kicker">{K.live}</h2>
         <ul className="linkgrid">
           {LIVE.items.map((l) => (
             <li key={l.id} id={l.id}>
               <A href={l.href}>{l.label}</A>
-              <span className="sr-only">: </span>
-              <span>
-                {l.code && (
-                  <>
-                    <code>{l.code}</code>{" "}
-                  </>
-                )}
-                {l.text}
-              </span>
+              {(l.code || l.text) && (
+                <>
+                  <span className="sr-only">: </span>
+                  <span>
+                    {l.code && (
+                      <>
+                        <code>{l.code}</code>{" "}
+                      </>
+                    )}
+                    {l.text}
+                  </span>
+                </>
+              )}
               {l.extra && (
                 <>
                   {" "}

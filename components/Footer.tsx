@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ME, OFF_CLOCK } from "@/data/portfolio";
+import { ME, OFF_CLOCK, FREELANCE } from "@/data/portfolio";
 
 export default function Footer() {
   return (
@@ -12,6 +12,10 @@ export default function Footer() {
         <a href={ME.linkedin} target="_blank" rel="noopener">LinkedIn</a> ·{" "}
         <a href={ME.github} target="_blank" rel="noopener">GitHub</a> ·{" "}
         <Link href="/writing">Writing</Link> · <a href={`mailto:${ME.email}`}>{ME.email}</a>
+      </p>
+      {/* 2 Nov (verify loop round 3): the freelance pilot's own page, linked once, here. */}
+      <p className="small">
+        <Link href={FREELANCE.href}>{FREELANCE.link}</Link>
       </p>
       <p className="small">
         {ME.location} · © 2026 {ME.name}

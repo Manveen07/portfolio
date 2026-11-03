@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
       { source: "/index.md", headers: copyOf("/") },
       { source: "/writing.md", headers: copyOf("/writing") },
       { source: "/how-i-build.md", headers: copyOf("/how-i-build") },
+      { source: "/working-with-me.md", headers: copyOf("/working-with-me") },
       { source: "/writing/:slug.md", headers: copyOf("/writing/:slug") },
     ];
   },

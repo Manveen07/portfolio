@@ -11,7 +11,10 @@ export const ME = {
   // /how-i-build headline, shown as the home hero's kicker. Was "automation engineer".
   role: "GTM engineer",
   location: "Delhi, India",
-  hours: "Delhi, India. UK working hours are my afternoon and evening, US mornings my evening.",
+  // 2 Nov (verify loop round 3): the same promise as /how-i-build's Say hi (data/how.ts CONTACT.where). The round 2
+  // founder read the old line ("UK working hours are my afternoon and evening, US mornings my evening") as limited US
+  // overlap. Manveen, 29 Oct: "yeah sure" to US hours.
+  hours: "Delhi, India. I can work US or UK hours.",
   email: "manveen9650@gmail.com",
   github: "https://github.com/Manveen07",
   // His profile, given 23 Oct 2026. linkedin.com/in/Manveen (used until then) is not his.
@@ -23,21 +26,54 @@ export const ME = {
 // ── Off the clock: footer line, from Manveen's own answers (13 Oct) ──
 export const OFF_CLOCK = "Hunter x Hunter theory videos, Peacemaker, Elden Ring, Sekiro, Doom, The Weeknd.";
 
-// ── The line above the hero's h1 (1 Nov, second review of the proof cards, hiring manager fix 1; his yes needed before
-// merge, and this commit can be dropped on its own). The first screen named the role but not the AI edge (Manveen, 1 Nov:
-// "we need to standup by our ai edge everybody in this space does this"). Not part of his approved hero below; ME.role
-// stays "GTM engineer" for the JSON-LD and the markdown title. ──
-export const HERO_KICKER = "GTM engineer · I build AI agents and measure what they get wrong";
+// ── The line above the hero's h1: the role. 1 Nov to 2 Nov it also carried the AI edge ("GTM engineer · I build AI
+// agents and measure what they get wrong"); since the verify loop's round 2 (2 Nov) that line is the h1 itself. ──
+export const HERO_KICKER = "GTM engineer";
 
-// ── Hero: Manveen's own words (approved 15 Oct, version A), keep the phrasing ──
+// ── Hero (2 Nov, verify loop round 2). All 4 blind readers of round 1 said the home first screen never named outbound or
+// the AI edge, and asked for the /how-i-build h1 here, so it is the h1, word for word (data/how.ts, HOW.headline). Cut in
+// round 2, as the session decided: "So now I build the thing, and the test for the thing." and the "nerd word for this:
+// deterministic" note. Round 3 (2 Nov): his first clause of the approved 15 Oct story stays word for word; the rest ("got
+// good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right",
+// flagged as AI-sounding by 4 of 4 round 2 readers) gave way to the measured line /how-i-build shows under its h1 (the
+// eval inventory of 31 Oct: 82 AI steps, 11 solid, 31 partial, 40 none), joined to his clause by ", and counted" (as two
+// sentences, the h1 and both opened with "I", which voice_check flags, §7). 28 words. His version A headline, its answer
+// and the week sketch moved, not removed: they open /working-with-me (WEEK_JOB below).
+// Round 4 (2 Nov): all 4 round 3 readers asked what an "AI step" is, so the line says it where it first appears (the
+// eval inventory of 31 Oct counts model steps only and leaves rules out), as two blocks of 30 words or fewer; the second
+// opens with "Of", so the h1 and the first block are the only two "I" openings in a row. /how-i-build's sub line ends
+// with the same sentence (data/how.ts HOW.sub).
+// Round 5 (2 Nov): all 4 round 4 readers still asked "82 steps of what?", and 3 read "40 none yet" as half the work
+// untested before they read it as honesty, so the line says where the steps are: the eval inventory of 31 Oct counts 35
+// in the agency's day-job tools, 20 in its earlier pipelines and 27 in his own projects (its sections 2a, 2b and 2c). It
+// opens with "Across", so the h1 and the first block stay the only "I" openings in a row. 28 words.
+// Round 6 (2 Nov, the jury on round 5): his approved 15 Oct story is back under the h1, word for word, as two blocks
+// (29 and 12 words). Rounds 2 and 3 cut it on reader flags without his yes, against his rule (his wording beats a
+// reader's opinion: move, never remove); claims row 57, "his own words approved 15 Oct". The 82-step line stays on
+// /how-i-build only (data/how.ts HOW.sub). The second block opens with "So", so the h1 and the first block stay the only
+// two "I" openings in a row. His keep or cut on each restored line is asked in a list kept outside this public repo.
+// 3 Nov: the second block is reworded at his ask (was "So now I build the thing, and the test for the thing."); the
+// missing piece is the measuring the first block names. ──
 export const HERO = {
+  headline: "I build AI agents for outbound and measure what they get wrong.",
+  how: [
+    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
+    "So now I build that missing piece too.",
+  ],
+} as const;
+
+// ── Manveen's own words (approved 15 Oct, version A), keep the phrasing. The home hero until 2 Nov; since round 2 of the
+// verify loop they open "How working with me goes", above the week sketch, where its ask ("Tell me one task you repeat
+// every week") answers them. Since round 3 (2 Nov) that section is its own page, /working-with-me, word for word and
+// linked from the footer: all 4 round 2 readers asked whether he wants a job or clients, and his target until 3 Jan is
+// GTM engineer roles. ──
+export const WEEK_JOB = {
   headline: "Every week has a job that's the same clicks, in the same order.",
   answer: "I make it run by itself,",
   marked: "the same way every time.",
+  // Round 6 (2 Nov): the red-pen note beside "the same way every time" is back beside its line. It was cut in round 2
+  // when this line left the home page, instead of moving with it (claims row 57: his own words approved 15 Oct).
   nerdNote: "nerd word for this: deterministic. Same input, same result, every time.",
-  how: [
-    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right. So now I build the thing, and the test for the thing.",
-  ],
 } as const;
 
 /** Path under /public plus its pixel size. Set to null to hide the photo. */
@@ -51,50 +87,59 @@ export const PHOTO: { src: string; alt: string; width: number; height: number } 
 // ── Tender Radar: prose only. Numbers come from lib/pipeline.ts ──────
 // (GitHub at request time when GITHUB_TOKEN is set, else the committed
 // data/pipeline-snapshot.json; refresh it with `npm run refresh-snapshot`).
+// Off the home page since round 6 (2 Nov, the round 5 jury's blocker): its AI step has failed on every new notice since
+// September (a suspended API key: the 1 Nov run ended "success" with 8,274 403 errors, and the classified total has stood
+// at 3,671 since 3 Sep) while the runs showed green, so the section's 64 and 8 were 3 Sep numbers. components/Proof.tsx
+// stays for when the classifier runs again and a failed classify step fails the run. The repo and the video links stay
+// in llms.txt; the intro sentences are his wording.
 export const PIPELINE = {
   firstRun: "4 July 2026",
-  intro:
-    "Government contract notices for cleaning, security and facilities work are spread across several UK websites. I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
-  penNote: "every bar is a morning nobody pressed a button",
-  sketchNote: "every number here comes from the same run as the bars below",
+  // Two paragraphs since 2 Nov (verify loop round 2): as one block it was 36 words, over the 30-word cap. His wording.
+  intro: [
+    "Government contract notices for cleaning, security and facilities work are spread across several UK websites.",
+    "I wanted one script to read all of them every morning and sort out which ones each trade should bid on.",
+  ],
+  // 2 Nov: the bars' pen note ("every bar is a morning nobody pressed a button") is cut: 2 of 4 round 1 readers flagged it
+  // as AI-sounding. Round 4 (2 Nov): the sketch's note ("every number here comes from the same run as the bars below")
+  // is cut too: the round 3 recruiter read it as a note to an auditor, and the run and save times sit under the bars.
   outage:
     "Its worst stretch was about three weeks, from 21 July to 11 August, when a data-format change broke the morning run and nothing told me.",
   loom: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc",
   repo: "https://github.com/Manveen07/tender-radar-showcase",
 } as const;
 
-// ── What people say: verbatim from Zackary Beckham's signed letter (11 Jan 2026).
-// Never publish the letter PDF or the email address on it. It renders in the Work
-// section, as a block right after the card marked `quote: true`.
-export const QUOTE = {
-  before: "…produced clear and maintainable technical documentation, and ",
-  marked: "effectively communicated complex engineering concepts to non-technical stakeholders.",
-  name: "Zackary Beckham",
-  title: "Chief Operations Officer",
-  company: "Caprae Capital Partners",
-  source: "From a signed letter of recommendation, 11 Jan 2026. Full letter available on request.",
-  penNote: "the bit that matters if you don't write code",
-} as const;
+// ── The reference: Zackary Beckham's signed letter (11 Jan 2026; he signs as Chief Operations Officer, Caprae Capital
+// Partners). Never publish the letter PDF or the email address on it. It renders in the Work section as one plain line
+// right after the card marked `reference: true`. Round 4 (2 Nov): the quoted excerpt ("…produced clear and maintainable
+// technical documentation, and effectively communicated complex engineering concepts to non-technical stakeholders.")
+// is cut: all 4 round 3 readers flagged it as AI-sounding, and every other line of the letter is as generic. The
+// reference stays, as a line (moved, not removed). ──
+export const REFERENCE =
+  "Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation (11 Jan 2026). Full letter on request.";
 
 // The last line of the Work section, before the resume link.
 export const NOW_LINE = "B.Tech Computer Science, MSIT Delhi, 2026.";
 
-// ── Work: two groups. Jobs, newest first (Precise Leads, then Caprae and its quote), then
-// Built on my own (leadlens, then PresentAI). Order matters; tests/site.test.mjs pins it.
-// Tender Radar has its own section above.
+// ── Work: jobs, newest first (Precise Leads, then Caprae and its reference), in the Work section right under the
+// held-list card. "Built on my own" (PresentAI, after Tender Radar) left the home page in round 4 (2 Nov): three round 3
+// readers called it a broken side project, and the cto stopped reading there. Its code stays on his GitHub profile.
+// Order matters; tests/site.test.mjs pins it.
 export type WorkItem = {
   title: string;
   where: string;
-  lead: string;
+  /** Optional since round 4 (2 Nov): Caprae's detail line says what the system does, so it has no lead. */
+  lead?: string;
   /** Optional: leadlens has none; its story is the caught-my-own-test proof card (1 Nov). */
   detail?: string;
+  /** Short lines under the detail, one thing each (2 Nov: the Precise Leads paragraph was 101 words, the cap is 30). */
+  points?: string[];
   metrics: [string, string][];
   stack: string[];
   links?: { label: string; href: string }[];
   /** A line under `where`, for a card that is a job (title, dates, place). */
   role?: string;
-  /** Zackary's quote renders as a block right after this card. */
-  quote?: true;
+  /** Zackary's reference renders as one line right after this card. */
+  reference?: true;
   /** A real 2x2 score (spec 3.2). Counts are against hand labels; see claims row 43. */
   scorecard?: { caught: number; missed: number; falseAlarms: number; leftAlone: number; caption: string };
   /** A real screenshot under /public (spec 3.3), with its true pixel size. */
@@ -105,7 +150,8 @@ export type WorkItem = {
 
 export const JOBS: WorkItem[] = [
   {
-    title: "Outbound, built end to end",
+    // 2 Nov (verify loop round 2): was "Outbound, built end to end" (a reader flagged it as AI-sounding).
+    title: "Outbound pipeline",
     where: "At Precise Leads",
     // Title and start date from public/resume.pdf ("Precise Leads, Nov. 2025 to Present"). The rest was rewritten
     // 15 Oct from his own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
@@ -113,61 +159,66 @@ export const JOBS: WorkItem[] = [
     // ticked rows reach the sending tool through n8n without the check (new 10x engineer money\applications\bustem\
     // NOTES.md line 11, jury round 1: "ticked rows reach Smartlead through n8n ungated").
     role: "GTM automation engineer · Nov 2025 → now · remote",
-    lead: "Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found.",
-    detail:
-      "I built the agency's outbound pipeline. One run sorted 34,044 companies in four days, and the prompt asks for a quote from the company's own website behind every yes. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client's sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team.",
+    // 2 Nov (verify loop round 2): the 101-word paragraph (all 4 readers called it a wall; one sentence was 42 words) is a
+    // lead and short points, the same facts. The agency reader said the inbox bot and the sequence tool were buried.
+    // Round 3 (2 Nov): the old lead ("Finds the companies worth writing to and the right person at each, then writes
+    // emails that only say what the research found.", flagged by 2 round 2 readers) is cut, and 34,044 prints once, on
+    // its tile, so the old detail's first sentence and its quote rule are the lead.
+    // Round 5 (2 Nov): the agency reader's edge sentence left out the AI two rounds running, so the lead says "The AI
+    // step" ("The prompt" until then) and the first point is his Claude Code follow-up agents, in /how-i-build's checked
+    // words (data/how.ts AGENTS; SOURCES.md row 33: "since 16 Oct", "approves each draft before it sends"; never "daily"
+    // or "every morning"). "asks for a quote" stays: two segments ran with quotes behind only 87.5% and 78.6% of yeses.
+    // The mistake point gave its generic wording ("When someone spots a new kind of mistake, it becomes a check that runs
+    // before upload.", flagged by the round 4 cto) for the example /how-i-build tells in How I test (NERD.testing[1]: the
+    // list check now blocks a list where one address sits on two people). Points stay at 20 words or fewer.
+    // Round 6 (2 Nov, 2 of 3 jurors): "Each new kind of mistake becomes a check before upload, like blocking a list with
+    // one address on two people." (3 of 4 round 5 readers flagged it; "each new kind" was a habit told as a rule) is the
+    // past event itself, from the same NERD.testing[1] line. 19 words.
+    lead: "I built the agency's outbound pipeline. The AI step that sorts companies asks for a quote from the company's own website behind every yes.",
+    points: [
+      "Since 16 Oct my Claude Code agents have drafted follow-ups to interested leads; a person approves each before it sends.",
+      "Each draft I upload myself is checked claim by claim against the research.",
+      "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
+      "I also built the Slack bot that buys and warms up the sending inboxes.",
+      "I built the tool that turns a client's sequence into a ready campaign.",
+      "My daily scan of five sales-tool Slack communities passes likely buyers to the sales team.",
+    ],
+    // Round 3 (2 Nov): the "0 contradicted claims in 300 drafted emails, scored by an AI judge with no human check" tile
+    // is out (claims row 81: all 4 round 2 readers said its caveat cancels it). In its place a number that stands on its
+    // own: one email batch, never a find rate (SOURCES.md rows 17 and 18; claims row 82a), "in one batch" beside it.
+    // "claude code" joins the stack: the follow-up drafts are his Claude Code agents' (data/how.ts AGENTS), and the round
+    // 2 founder's edge sentence never said AI.
     metrics: [
-      ["0", "contradicted claims in 300 drafted emails"],
+      ["12,030", "verified emails for 15,514 decision-makers, in one batch"],
       ["34,044", "companies sorted in four days"],
     ],
-    stack: ["python", "typescript", "clay", "smartlead", "n8n"],
+    stack: ["claude code", "python", "typescript", "clay", "smartlead", "n8n"],
   },
   {
     title: "Resume screening, automated",
     where: "At Caprae Capital Partners",
     // Title and dates come from the signed letter (11 Jan 2026); "US, remote" from the resume.
     role: "Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote",
-    quote: true,
-    lead: "Reads incoming resumes, ranks the candidates, and books the interviews.",
-    detail:
-      "A recruiting team was spending about ten hours a week reading resumes by hand. The system reads each one, scores it against the role, writes the shortlist and schedules the calls.",
-    metrics: [
-      ["10h → 3h", "screening per week"],
-      ["5 → 1.5", "days to a shortlist"],
-    ],
+    reference: true,
+    // Round 4 (2 Nov): the lead ("Reads incoming resumes, ranks the candidates, and books the interviews.", flagged by the
+    // round 3 cto) is cut; the detail says the same thing concretely. The tiles "10h → 3h" (screening per week) and
+    // "5 → 1.5" (days to a shortlist) are cut too: the cto found them the only numbers with no source beside them. Their
+    // claims row (29, his own Feb 2026 draft) was never settled, the resume sources table cites this site's own copy, and
+    // the letter has no numbers: self-reported only.
+    // Round 5 (2 Nov): the four-verb chain ("The system reads each one, scores it against the role, writes the shortlist
+    // and schedules the calls.", flagged by the round 4 cto) is one first-person line of what he built, and "A recruiting
+    // team spent about ten hours a week reading resumes by hand." is cut: its number has the same unsettled, self-reported
+    // source as the tiles. Ranking against the role, the shortlist and the scheduling are the resume's and his drafts'
+    // (claims row 30).
+    detail: "I built a screener that ranks each incoming resume against the role and books calls with the shortlist.",
+    metrics: [],
     stack: ["python", "embeddings", "slack"],
   },
 ];
 
-export const OWN_WORK: WorkItem[] = [
-  {
-    title: "leadlens",
-    where: "My own project",
-    lead: "Reads a job posting and tells you whether the AI role is real, dressed up, or a scam.",
-    // 1 Nov (proof cards): the scorecard (TP 9, FN 2, FP 0, TN 61) and the margin note ("it once scored 100%, because
-    // my own notes leaked the answers") left this entry. The caught-my-own-test card in the home page's proof band
-    // tells that story and shows the 9 of 11 two screens up; showing both would print the same numbers twice.
-    metrics: [],
-    stack: ["python", "gemini", "pydantic"],
-    links: [{ label: "How I tested it →", href: "/writing/schema-as-eval-spec" }],
-  },
-  {
-    title: "PresentAI",
-    // Rewritten 25 Oct 2026 from the code (Manveen: "it does not have export"). src/actions/openai.ts: an outline
-    // first, then every slide in one Gemini call, Pexels photos; src/lib/constant.ts: 25 themes. No speaker notes, no
-    // export, no free plan (every deck needs the subscription flag), and gemini-2.0-flash was shut down 1 June 2026,
-    // so the live demo link is off until the model is updated. The "<60s" figure had no source and is gone.
-    where: "My own project",
-    lead: "Type a topic, get a first-draft slide deck you can edit.",
-    detail:
-      "Gemini writes the outline first, then the slides, and Pexels adds a photo to each. You finish the deck in a drag-and-drop editor with 25 themes. Its AI step needs a model update before it runs again.",
-    metrics: [],
-    // Captured from the live site 14 Oct 2026 (headless Chrome, 1280x800, scaled to 640 wide).
-    shot: { src: "/work/presentai.png", alt: "PresentAI's home page", width: 640, height: 400 },
-    stack: ["next.js", "postgres"],
-    links: [{ label: "See the code ↗", href: "https://github.com/Manveen07/PresentAI" }],
-  },
-];
+// OWN_WORK (Built on my own: PresentAI, with its screenshot and "See the code ↗") left the home page in round 4 (2 Nov):
+// three round 3 readers asked why a broken side project was there, and the cto stopped reading at it. PresentAI stays on
+// his GitHub profile (github.com/Manveen07/PresentAI); public/work/presentai.png is kept for a later use.
 
 // ── drawing-proof: an AI reads engineering drawings, marked against my own labels (added 22 Oct) ──
 // A home page block until later on 22 Oct, now the post /writing/marking-the-ais-homework (data/posts.ts).
@@ -319,8 +370,12 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
       title: "12 of 12, and down for three weeks",
       exhibit: { before: "", marked: "tests (12/12)", pen: "underline" },
       scribble: "none of them opened the new files",
-      what: "Tender Radar is my script that reads UK government tender notices every morning and sorts out which ones are worth a bid. An AI helped me add three trades to it, each with a little file describing a sample firm. Its commit said the tests passed, 12 of 12. The new files were missing two details the script insists on, so the morning run crashed on them every day for three weeks. None of the 12 tests had opened them.",
-      now: "a passing test only vouches for what it opens. So I watch the run, not the tests: the last 40 sit on my home page as bars, red when one fails.",
+      // Round 6 (2 Nov): "sorts out" is past ("until September"): its AI step has failed on every new notice since then
+      // (a suspended API key: gh run 41304264801 of 1 Nov ended "success" with 8,274 403 errors), and the bars this note
+      // pointed at left the home page. His lesson line ("So I watch the run, not the tests.") stays; the September truth
+      // follows it, with no claim of a fix (a failed classify step does not fail the run yet).
+      what: "Tender Radar is my script that reads UK government tender notices every morning and, until September, sorted out which ones were worth a bid. An AI helped me add three trades to it, each with a little file describing a sample firm. Its commit said the tests passed, 12 of 12. The new files were missing two details the script insists on, so the morning run crashed on them every day for three weeks. None of the 12 tests had opened them.",
+      now: "a passing test only vouches for what it opens. So I watch the run, not the tests. From September its AI step failed on every new notice and no run went red for it, so its bars came off my home page.",
     },
     {
       // Commit 7abe5472 (19 Sep 2026): "Two OpenCode runs produced confident write-ups whose quotes did not support
@@ -339,8 +394,30 @@ export const WRONG: { title: string; lede: string; pins: Pin[] } = {
   ],
 };
 
-// ── How working with me goes ─────────────────────────────────────────
+// ── The contact section (2 Nov, verify loop round 2) ──────────────────
+// All 4 round 1 readers asked whether he wants a job or clients (home ended on the pilot, /how-i-build on "Hiring a GTM
+// engineer?"). His target is GTM engineer roles, the freelance pilot second, so the section opens with /how-i-build's
+// ask under /how-i-build's label, word for word (data/how.ts CONTACT.ask and VISUAL.kickers.contact; a test holds them
+// equal). Round 3 (2 Nov): all 4 round 2 readers still asked, so the pilot left home for /working-with-me (FREELANCE
+// below), and Say hi ends the way /how-i-build's does: the ask, the address, the hours line (CONTACT.where), the links.
+// Round 5 (2 Nov): "Hiring a GTM engineer? Tell me about the role." lost its question (the round 4 recruiter flagged it);
+// the same ask, the job first.
+export const SAY_HI = {
+  kicker: "Say hi",
+  ask: "If you're hiring a GTM engineer, email me about the role.",
+} as const;
+
+// ── The freelance pilot's page, /working-with-me (round 3, 2 Nov): its rail label, and the one link to it, in the
+// footer of every page. The label is the session's wording. ──
+export const FREELANCE = {
+  kicker: "Freelance automation",
+  link: "Freelance automation: how working with me goes",
+  href: "/working-with-me",
+} as const;
+
+// ── How working with me goes: the page /working-with-me since round 3 (2 Nov), word for word ──
 export const PILOT = {
+  head: "How working with me goes",
   opener:
     "On the first call you tell me what wastes the most time. If it isn't a real problem, I'll say so and we won't build it.",
   steps: [
@@ -348,6 +425,10 @@ export const PILOT = {
     "The pilot runs on a month of your real requests. Every miss gets logged, and you see the list, not just a score.",
     "If you keep it, a monthly fee covers me looking after it.",
   ],
+  // 2 Nov (verify loop round 2) cut "not just a score" from the step above and the timeline's pen note below (3 of 4
+  // readers flagged it). Round 6 (2 Nov): both are back, word for word: his own offer terms (claims row 56) and the
+  // approved red-pen design of 14 Oct, cut on reader flags without his yes. voice_check flags "not just" as a staged
+  // contrast; his keep or cut is asked.
   note: "you see every miss, not just a score",
   // The section's end: no button, just the address and, small, the calendar (one Calendly link on the page).
   ask: "Tell me one task you repeat every week. I'll reply within a day and say whether it can run by itself.",

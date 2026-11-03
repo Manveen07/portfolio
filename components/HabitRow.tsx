@@ -11,11 +11,12 @@ import type { Habit } from "@/data/how";
 
 export default function HabitRow({ h }: { h: Habit }) {
   const x = h.exhibit;
-  // The circle keeps the words after it up to their first comma; the rest can wrap.
+  // The circle keeps the words after it up to their first comma, or (round 5, 2 Nov) the one word after it when the rest
+  // has no comma ("70 of them pass the new rules" whole is wider than a phone's line); the rest can wrap.
   const rest = x.rest ?? "";
   const cut = rest.indexOf(",", 1);
-  const kept = cut > 0 ? rest.slice(0, cut + 1) : rest;
-  const tail = cut > 0 ? rest.slice(cut + 1) : "";
+  const kept = cut > 0 ? rest.slice(0, cut + 1) : (rest.match(/^ ?\S+/)?.[0] ?? "");
+  const tail = rest.slice(kept.length);
   return (
     <article className="habit" id={h.id}>
       <h3 className="h3">{keep(h.head)}</h3>

@@ -1,5 +1,5 @@
-sha256: d5abdaf0404eff5176f44a70e58395615f2773a198533ed7defdb3f84ff9f083
-created: D:20261101072109+00'00'
+sha256: 3077a5466189243a6aa0917620f544309b1cdf840ab4ecfcdf3701fefc5b0c3c
+created: D:20261102140151+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
@@ -20,9 +20,10 @@ on wording and testing it on hand labels.
 waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.
 –  Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the
 result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.
-–  Built an unattended weekly Claude Code agent that ranks searches by lead quality and replies and swaps a weak one only after a
-gate passes, and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email
-had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.
+–  Built an unattended weekly Claude Code agent that ranked searches by lead quality and replies and swapped a weak one only
+after a gate passed (paused since 27 Oct; its one full run swapped nothing), and an LLM judge that checks each claim in a cold
+email against the research (300-email test set: the average email had 95.5% of its claims supported, none contradicted). Pipeline
+repo: 870+ tests.
 Caprae Capital Partners · Aug. 2025 – Jan. 2026
 AI/ML Intern, internship · Remote (Glendale, US)
 –  Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed
@@ -41,7 +42,8 @@ Personal AI ops | Claude Code, n8n, Python, Gmail and Slack APIs · 2026
 day (an LLM judge went through 4,705 threads in one run) and emails me the few opportunities worth acting on; an Upwork
 alert judge that labels every job alert and drafts proposals for the good ones; and a task tracker with Slack buttons.
 Tender Radar | Python, LLM classification, GitHub Actions · source · 2026
-–  Daily UK public-sector tender finder: pulls new notices, and an LLM scores each one against 7 trade profiles.
+–  Daily UK public-sector tender finder: pulls new notices; an LLM scored each one against 7 trade profiles until its API key was
+suspended in September.
 Education
 Maharaja Surajmal Institute of Technology · GPA 8.6/10
 Bachelor of Technology in Computer Science · Nov. 2022 – Aug. 2026

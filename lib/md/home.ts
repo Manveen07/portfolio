@@ -4,37 +4,21 @@
 // So when a component's wording changes, change it here too, or the tests fail.
 
 import { NEWEST_FIRST } from "@/data/posts";
-import { ME, HERO, HERO_KICKER, PHOTO, PIPELINE, QUOTE, NOW_LINE, JOBS, OWN_WORK, PILOT, OFF_CLOCK, type WorkItem } from "@/data/portfolio";
-import type { PipelineData } from "@/lib/pipeline";
-import { fmtDay, runLine } from "@/lib/runs";
-import { radarText, RADAR_SOURCES, WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
+import { ME, HERO, HERO_KICKER, SAY_HI, PHOTO, REFERENCE, NOW_LINE, JOBS, OFF_CLOCK, FREELANCE, type WorkItem } from "@/data/portfolio";
+import { CONTACT } from "@/data/how";
 import { abs, mdHref, SITE } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
-import { PROOF, HOME_CARDS, HOME_BAND } from "@/data/proof";
+import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS, type ProofCard } from "@/data/proof";
 import { proofMarkdown } from "@/lib/md/proof";
 
-/** The words of the week sketch, as drawn. */
-function weekDrawing(): string {
-  const rows = WEEK.days.map((d) => `${d}: ${WEEK.task}`).join("; ");
-  return `*Drawing:* ${WEEK.label} Drawn as ${WEEK.days.length} rows (${rows}), each crossed out in red, bracketed, with "${WEEK.red.join(" ")}" written beside them in red.`;
-}
-
-function radarDrawing(pipe: PipelineData): string {
-  const t = radarText({ trades: pipe.clientProfiles, checks: pipe.checks, bid: pipe.bid, maybe: pipe.maybe });
-  return [
-    `*Drawing:* ${t.label}`,
-    `Drawn as ${RADAR_SOURCES.length} boxes (${RADAR_SOURCES.join(", ")}) with arrows into a box that says "${t.script.join(" ")}", then a box that says "${t.checked} ${t.forTrades}, ${t.look}, ${t.worth}", with "${t.worth}" circled in red. Under it in red: "${t.under.join(" ")}"`,
-  ].join("\n");
-}
-
-function pilotDrawing(): string {
-  const steps = PILOT_DRAWN.map((s) => `${s.title}: ${s.lines.join(" ")}${s.dim.length ? ` (in grey: ${s.dim.join(" ")})` : ""}`).join("; ");
-  return `*Drawing:* ${PILOT.sketchLabel} Drawn as a timeline: ${steps}. The red pen circles "every miss logged, you see the list".`;
-}
+// The week and the pilot's drawings left with the pilot (round 3, 2 Nov): lib/md/working.ts. Tender Radar's section and
+// its drawing left the home page in round 6 (2 Nov; components/Proof.tsx says why).
 
 function entry(w: WorkItem): string {
-  const out: string[] = [`#### ${w.title}`, para([w.where, w.role].filter(Boolean).join(" · ")), para(w.lead)];
+  const out: string[] = [`#### ${w.title}`, para([w.where, w.role].filter(Boolean).join(" · "))];
+  if (w.lead) out.push(para(w.lead));
   if (w.detail) out.push(para(w.detail));
+  if (w.points) out.push(list(w.points));
   if (w.scorecard) {
     const s = w.scorecard;
     out.push(para(s.caption));
@@ -45,34 +29,22 @@ function entry(w: WorkItem): string {
   out.push(para(`built with ${w.stack.join(", ")}`));
   if (w.links) out.push(list(w.links.map((l) => link(l.label, mdHref(l.href)))));
   if (w.note) out.push(para(pen(w.note)));
-  if (w.quote) {
-    out.push(
-      [
-        `> “${QUOTE.before}${QUOTE.marked}”`,
-        ">",
-        `> ${QUOTE.name}, ${QUOTE.title}, ${QUOTE.company}`,
-        `> ${QUOTE.source}`,
-      ].join("\n"),
-    );
-    out.push(para(pen(QUOTE.penNote)));
-  }
+  if (w.reference) out.push(para(REFERENCE));
   return out.join("\n\n");
 }
 
-/** components/Writing.tsx: the three newest posts, a title and one line each, and the way to the rest. */
+/** components/Writing.tsx: the three newest posts, titles only (round 5, 2 Nov), and the way to the rest. */
 function latestWriting(): string[] {
   const latest = NEWEST_FIRST.slice(0, 3);
   if (!latest.length) return [];
   return [
     "## Writing",
-    ...latest.map((p) => [`### ${link(p.cardTitle ?? p.title, mdHref(`/writing/${p.slug}`))}`, para(p.line ?? p.cardSummary ?? p.summary)].join("\n\n")),
+    ...latest.map((p) => `### ${link(p.cardTitle ?? p.title, mdHref(`/writing/${p.slug}`))}`),
     para(link("All writing →", mdHref("/writing"))),
   ];
 }
 
-export function homeMarkdown(pipe: PipelineData): string {
-  const failed = pipe.history.filter((r) => !r.ok);
-  const failedDays = failed.length ? `Days that failed: ${failed.map((r) => fmtDay(r.date)).join(", ")}.` : "None failed.";
+export function homeMarkdown(): string {
   return [
     `# ${ME.name} | ${ME.role}`,
     para(
@@ -84,9 +56,6 @@ export function homeMarkdown(pipe: PipelineData): string {
     PHOTO ? para(image(PHOTO.alt, abs(PHOTO.src))) : "",
     para(`*${HERO_KICKER}*`),
     `## ${HERO.headline}`,
-    para(`${HERO.answer} ${HERO.marked}`),
-    para(pen(HERO.nerdNote)),
-    para(weekDrawing()),
     ...HERO.how.map(para),
     list([link(HOME_BAND.link.label, mdHref(HOME_BAND.link.href))]),
     para(ME.hours),
@@ -94,41 +63,31 @@ export function homeMarkdown(pipe: PipelineData): string {
     `## ${HOME_BAND.kicker}`,
     ...HOME_CARDS.map((slug) => proofMarkdown(PROOF[slug], "compact", { level: 3, links: true, href: mdHref })),
 
-    "## Running right now · Tender Radar",
-    para(PIPELINE.intro),
-    para(radarDrawing(pipe)),
-    para(pen(PIPELINE.sketchNote)),
-    para(`**${pipe.totalRuns}** mornings it has started on its own since ${PIPELINE.firstRun}.`),
-    para(`*Chart:* Last ${pipe.history.length} days: ${pipe.history.length - failed.length} finished, ${failed.length} failed. ${failedDays}`),
-    para(`One bar per day, last ${pipe.history.length}. Black finished, red failed. ${runLine(pipe.lastRun, pipe.live, pipe.asOf)}`),
-    para(pen(PIPELINE.penNote)),
-    para(`It sorts for ${pipe.clientProfiles} trades, from cleaning and security to pest control, and has ${pipe.noticesRead} notices on file.`),
-    para(PIPELINE.outage),
-    list([link("Watch it work (under 5 min) ↗", PIPELINE.loom), link("See the code ↗", PIPELINE.repo)]),
-
-    "## Work, and who vouches for it",
-    "### Jobs",
+    "## Work",
     ...JOBS.map(entry),
-    "### Built on my own",
-    ...OWN_WORK.map(entry),
     para(`${NOW_LINE} ${link("Full resume ↗", abs(ME.resume))} (as text: ${link("resume.md", abs("/resume.md"))})`),
+
+    // Round 3 (2 Nov): each of his own projects is its line, then the full card that its click opens.
+    `## ${HOME_OWN_BAND.kicker}`,
+    ...HOME_OWN_CARDS.flatMap((slug) => [para((PROOF[slug] as ProofCard).line ?? ""), proofMarkdown(PROOF[slug], "full", { level: 3, links: true, href: mdHref })]),
 
     ...latestWriting(),
 
-    "## How working with me goes",
-    para(PILOT.opener),
-    PILOT.steps.map((s, i) => `${i + 1}. ${s}`).join("\n"),
-    para(pilotDrawing()),
-    para(pen(PILOT.note)),
-    para(PILOT.ask),
+    // Round 3 (2 Nov): Say hi ends like /how-i-build's; the pilot is /working-with-me (lib/md/working.ts).
+    `## ${SAY_HI.kicker}`,
+    para(SAY_HI.ask),
     para(`Email: ${link(ME.email, `mailto:${ME.email}`)}`),
-    para(link(PILOT.calendar, ME.calendly)),
+    para(CONTACT.where),
+    para(
+      [link("LinkedIn ↗", ME.linkedin), link("GitHub ↗", ME.github), link("Résumé (PDF)", abs(ME.resume)), link("How I build", mdHref("/how-i-build")), link("Writing", mdHref("/writing"))].join(" "),
+    ),
 
     "---",
     para(`**Off the clock:** ${OFF_CLOCK}`),
     para(
       `Hiring? ${link("Resume", abs(ME.resume))} · ${link("LinkedIn", ME.linkedin)} · ${link("GitHub", ME.github)} · ${link("Writing", mdHref("/writing"))} · ${link(ME.email, `mailto:${ME.email}`)}`,
     ),
+    para(link(FREELANCE.link, mdHref(FREELANCE.href))),
     para(`${ME.location} · © 2026 ${ME.name}`),
   ]
     .filter(Boolean)

@@ -177,11 +177,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .pen-js .pen:not(.in) .pen-strike { background-size: 100% 2px; }
 }
 
-/* ── The quote (rendered inside Work, after the Caprae card) ── */
-.quote { margin: 30px 0 0; }
-.quote blockquote { margin: 0; font-size: 20px; line-height: 1.45; }
-.quote blockquote p { margin: 0; }
-.quote figcaption { margin-top: 10px; font-size: 15px; }
+/* ── The reference (one plain line inside Work, after the Caprae card; a quote block until round 4, 2 Nov) ── */
+.ref { margin: 24px 0 0; }
 
 /* ── Hand-drawn sketches ──
    Two SVGs per sketch: tall below 640px, wide from 640px up. Only the red .mark paths animate. */
@@ -219,6 +216,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .now { margin-top: 48px; }
 .entry .small + .small { margin-top: -6px; } /* where line and role line read as one block */
 .tick { width: 80px; height: 8px; margin: 40px 0 34px; border: 0; background-image: var(--divider); background-repeat: no-repeat; background-size: 80px 8px; }
+.points { list-style: disc; padding-left: 22px; margin: 0 0 12px; }  /* short lines under a work entry (2 Nov) */
+.points li { margin-bottom: 6px; }
 .metrics { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 14px 0 8px; }
 .metrics dt { font-size: 28px; font-weight: 800; line-height: 1.1; }
 .metrics dd { margin: 0; font-size: 13.5px; color: var(--dim); }
@@ -286,13 +285,13 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .arr-left { display: inline; }
 }
 
-/* ── How working with me goes ── */
+/* ── How working with me goes (its own page, /working-with-me, since 2 Nov, verify loop round 3) ── */
 .steps { list-style: decimal; padding-left: 20px; margin: 0 0 22px; }
 .steps li { margin-bottom: 8px; }
 /* Visually hidden, still read aloud: the pilot steps list sits behind the drawn timeline. Must stay after .steps. */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 0; }
-/* The contact section's end: the one-task line, the address as the main link, the calendar small under it. */
+/* The pilot page's end: the one-task line, the address as the main link, the calendar small under it. */
 .ask { margin-top: 28px; }
 .mail-line { margin: 4px 0 10px; }
 .mail { font-size: 24px; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
@@ -400,9 +399,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .pc-before { margin: 0 0 20px; }
 .pc-label { margin: 0 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .pc-line { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 15px; line-height: 1.6; }
-/* The cards' struck lines are evidence to read, so the pen's strike is lighter there (review, 2 Nov: the full red line
-   read as deleted text and made the first line on /how-i-build hard to read). Same colour, more paper through it. */
-.pc-line .pen-strike { background-image: linear-gradient(color-mix(in srgb, var(--red) 55%, transparent), color-mix(in srgb, var(--red) 55%, transparent)); }
+/* The cards' lines under "what broke" are underlined in red since 2 Nov (verify loop round 3): two round 2 readers read
+   the strike (lightened the same day) as deleted text. The underline leaves every letter clear. */
 .pc-scribble { margin-top: 6px; }
 .pen-brace { display: none; }
 .pen-brace svg { display: block; width: 14px; height: 100%; overflow: visible; }
@@ -471,14 +469,18 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* ── /how-i-build v2 (2 Nov): the sub line, the agents' lanes, habit rows, skill rows, the corrections log ──
    Design: the 2 Nov design doc (outside this repo), section 11. Red means the bar, a miss or a
    decision, drawn by the pen; gaps, levels, tags, the log and links stay ink. */
-/* The sub line sits in the head block, right under the h1. */
+/* The sub lines sit in the head block, right under the h1 (two since round 4, 2 Nov). */
 .how-sub { margin: 14px 0 0; font-size: 19px; line-height: 1.5; color: var(--ink); }
-/* Under 720px the photo sits right of the h1 at 72px, so the h1, the sub line and the card's title fit the first screen. */
+.how-sub p { margin: 0; }
+.how-sub p + p { margin-top: 8px; }
+/* Under 720px the photo sits right of the h1 at 72px, so the h1, the sub lines and Me and my agents start the first screen. */
+/* Round 6 (2 Nov): the kicker ("How I build") takes the first row and the h1 the second, as on home. */
 @media (max-width: 719px) {
   .how .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 72px; column-gap: 14px; align-items: start; }
-  .how .photo { grid-column: 2; grid-row: 1; width: 72px; margin: 4px 0 0; }
-  .how .hero-head h1 { grid-column: 1; grid-row: 1; }
-  .how .how-sub { grid-column: 1 / -1; grid-row: 2; }
+  .how .photo { grid-column: 2; grid-row: 1 / span 2; width: 72px; margin: 4px 0 0; }
+  .how .hero-kicker { grid-column: 1; grid-row: 1; }
+  .how .hero-head h1 { grid-column: 1; grid-row: 2; }
+  .how .how-sub { grid-column: 1 / -1; grid-row: 3; }
 }
 /* 720 to 1099px: home's grid (photo right at 176px), with the sub line under the h1 beside the photo. */
 @media (min-width: 720px) and (max-width: 1099px) {
@@ -489,7 +491,7 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 @media (min-width: 1100px) {
   /* The tilted photo's corner touched the card under it (review, 2 Nov): a small gap. */
   .how .photo { width: 140px; margin-bottom: 10px; }
-  /* No kicker above this h1, so it takes the first row (home's h1 sits in row 2, under its kicker). */
+  /* The kicker, the h1 and the sub lines take the rows in order beside the photo (a kicker since round 6, 2 Nov). */
   .how .hero-head h1 { grid-row: auto; margin-bottom: 0; }
   .how .how-sub { grid-column: 2; margin-bottom: 22px; }
 }
@@ -541,3 +543,10 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .habit .more { margin: 14px 0 -8px; border-top: 1px dashed var(--rule); border-bottom: 0; }
 .habit .more summary { padding: 12px 40px 10px 0; }
 .habit .more-hint { top: 10px; }
+
+/* His own projects on the home page (2 Nov, verify loop round 3): one line each, the full card behind a click. */
+.own-check { margin: 0 0 26px; }
+.own-check:last-child { margin-bottom: 0; }
+.own-line { margin: 0 0 2px; }
+.own-check .pc-full { margin: 4px 0 16px; }
+.held-click .pc-full { margin: 4px 0 16px; }  /* /how-i-build's held-list card behind its click (round 5, 2 Nov) */

@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // The page for hiring managers (29 Oct 2026); its date is the day its words last changed (2 Nov: the v2 branch's
     // date; set it to the merge day if that differs).
     { url: abs("/how-i-build"), lastModified: "2026-11-02" },
+    // The freelance pilot's own page since the verify loop's round 3 (2 Nov); part of the home page until then.
+    { url: abs("/working-with-me"), lastModified: "2026-11-02" },
     ...POSTS.map((p) => ({ url: abs(`/writing/${p.slug}`), lastModified: p.date })),
     { url: abs(RESUME.pdf), lastModified: RESUME.updated },
   ];

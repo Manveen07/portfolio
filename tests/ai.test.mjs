@@ -100,6 +100,7 @@ test("every AI file is built and served with status 200 and its content type", (
     ["resume.md", "text/markdown"],
     ["resume.json", "application/json"],
     ["writing.md", "text/markdown"],
+    ["working-with-me.md", "text/markdown"],
     ...posts.map((slug) => [`md/writing/${slug}`, "text/markdown"]),
     ["robots.txt", "text/plain"],
     ["sitemap.xml", "application/xml"],
@@ -154,7 +155,7 @@ test("llms.txt opens with Manveen's own words from data/llms-intro.ts", () => {
 
 test("llms.txt links the resume three ways, every page's markdown, and every post", () => {
   const txt = route("llms.txt").body;
-  for (const p of ["/resume.md", "/resume.json", "/resume.pdf", "/index.md", "/writing.md", "/llms-full.txt", ...posts.map((s) => `/writing/${s}.md`)]) {
+  for (const p of ["/resume.md", "/resume.json", "/resume.pdf", "/index.md", "/writing.md", "/working-with-me.md", "/llms-full.txt", ...posts.map((s) => `/writing/${s}.md`)]) {
     assert.ok(txt.includes(`](${SITE}${p})`), `llms.txt does not link ${p}`);
   }
   // Every link on this site points at something that exists.
@@ -178,7 +179,9 @@ test("nothing that matters is only in a picture: every alt text, aria-label and 
   for (const img of page.match(/<img\b[^>]*>/g) ?? []) assert.match(img, /\salt="[^"]+"/, `an image without alt text: ${img.slice(0, 80)}`);
   for (const pic of page.match(/<[^>]*role="img"[^>]*>/g) ?? []) assert.match(pic, /aria-label="[^"]+"/, `a drawing without a label: ${pic.slice(0, 80)}`);
   const words = [...pictureWords(page), ...[...page.matchAll(/<text\b[^>]*>([^<]*)<\/text>/g)].map((m) => squash(decode(m[1])))];
-  assert.ok(words.length > 40, "no sketch text found: did the sketches move?");
+  // 28 since round 3 (2 Nov): the week and pilot sketches moved to /working-with-me (tested there). Since round 6 (2 Nov)
+  // the radar sketch is off the home page too, so what is left are alt texts and labels.
+  assert.ok(words.length > 0, "no alt text or label found on the home page");
   const missing = words.filter((w) => w && !md.includes(w));
   assert.deepEqual(missing, [], "drawn or described on the page but not in index.md");
 });
@@ -194,17 +197,25 @@ test("numbers: every number on the page is in index.md and llms-full.txt, and ev
   assert.deepEqual([...seen].filter((n) => !inFull.has(n)), [], "on the page, not in llms-full.txt");
   // The other way, the bars' hover titles count as the page too: index.md lists the days that failed.
   const withTitles = numbers([plain(page), ...pictureWords(page), ...[...page.matchAll(/\stitle="([^"]*)"/g)].map((m) => m[1])].join(" "));
-  assert.deepEqual([...inMd].filter((n) => !withTitles.has(n)), [], "in index.md, not on the page");
+  // Round 6 (2 Nov): an ordered list's own numbers ("1. ", "2. ") are markdown, not words: the proof cards' steps are a
+  // numbered list in index.md and a drawn flow on the page.
+  const inMdText = mdNumbers(md.replace(/^\d+\. /gm, ""));
+  assert.deepEqual([...inMdText].filter((n) => !withTitles.has(n)), [], "in index.md, not on the page");
 });
 
 test("every project and job title on the page is in llms.txt, index.md and llms-full.txt", () => {
+  // 2 Nov (verify loop round 2): the jobs in #work. Round 4 (2 Nov): #built (PresentAI) left the home page.
   const work = homePage().match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const titles = [...work.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>/g)].map((m) => squash(plain(m[1])));
-  assert.ok(titles.length >= 4, `only ${titles.length} titles in #work`);
-  titles.push("Tender Radar");
+  assert.deepEqual(titles, ["Outbound pipeline", "Resume screening, automated"]);
+  assert.ok(!homePage().includes('id="built"'), "Built on my own is back on the home page");
   for (const [name, body] of [["llms.txt", route("llms.txt").body], ["index.md", route("index.md").body], ["llms-full.txt", route("llms-full.txt").body]]) {
     for (const t of titles) assert.ok(unmark(body).includes(t), `${name} is missing "${t}"`);
   }
+  // Round 6 (2 Nov): Tender Radar left the home page (its AI step had failed on every new notice since September), so
+  // index.md no longer has it; llms.txt still lists its code, with the corrections log's words for why.
+  assert.ok(!unmark(route("index.md").body).includes("Tender Radar"), "index.md still has Tender Radar");
+  assert.match(route("llms.txt").body, /\[Tender Radar\]\(https:\/\/github\.com\/Manveen07\/tender-radar-showcase\): [^\n]*Took Tender Radar off my home page/);
 });
 
 test("llms.txt lists every post under Writing, newest first, with the date its page shows; the moved blocks are posts, not projects", () => {
@@ -247,6 +258,25 @@ test("llms-full.txt holds Manveen's intro, the resume, the home page and every p
     assert.ok(full.includes(route(name).body.trim()), `${name} is not inside llms-full.txt whole`);
   }
   assert.match(read("lib/md/llms.ts"), /llms-full\.txt is not part of the llms\.txt spec/);
+});
+
+// Round 3 of the verify loop (2 Nov): the freelance pilot left the home page for /working-with-me, with its own copy.
+test("/working-with-me.md has every block, drawn word and number of its page, and llms.txt and llms-full.txt carry it", () => {
+  const html = app("working-with-me.html").replace(/<script[\s\S]*?<\/script>/g, "");
+  const main = html.slice(html.indexOf("<main"), html.indexOf("</main>"));
+  const body = route("working-with-me.md").body;
+  const md = unmark(body);
+  assert.deepEqual(blocks(main).filter((b) => !md.includes(b)), [], "on the page but not in working-with-me.md");
+  const drawn = [...pictureWords(main), ...[...main.matchAll(/<text\b[^>]*>([^<]*)<\/text>/g)].map((m) => squash(decode(m[1])))];
+  assert.ok(drawn.length > 20, "no sketch text found: did the sketches move?");
+  assert.deepEqual(drawn.filter((w) => w && !md.includes(w)), [], "drawn or described on the page but not in working-with-me.md");
+  const seen = numbers([plain(main), ...pictureWords(main)].join(" "));
+  // The drawings' write-ups count rows and number the steps the SVGs draw; list markers are the page's <ol>.
+  const inMd = mdNumbers(body.split("\n\n").filter((p) => !p.startsWith("*Drawing:*")).join("\n\n").replace(/^\d+\. /gm, ""));
+  assert.deepEqual([...seen].filter((n) => !inMd.has(n)), [], "on the page, not in working-with-me.md");
+  assert.deepEqual([...inMd].filter((n) => !seen.has(n)), [], "in working-with-me.md, not on the page");
+  assert.ok(route("llms.txt").body.includes(`](${SITE}/working-with-me.md)`), "llms.txt does not link the copy");
+  assert.ok(route("llms-full.txt").body.includes(body.trim()), "llms-full.txt does not hold the copy whole");
 });
 
 test("each writing page's markdown has every block of the page", () => {
@@ -358,7 +388,7 @@ test("resume.json follows the JSON Resume schema's shape (jsonresume.org, v1.2.1
 
 // ── 5. Head: markdown alternates, llms.txt, and who this is ─────────────
 test("every page links its markdown copy and llms.txt in its head", () => {
-  const pages = [["index.html", "/index.md"], ["writing.html", "/writing.md"], ...posts.map((s) => [`writing/${s}.html`, `/writing/${s}.md`])];
+  const pages = [["index.html", "/index.md"], ["writing.html", "/writing.md"], ["working-with-me.html", "/working-with-me.md"], ...posts.map((s) => [`writing/${s}.html`, `/writing/${s}.md`])];
   for (const [html, md] of pages) {
     const head = app(html).match(/<head[\s\S]*?<\/head>/)?.[0] ?? "";
     assert.ok(head.includes(`<link rel="alternate" type="text/markdown" href="${SITE}${md}"/>`), `${html} has no markdown alternate`);
@@ -404,7 +434,7 @@ test("robots.txt lets every crawler in, AI ones included, and points to the site
 test("the sitemap lists the pages and the resume PDF, not the copies (28 Oct: Google reads every sitemap URL as a canonical)", () => {
   const xml = route("sitemap.xml").body;
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  const want = ["/", "/writing", "/how-i-build", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
+  const want = ["/", "/writing", "/how-i-build", "/working-with-me", "/resume.pdf", ...posts.map((s) => `/writing/${s}`)];
   assert.deepEqual([...urls].sort(), want.map((p) => `${SITE}${p}`).sort());
   // Google ignores changefreq and priority; lastmod only where it is a real content date.
   assert.doesNotMatch(xml, /<changefreq>|<priority>/);
@@ -425,7 +455,7 @@ test("each markdown copy points search engines to its page as canonical", () => 
     }
     return value;
   };
-  const pages = [["/index.md", "/"], ["/writing.md", "/writing"], ...posts.map((s) => [`/writing/${s}.md`, `/writing/${s}`])];
+  const pages = [["/index.md", "/"], ["/writing.md", "/writing"], ["/working-with-me.md", "/working-with-me"], ...posts.map((s) => [`/writing/${s}.md`, `/writing/${s}`])];
   for (const [md, page] of pages) {
     const link = linkFor(md);
     assert.ok(link.includes(`<${SITE}${page}>; rel="canonical"`), `${md}: ${link}`);

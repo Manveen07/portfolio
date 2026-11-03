@@ -7,6 +7,8 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE } from "../data/portfolio.ts";
+import { HOW, CONTACT, VISUAL, LIVE } from "../data/how.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -33,6 +35,9 @@ const plain = (html) =>
     .replace(/&nbsp;|&#160;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/\s+/g, " ");
+
+/** Markup with entities decoded (no tags removed), for order checks on words. */
+const decodeText = (html) => html.replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
 
 /** All built CSS as one string. */
 const css = () => {
@@ -73,6 +78,9 @@ const outsideMedia = (styles) => {
 };
 
 const snapshot = JSON.parse(read("data/pipeline-snapshot.json"));
+
+/** /working-with-me's one section: the freelance pilot, on its own page since the verify loop's round 3 (2 Nov). */
+const working = () => markup("working-with-me.html").match(/<section[^>]*id="pilot"[\s\S]*?<\/section>/)?.[0] ?? "";
 
 /** Every post's slug, in data/posts.ts order. */
 const posts = [...read("data/posts.ts").matchAll(/slug: "([a-z0-9-]+)"/g)].map((m) => m[1]);
@@ -166,23 +174,43 @@ test("the pilot steps list is still styled as a numbered list, for screen reader
   assert.match(css(), /\.steps\{[^}]*list-style:decimal/);
 });
 
-// ── Task 3: the hero says the problem first, in Manveen's words ────────
-test("hero leads with the weekly job and drops the slogan", () => {
+// ── Task 3, revised 2 Nov (verify loop rounds 2 to 6): the hero leads with the AI edge and his 15 Oct story; his
+// week opens /working-with-me, with its red note ──
+test("hero leads with the AI edge and his 15 Oct story, his week (with its red note) on /working-with-me", () => {
   const t = text("index.html");
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(hero, /<h1>Every week has a job that(?:'|&#x27;)s the same clicks, in the same order\.<\/h1>/);
-  assert.match(t, /I make it run by itself, the same way every time\./);
-  assert.match(hero, /<span class="pen-under">the same way every time\.<\/span>/, "the underline is not on its words");
+  // All 4 round 1 readers asked for the /how-i-build h1 on the home first screen: the same words on both pages.
+  assert.equal(HERO.headline, HOW.headline);
+  assert.match(hero, /<h1>I build AI agents for outbound and measure what they get wrong\.<\/h1>/);
+  assert.match(hero, /outbound/, "the hero does not name outbound");
+  // His approved 15 Oct version A moved, not removed: since round 3 it opens /working-with-me. Round 6 (2 Nov): its red
+  // note ("nerd word for this: deterministic", claims row 57) is back beside it there; round 2 cut it on reader flags.
+  assert.match(working(), /<p class="lede">Every week has a job that(?:'|&#x27;)s the same clicks, in the same order\.(?:<!-- -->)? (?:<!-- -->)?I make it run by itself,(?:<!-- -->)? <span class="pen"><span class="pen-under">the same way every time\.<\/span><\/span><\/p><\/div><aside class="note">nerd word for this: deterministic\. Same input, same result, every time\.<\/aside>/);
+  assert.equal(WEEK_JOB.headline, "Every week has a job that's the same clicks, in the same order.");
+  assert.doesNotMatch(t, /same clicks|Every week has a job/, "the week is still on the home page");
   assert.doesNotMatch(t, /talk to each other|copies things between/);
   assert.doesNotMatch(hero, /class="btn"/, "the hero still has a button");
-  assert.match(t, /nerd word for this: deterministic\. Same input, same result, every time\./);
-  // Manveen's pick, 15 Oct: headline A with version C's story in place of the two old paragraphs.
-  assert.match(t, /nobody measures whether the automation is right\. So now I build the thing, and the test for the thing\./);
+  // Rounds 2 to 5 (2 Nov) cut his approved 15 Oct story on blind readers' flags ("So now I build the thing, and the test
+  // for the thing." and "got good at it, and noticed the same missing piece everywhere: almost nobody measures whether
+  // the automation is right.") and put the 82-step line in its place. Round 6 (2 Nov, the round 5 jury): his story is
+  // back under the h1 word for word (claims row 57), as two blocks of 30 words or fewer; his rule is that his wording
+  // beats a reader's opinion. The 82-step line stays on /how-i-build (tests/how.test.mjs). The second block opens with
+  // "So", so only the h1 and the first block open with "I" (voice_check §7). 3 Nov: reworded at
+  // his ask (was "So now I build the thing, and the test for the thing.").
+  assert.deepEqual(HERO.how, [
+    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
+    "So now I build that missing piece too.",
+  ]);
+  assert.ok(t.includes(HERO.how.join(" ")), "the hero's two blocks are not on the page, in order");
+  assert.doesNotMatch(t, /Of my 82 steps where/, "the round 4 line is back");
+  for (const l of HERO.how) assert.ok(l.split(" ").length <= 30, `a hero block is over 30 words: ${l}`);
+  assert.doesNotMatch(t, /counted my 82 AI steps/, "the line that never said what an AI step is is back");
   // 1 Nov: "got bored of it" cut (Manveen's yes): a hiring manager can read it as a reason not to hire him for the same work.
   assert.doesNotMatch(t, /got bored of it/);
   assert.doesNotMatch(t, /I don't automate things that aren't anyone's problem\./);
-  assert.match(t, /UK working hours are my afternoon and evening, US mornings my evening\./);
-  assert.doesNotMatch(t, /my mornings overlap the UK/i);
+  // Round 3: the hours line makes /how-i-build's promise (the round 2 founder read the old one as limited US overlap).
+  assert.match(t, /Delhi, India\. I can work US or UK hours\./);
+  assert.doesNotMatch(t, /UK working hours are my afternoon|US mornings my evening|my mornings overlap the UK/i);
   assert.doesNotMatch(t, /automating the boring/i);
   assert.doesNotMatch(t, /scaling the interesting/i);
 });
@@ -199,45 +227,30 @@ test("hero shows Manveen's photo", () => {
   assert.match(img, /height="330"/);
 });
 
-// ── Task 4: Tender Radar, with numbers a skeptic can check ─────────────
-test("proof shows the real run count, trades not companies, and no serial labels", () => {
-  const t = text("index.html");
-  const countP = markup("index.html").match(/<p class="count">([\s\S]*?)<\/p>/)?.[1] ?? "";
-  assert.ok(countP.includes(`>${snapshot.totalRuns}<`), "circled run count missing");
-  // Final review: 24 of the 102 scheduled mornings failed, so the count says "started", and the
-  // legend matches ("Black finished, red failed").
-  assert.match(t, /mornings it has started on its own since 4 July 2026\./);
-  assert.doesNotMatch(t, /it has run on its own/);
-  assert.match(t, /Black finished, red failed\./);
-  assert.match(t, new RegExp(`It sorts for ${snapshot.clientProfiles} trades`));
-  // Task 13: 431 is the daily summary's "Raw tender records" count, and the fetch step drops
-  // expired notices from that file, so it is notices on file, not a running total read.
-  assert.match(t, new RegExp(`has ${snapshot.noticesRead} notices on file`));
-  assert.doesNotMatch(t, /notices so far/);
-  assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
-  // The workflow has no alert step, so the page must not promise a "visible trace" (audit row 13).
-  assert.match(t, /when a data-format change broke the morning run and nothing told me\./);
-  assert.doesNotMatch(t, /visible trace/);
-  for (const s of ["Companies served", "companies served", "LINE-01", "S/N", "6:30", "broke once", "short list", "short email"]) {
-    assert.ok(!t.includes(s), `still says "${s}"`);
+// ── Task 4: Tender Radar, off the home page since round 6 (2 Nov) ──────
+test("Tender Radar is off the home page and its copies, and the corrections log says why", () => {
+  // Round 6 (2 Nov, the round 5 jury's blocker): its AI step had failed on every new notice since September (a suspended
+  // API key: gh run 41304264801 of 1 Nov ended "success" with 8,274 lines of 403 PERMISSION_DENIED, and the classified
+  // total has stood at 3,671 since 3 Sep) while the runs showed green, so the panel's 64 and 8 were 3 Sep numbers and its
+  // black bars said nothing about the AI step. components/Proof.tsx stays for when the classifier runs again and a failed
+  // classify step fails the run; the panel's tests (the count, the bars, the sketch, the outage line) come back with it.
+  assert.ok(!markup("index.html").includes('id="proof"'), "the Tender Radar section is back on the home page");
+  assert.doesNotMatch(read("app/page.tsx"), /<Proof\b|getPipeline/, "the home page renders the panel or reads the run history");
+  const copies = [
+    ["home", text("index.html")],
+    ["index.md", read(".next/server/app/index.md.body")],
+    ["llms.txt", read(".next/server/app/llms.txt.body")],
+    ["llms-full.txt", read(".next/server/app/llms-full.txt.body")],
+  ];
+  for (const [name, s] of copies) {
+    assert.doesNotMatch(s, /Running right now|worth bidding|worth a look|started on its own|Numbers saved|3,671|Its worst stretch|watch it work/i, `${name} still shows the panel's numbers or says it works`);
   }
-});
-
-test("without a GitHub token the panel says the numbers are saved, not live", () => {
-  // Local builds have no GITHUB_TOKEN, so getPipeline() returns the snapshot.
-  const t = text("index.html");
-  assert.match(t, /Numbers saved \d{1,2} [A-Z][a-z]{2}, \d{2}:\d{2} UTC\./);
-  assert.doesNotMatch(t, /Read live from GitHub/);
-});
-
-test("one bar per saved run, failures marked red", () => {
-  const bars = markup("index.html").match(/<div[^>]*class="bars"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
-  assert.equal(count(bars, "<i"), snapshot.history.length);
-  assert.equal(count(bars, 'class="f"'), snapshot.history.filter((r) => !r.ok).length);
-  // Hover titles use fixed month names ("7 Sep", never "7 Sept") and the legend's word, "finished".
-  const titles = [...bars.matchAll(/title="([^"]*)"/g)].map((m) => m[1]);
-  assert.equal(titles.length, snapshot.history.length);
-  for (const title of titles) assert.match(title, /^\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec): (?:finished|failed)$/);
+  // The corrections log on /how-i-build says why, dated, and llms.txt carries the same words beside the code link.
+  const entry = LIVE.log[0];
+  assert.equal(entry.id, "log-2026-11-03-tender-radar");
+  assert.equal(entry.text, "Took Tender Radar off my home page: its AI step had been failing on every new notice since September (a suspended API key), and no run went red for it.");
+  assert.ok(text("how-i-build.html").includes(entry.text), "the log entry is not on /how-i-build");
+  assert.ok(read(".next/server/app/llms.txt.body").includes(entry.text), "llms.txt does not say why");
 });
 
 test("live and saved run numbers both count scheduled runs only", () => {
@@ -247,11 +260,13 @@ test("live and saved run numbers both count scheduled runs only", () => {
 });
 
 // ── Task 5: what people say, and job history that matches the letter ───
-test("Zackary's quote has name, title and company, and no email address", () => {
+test("Zackary's reference is one plain line with his title, company and the letter's date, and no email address", () => {
   const t = text("index.html");
-  assert.match(t, /and effectively communicated complex engineering concepts to non-technical stakeholders\./);
-  assert.match(t, /Zackary Beckham, Chief Operations Officer, Caprae Capital Partners/);
-  assert.match(t, /Full letter available on request\./);
+  // Round 4 (2 Nov): the quoted excerpt is cut (all 4 round 3 readers flagged it as AI-sounding); the reference stays.
+  assert.match(t, /Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation \(11 Jan 2026\)\. Full letter on request\./);
+  // Round 6 (2 Nov): no ban on the excerpt ("effectively communicated complex engineering concepts to non-technical
+  // stakeholders", cut in round 4 on reader flags) or its red note ("the bit that matters if you don't write code"):
+  // putting them back is his call.
   assert.ok(!markup("index.html").toLowerCase().includes("zackary@"), "his email address is on the page");
 });
 
@@ -268,14 +283,19 @@ test("Caprae dates and title follow the signed letter; Precise Leads is a job en
 });
 
 // ── Task 6: three projects, no stale, agency or demo-data cards ────────
-test("work shows lead research, resume screening, leadlens and PresentAI only", () => {
+test("work shows lead research and resume screening; leadlens is its own line; PresentAI and the Caprae tiles are off", () => {
   const html = markup("index.html");
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.equal(count(work, "<article"), 4);
+  assert.equal(count(work, "<article"), 2);
+  // Round 3 (2 Nov): leadlens left Built on my own; its line and card in "AI checks on my own projects" tell it once.
+  // Round 4 (2 Nov): Built on my own (PresentAI) left the home page.
+  assert.ok(!html.includes('id="built"'), "Built on my own is back");
   const t = text("index.html");
-  for (const s of ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI", "10h → 3h"]) {
+  for (const s of ["Outbound pipeline", "Resume screening, automated", "leadlens"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
+  // Round 4: the Caprae tiles had no source beside them (claims row 29: needs Manveen; SOURCES.md cites this site).
+  for (const s of ["PresentAI", "10h → 3h", "5 → 1.5", "days to a shortlist"]) assert.ok(!t.includes(s), `still says "${s}"`);
   // Final review: name what was measured, and say nothing the sources can't back.
   // (Show the machine, Task 3: the two metric lines became the scorecard, so "9 of 11 ..." left the Work section.)
   assert.doesNotMatch(plain(work), /9 of 11/);
@@ -284,7 +304,9 @@ test("work shows lead research, resume screening, leadlens and PresentAI only", 
   assert.match(t, /72 posts: 11 fake AI jobs, 61 real/);
   assert.doesNotMatch(t, /72 real postings/);
   assert.doesNotMatch(t, /82%/);
-  assert.match(t, /spending about ten hours a week reading resumes by hand/);
+  // Round 5 (2 Nov): one first-person line of what he built; "about ten hours a week" had the tiles' unsettled source.
+  assert.match(t, /I built a screener that ranks each incoming resume against the role and books calls with the shortlist\./);
+  assert.doesNotMatch(t, /ten hours a week|scores it against the role/);
   for (const s of ["Lead enrichment on autopilot", "Research-grounded writing", "deploying sep 2026", "BAY-0", "watch one", "operator-demo"]) {
     assert.ok(!t.toLowerCase().includes(s.toLowerCase()) && !html.includes(s), `still has "${s}"`);
   }
@@ -295,54 +317,69 @@ test("the leadlens card links to a post that was built", () => {
   assert.ok(built(".next/server/app/writing/schema-as-eval-spec.html"));
 });
 
-// ── Show the machine, Task 0: four sections; the quote follows the Caprae card ──
-test("work runs Jobs (Precise Leads, Caprae, the quote), then Built on my own (leadlens, PresentAI)", () => {
+// ── Show the machine, Task 0, revised 2 Nov (verify loop round 2): Work holds the jobs and the quote (a one-line
+// reference since round 4); Built on my own left the home page in round 4 ──
+test("Work runs Precise Leads, Caprae, the reference; no Built on my own", () => {
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.ok(work, "no section#work");
-  assert.match(work, /<h2 class="kicker">Work, and who vouches for it<\/h2>/, "the section lost its kicker");
+  // Was "Work, and who vouches for it" (2 of 4 round 1 readers flagged it as AI-sounding).
+  assert.match(work, /<h2 class="kicker">Work<\/h2>/, "the section lost its kicker");
   const titles = [...work.matchAll(/<h3 class="h3">([^<]*)<\/h3>/g)].map((m) => m[1]);
-  assert.deepEqual(titles, ["Outbound, built end to end", "Resume screening, automated", "leadlens", "PresentAI"]);
+  assert.deepEqual(titles, ["Outbound pipeline", "Resume screening, automated"]);
   const at = (s) => work.indexOf(s);
-  const quoteAt = at('<figure class="quote">');
-  assert.ok(quoteAt > 0, "no quote in the Work section");
-  const order = [
-    '<p class="group">Jobs</p>',
-    ">Outbound, built end to end<",
-    ">Resume screening, automated<",
-    '<figure class="quote">',
-    '<p class="group">Built on my own</p>',
-    ">leadlens<",
-    ">PresentAI<",
-  ].map(at);
+  const order = [">Outbound pipeline<", ">Resume screening, automated<", '<p class="body ref">', '<p class="small now">'].map(at);
   assert.ok(order.every((i) => i >= 0), `a piece is missing: ${order}`);
   assert.deepEqual([...order].sort((a, b) => a - b), order, "the Work section is out of order");
-  // One pencil tick inside each group, between its two entries.
-  assert.equal(count(work, '<hr class="tick"/>'), 2);
-  const label = css().match(/\.group\{[^}]*\}/)?.[0] ?? "";
-  assert.match(label, /font-family:var\(--font-mono\)/, "the group labels are not mono");
+  assert.equal(count(work, '<hr class="tick"/>'), 1);
+  assert.ok(!markup("index.html").includes('id="built"'), "Built on my own is back");
+  assert.doesNotMatch(text("index.html"), /Built on my own|Type a topic, get a first-draft slide deck/);
+  assert.doesNotMatch(markup("index.html"), /<p class="group">/, "a group label is back");
 });
 
-test("the Precise Leads entry: meta, title, plain text, two metrics, stack; no note and no link", () => {
+test("the Precise Leads entry: meta, title, a lead, short points, two metrics, stack; no note and no link (round 3)", () => {
   // Rewritten 15 Oct from Manveen's own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
   assert.ok(entry, "no Precise Leads entry");
-  assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Outbound, built end to end<\/h3>/);
-  assert.match(entry, /<p class="body">Finds the companies worth writing to and the right person at each, then writes emails that only say what the research found\.<\/p>/);
+  assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Outbound pipeline<\/h3>/);
+  // 2 Nov (verify loop round 2): the 101-word paragraph (all 4 readers called it a wall) is a lead and five points.
+  // Round 3: the old lead ("Finds the companies worth writing to ...", flagged by 2 round 2 readers) is cut, and 34,044
+  // prints once, on its tile.
+  assert.doesNotMatch(entry, /Finds the companies worth writing to/);
   assert.match(
     entry,
-    /<p class="body">I built the agency(?:'|&#x27;)s outbound pipeline\. One run sorted 34,044 companies in four days, and the prompt asks for a quote from the company(?:'|&#x27;)s own website behind every yes\. Each draft I upload myself is checked claim by claim against that research, and when someone spots a new kind of mistake, it becomes a check that runs before upload\. I also built the Slack bot that buys and warms up the sending inboxes, the tool that turns a client(?:'|&#x27;)s sequence into a ready campaign, and a daily scan of five sales-tool Slack communities that passes likely buyers to the sales team\.<\/p>/,
+    /<h3 class="h3">Outbound pipeline<\/h3><p class="body">I built the agency(?:'|&#x27;)s outbound pipeline\. The AI step that sorts companies asks for a quote from the company(?:'|&#x27;)s own website behind every yes\.<\/p><ul class="points">/,
   );
-  assert.match(entry, /<dt>0<\/dt><dd>contradicted claims in 300 drafted emails<\/dd>/);
+  // Round 5 (2 Nov): "The AI step", and his Claude Code follow-up agents as the first point (the round 4 agency reader's
+  // edge sentence left out the AI two rounds running); never "daily" or "every morning" (SOURCES.md row 33).
+  assert.doesNotMatch(entry, /The prompt that sorts|When someone spots/);
+  assert.equal(count(entry, "34,044"), 1, "34,044 prints more than once");
+  const points = [...(entry.match(/<ul class="points">([\s\S]*?)<\/ul>/)?.[1] ?? "").matchAll(/<li>([^<]*)<\/li>/g)].map((m) => m[1].replace(/&#x27;/g, "'"));
+  assert.deepEqual(points, [
+    "Since 16 Oct my Claude Code agents have drafted follow-ups to interested leads; a person approves each before it sends.",
+    "Each draft I upload myself is checked claim by claim against the research.",
+    // Round 6 (2 Nov, 2 of 3 jurors): the past event itself (3 of 4 round 5 readers flagged "Each new kind of mistake
+    // becomes a check before upload, like ..."); the event is /how-i-build's How I test line (data/how.ts NERD.testing).
+    "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
+    "I also built the Slack bot that buys and warms up the sending inboxes.",
+    "I built the tool that turns a client's sequence into a ready campaign.",
+    "My daily scan of five sales-tool Slack communities passes likely buyers to the sales team.",
+  ]);
+  for (const p of points) assert.ok(p.split(" ").length <= 20, `a long point: ${p}`);
+  // Round 3: the AI-judge tile is out (claims row 81: all 4 round 2 readers said its caveat cancels it). One email batch
+  // instead, its caveat beside it, never a find rate (SOURCES.md rows 17 and 18; claims row 82a).
+  assert.match(entry, /<dt>12,030<\/dt><dd>verified emails for 15,514 decision-makers, in one batch<\/dd>/);
+  assert.doesNotMatch(entry, /contradicted claims|AI judge|find rate/);
   assert.match(entry, /<dt>34,044<\/dt><dd>companies sorted in four days<\/dd>/);
-  assert.match(entry, /<p class="stack">built with (?:<!-- -->)?python, typescript, clay, smartlead, n8n<\/p>/);
+  // The day job's AI is named (the round 2 founder's edge sentence never said AI).
+  assert.match(entry, /<p class="stack">built with (?:<!-- -->)?claude code, python, typescript, clay, smartlead, n8n<\/p>/);
   assert.doesNotMatch(entry, /Lead research, automated|watches Slack communities as messages come in/);
   // 1 Nov: the check covers drafts he uploads himself; ticked rows reach the sending tool through n8n without it
   // (new 10x engineer money/applications/bustem/NOTES.md line 11), so the old universal line stays off.
   assert.doesNotMatch(entry, /runs before anything goes out/);
   assert.doesNotMatch(entry, /<a /, "the Precise Leads entry has a link");
   // No note: it is not inside an annotated block.
-  assert.match(work, /<p class="group">Jobs<\/p><article class="entry"><p class="small">At Precise Leads/);
+  assert.match(work, /<h2 class="kicker">Work<\/h2><article class="entry"><p class="small">At Precise Leads/);
 });
 
 test("the Caprae card has the company line, then the role line, and no card gets a role it doesn't have", () => {
@@ -352,32 +389,30 @@ test("the Caprae card has the company line, then the role line, and no card gets
     work,
     /<article class="entry"><p class="small">At Caprae Capital Partners<\/p><p class="small">Machine Learning Intern · Aug 2025 → Jan 2026 · US, remote<\/p><h3 class="h3">Resume screening, automated<\/h3>/,
   );
-  // leadlens and PresentAI keep their single "where" line.
-  assert.match(work, /<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
-  assert.match(work, /<article class="entry"><p class="small">My own project<\/p><h3 class="h3">PresentAI<\/h3>/);
+  // Round 4 (2 Nov): no lead ("Reads incoming resumes, ranks the candidates, and books the interviews.", flagged by the
+  // round 3 cto); the detail follows the title, and no tiles (they had no source beside them).
+  const caprae = work.match(/<article class="entry"><p class="small">At Caprae Capital Partners<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  // Round 5 (2 Nov): the detail is one first-person line; "about ten hours a week" is cut (self-reported, never settled).
+  assert.match(caprae, /<h3 class="h3">Resume screening, automated<\/h3><p class="body">I built a screener that ranks each incoming resume against the role and books calls with the shortlist\.<\/p>/);
+  assert.doesNotMatch(caprae, /Reads incoming resumes|class="metrics"/);
+  assert.match(caprae, /<p class="stack">built with (?:<!-- -->)?python, embeddings, slack<\/p><\/article>$/);
 });
 
-test("the quote follows the Caprae card as a block of the Work section, with its margin note", () => {
+test("the reference follows the Caprae card as one plain line of the Work section", () => {
   const html = markup("index.html");
   const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.ok(work, "no section#work");
-  assert.equal(count(html, '<figure class="quote">'), 1, "the quote is not on the page exactly once");
-  assert.equal(count(work, '<figure class="quote">'), 1, "the quote is not in the Work section");
-  // Cards and the quote block are direct children of the section, so `.wrap > .annotated`
-  // gives the quote its margin column. A wrapper div around the cards would stop that.
+  // Round 4 (2 Nov): the quoted excerpt is cut (all 4 round 3 readers flagged it); the reference is one line.
+  assert.equal(count(html, '<p class="body ref">'), 1, "the reference is not on the page exactly once");
+  // Cards and the reference line are direct children of the section; a wrapper div around the cards is gone.
   assert.ok(!work.includes('<div class="work"'), "cards are still wrapped in a .work div");
   const capraeAt = work.indexOf(">Resume screening, automated<");
   const capraeEnd = work.indexOf("</article>", capraeAt);
-  const quoteAt = work.indexOf('<figure class="quote">');
-  const nextCardAt = work.indexOf("<article", capraeEnd);
+  const refAt = work.indexOf('<p class="body ref">');
+  const nowAt = work.indexOf('<p class="small now">');
   assert.ok(capraeAt > 0, "no Caprae entry");
-  assert.ok(capraeEnd < quoteAt && quoteAt < nextCardAt, "the quote is not between the Caprae entry and the next entry");
-  assert.match(work, /<\/article><div class="annotated"><div><figure class="quote">/, "the quote is inside a card, not a section-level block");
-  // The quote closes the Jobs group; leadlens opens Built on my own, plain since 1 Nov (its note left with the scorecard).
-  assert.match(work, /<\/figure><\/div><aside class="note">[^<]*<\/aside><\/div><p class="group">Built on my own<\/p><article class="entry">/);
-  assert.match(text("index.html"), /the bit that matters if you don't write code/);
-  // The red underline is on the marked words.
-  assert.match(work, /<span class="pen-under">effectively communicated complex engineering concepts to non-technical stakeholders\.<\/span>/);
+  assert.ok(capraeEnd < refAt && refAt < nowAt, "the reference is not between the Caprae entry and the Now line");
+  assert.match(work, /<\/article><p class="body ref">Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation \(11 Jan 2026\)\. Full letter on request\.<\/p>/);
 });
 
 test("the Work section ends with the Now line and the resume link", () => {
@@ -396,6 +431,7 @@ test("one reading column, centred: header, sections and footer share its width a
   // Header, every section and the footer are wraps.
   const html = markup("index.html");
   assert.match(html, /<header class="wrap head">/);
+  // Six since round 6 (2 Nov): Tender Radar's section left the home page.
   assert.equal(count(html, /<section[^>]*class="wrap sec/), 6);
   assert.match(html, /<footer class="wrap foot">/);
   // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
@@ -413,15 +449,27 @@ test("red notes stay inside the centred column at every width, under the block t
   assert.doesNotMatch(ann, /margin-right/, "the annotated block still grows out of the column");
 });
 
-test("the hero answers its headline first, then shows the week", () => {
+test("the hero is the h1, two short paragraphs, the link down and the hours; /working-with-me opens with the week, then its sketch", () => {
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const lede = hero.indexOf('class="lede"');
-  const sketch = hero.indexOf('class="sketch');
   const story = hero.indexOf("I spent a year automating");
-  assert.ok(lede > 0 && sketch > 0 && story > 0, `a hero piece is missing: ${[lede, sketch, story]}`);
-  assert.ok(hero.indexOf("</h1>") < lede && lede < sketch && sketch < story, "the hero is not h1, lede, week sketch, story");
+  const link = hero.indexOf('class="links hero-links"');
+  const hours = hero.indexOf("I can work US or UK hours");
+  assert.ok(story > 0 && link > 0 && hours > 0, `a hero piece is missing: ${[story, link, hours]}`);
+  assert.ok(hero.indexOf("</h1>") < story && story < link && link < hours, "the hero is not h1, sentence, link, hours");
+  // Round 6 (2 Nov): his story's last sentence is its own paragraph, after the first and before the link (the 82-step
+  // line held this place in rounds 4 and 5; it is on /how-i-build only now).
+  const so = hero.indexOf("So now I build that missing piece too.");
+  assert.ok(story < so && so < link, "his 'So now' line is not between the story and the link");
+  assert.equal(count(hero, '<p class="body">'), 2, "the hero does not have two paragraphs");
+  assert.ok(!hero.includes('class="sketch') && !hero.includes('class="lede"'), "the week or its lede is still in the hero");
+  const c = working();
+  const head = c.indexOf(`<h1>${PILOT.head}</h1>`);
+  const week = c.indexOf("Every week has a job");
+  const sketch = c.indexOf('aria-label="A week of the same task');
+  const opener = c.indexOf("On the first call");
+  assert.ok(head > 0 && head < week && week < sketch && sketch < opener, `the pilot is not head, week, sketch, opener: ${[head, week, sketch, opener]}`);
   // Manveen, 15 Oct: Precise Leads is an outbound agency, not a sales-software company.
-  assert.match(hero, /I spent a year automating lead-finding for an outbound agency, got good at it/);
+  assert.match(hero, /I spent a year automating lead-finding for an outbound agency, got good at it,/);
   assert.doesNotMatch(hero, /sales-software/);
 });
 
@@ -449,14 +497,16 @@ test("the hero names the role above the h1 and links down to the proof cards", (
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   // His own words from the live /how-i-build headline ("GTM engineer."), not the old "automation engineer", then the AI
   // edge (second review, hiring manager fix 1).
-  const kicker = hero.indexOf('<p class="kicker hero-kicker">GTM engineer · I build AI agents and measure what they get wrong</p>');
-  assert.ok(kicker > 0 && kicker < hero.indexOf("<h1>"), "no role and AI line above the h1");
-  assert.match(read(".next/server/app/index.md.body"), /^\*GTM engineer · I build AI agents and measure what they get wrong\*$/m);
+  // 2 Nov (verify loop round 2): the AI line is the h1 itself, so the kicker is the role alone.
+  assert.equal(HERO_KICKER, "GTM engineer");
+  const kicker = hero.indexOf('<p class="kicker hero-kicker">GTM engineer</p>');
+  assert.ok(kicker > 0 && kicker < hero.indexOf("<h1>"), "no role above the h1");
+  assert.match(read(".next/server/app/index.md.body"), /^\*GTM engineer\*$/m);
   assert.doesNotMatch(text("index.html"), /automation engineer(?! ·)/i, "the old role is still on the page");
   // The link sits under the hero's paragraph and before the hours line, and points at the band right under the hero.
   const story = hero.indexOf("I spent a year automating");
   const link = hero.indexOf('<p class="links hero-links"><a href="#proof-cards">How I check my AI');
-  assert.ok(story > 0 && link > story && link < hero.indexOf("UK working hours"), "the link is not under the hero paragraph");
+  assert.ok(story > 0 && link > story && link < hero.indexOf("I can work US or UK hours"), "the link is not under the hero paragraph");
   assert.match(markup("index.html"), /<section id="proof-cards"/);
   assert.match(read(".next/server/app/index.md.body"), /^# Manveen Singh \| GTM engineer$/m);
   // Under the 1100px rail the role stays in the reading column, above the h1, never in the photo's rail.
@@ -480,7 +530,7 @@ test("the photo sits inside the column beside the h1 from 720px, above it below 
   for (const rule of styles.match(/\.photo\{[^}]*\}/g) ?? []) assert.doesNotMatch(rule, /position:(?:absolute|fixed)/, "the photo is positioned against layout constants");
   const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
   // Photo, then the role (1 Nov), then h1, in one head block: stacked on a phone, side by side from 720px.
-  assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><p class="kicker hero-kicker">GTM engineer · [^<]*<\/p><h1>/);
+  assert.match(hero, /<div class="hero-head"><img[^>]*class="photo"[^>]*\/?><p class="kicker hero-kicker">GTM engineer<\/p><h1>/);
   const mid = mediaBlocks(styles, "720px").join("\n");
   assert.match(mid, /\.hero-head\{[^}]*display:grid/);
   assert.match(mid, /\.hero-head\{[^}]*grid-template-columns:minmax\(0,\s?1fr\) 176px/);
@@ -498,7 +548,8 @@ test("work entries sit on the paper: no wash box, a short pencil tick between th
   assert.match(tick, /background-image:var\(--divider\)/, "the tick is not the pencil stroke");
   assert.match(tick, /width:80px/);
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.ok(count(work, '<hr class="tick"/>') >= 2, "entries are not separated by ticks");
+  // Work has two entries (Built on my own left the home page in round 4, 2 Nov), so one tick.
+  assert.ok(count(work, '<hr class="tick"/>') >= 1, "entries are not separated by ticks");
   assert.doesNotMatch(work, /<p class="body"><b>/, "the lead sentence is still bold");
 });
 
@@ -509,30 +560,36 @@ test("the people and incident sections are gone, with their copy", () => {
   for (const s of ["What people say", "What broke", "Where I've done this", "When something I built breaks", "Here are four of them", "The last 40 runs now show on this page", "An investment firm"]) {
     assert.ok(!t.includes(s), `still says "${s}"`);
   }
-  // The two failure stories that stay: the outage inside the Tender Radar section, and leadlens.
-  assert.match(t, /Its worst stretch was about three weeks, from 21 July to 11 August/);
+  // The failure story that stays: leadlens. (Tender Radar's outage line left with its section in round 6, 2 Nov; the
+  // three-week crash is told in the post "Four AI mistakes I caught".)
   // (Told once, in the caught-my-own-test card since 1 Nov; the leadlens margin note that told it left the Work section.)
   assert.match(t, /my notes to myself were in the test data/);
 });
 
 // ── Task 8: the whole home page follows the copy rules ─────────────────
-test("sections appear in the agreed order: six, the proof cards second, the newest writing just before the pilot", () => {
+test("sections appear in the agreed order: six, the held-list card second, the jobs third, the newest writing just before Say hi", () => {
   // On 22 Oct Manveen added drawing-proof and the confidently-wrong notes between Work and the pilot, then asked for
   // the writing to be findable ("a person navigating the website will never lead to the writing section. I want them
   // to go to the writing section."), then moved both blocks into the writing: "these are the blogs"; "I want my
   // website to be not filled with balls of text". So Work is followed by a short Writing list.
   const html = markup("index.html");
-  // 1 Nov: the proof cards sit between the hero and Tender Radar (DESIGN-PLAN.md section 2).
-  const at = ["top", "proof-cards", "proof", "work", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  // 2 Nov (verify loop round 2): all 4 round 1 readers stopped at or before Work, and three asked for the day job above
+  // the side projects, so: the held-list card, the jobs, his own projects' two cards, Tender Radar. Round 4 (2 Nov):
+  // Built on my own (PresentAI) is off the home page.
+  // (1 Nov to 2 Nov all three cards sat in one band before Tender Radar, DESIGN-PLAN.md section 2.)
+  // Round 6 (2 Nov): Tender Radar (#proof) left the home page: its AI step had failed on every new notice since September.
+  const at = ["top", "proof-cards", "work", "own-checks", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
-  for (const id of ["people", "broke", "drawings", "wrong"]) assert.ok(!html.includes(`id="${id}"`), `a removed section is back: #${id}`);
+  for (const id of ["people", "broke", "drawings", "wrong", "built", "proof"]) assert.ok(!html.includes(`id="${id}"`), `a removed section is back: #${id}`);
   assert.equal(count(html, /<section[\s>]/), 6, "the home page does not have exactly six sections");
 });
 
-test("one Calendly link on the home page, at the bottom, and no buttons", () => {
+test("one Calendly link on the site's pages, at the end of /working-with-me, none on home since round 3, and no buttons", () => {
   const html = markup("index.html");
-  assert.equal(count(html, /calendly\.com\/manveen9650/), 1);
+  // Round 3 (2 Nov): the calendar went with the pilot; home's Say hi ends like /how-i-build's.
+  assert.equal(count(html, /calendly\.com\/manveen9650/), 0);
+  assert.equal(count(markup("working-with-me.html"), /calendly\.com\/manveen9650/), 1);
   assert.doesNotMatch(text("index.html"), /Book a 30-minute call|Book a call/);
   assert.doesNotMatch(html, /class="btn"/);
 });
@@ -557,27 +614,59 @@ test("a post fills the side rail too: back link and date sit in the rail, the ti
   assert.match(css(), /\.post h1\{font-size:clamp\(30px,\s?3\.4vw,\s?44px\)/);
 });
 
-test("the contact section ends with the one-task line, the email address, then the calendar link", () => {
+test("Say hi ends like /how-i-build's: the hiring line, the address, the hours line, the links; no pilot (round 3)", () => {
   const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const at = (s) => c.indexOf(s);
-  const order = [
-    'class="sketch"',
-    "Tell me one task you repeat every week. I(?:'|&#x27;)ll reply within a day and say whether it can run by itself.",
-    'href="mailto:manveen9650@gmail.com"',
-    "or pick a time on my calendar",
-  ];
-  assert.match(c, new RegExp(order[1]), "the one-task line is missing");
-  const pos = [at(order[0]), c.search(new RegExp(order[1])), at(order[2]), at(order[3])];
-  assert.ok(pos.every((p) => p >= 0), `a piece is missing: ${pos}`);
-  assert.deepEqual([...pos].sort((a, b) => a - b), pos, "the contact end is out of order");
+  // 2 Nov (verify loop round 2): all 4 readers asked whether he wants a job or clients. The job, in /how-i-build's words
+  // under its label. Round 3: all 4 still asked, so the pilot is /working-with-me, linked from the footer.
+  assert.equal(SAY_HI.ask, CONTACT.ask);
+  assert.equal(SAY_HI.kicker, VISUAL.kickers.contact);
+  assert.match(c, /^<section id="contact" class="wrap sec"><h2 class="kicker">Say hi<\/h2><p class="lede">If you(?:'|&#x27;)re hiring a GTM engineer, email me about the role\.<\/p><p class="mail-line"><a class="mail" href="mailto:manveen9650@gmail\.com">manveen9650@gmail\.com<\/a><\/p><p class="small">I(?:'|&#x27;)m in New Delhi and can work US or UK hours\.<\/p><p class="cta-row"/);
+  assert.equal(count(c, "mailto:"), 1, "the address is in Say hi more than once");
+  const links = [...c.matchAll(/<a [^>]*href="([^"]*)"[^>]*>/g)].map((m) => m[1]);
+  assert.deepEqual(links, [`mailto:${ME.email}`, ME.linkedin, ME.github, "/resume.pdf", "/how-i-build", "/writing"]);
+  assert.doesNotMatch(c, /pilot|How working with me goes|Every week has a job|Tell me one task|calendly/i, "the pilot is back in Say hi");
   // The address is the main link: its own class, larger than body text, underlined.
-  assert.match(c, /<a class="mail" href="mailto:manveen9650@gmail\.com">manveen9650@gmail\.com<\/a>/);
   const mail = css().match(/\.mail\{[^}]*\}/)?.[0] ?? "";
   const px = Number(/font-size:(\d+)px/.exec(mail)?.[1]);
   assert.ok(px > 17, `the email link is ${px}px, not larger than the 17px body`);
   assert.match(mail, /text-decoration:underline|text-decoration-line:underline/);
-  // The calendar link is small, on its own line, and is the page's one Calendly link.
-  assert.match(c, /<p class="small"><a class="link" href="https:\/\/calendly\.com\/manveen9650\/30min"[^>]*>or pick a time on my calendar<\/a><\/p><\/section>$/);
+});
+
+// ── Verify loop round 3 (2 Nov): the freelance pilot has its own page, word for word, linked once from the footer ──
+test("/working-with-me holds the pilot word for word and in order, and every page's footer links it once", () => {
+  const w = working();
+  assert.ok(w, "no section#pilot on /working-with-me");
+  assert.equal(count(markup("working-with-me.html"), /<h1[\s>]/), 1);
+  // Round 6 (2 Nov): the week's line and the timeline sit in annotated blocks with their red notes again (his 15 Oct
+  // wording and the approved red pen, cut in round 2 on reader flags).
+  assert.match(w, new RegExp(`^<section id="pilot" class="wrap sec hero"><p class="kicker">${FREELANCE.kicker}</p><h1>${PILOT.head}</h1><div class="annotated"><div><p class="lede">`));
+  const order = [
+    "Every week has a job",
+    "nerd word for this: deterministic.",
+    'aria-label="A week of the same task',
+    "On the first call you tell me what wastes the most time.",
+    '<ol class="steps sr-only">',
+    `aria-label="${PILOT.sketchLabel}"`,
+    PILOT.note,
+    "Tell me one task you repeat every week.",
+    'href="mailto:manveen9650@gmail.com"',
+    "or pick a time on my calendar",
+    "← Home",
+  ];
+  const pos = order.map((s) => decodeText(w).indexOf(s));
+  assert.ok(pos.every((p) => p >= 0), `a piece is missing: ${pos}`);
+  assert.deepEqual([...pos].sort((a, b) => a - b), pos, "the pilot is out of order");
+  // The calendar link is small, on its own line, and the site's one Calendly link.
+  assert.match(w, /<p class="small"><a class="link" href="https:\/\/calendly\.com\/manveen9650\/30min" target="_blank" rel="noopener">or pick a time on my calendar<\/a><\/p>/);
+  const t = text("working-with-me.html");
+  for (const s of [PILOT.opener, ...PILOT.steps, PILOT.ask]) assert.ok(t.includes(s), `missing: ${s}`);
+  // The footer link, once on every page.
+  for (const page of ["index.html", "how-i-build.html", "writing.html", "working-with-me.html", ...posts.map((s) => `writing/${s}.html`)]) {
+    const foot = markup(page).slice(markup(page).lastIndexOf("<footer"));
+    assert.equal(count(foot, `<a href="${FREELANCE.href}">${FREELANCE.link}</a>`), 1, `${page}: the footer link`);
+  }
+  assert.equal(count(markup("index.html"), `href="${FREELANCE.href}"`), 1, "home links /working-with-me more than once");
+  assert.equal(FREELANCE.link, "Freelance automation: how working with me goes");
 });
 
 test("no dashes, banned words, slogans or 'honest' in the home page copy", () => {
@@ -589,8 +678,8 @@ test("no dashes, banned words, slogans or 'honest' in the home page copy", () =>
   );
 });
 
-test("the pilot section opens with the 'is it a real problem' line", () => {
-  assert.match(text("index.html"), /If it isn't a real problem, I'll say so and we won't build it\./);
+test("the pilot (on /working-with-me since round 3) opens with the 'is it a real problem' line", () => {
+  assert.match(text("working-with-me.html"), /If it isn't a real problem, I'll say so and we won't build it\./);
 });
 
 // ── Final review: a real heading outline ───────────────────────────────
@@ -603,13 +692,15 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   );
   assert.deepEqual(h2, [
     "How I check my AI",
-    "Running right now · Tender Radar",
-    "Work, and who vouches for it",
+    "Work",
+    "AI checks on my own projects",
+    // "Running right now · Tender Radar" until round 6 (2 Nov).
     "Writing",
-    "How working with me goes",
+    "Say hi",
   ]);
-  // Three proof cards, four work entries and the three newest posts.
-  assert.equal(count(html, /<h3[\s>]/), 10);
+  // Three proof cards (two of them behind their clicks), two work entries and the three newest posts (round 3: the
+  // pilot's sub-heading left with the pilot, leadlens's entry with its duplicate; round 4: PresentAI's entry left).
+  assert.equal(count(html, /<h3[\s>]/), 8);
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -620,6 +711,7 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.match(rule, /margin:0 0 14px/);
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
+  // Five since round 6 (2 Nov): Tender Radar's section left the home page.
   assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
 });
 
@@ -651,16 +743,18 @@ test("writing pages and 404 have no control-panel labels or dashes", () => {
   }
 });
 
-test("the post links to the pilot section, which exists", () => {
+test("a post's Write to me link points at Say hi, which exists", () => {
   assert.ok(markup("writing/schema-as-eval-spec.html").includes('href="/#contact"'));
   assert.ok(markup("index.html").includes('id="contact"'));
 });
 
 test("meta description and share text are current", () => {
   const head = read(".next/server/app/index.html").match(/<head[\s\S]*?<\/head>/)[0];
-  const desc = head.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "";
-  // Layout pass item 5: the head says what the hero says.
-  assert.match(desc, /^Every week has a job that(?:'|&#x27;)s the same clicks, in the same order\. I make it run by itself, the same way every time\.$/);
+  // Decoded since round 5 (2 Nov): the hero's second line has an apostrophe ("the agency's"), written &#x27; here.
+  const desc = decodeText(head.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "");
+  // Layout pass item 5: the head says what the hero says (2 Nov: the new h1 and its sentence; two lines since round 4).
+  assert.equal(desc, `${HERO.headline} ${HERO.how.join(" ")}`);
+  assert.match(head, /<title>Manveen Singh \| GTM engineer<\/title>/);
   assert.doesNotMatch(head, /talk to each other|copies things between|copy-paste work between/);
   assert.doesNotMatch(head, /quote intake/i);
   assert.doesNotMatch(head, /automating the boring/i);
@@ -670,15 +764,14 @@ test("share image and icon have the new look", () => {
   const og = read("app/opengraph-image.tsx");
   assert.doesNotMatch(og, /automating the boring|hazard|#ffd60a/i);
   assert.match(og, /#f4f1ea/);
-  // Same wording as the page: the count is mornings started, not mornings that worked.
-  assert.match(og, /mornings one system has started on its own/);
-  assert.doesNotMatch(og, /has run on its own/);
-  // Layout pass item 5: the card carries hero A's headline, the circled count and the red URL.
-  assert.match(og, /Every week has a job that(?:&apos;|')s\s/);
-  assert.match(og, /the same clicks, in the same order\./);
+  // Round 6 (2 Nov): the circled Tender Radar count ("mornings one system has started on its own") is off the card, with
+  // the section it came from (its runs showed green while its AI step failed on every new notice since September).
+  assert.doesNotMatch(og, /import snapshot|\{snapshot\.|totalRuns/, "the share card still prints the run count");
+  // Layout pass item 5: the card carries the hero's headline (the new h1 since 2 Nov) and the red URL.
+  assert.match(og, />\s*I build AI agents for outbound\s*</);
+  assert.match(og, />\s*and measure what they get wrong\.\s*</);
+  assert.match(og, /alt = "Manveen Singh, GTM engineer"/);
   assert.doesNotMatch(og, /talk to each other|I connect them/);
-  assert.match(og, /\{snapshot\.totalRuns\}/);
-  assert.match(og, /border: "4px solid #c4161c"/);
   // 15 Oct: the domain reads like the underlined words on the page: ink text, a hand-drawn red line under it.
   const domain = og.slice(og.indexOf(">manveen.me<") - 400, og.indexOf(">manveen.me<") + 700);
   assert.match(domain, /color: "#1d1d1d"[^>]*>manveen\.me</, "the domain is not in ink");
@@ -694,7 +787,20 @@ test("claims and README follow the new hero and the Precise Leads entry", () => 
   // The Precise Leads rows now cite his own repos, not only the old resume.
   assert.match(claims, /SHOWCASE-300-REPORT\.md/);
   assert.match(claims, /universe-to-people-at-scale\.md/);
-  assert.match(claims, /Outbound, built end to end/);
+  assert.match(claims, /Outbound pipeline/);
+  // 2 Nov: the new hero and the 300-email line are on file, and the 124-claim calibration is no longer cited as proof.
+  assert.match(claims, /I build AI agents for outbound and measure what they get wrong\./);
+  assert.match(claims, /scored by an AI judge with no human check/);
+  // Round 3 (2 Nov): the tile that replaced it, the measured hero line and the cut sentence are on file. Round 4: the
+  // hero's two lines (what an AI step is) and the cuts.
+  assert.match(claims, /12,030/);
+  assert.match(claims, /Of my 82 steps where an AI decides or writes something, 11 have a solid test, 31 a partial one, 40 none yet\./);
+  assert.match(claims, /verify loop round 3/);
+  assert.match(claims, /verify loop round 4/);
+  // Round 5 (2 Nov): where the 82 steps are, and the Work card's and Caprae's new lines.
+  assert.match(claims, /Across the agency's tools and my own projects, 82 steps have an AI deciding or writing: 11 have a solid test, 31 a partial one, 40 none yet\./);
+  assert.match(claims, /verify loop round 5/);
+  assert.doesNotMatch(claims, /matched Manveen's hand labels on all 124 claims/);
   assert.match(claims, /an outbound agency/);
   const readme = read("README.md");
   assert.doesNotMatch(readme, /copy-paste work between them|talk to each other/);
@@ -711,28 +817,19 @@ test("claims and README follow the new hero and the Precise Leads entry", () => 
 
 // ── Task 13: claims that failed the skeptic pass (docs/superpowers/specs/2026-10-13-claims.md) ──
 test("the Loom link states the video's real length (281 s per Loom's oEmbed, so under 5 minutes)", () => {
-  const t = text("index.html");
-  assert.match(t, /Watch it work \(under 5 min\)/);
-  assert.doesNotMatch(t, /\(3 min\)/);
+  // Round 6 (2 Nov): the link left the home page with Tender Radar's section; /how-i-build's Check it yourself and
+  // llms.txt keep it, and llms.txt no longer says "watch it work" (its AI step has failed since September).
+  assert.match(text("how-i-build.html"), /Its 5-minute video/);
+  assert.match(read(".next/server/app/llms.txt.body"), /: a walkthrough, under 5 minutes/);
+  for (const page of ["index.html", "how-i-build.html"]) assert.doesNotMatch(text(page), /\(3 min\)/);
 });
 
-test("PresentAI claims only what its code does: no export, no free plan, no live demo while its model is retired", () => {
-  // 25 Oct 2026: the code has no PDF/PPTX export and every deck needs a paid account (Manveen: "it does not have export").
-  const t = text("index.html");
-  for (const claim of [/It's free/, /free plan/, /PowerPoint export/, /export to P/, /speaker notes/, /decks a month/]) {
-    assert.doesNotMatch(t, claim);
+test("PresentAI is off the home page and its copies since round 4 (2 Nov); its code stays on his GitHub", () => {
+  // Three round 3 readers called it a broken side project (a blank screenshot, an AI step that needs a model update);
+  // the cto stopped reading there. The claims it carried (rows 32 to 39 and 68) are on file in the claims table.
+  for (const s of [text("index.html"), read(".next/server/app/index.md.body"), read(".next/server/app/llms.txt.body")]) {
+    assert.doesNotMatch(s, /PresentAI|presentai\.png|present-ai-007\.vercel\.app|first-draft slide deck/);
   }
-  assert.ok(!markup("index.html").includes("present-ai-007.vercel.app"), "the card links a live demo that can't generate");
-});
-
-test("PresentAI card: a typed topic, the public repo has no Python, no unsourced timing figure", () => {
-  const t = text("index.html");
-  assert.match(t, /Type a topic, get a first-draft slide deck you can edit\./);
-  assert.doesNotMatch(t, /Paste your notes/);
-  assert.match(t, /built with next\.js, postgres(?!,)/);
-  assert.doesNotMatch(t, /python-pptx/);
-  assert.doesNotMatch(t, /<60s/, "a timing figure with no source");
-  assert.doesNotMatch(t, /2h → 15m/);
 });
 
 test("every post's read time is in line with its length", () => {
@@ -758,24 +855,11 @@ test("verdict 2: post headings have no ## marker and match the site's 800 weight
   }
 });
 
-test("verdict 3a: the proof note sits with the bars, below the run count", () => {
-  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.ok(proof, "no section#proof");
-  const countAt = proof.indexOf('class="count"');
-  // The Tender Radar sketch has its own annotated block above the count; the bars' block is the last one.
-  const annotatedAt = proof.lastIndexOf('class="annotated"');
-  assert.ok(countAt !== -1 && annotatedAt !== -1, "count or annotated block missing");
-  assert.ok(countAt < annotatedAt, "the circled count is still inside the annotated block");
-  const annotated = proof.slice(annotatedAt, proof.indexOf("</aside>", annotatedAt));
-  assert.ok(annotated.includes('class="bars"'), "the bars are not inside the annotated block");
-  assert.ok(annotated.includes("Black finished, red failed"), "the bar caption is not inside the annotated block");
-  assert.ok(!annotated.includes('class="count"'), "the count is still inside the annotated block");
-  assert.ok(proof.indexOf("mornings it has started on its own") < annotatedAt, "the count line is still inside the annotated block");
-});
-
 test("every note is a plain note: the margin offsets (note-drop, note-score) are gone", () => {
   const html = markup("index.html");
-  assert.ok(count(html, /<aside class="note">/) >= 5, "a note lost its plain class");
+  // Rounds 2 and 4 (2 Nov) cut all five of the home page's pen notes on blind readers' flags, and this test held them
+  // off. Round 6 (2 Nov, the round 5 jury): that ban is gone. His notes go back beside their lines (the deterministic and
+  // pilot notes on /working-with-me, where those lines moved); the Tender Radar and quote notes wait on his call.
   assert.doesNotMatch(html, /note-(?:drop|score)/);
   assert.doesNotMatch(css(), /\.note-(?:drop|score)/);
 });
@@ -806,36 +890,8 @@ test("saved snapshot has the Tender Radar verdict counts", () => {
 });
 
 // ── Show the machine, Task 2: the Tender Radar sketch ─────────────────
-test("Tender Radar sketch shows the saved numbers in both layouts", () => {
-  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const sketch = proof.match(/<div[^>]*class="sketch[^"]*"[^>]*role="img"[\s\S]*?<\/div>/)?.[0] ?? "";
-  assert.ok(sketch, "no sketch in the proof section");
-  assert.match(sketch, /aria-label="[^"]*checked for \d+ trades[^"]*"/);
-  assert.match(sketch, /aria-label="3 public tender sites feed my script every morning\./);
-  for (const v of ["sketch-wide", "sketch-tall"]) assert.ok(proof.includes(v), `missing ${v}`);
-  const comma = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  // Each string is in the wide SVG, the tall SVG and the sketch's aria-label.
-  for (const s of [`${snapshot.maybe} worth a look`, `${snapshot.bid} worth bidding`, `out of ${comma(snapshot.checks)} checks`]) {
-    assert.equal(count(proof, s), 3, `"${s}" should appear once per layout and once in the aria-label`);
-  }
-  assert.match(text("index.html"), /every number here comes from the same run as the bars below/);
-});
-
-test("Tender Radar sketch draws only the sources the daily run really reads", () => {
-  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
-  for (const s of ["Find a Tender", "Contracts Finder", "ProContract"]) assert.equal(count(proof, `>${s}<`), 2, `${s}: one box per layout`);
-  for (const s of ["Public Contracts Scotland", "Sell2Wales"]) assert.ok(!proof.includes(s), `${s} returns 403 every morning, so it must not be drawn`);
-});
-
-test("Tender Radar tall sketch text stays readable on a 320px phone", () => {
-  const proof = markup("index.html").match(/<section[^>]*id="proof"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const tall = proof.match(/<svg[^>]*class="sketch-tall"[^>]*>/)?.[0] ?? "";
-  assert.ok(tall, "no tall sketch in the proof section");
-  // The tall SVG is 320 units wide and shows about 280px wide at a 320 viewport, so 11 gave 9.6px text.
-  const size = Number(/font-size="(\d+(?:\.\d+)?)"/.exec(tall)?.[1]);
-  assert.ok(size >= 12, `tall radar sketch font-size is ${size}, under 12 (about 10.5px at 320)`);
-});
-
+// Its three tests (the saved numbers in both layouts, only the sources the run reads, 12px text on a 320px phone) left
+// with the section in round 6 (2 Nov); they come back with it (git history: feat/site-r5, tests/site.test.mjs).
 test("sketch red marks hide only under pen-js and never under reduced motion", () => {
   const styles = css();
   assert.match(styles, /\.pen-js \.sketch:not\(\.in\) \.mark\{stroke-dashoffset:1/);
@@ -846,59 +902,35 @@ test("sketch red marks hide only under pen-js and never under reduced motion", (
 // ── Show the machine, Task 3: real artifacts on the work cards ────────
 test("leadlens's real score is on its proof card, the score circled, with what was measured beside it", () => {
   // 1 Nov (proof cards, review fix 3): the scorecard left the Work entry, so 9 of 11 and no false alarms show once,
-  // on the caught-my-own-test card two screens up. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44).
+  // on the caught-my-own-test card. TP 9, FN 2, FP 0, TN 61 (claims rows 43 and 44). Round 3 (2 Nov): the home page shows
+  // the card's one line, and the full card behind its click.
   const html = markup("index.html");
   assert.ok(!html.includes('class="scorecard"'), "the scorecard is back: the card shows the same numbers");
-  const card = html.match(/<article class="pc pc-compact" id="caught-my-own-test">[\s\S]*?<\/article>/)?.[0] ?? "";
-  assert.ok(card, "no caught-my-own-test card");
+  const card = html.match(/<details class="more"><summary>[\s\S]*?<\/summary><article class="pc pc-full" id="caught-my-own-test">[\s\S]*?<\/article><\/details>/)?.[0] ?? "";
+  assert.ok(card, "no caught-my-own-test card behind a click");
   // The card keeps each "N of M" on one line with no-break spaces (review 2): read them as spaces.
-  const t = plain(card.replace(/<svg[\s\S]*?<\/svg>/g, "")).replace(/\u00a0/g, " ");
-  for (const s of ["9 of 11 caught: no false alarms", "72 posts: 11 fake AI jobs, 61 real", "11 of 11 caught: a perfect score", "circled: the score I published"]) {
+  const t = plain(card.replace(/<svg[\s\S]*?<\/svg>/g, "")).replace(/\u00a0/g, " ").replace(/\s+/g, " ");
+  for (const s of ["9 of 11 caught no false alarms", "72 posts: 11 fake AI jobs, 61 real", "11 of 11 caught: a perfect score", "circled: the score I published"]) {
     assert.ok(t.includes(s), `missing "${s}"`);
   }
   assert.equal(count(card, "pen-circle"), 1, "only the published score is circled");
-  assert.match(card, /<span class="pen pen-circle">9\u00a0of\u00a011 caught<svg/);
+  assert.match(card, /<span class="pen pen-circle tight">9\u00a0of\u00a011 caught<svg/);
   assert.doesNotMatch(text("index.html"), /my own notes leaked the answers/);
+  // leadlens is told once on the page: its line here, its card's eyebrow behind the click, and (round 6, 2 Nov) the
+  // click's own label, which names what it opens.
+  assert.equal(count(text("index.html"), /leadlens/g), 3, "leadlens is on the home page more or less than its line, its click and its card's eyebrow");
 });
 
-test("the leadlens card goes lead, stack, link: no detail paragraph, no metric lines, no scorecard, no note", () => {
-  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  // 1 Nov (proof cards, review fix 3): the scorecard and the margin note left; the description and the link stay.
-  assert.match(work, /<p class="group">Built on my own<\/p><article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>/);
-  const card = work.match(/<article class="entry"><p class="small">My own project<\/p><h3 class="h3">leadlens<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
-  assert.doesNotMatch(text("index.html"), /It scored a perfect 100%, which was the problem/);
-  assert.ok(!card.includes("I hand-checked 72 postings"), "the old detail paragraph is still in the card");
-  assert.equal(count(card, '<p class="body">'), 1, "leadlens has a body paragraph besides its lead line");
-  const order = ["Reads a job posting", "class=\"stack\"", "class=\"links\""].map((s) => card.indexOf(s));
-  assert.ok(order.every((i) => i >= 0), `a piece of the card is missing: ${order}`);
-  assert.deepEqual([...order].sort((a, b) => a - b), order, "the card is not lead, stack, link");
-  assert.ok(!card.includes("<table"), "leadlens still has its scorecard");
-  assert.ok(!card.includes('class="metrics"'), "leadlens still has an empty metrics list");
-  for (const s of ["dressed-up AI roles caught", "real jobs wrongly flagged"]) assert.ok(!card.includes(s), `old metric line "${s}" is still there`);
-  assert.match(card, /<a href="\/writing\/schema-as-eval-spec">How I tested it →<\/a>/);
+test("leadlens has no work entry since round 3: its line and card tell it, and link its post", () => {
+  // 1 Nov (proof cards, review fix 3): the scorecard and the margin note left the entry. Round 3 (2 Nov): all 4 round 2
+  // readers saw leadlens twice, so the entry left too.
+  assert.doesNotMatch(text("index.html"), /Reads a job posting|It scored a perfect 100%, which was the problem|I hand-checked 72 postings|dressed-up AI roles caught/);
+  const own = markup("index.html").match(/<section[^>]*id="own-checks"[\s\S]*?<\/section>/)?.[0] ?? "";
+  assert.match(own, /<a href="\/writing\/schema-as-eval-spec">How I caught it →<\/a>/);
 });
 
-test("the work section has one margin note (the quote's) and PresentAI has none", () => {
-  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  // 1 Nov: leadlens's note left with its scorecard (its story is the caught-my-own-test card).
-  assert.equal(count(work, /<aside class="note/), 1, "the Work section should have exactly one margin note");
-  assert.ok(work.lastIndexOf("<aside") < work.indexOf(">PresentAI<"), "PresentAI has a margin note");
-});
+// "Work has no margin notes" held the quote's red note off until round 6 (2 Nov); putting it back is his call.
 
-test("PresentAI card shows a real screenshot of the live app", () => {
-  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const card = work.match(/<article class="entry"><p class="small">My own project<\/p><h3 class="h3">PresentAI<\/h3>[\s\S]*?<\/article>/)?.[0] ?? "";
-  // React writes the apostrophe in an attribute as &#x27;.
-  assert.match(card, /<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"/);
-  assert.ok(built("public/work/presentai.png"));
-  // The width and height on the tag are the file's real size (PNG header: width and height are big-endian 32-bit at byte 16 and 20).
-  const png = readFileSync(path.join(root, "public/work/presentai.png"));
-  assert.deepEqual([...png.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], "presentai.png is not a PNG");
-  const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
-  assert.equal(w, 640, "the screenshot is not 640px wide");
-  assert.match(card, new RegExp(`<img[^>]*width="${w}"`));
-  assert.match(card, new RegExp(`<img[^>]*height="${h}"`));
-});
 
 test("scorecard and screenshot styles: ink grid, thin rule border, no shadow", () => {
   const styles = css();
@@ -932,15 +964,18 @@ test("the pilot timeline's dots take the ink colour from CSS, not a hard-coded h
 });
 
 // ── Show the machine, Task 4: the problem, drawn ──────────────────────
-test("hero has the week sketch: one SVG, five crossed-out days, a bracket and its red label", () => {
-  const hero = markup("index.html").match(/<section[^>]*id="top"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.match(
-    hero,
-    /role="img" aria-label="A week of the same task: Monday to Friday, copy, paste, double-check, crossed out in red\. Runs on its own now\."/,
-  );
-  // Order (h1, lede, sketch, story) is checked in "the hero answers its headline first".
-  const svgs = hero.match(/<svg[\s\S]*?<\/svg>/g) ?? [];
+test("the pilot has the week sketch: one SVG, five crossed-out days, a bracket and its red label", () => {
+  // In the hero until 2 Nov; since the verify loop's round 2 it opened the pilot part of Say hi, under his version A
+  // lines, and since round 3 it opens /working-with-me.
+  const c = working();
+  const label = 'role="img" aria-label="A week of the same task: Monday to Friday, copy, paste, double-check, crossed out in red. Runs on its own now."';
+  assert.ok(c.includes(label), "no week sketch in the pilot");
+  // Order (head, week lines, sketch, opener) is checked in "the hero is the h1, one sentence, ...".
+  const sketchDiv = c.slice(c.indexOf(label), c.indexOf("</div>", c.indexOf(label)));
+  const svgs = sketchDiv.match(/<svg[\s\S]*?<\/svg>/g) ?? [];
   assert.equal(svgs.length, 1, "the week sketch should be one SVG");
+  assert.equal(count(markup("working-with-me.html"), "sketch-week"), 1, "the week sketch is on the page more than once");
+  assert.equal(count(markup("index.html"), "sketch-week"), 0, "the week sketch is still on the home page");
   const svg = svgs[0];
   assert.doesNotMatch(svg, /sketch-wide|sketch-tall/);
   assert.deepEqual([...svg.matchAll(/>(mon|tue|wed|thu|fri)</g)].map((m) => m[1]), ["mon", "tue", "wed", "thu", "fri"]);
@@ -969,7 +1004,7 @@ test("tall sketches stop growing at 420px, and the wide ones are not capped", ()
 
 // ── Show the machine, Task 5: the offer, drawn ────────────────────────
 test("pilot timeline is drawn, the steps list stays for screen readers", () => {
-  const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const c = working();
   assert.match(c, /<ol class="steps sr-only">/);
   assert.match(c, /class="sketch"[^>]*role="img"/);
   // Each step title is in the wide SVG and the tall SVG. "every miss logged," is also in the sketch's aria-label, so 3.
@@ -977,7 +1012,10 @@ test("pilot timeline is drawn, the steps list stays for screen readers", () => {
     assert.equal(count(c, s), 2, `"${s}" once per layout`);
   }
   assert.equal(count(c, "every miss logged,"), 3, `"every miss logged," in both layouts and the aria-label`);
-  assert.match(text("index.html"), /you see every miss, not just a score/);
+  // Round 2 (2 Nov) cut "not just a score" from the step and the timeline's pen note on blind readers' flags; round 6
+  // (2 Nov, the round 5 jury) put both back word for word: his own offer terms (claims row 56).
+  assert.match(c, /<li class="body">The pilot runs on a month of your real requests\. Every miss gets logged, and you see the list, not just a score\.<\/li>/);
+  assert.match(c, /<\/div><\/div><aside class="note">you see every miss, not just a score<\/aside><\/div>/);
   // .sr-only must hide the list from the eye but not from screen readers: display:none or
   // visibility:hidden would remove it from the accessibility tree too.
   const sr = css().match(/\.sr-only\{[^}]*\}/)?.[0] ?? "";
@@ -1007,22 +1045,8 @@ test("the footer has the same pencil line above it", () => {
   assert.doesNotMatch(foot, /border-top/);
 });
 
-// ── Final fix wave, item 2: the PresentAI capture is a small framed thumbnail (Manveen's pick B, 15 Oct) ──
-test("the PresentAI screenshot shows as a 280px thumbnail, left-aligned, and the browser is told so", () => {
-  const shot = css().match(/\.shot\{[^}]*\}/)?.[0] ?? "";
-  assert.match(shot, /(?:^|[{;])width:280px/, "the screenshot is not 280px wide");
-  assert.match(shot, /max-width:100%/, "a narrow phone card would push the thumbnail out");
-  assert.match(shot, /outline:1px solid/);
-  assert.doesNotMatch(shot, /margin:[^;}]*auto/, "the thumbnail is centred, not left-aligned");
-  const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const img = work.match(/<img[^>]*alt="PresentAI(?:'|&#x27;|&#39;)s home page"[^>]*>/)?.[0] ?? "";
-  assert.ok(img, "no PresentAI screenshot");
-  // sizes tells next/image the real display width, so it stops serving a 640px source to a 280px box.
-  assert.match(img, /sizes="280px"/);
-  // The file stays 640x400: the thumbnail is the same picture shown smaller.
-  assert.match(img, /width="640"/);
-  assert.match(img, /height="400"/);
-});
+// ── Final fix wave, item 2: the PresentAI capture was a small framed thumbnail (Manveen's pick B, 15 Oct); PresentAI
+// left the home page in round 4 (2 Nov), and the .shot style stays for the next work screenshot ──
 
 // ── Final fix wave, item 3: one run per page ───────────────────────────
 test("a summary that cannot be parsed sends the live path back to the whole saved run", () => {
@@ -1038,7 +1062,7 @@ test("a summary that cannot be parsed sends the live path back to the whole save
 // ── Final fix wave, item 4: the leadlens note points at its scorecard ──
 // ── Final fix wave, item 5: even spacing on the tall pilot timeline ───
 test("the tall pilot timeline has an even gap before each step and no blank tail", () => {
-  const c = markup("index.html").match(/<section[^>]*id="contact"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const c = working();
   const tall = c.match(/<svg[^>]*class="sketch-tall"[\s\S]*?<\/svg>/)?.[0] ?? "";
   assert.ok(tall, "no tall pilot sketch");
   const texts = [...tall.matchAll(/<text ([^>]*)>([^<]*)<\/text>/g)].map((m) => ({
@@ -1063,9 +1087,10 @@ test("the tall pilot timeline has an even gap before each step and no blank tail
 
 // ── Final fix wave, item 6: wide sketch text one size up ──────────────
 test("the wide radar and pilot sketches draw their text at 13 or more (about 11px at 640)", () => {
-  const html = markup("index.html");
-  for (const id of ["proof", "contact"]) {
-    const section = html.match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`))?.[0] ?? "";
+  // The pilot's sketch is on /working-with-me since round 3 (2 Nov).
+  // Round 6 (2 Nov): the radar's sketch left the home page with its section.
+  for (const [page, id] of [["working-with-me.html", "pilot"]]) {
+    const section = markup(page).match(new RegExp(`<section[^>]*id="${id}"[\\s\\S]*?</section>`))?.[0] ?? "";
     const wide = section.match(/<svg[^>]*class="sketch-wide"[^>]*>/)?.[0] ?? "";
     assert.ok(wide, `no wide sketch in #${id}`);
     const size = Number(/font-size="(\d+(?:\.\d+)?)"/.exec(wide)?.[1]);
@@ -1158,7 +1183,8 @@ test("the confidently-wrong notes: four real dates in four different months, the
   assert.equal(new Set(dates.map((d) => d.slice(0, 7))).size, dates.length, "two notes share a month");
   assert.equal(dates.at(-1).slice(0, 7), "2026-09", "the latest note is not in September");
   assert.ok(dates.every((d) => d < "2026-10-01"), "a note is from October");
-  // Each note: the AI's words as code with a red mark on the wrong part, what happened, and the lesson.
+  // Each note: the AI's words as code with a red mark on the wrong part, what happened, and the lesson. Four exactly: the
+  // writing lists call the post "Four AI mistakes I caught" (round 4, 2 Nov).
   assert.equal(count(sec, /<li class="pin">/), 4);
   assert.equal(count(sec, /<code class="exhibit">/), 4);
   assert.equal(count(sec, /class="pen pen-circle|class="pen"><span class="pen-under">/), 4, "a note lost its red mark");
@@ -1171,7 +1197,10 @@ test("the confidently-wrong notes: four real dates in four different months, the
   const t = plain(sec);
   assert.ok(t.includes("Tender Radar is my script that reads UK government tender notices every morning"), "the 11 Aug note doesn't say what Tender Radar is");
   assert.ok(t.includes("The new files were missing two details the script insists on"));
-  assert.ok(t.includes("on my home page as bars"));
+  // Round 6 (2 Nov): the lesson keeps his line and says what September showed (the bars it pointed at left the home
+  // page: the runs showed green while the AI step failed on every new notice).
+  assert.ok(t.includes("So I watch the run, not the tests."));
+  assert.ok(t.includes("From September its AI step failed on every new notice and no run went red for it"));
   assert.doesNotMatch(t, /fit the checker/, "engineer's shorthand is back in the 11 Aug note");
   assert.ok(t.includes("It doesn't make the number right by itself"), "the 25 May note implies the fix proved the score");
 });
@@ -1211,7 +1240,7 @@ test("the June post is the eval that leaked its own answers: one title everywher
 // ── 22 Oct: the writing is findable. Manveen: "a person navigating the website will never lead to the writing
 // section. I want them to go to the writing section." It was only a footer link. ──
 test("every page's header links Writing, plainly, beside the mail link", () => {
-  for (const page of ["index.html", "writing.html", "how-i-build.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
+  for (const page of ["index.html", "writing.html", "how-i-build.html", "working-with-me.html", ...posts.map((s) => `writing/${s}.html`), "_not-found.html"]) {
     const head = markup(page).match(/<header[\s\S]*?<\/header>/)?.[0] ?? "";
     // 29 Oct: "How I build" (the page for hiring managers) comes first, then Writing, then the mail link.
     assert.match(head, /<nav class="head-links" aria-label="Site"><a class="head-link" href="\/how-i-build">How I build<\/a><a class="head-link" href="\/writing">Writing<\/a><a class="head-cta" href="mailto:/, `${page}: no How I build and Writing links before the mail link`);
@@ -1221,18 +1250,24 @@ test("every page's header links Writing, plainly, beside the mail link", () => {
   assert.match(styles, /\.head\{[^}]*flex-wrap:wrap/, "on a narrow phone the links would squeeze the name");
 });
 
-test("the home page lists the three newest posts after the work: a title and one line each, and all writing", () => {
+test("the home page lists the three newest posts after the work: the titles only, and all writing", () => {
   const w = markup("index.html").match(/<section[^>]*id="writing"[\s\S]*?<\/section>/)?.[0] ?? "";
   assert.match(w, /<h2 class="kicker">Writing<\/h2>/);
-  const items = [...w.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><h3 class="h3">([^<]*)<\/h3><p class="body">([^<]*)<\/p><\/a><\/li>/g)];
+  // Round 5 (2 Nov): the line under each title is cut (5 of round 4's 13 AI-sounding flags were those lines); each post
+  // keeps its lede on its own page.
+  const items = [...w.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><h3 class="h3">([^<]*)<\/h3><\/a><\/li>/g)];
+  assert.equal(count(w, "<li>"), 3, "not three posts, or a post has more than its title");
+  assert.doesNotMatch(w, /<p class="body">/, "a line is back under a title");
   // 25 Oct: the n8n testing post is the newest, so the eval post now sits behind "All writing".
   assert.deepEqual(items.map((m) => m[1]), ["149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong"], "not the three newest, newest first");
   assert.equal(items[0][2], "How I test an n8n workflow before it goes live");
-  assert.equal(items[0][3], "My task tracker is a few Slack buttons and two n8n workflows. It has 149 tests, because of one week of green ticks.");
+  assert.doesNotMatch(plain(w), /because of one week of green ticks|still crashed every morning/, "a flagged line is back");
   assert.match(items[1][2], /^Marking the AI(?:'|&#x27;)s homework$/);
-  assert.equal(items[2][2], "Things AI got confidently wrong");
-  // "Not filled with balls of text": one line each, no dates, no read times, no long paragraphs.
-  for (const m of items) assert.ok(m[3].length <= 140, `a long line under "${m[2]}": ${m[3].length} characters`);
+  // Round 4 (2 Nov): two round 3 readers flagged "Things AI got confidently wrong" as AI-sounding; the list says how many
+  // (the post pins exactly four, tested below), and the post keeps its own title.
+  assert.equal(items[2][2], "Four AI mistakes I caught");
+  assert.match(markup("writing/things-ai-got-confidently-wrong.html"), /<h1>Things AI got confidently wrong<\/h1>/);
+  // "Not filled with balls of text": titles only, no dates, no read times.
   assert.doesNotMatch(w, /min read|<time/, "the list carries dates or read times");
   assert.match(w, /<a href="\/writing">All writing →<\/a>/);
   assert.doesNotMatch(w, /class="btn"|Read more|Subscribe/i, "the block pitches");
@@ -1293,7 +1328,7 @@ const headOf = (page) => read(`.next/server/app/${page}`).match(/<head[\s\S]*?<\
 const tag = (head, re) => head.match(re)?.[1];
 
 test("every page names one canonical address, and its share card points to the same one", () => {
-  const pages = [["index.html", "https://manveen.me"], ["writing.html", "https://manveen.me/writing"], ...posts.map((s) => [`writing/${s}.html`, `https://manveen.me/writing/${s}`])];
+  const pages = [["index.html", "https://manveen.me"], ["writing.html", "https://manveen.me/writing"], ["working-with-me.html", "https://manveen.me/working-with-me"], ...posts.map((s) => [`writing/${s}.html`, `https://manveen.me/writing/${s}`])];
   for (const [page, url] of pages) {
     const head = headOf(page);
     assert.equal(head.match(/rel="canonical"/g)?.length, 1, `${page}: canonical count`);

@@ -1,9 +1,8 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { JOBS, OWN_WORK, QUOTE, NOW_LINE, ME, type WorkItem } from "@/data/portfolio";
+import { JOBS, REFERENCE, NOW_LINE, ME, type WorkItem } from "@/data/portfolio";
 import Annotated from "@/components/Annotated";
-import { Underline } from "@/components/Pen";
 import Scorecard from "@/components/Scorecard";
 
 /** One entry, on the paper: meta lines, bold title, plain text, then whatever it carries. */
@@ -13,8 +12,15 @@ function Entry({ w }: { w: WorkItem }) {
       <p className="small">{w.where}</p>
       {w.role && <p className="small">{w.role}</p>}
       <h3 className="h3">{w.title}</h3>
-      <p className="body">{w.lead}</p>
+      {w.lead && <p className="body">{w.lead}</p>}
       {w.detail && <p className="body">{w.detail}</p>}
+      {w.points && (
+        <ul className="points">
+          {w.points.map((p) => (
+            <li key={p}>{p}</li>
+          ))}
+        </ul>
+      )}
       {w.scorecard && <Scorecard s={w.scorecard} />}
       {w.shot && (
         <Image className="shot" src={w.shot.src} alt={w.shot.alt} width={w.shot.width} height={w.shot.height} sizes="280px" />
@@ -49,12 +55,11 @@ function Entry({ w }: { w: WorkItem }) {
   );
 }
 
-/** A group: its mono label, then its entries with a pencil tick between them. An entry with a note
-    gets an annotated block; the entry marked `quote` is followed by Zackary's quote and its note. */
-function Group({ label, items }: { label: string; items: WorkItem[] }) {
+/** Entries with a pencil tick between them. An entry with a note gets an annotated block; the entry marked `reference`
+    is followed by Zackary's reference, one plain line (round 4, 2 Nov: the quoted excerpt is cut). */
+function Entries({ items }: { items: WorkItem[] }) {
   return (
     <>
-      <p className="group">{label}</p>
       {items.map((w, i) => (
         <Fragment key={w.title}>
           {i > 0 && <hr className="tick" />}
@@ -65,40 +70,26 @@ function Group({ label, items }: { label: string; items: WorkItem[] }) {
           ) : (
             <Entry w={w} />
           )}
-          {w.quote && (
-            <Annotated note={QUOTE.penNote}>
-              <figure className="quote">
-                <blockquote>
-                  <p>
-                    &ldquo;{QUOTE.before}
-                    <Underline>{QUOTE.marked}</Underline>&rdquo;
-                  </p>
-                </blockquote>
-                <figcaption>
-                  <b>{QUOTE.name}</b>, {QUOTE.title}, {QUOTE.company}
-                  <br />
-                  <span className="small">{QUOTE.source}</span>
-                </figcaption>
-              </figure>
-            </Annotated>
-          )}
+          {w.reference && <p className="body ref">{REFERENCE}</p>}
         </Fragment>
       ))}
     </>
   );
 }
 
-// Groups, entries and the quote are direct children of the section, all on the column's left edge.
-// The section has one margin note, the quote's (leadlens's left on 1 Nov: its story is the caught-my-own-test card).
+// The jobs and the reference, right under the held-list card (2 Nov, verify loop round 2). The kicker was "Work, and
+// who vouches for it" until then (2 of 4 readers flagged it as AI-sounding). Entries and the reference line are direct
+// children of the section, all on the column's left edge.
 export default function Work() {
   return (
     <section id="work" className="wrap sec">
-      <h2 className="kicker">Work, and who vouches for it</h2>
-      <Group label="Jobs" items={JOBS} />
-      <Group label="Built on my own" items={OWN_WORK} />
+      <h2 className="kicker">Work</h2>
+      <Entries items={JOBS} />
       <p className="small now">
         {NOW_LINE} <a className="link" href={ME.resume}>Full resume ↗</a>
       </p>
     </section>
   );
 }
+
+// "Built on my own" (PresentAI) left the home page in round 4 (2 Nov); its code stays on his GitHub profile.

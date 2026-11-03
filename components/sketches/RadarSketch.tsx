@@ -9,7 +9,7 @@ export default function RadarSketch({ trades, checks, bid, maybe }: Props) {
   return (
     <Sketch label={t.label}>
       {/* viewBox starts at y 30: with three source boxes nothing is drawn above y 38, so no blank band over the sketch */}
-      {/* text is 13 (it was 12: 10.4px at a 640px window); the script box is 10 units wider so "no one presses go" keeps its margin */}
+      {/* text is 13 (it was 12: 10.4px at a 640px window); the script box is 10 units wider (it was sized for "no one presses go"; "on a timer" since 2 Nov) */}
       <svg className="sketch-wide" viewBox="0 30 690 200" aria-hidden="true" fontSize="13">
         {SOURCES.map((s, i) => {
           const y = 48 + i * 38; // three boxes, centred on the script box (y 70 to 130)

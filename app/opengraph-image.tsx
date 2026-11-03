@@ -1,9 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import snapshot from "@/data/pipeline-snapshot.json";
 
-export const alt = "Manveen Singh, automation engineer";
+export const alt = "Manveen Singh, GTM engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -32,29 +31,17 @@ export default async function Image() {
       >
         <div style={{ display: "flex", fontSize: 28, fontWeight: 800 }}>Manveen Singh</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
-            Every week has a job that&apos;s
+          {/* The hero's h1 (2 Nov, verify loop round 2), at 56 so its longer second line fits the 1056px inside the padding. */}
+          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            I build AI agents for outbound
           </div>
-          <div style={{ display: "flex", fontSize: 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
-            the same clicks, in the same order.
+          <div style={{ display: "flex", fontSize: 56, fontWeight: 800, lineHeight: 1.08, letterSpacing: -2 }}>
+            and measure what they get wrong.
           </div>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-            <div
-              style={{
-                display: "flex",
-                padding: "6px 26px",
-                border: "4px solid #c4161c",
-                borderRadius: "50%",
-                fontSize: 52,
-                fontWeight: 800,
-              }}
-            >
-              {snapshot.totalRuns}
-            </div>
-            <div style={{ display: "flex", fontSize: 26, color: "#5a5750" }}>mornings one system has started on its own</div>
-          </div>
+        {/* Round 6 (2 Nov): the circled Tender Radar count ("mornings one system has started on its own") is off, with
+            the section it came from: those runs showed green while the AI step failed (components/Proof.tsx). */}
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
           {/* The domain reads like the underlined words on the page: ink text, a hand-drawn red line under it. */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
             <div style={{ display: "flex", fontSize: 28, fontWeight: 800, color: "#1d1d1d" }}>manveen.me</div>

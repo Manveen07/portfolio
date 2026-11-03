@@ -34,7 +34,7 @@ export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = []
 export const RESUME = {
   pdf: "/resume.pdf",
   /** The PDF's own creation date (its metadata), so a reader knows how fresh it is. */
-  updated: "2026-11-01",
+  updated: "2026-11-02",
   name: "Manveen Singh",
   /** The line under the name: "AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows". */
   role: "AI & GTM Automation Engineer",
@@ -61,7 +61,7 @@ export const RESUME = {
         "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and checked 24,506 companies with Claygent at ~0.18 credits each (16,728 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
         "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a multi-provider waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
         "Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.",
-        "Built an unattended weekly Claude Code agent that ranks searches by lead quality and replies and swaps a weak one only after a gate passes, and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.",
+        "Built an unattended weekly Claude Code agent that ranked searches by lead quality and replies and swapped a weak one only after a gate passed (paused since 27 Oct; its one full run swapped nothing), and an LLM judge that checks each claim in a cold email against the research (300-email test set: the average email had 95.5% of its claims supported, none contradicted). Pipeline repo: 870+ tests.",
       ],
     },
     {
@@ -111,7 +111,9 @@ export const RESUME = {
       stack: ["Python", "LLM classification", "GitHub Actions"],
       links: [{ label: "source", href: "https://github.com/Manveen07/tender-radar-showcase" }],
       date: "2026",
-      bullets: ["Daily UK public-sector tender finder: pulls new notices, and an LLM scores each one against 7 trade profiles."],
+      // Round 6 (2 Nov): past tense. Its LLM step has failed on every new notice since September (a suspended API key)
+      // while the daily runs showed green, so the site took Tender Radar off its home page.
+      bullets: ["Daily UK public-sector tender finder: pulls new notices; an LLM scored each one against 7 trade profiles until its API key was suspended in September."],
     },
   ] as ResumeProject[],
   education: [

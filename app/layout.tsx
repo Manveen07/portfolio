@@ -5,6 +5,7 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { SITE } from "@/lib/site";
+import { ME, HERO } from "@/data/portfolio";
 
 // The fonts live in app/fonts (Google's own Latin files, OFL; see app/fonts/README.md), so a build never
 // depends on Google's font server. On 15 Oct a Vercel build failed when that server did not deliver Archivo.
@@ -37,9 +38,9 @@ const IBMPlexMono = localFont({
   fallback: ["IBM Plex Mono Fallback"],
 });
 
-const TITLE = "Manveen Singh | automation engineer";
-// The hero's own two sentences (version A, approved 15 Oct).
-const DESCRIPTION = "Every week has a job that's the same clicks, in the same order. I make it run by itself, the same way every time.";
+const TITLE = `Manveen Singh | ${ME.role}`;
+// The hero's h1 and its lines (2 Nov, verify loop round 2; version A of 15 Oct until then; two lines since round 4).
+const DESCRIPTION = `${HERO.headline} ${HERO.how.join(" ")}`;
 
 export const metadata: Metadata = {
   title: TITLE,
