@@ -37,7 +37,7 @@ export const HOW = {
   // because the sub line says plainly, on the same screen, that 40 of the 82 AI steps he built have no test (the eval
   // inventory, 31 Oct, its count line). Review (Karpathy): the h1 was contradicted a screen later and limited three
   // screens later; review (Hormozi): a tool list is the "person that uses claude" line. The tools are named below
-  // (Claude Code in the agents section, Clay, n8n and Python in the skill rows); New Delhi is in Say hi.
+  // (Claude Code in the agents section, Clay, n8n and Python in the skill rows); Delhi is in Say hi.
   // 2 Nov (his call, "we want to have our ai edge"): the line stays under the h1, said as a measurement he made
   // ("I counted": the inventory ran on 31 Oct). Round 4 (2 Nov): two lines, the role and then home's 82-step line, which
   // says what an AI step is (all 4 round 3 readers asked); each line is 30 words or fewer. Round 5 (2 Nov): the line
@@ -703,7 +703,7 @@ export const logSummary = () => `My corrections log (last entry ${shortDate(LIVE
 // Round 5 (2 Nov): the ask without the question (data/portfolio.ts SAY_HI.ask, held equal by a test).
 export const CONTACT = {
   ask: "If you're hiring a GTM engineer, email me about the role.",
-  where: "I'm in New Delhi and can work US or UK hours.",
+  where: "I'm in Delhi and can work US or UK hours.",
   results: "I'll walk you through campaign results on a call.",
 };
 

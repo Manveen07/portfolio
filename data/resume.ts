@@ -34,12 +34,12 @@ export const PDF_OVERRIDES: { pdf: string; data: string; source: string }[] = []
 export const RESUME = {
   pdf: "/resume.pdf",
   /** The PDF's own creation date (its metadata), so a reader knows how fresh it is. */
-  updated: "2026-11-02",
+  updated: "2026-11-03",
   name: "Manveen Singh",
   /** The line under the name: "AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows". */
   role: "AI & GTM Automation Engineer",
   focus: "Clay, n8n, Python, LLM workflows",
-  location: "New Delhi, India (remote)",
+  location: "Delhi, India (remote)",
   phone: "+91 9289644633",
   links: [
     { label: "manveen9650@gmail.com", href: "mailto:manveen9650@gmail.com" },
@@ -55,9 +55,9 @@ export const RESUME = {
       dates: "Nov. 2025 – Present",
       start: "2025-11",
       title: "GTM Automation Engineer (outbound agency), full-time",
-      location: "New Delhi, India · Remote",
+      location: "Delhi, India · Remote",
       bullets: [
-        "Built an always-on lead finder for 3 accounts: 31 Clay workflows posted new people to n8n by webhook; a daily Python job screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10 days: 2,205 new people found, 1,000+ delivered with verified emails.",
+        "Built a lead finder for 3 accounts (paused since 27 Oct): 31 Clay workflows posted new people to n8n by webhook; a daily Python job screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10 days: 2,205 new people found, 1,000+ delivered with verified emails.",
         "Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and checked 24,506 companies with Claygent at ~0.18 credits each (16,728 fits), after rewriting the shared prompt template that rejected good fits on wording and testing it on hand labels.",
         "Found 15,514 decision-makers at 8,639 companies and 12,030 verified emails (78%, in one batch) through a multi-provider waterfall (Tomba, LeadMagic, AI Ark, Clay, BounceBan) with per-provider caps and a spend ledger.",
         "Measured bounce rates by mail server across 505,461 sends (Mimecast 5.1%, Barracuda 2.4%, Google 0.5%) and built the result into the pipeline: risky servers are skipped before any paid lookup, 2,800+ people in the first 9 days.",
@@ -70,7 +70,7 @@ export const RESUME = {
       dates: "Aug. 2025 – Jan. 2026",
       start: "2025-08",
       end: "2026-01",
-      title: "AI/ML Intern, internship",
+      title: "Machine Learning Intern, internship",
       location: "Remote (Glendale, US)",
       bullets: [
         "Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed ones out.",

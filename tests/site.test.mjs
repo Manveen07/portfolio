@@ -781,7 +781,7 @@ test("Say hi ends like /how-i-build's: the hiring line, the address, the hours l
   // under its label. Round 3: all 4 still asked, so the pilot is /working-with-me, linked from the footer.
   assert.equal(SAY_HI.ask, CONTACT.ask);
   assert.equal(SAY_HI.kicker, VISUAL.kickers.contact);
-  assert.match(c, /^<section id="contact" class="wrap sec"><h2 class="kicker">Say hi<\/h2><p class="lede">If you(?:'|&#x27;)re hiring a GTM engineer, email me about the role\.<\/p><p class="mail-line"><a class="mail" href="mailto:manveen9650@gmail\.com">manveen9650@gmail\.com<\/a><\/p><p class="small">I(?:'|&#x27;)m in New Delhi and can work US or UK hours\.<\/p><p class="cta-row"/);
+  assert.match(c, /^<section id="contact" class="wrap sec"><h2 class="kicker">Say hi<\/h2><p class="lede">If you(?:'|&#x27;)re hiring a GTM engineer, email me about the role\.<\/p><p class="mail-line"><a class="mail" href="mailto:manveen9650@gmail\.com">manveen9650@gmail\.com<\/a><\/p><p class="small">I(?:'|&#x27;)m in Delhi and can work US or UK hours\.<\/p><p class="cta-row"/);
   assert.equal(count(c, "mailto:"), 1, "the address is in Say hi more than once");
   const links = [...c.matchAll(/<a [^>]*href="([^"]*)"[^>]*>/g)].map((m) => m[1]);
   assert.deepEqual(links, [`mailto:${ME.email}`, ME.linkedin, ME.github, "/resume.pdf", "/how-i-build", "/writing"]);

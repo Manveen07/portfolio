@@ -1,18 +1,18 @@
-sha256: 3077a5466189243a6aa0917620f544309b1cdf840ab4ecfcdf3701fefc5b0c3c
-created: D:20261102140151+00'00'
+sha256: 8e432cad95ef5f7b51899e2683f2b6fab5d223c6fc6ff6c1aa9858b87a16bfe2
+created: D:20261103190957+00'00'
 --- text
 Manveen Singh
 AI & GTM Automation Engineer · Clay, n8n, Python, LLM workflows
-New Delhi, India (remote) · +91 9289644633 manveen9650@gmail.com
+Delhi, India (remote) · +91 9289644633 manveen9650@gmail.com
 LinkedIn
 github.com/Manveen07
 manveen.me
 Experience
 Precise Leads · Nov. 2025 – Present
-GTM Automation Engineer (outbound agency), full-time · New Delhi, India · Remote
-–  Built an always-on lead finder for 3 accounts: 31 Clay workflows posted new people to n8n by webhook; a daily Python job
-screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10 days: 2,205 new
-people found, 1,000+ delivered with verified emails.
+GTM Automation Engineer (outbound agency), full-time · Delhi, India · Remote
+–  Built a lead finder for 3 accounts (paused since 27 Oct): 31 Clay workflows posted new people to n8n by webhook; a daily
+Python job screened mail servers, ran a Claygent ICP check and an email waterfall, and wrote leads to client sheets. First 10
+days: 2,205 new people found, 1,000+ delivered with verified emails.
 –  Mapped a 34,044-company market through Clay for 0 data credits, cut 28% with a DNS mail-server check, and checked 24,506
 companies with Claygent at ~0.18 credits each (16,728 fits), after rewriting the shared prompt template that rejected good fits
 on wording and testing it on hand labels.
@@ -25,7 +25,7 @@ after a gate passed (paused since 27 Oct; its one full run swapped nothing), and
 email against the research (300-email test set: the average email had 95.5% of its claims supported, none contradicted). Pipeline
 repo: 870+ tests.
 Caprae Capital Partners · Aug. 2025 – Jan. 2026
-AI/ML Intern, internship · Remote (Glendale, US)
+Machine Learning Intern, internship · Remote (Glendale, US)
 –  Built data pipelines that normalized financial records for the firm's internal data engine, with validation that kept malformed
 ones out.
 –  Led a team of 3 building a recruitment automation platform: embeddings-based candidate ranking, an AI-scored video interview
