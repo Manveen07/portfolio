@@ -504,6 +504,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 
 /* The lanes in the agents drawing. */
 .sketch .lane { stroke: var(--rule); stroke-width: 1.2; stroke-dasharray: 4 5; fill: none; }
+/* The inbox fleet's open dot (3 Nov): a stage still being tested. Paper inside, so the line doesn't run through it. */
+.sketch .open { fill: var(--paper); stroke: var(--ink); stroke-width: 1.6; }
 
 /* Habit rows: a wash box like a proof card, straight, no border or shadow; red only through the pen. */
 .habit { margin: 0 0 34px; padding: 20px; background: var(--wash); }

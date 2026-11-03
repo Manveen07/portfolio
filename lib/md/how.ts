@@ -3,7 +3,7 @@
 // is written out (what is struck, what is circled), so nothing is only a picture. tests/how.test.mjs checks every block
 // and number against the built page.
 
-import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, LIVE, CONTACT, VISUAL, logSummary, shortDate, type Story } from "@/data/how";
+import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
 import { ME } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
@@ -60,6 +60,17 @@ export function howMarkdown(): string {
     list(NERD.testing.map(md)),
     `#### ${NERD.clayHead}`,
     list(NERD.clay.map(md)),
+
+    // 3 Nov: the inbox fleet, after the skills and their clicks, as on the page; the drawing as its reading.
+    `## ${K.fleet}`,
+    para(INBOX.lead),
+    para(`Drawing: ${INBOX.label}`),
+    para(pen(INBOX.note)),
+    para(INBOX.caption),
+    para(INBOX.credit),
+    `### ${INBOX.summary}`,
+    INBOX.stages.map((s, i) => `${i + 1}. **${stageHead(s)}** ${s.detail}`).join("\n"),
+    para(INBOX.never),
 
     `## ${K.habits}`,
     ...HABITS.flatMap((h) => {

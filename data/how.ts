@@ -354,6 +354,139 @@ export const NERD = {
   ],
 };
 
+// ── The inbox fleet (3 Nov 2026): the agency's inbox bot, stage by stage, and where a person decides ──
+// Manveen, 3 Nov: "you did not have anything about inboxes we have ramping up killing odering fleet management domain
+// renewal all automated but i don;t thnk we mention it"; "start with outcome how it would look on the website and then
+// we can build". The outcome he saw and approved: a bot runs the routine parts of the sending inboxes, and a person
+// approves anything that costs money or puts a sender at risk. His correction the same day: "but [teammate] built an app
+// that tracked renwals we imporved it and built all of the rest" (the bot's git history agrees: 365 of its 386 commits
+// are his; the teammate's 16 are the renewal tracker and its reminders, 2 to 5 Mar 2026).
+// Every line comes from a read-only, adversarially checked inventory of the bot (3 Nov) and the bot's own files, and
+// only what that check marked safe for this site. What it marked missing stays off: the bot orders nothing, renews
+// nothing and retires nothing by itself (a person places each order by hand, the providers charge renewals themselves,
+// and the retire list is a warning a person acts on), and nothing it runs has raised a send limit yet. Stage 5 is a test
+// he described at his standup on 2 Nov, in the past tense, on a subset of the agency's own inboxes (results by the end
+// of that week, every inbox only if it works), so it is drawn as an open dot and said as a test as of that date, never
+// as running, and never as the bot's (the standup doesn't say which code runs it). "Daily" here names a job's schedule,
+// never a record of every day. No client names: "the agency" and "our" only. Each number has a row in his private
+// claims draft, checked with claims_check.py --strict-numbers. The truth review the same day corrected four click lines
+// against the bot's own files: orders are placed by hand (Slack ordering stays switched off), the setup intake sits
+// behind a switch no file shows is on, the warm-up test isn't shown to be the bot's, and the renewal review marks the
+// bot's own tracker.
+export type InboxStage = {
+  /** Drawn beside the stage's number; capitalised, it starts the click's bold head. */
+  name: string;
+  /** The drawing's grey line under the name. */
+  sub: string;
+  /** bot: an ink dot (the bot does it). test: an open dot (being tested). person: circled in red (a person decides). */
+  who: "bot" | "test" | "person";
+  /** Behind the click. */
+  detail: string;
+};
+
+const INBOX_STAGES: InboxStage[] = [
+  // The bot's order runbook and its 13 Oct handoff: each order is staged as a plan (in Slack or from the command line)
+  // and placed by a person, one plan per command, with the spend switch set for that one run; the server's spend
+  // switches stay unset, so Slack doesn't order. The plan re-checks price ceilings first, and placing reads the order
+  // back. On 12 Oct four plans, 15 domains and 94 inboxes, placed that way.
+  {
+    name: "order",
+    sub: "placed after a yes",
+    who: "person",
+    detail:
+      "The bot keeps each order as a staged plan, made in Slack or from its command line. A person places each one by hand; the bot re-checks it against price ceilings first and reads the order back after. On 12 Oct, 4 orders went through this way: 15 domains and 94 inboxes.",
+  },
+  // The setup standard (15 Oct, from the providers' and Smartlead's support answers). The intake that writes it runs
+  // only behind a switch no file shows is on, so the bot is never said to write it. The fleet watch (daily, no switch)
+  // checks inboxes carrying the setup tag against it: a limit changed by hand, a campaign before the ready date. The
+  // weekly raises: a volume review set to pilot 6 domains with 5 held flat; it holds below 100 sends a domain, and the
+  // pilot domains had sent nothing by 31 Oct, so it had changed 0 limits.
+  {
+    name: "set up",
+    sub: "a standard per type",
+    who: "bot",
+    detail:
+      "I wrote a standard for each inbox type from the providers' and Smartlead's support answers. For Google it's 15 emails a day to start, then 2 more a week, up to 20. On inboxes tagged as set up to it, the daily watch flags a limit changed by hand and an inbox put in a campaign before its ready date. Nothing raises those limits by itself yet: a weekly review is set to pilot that on 6 domains, with 5 kept flat to compare. It waits for 100 sends a domain, and by 31 Oct those domains had sent nothing, so it hadn't changed a limit.",
+  },
+  // The health weights in the bot's config (each the most points a part can give: placement 45, warm-up 10, bounces 25,
+  // connection 20), its letter grades (A from 90, B from 70, C from 50, else D), the 10:00 daily sync, and the feature
+  // check of 3 Jul: 442 inboxes scored and graded.
+  {
+    name: "score",
+    sub: "0 to 100, daily",
+    who: "bot",
+    detail:
+      "A daily job pulls every inbox from Smartlead and scores it 0 to 100: up to 45 points for placement tests, 25 for bounces, 20 for connection and DNS and 10 for warm-up, with a letter grade from A to D. Its first full run, on 3 Jul, scored and graded 442 inboxes.",
+  },
+  // The fleet watch (10:30 daily, no switch; posts only problems that start, each with what to do) and its 12 kinds; SPF,
+  // DKIM and DMARC inside the daily sync; the Monday blocklist check (Spamhaus DBL, SURBL, URIBL).
+  {
+    name: "watch",
+    sub: "12 kinds of problem",
+    who: "bot",
+    detail:
+      "A daily fleet watch looks for 12 kinds of problem and posts only the new ones, each with a suggested fix. They include warm-up switched off, a disconnected inbox, bounces of 4% or more on a domain, a domain on a blocklist, and an inbox in a campaign before its ready date. Every day the bot also checks each domain's SPF, DKIM and DMARC, and every week it checks every domain against 3 blocklists.",
+  },
+  // His standup, 2 Nov, in the past tense ("I did a test on a subset of inboxes"): a test on the agency's own inboxes
+  // that raises or lowers each inbox's warm-up from placement tests, how it does in active campaigns and in warm-up; "by
+  // the end of this week, we'll know if it works or not"; every inbox only if it works. The standup says "it", never
+  // which code, so the bot isn't named. Smartlead runs the warm-up (the bot's 8 Oct audit: Smartlead's own warm-up owns
+  // warm-up).
+  {
+    name: "warm-up",
+    sub: "a test, as of 2 Nov",
+    who: "test",
+    detail:
+      "Smartlead does the warming itself. As of 2 Nov I was testing a change on a subset of the agency's own inboxes: it raises or lowers each inbox's warm-up from its placement tests, how it does in live campaigns and how it does in warm-up. I expected results by the end of that week, and it goes to every inbox only if it works.",
+  },
+  // The kill rule (agreed 8 Oct; a warning only, a person decides and acts): two strikes 7 or more days apart, one test
+  // under 50% on 20 or more seeds, or a failing domain; its binomial note (about 17%, near 3%); the first live run, 33 to
+  // retire of 301 judged (33 + 7 + 143 + 118); the Tuesday post.
+  {
+    name: "retire list",
+    sub: "a two-strike rule",
+    who: "person",
+    detail:
+      "A two-strike rule reads the placement tests and posts a weekly list of inboxes to retire; a person makes the call. An inbox lands on it after two failed tests at least a week apart, one test under 50% on 20 seeds or more, or a failing domain. It takes two strikes because one 20-seed test wrongly flags a good inbox (one that truly lands 85% in the inbox) about 17% of the time; two strikes bring that near 3%. Its first run judged 301 inboxes and flagged 33.",
+  },
+  // The renewal review (09:50 daily, 7 days ahead; keep, retire or check per inbox, with copy-ready support messages).
+  // Its cron passes --flag-tracker, which marks DROP or CHECK on the bot's own tracker rows, so "changes nothing" is said
+  // only of the provider; retiring is an approver's button. The billing watch: every 2 hours, 09:05 to 21:05.
+  {
+    name: "before the bill",
+    sub: "keep, check or retire",
+    who: "person",
+    detail:
+      "A daily review looks 7 days ahead at the provider bills and sorts each inbox on them into keep, check or retire, with the cancel message already written. It changes nothing at the provider; it only marks the retire and check inboxes on the bot's own tracker, and retiring is a person's call. Every 2 hours through the day, a billing watch flags any subscription that failed to renew, failed payment or was cancelled.",
+  },
+];
+
+const INBOX_KEY = { bot: "the bot does it", test: "being tested", person: "a person decides" };
+// The kill rule's binomial note, said plainly: "a good inbox" is one that truly lands 85% in the inbox.
+const INBOX_NOTE = "one test wrongly flags a good inbox about 17% of the time; two strikes, about 3%";
+const INBOX_GATES = INBOX_STAGES.flatMap((s, i) => (s.who === "person" ? [i + 1] : []));
+const INBOX_TEST = INBOX_STAGES.findIndex((s) => s.who === "test") + 1;
+
+/** A stage's bold head behind the click: "Order, a person decides." */
+export const stageHead = (s: InboxStage) => `${s.name[0].toUpperCase()}${s.name.slice(1)}, ${INBOX_KEY[s.who]}.`;
+
+export const INBOX = {
+  lead: "A bot runs the routine work on our sending inboxes; a person approves anything that costs money or puts a sender at risk.",
+  stages: INBOX_STAGES,
+  key: INBOX_KEY,
+  note: INBOX_NOTE,
+  /** The drawing's reading, built from what it draws, so the markdown copy prints every drawn word. */
+  label: `Our inbox bot, stage by stage: ${INBOX_STAGES.map((s, i) => `${i + 1} ${s.name}, ${s.sub}.`).join(" ")} Steps ${INBOX_GATES.slice(0, -1).join(", ")} and ${INBOX_GATES.at(-1)} are circled in red: ${INBOX_KEY.person}. A dot means ${INBOX_KEY.bot}; step ${INBOX_TEST}'s open dot means ${INBOX_KEY.test}. Red note: ${INBOX_NOTE}.`,
+  // The inventory's count, read from the bot's database on 2 Nov: about 72 + 281 tracked inboxes.
+  caption: "About 350 sending inboxes tracked, as of 2 Nov.",
+  // His wording (3 Nov), and git's count (the bot's log, 3 Nov: 343 commits plus his 22 pull-request merges, of 386).
+  credit: "My teammate built its renewal tracker; I improved it and built the rest: 365 of the bot's 386 commits are mine.",
+  summary: "How the inbox bot works",
+  // The inventory's missing list, said once: a person places each order, renewals are the providers' own, retiring is
+  // a person's button.
+  never: "The bot never orders, renews or retires anything by itself.",
+};
+
 // ── Check it yourself: what to click, and what you'll see ──
 // The public READMEs, as snapshotted 29 to 31 Oct: champion-move-checker lines 12 to 16 ("8/29", BLOCKED);
 // n8n-workflow-tests line 9 (45 tests); tender-radar-showcase line 56 (the three weeks it crashed, 21 July to 11
@@ -541,6 +674,8 @@ export const VISUAL = {
     failures: "What broke, and what I changed",
     // v2.1 (2 Nov): the gaps are one "Not yet" line under the rows, so the kicker names what he can do.
     skills: "What I can do",
+    // 3 Nov: the agency's inbox bot, after the skills and their clicks (his ask; the mockup he approved).
+    fleet: "The inbox fleet",
     live: "Check it yourself",
     contact: "Say hi",
   },

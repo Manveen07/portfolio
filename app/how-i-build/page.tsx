@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, NERD, LIVE, CONTACT, VISUAL } from "@/data/how";
+import { HOW, AGENTS, HABITS, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
@@ -14,6 +14,7 @@ import FixLog from "@/components/FixLog";
 import OpenOnHash from "@/components/OpenOnHash";
 import AgentLanes from "@/components/sketches/AgentLanes";
 import PipelineSketch from "@/components/sketches/PipelineSketch";
+import InboxFleet from "@/components/sketches/InboxFleet";
 import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
 
 // How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
@@ -28,6 +29,8 @@ import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
 // switching, its story behind the card's click), two day-job failures, what to click, and how to reach him. Numbers
 // and pictures carry the page; every longer text sits behind a <details> (no JavaScript needed to open one).
 // Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
+// 3 Nov: the inbox fleet (the agency's inbox bot, stage by stage, and where a person decides) sits after the skills
+// and their clicks, before the habit (his ask: "you did not have anything about inboxes").
 
 const DESCRIPTION = `${HOW.headline} ${HOW.sub.join(" ")}`;
 
@@ -130,6 +133,33 @@ export default function HowIBuild() {
               </li>
             ))}
           </ul>
+        </details>
+      </section>
+
+      {/* 3 Nov (his ask): the agency's inbox bot, stage by stage, and where a person decides, after the skills and their
+          clicks. The lead line, the drawing, one caption and the credit show; each stage's detail sits behind one click.
+          Words in data/how.ts (INBOX). */}
+      <section id="inbox-fleet" className="wrap sec">
+        <h2 className="kicker">{K.fleet}</h2>
+        <p className="body">{INBOX.lead}</p>
+        <figure className="pipe">
+          <InboxFleet />
+          <figcaption className="cap">{INBOX.caption}</figcaption>
+        </figure>
+        <p className="body">{INBOX.credit}</p>
+        <details className="more" id="inbox-bot">
+          <summary>
+            <span className="more-line more-label">{INBOX.summary}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <ol className="steps-full">
+            {INBOX.stages.map((s) => (
+              <li key={s.name}>
+                <b>{stageHead(s)}</b> {s.detail}
+              </li>
+            ))}
+          </ol>
+          <p className="body">{INBOX.never}</p>
         </details>
       </section>
 

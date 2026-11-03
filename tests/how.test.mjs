@@ -10,13 +10,15 @@
 // check with a dated corrections log, and how to reach him. The visible words stay at the count measured at the build; the day job is described,
 // never named, and the source files name no private folder; the markdown copy says everything the page says, charts,
 // drawings and cards included, and nothing else. The cards' own words and numbers are pinned in tests/proof.test.mjs.
+// 3 Nov: the inbox fleet (the agency's inbox bot, stage by stage, a person deciding at three of them) sits after the
+// skills and their clicks; its own test is at the end of this file.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, LIVE, VISUAL, logSummary } from "../data/how.ts";
+import { HOW, AGENTS, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
 import { HERO } from "../data/portfolio.ts";
 import { PROOF } from "../data/proof.ts";
 
@@ -110,7 +112,8 @@ test("the first screen: the photo, the kicker, the h1, two sub lines (the role, 
 });
 
 // 3 Nov, final jury: +10 words on the Tender Radar link (its AI step is down since September), a truth fix.
-const VISIBLE_CAP = 618;
+// 3 Nov, his ask: the inbox fleet (kicker, lead line, caption, credit, click label): 679.
+const VISIBLE_CAP = 679;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -149,21 +152,22 @@ test("short blocks: no visible paragraph over 30 words outside a card, and each 
   }
 });
 
-test("sections in order: agents, skills (the held-list card behind a click under the rows), habits, failures, live, contact, each holding its own picture", () => {
+test("sections in order: agents, skills (the held-list card behind a click under the rows), the inbox fleet, habits, failures, live, contact, each holding its own picture", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
   const K = VISUAL.kickers;
   // Verify loop round 3 (2 Nov): What I can do right after Me and my agents, no word changed (the round 2 recruiter gave
   // up in Two times it broke before reaching it; three readers called it the most useful part for a hirer).
-  assert.deepEqual(h2, [K.agents, K.skills, K.habits, K.failures, K.live, K.contact]);
+  // 3 Nov: the inbox fleet after What I can do and its clicks, before the habit (his ask).
+  assert.deepEqual(h2, [K.agents, K.skills, K.fleet, K.habits, K.failures, K.live, K.contact]);
   // Round 5 (2 Nov): the held-list card, in full, sits behind a click right under the skills rows (its label since round 6:
   // "How the held list actually went")
   // (all 4 round 4 readers said its story repeats); round 4 gave it a section of its own after What I can do.
-  const at = ["agents", "skills", "habits", "failures", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
+  const at = ["agents", "skills", "inbox-fleet", "habits", "failures", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `a section is missing: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "the sections are out of order");
   assert.ok(!html.includes('<section id="held"'), "the held-list card has its own section again");
-  const mdAt = [`## ${K.agents}`, `## ${K.skills}`, `### ${VISUAL.clicks["held-list"]}`, `#### ${PROOF["held-list"].title}`, `### ${NERD.summary}`, `## ${K.habits}`, `## ${K.failures}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
+  const mdAt = [`## ${K.agents}`, `## ${K.skills}`, `### ${VISUAL.clicks["held-list"]}`, `#### ${PROOF["held-list"].title}`, `### ${NERD.summary}`, `## ${K.fleet}`, `### ${INBOX.summary}`, `## ${K.habits}`, `## ${K.failures}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
   assert.ok(mdAt.every((i) => i >= 0), `a section is missing from the copy: ${mdAt}`);
   assert.deepEqual([...mdAt].sort((a, b) => a - b), mdAt, "the copy is not in page order");
   assert.ok(sketch(section("agents"), AGENTS.label), "#agents does not hold the agents drawing");
@@ -573,7 +577,7 @@ test("red discipline: skills, habit tags, the log, the limit line and the live c
     assert.doesNotMatch(body, /--red|#c4161c/i, `${sel.trim()} paints red`);
   }
   // No inline red on the page outside the pen, and no red post links (Inline's prose-link) on this page.
-  for (const id of ["skills", "live", "agents", "habits", "contact"]) {
+  for (const id of ["skills", "inbox-fleet", "live", "agents", "habits", "contact"]) {
     const html = section(id).replace(/<details[\s\S]*?<\/details>/g, "");
     assert.doesNotMatch(html, /style="[^"]*(?:#c4161c|rgb\(196, ?22, ?28\)|var\(--red\))/i, `#${id}: an inline red style`);
   }
@@ -581,4 +585,91 @@ test("red discipline: skills, habit tags, the log, the limit line and the live c
   assert.doesNotMatch(section("live"), /<code style=/, "the command is styled through Inline (red)");
   // The struck and circled habit numbers, the agents' gate loop and the Claygent rings are the pen's.
   assert.match(styles, /\.sketch \.lane\{[^}]*stroke:var\(--rule\)/);
+});
+
+// ── 3 Nov: the inbox fleet ──────────────────────────────────────────────────
+test("the inbox fleet: seven stages in order, the person's three circled in red, the test an open dot, one click, the credit", () => {
+  // Manveen, 3 Nov: "you did not have anything about inboxes we have ramping up killing odering fleet management domain
+  // renewal all automated but i don;t thnk we mention it", then "start with outcome how it would look on the website and
+  // then we can build", and "but [teammate] built an app that tracked renwals we imporved it and built all of the rest". The
+  // bot's checked inventory: ordering, retiring and renewing each wait on a person, and the warm-up change is a test.
+  assert.equal(VISUAL.kickers.fleet, "The inbox fleet");
+  assert.deepEqual(INBOX.stages.map((s) => s.name), ["order", "set up", "score", "watch", "warm-up", "retire list", "before the bill"]);
+  assert.deepEqual(INBOX.stages.map((s) => s.who), ["person", "bot", "bot", "bot", "test", "person", "person"]);
+  const html = page();
+  const at = ["skills", "inbox-fleet", "habits"].map((id) => html.indexOf(`<section id="${id}"`));
+  assert.ok(at[0] >= 0 && at[0] < at[1] && at[1] < at[2], `not after What I can do and before the habit: ${at}`);
+  const sec = section("inbox-fleet");
+  const copy = unmark(md());
+  const drawing = sketch(sec, INBOX.label);
+  assert.ok(drawing, "#inbox-fleet does not hold its drawing");
+  assert.ok(copy.includes(INBOX.label), "the drawing's reading is not in the copy");
+  for (const cls of ["sketch-wide", "sketch-tall"]) {
+    const svg = drawing.match(new RegExp(`<svg class="${cls}"[\\s\\S]*?</svg>`))?.[0] ?? "";
+    assert.ok(svg, `${cls}: missing`);
+    // One group per stage, in order: its dot, its numbered name, its grey line, and a red loop only where a person decides.
+    const groups = [...svg.matchAll(/<g>([\s\S]*?)<\/g>/g)].map((m) => m[1]);
+    assert.equal(groups.length, INBOX.stages.length, `${cls}: not one group per stage`);
+    INBOX.stages.forEach((s, i) => {
+      const g = groups[i];
+      const texts = [...g.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map((m) => decode(m[1]));
+      assert.deepEqual(texts, [`${i + 1} ${s.name}`, s.sub], `${cls}: stage ${i + 1} is not drawn in its place`);
+      assert.equal(/class="mark"/.test(g), s.who === "person", `${cls}: stage ${i + 1}: a red loop only where a person decides`);
+      assert.match(g, new RegExp(`<circle[^>]*class="${s.who === "test" ? "open" : "dot"}"`), `${cls}: stage ${i + 1} has the wrong dot`);
+    });
+    // The key circles its own "a person decides", so each layout has one red loop more than it has gates.
+    assert.equal((svg.match(/class="mark"/g) ?? []).length, INBOX.stages.filter((s) => s.who === "person").length + 1, `${cls}: red loops`);
+    const drawn = [...svg.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map((m) => decode(m[1]));
+    for (const k of Object.values(INBOX.key)) assert.ok(drawn.includes(k), `${cls}: the key's "${k}" is not drawn`);
+    for (const w of drawn) assert.ok(copy.includes(w), `${cls}: "${w}" is drawn but not in the copy`);
+    const red = [...svg.matchAll(/<text[^>]*class="red"[^>]*>([^<]*)<\/text>/g)].map((m) => decode(m[1])).join(" ");
+    assert.equal(red, INBOX.note, `${cls}: the red note is not drawn whole`);
+  }
+  // Stage 5 is a test, said as one and dated (his standup of 2 Nov, in the past tense), never as running for every
+  // inbox, and never as the bot's (the standup says "it", never which code).
+  const warm = INBOX.stages[4];
+  assert.match(warm.sub, /^a test, as of \d{1,2} [A-Z][a-z]{2}$/);
+  assert.match(warm.detail, /As of 2 Nov I was testing a change on a subset of the agency's own inboxes/);
+  assert.match(warm.detail, /only if it works\.$/);
+  assert.doesNotMatch(warm.detail, /\bthe bot\b|\bsince \d/i, "stage 5 names the bot or a start date");
+  // The truth review (3 Nov), against the bot's own files: a person places each order by hand (Slack ordering is off);
+  // the setup intake isn't shown to run, so the bot is never said to write the standard; the renewal review marks the
+  // bot's own tracker, so "changes nothing" is said only of the provider.
+  const [order, setup, , , , , bill] = INBOX.stages;
+  assert.match(order.detail, /A person places each one by hand/);
+  assert.doesNotMatch(order.detail, /approver says yes|that path/, "stage 1 says Slack approvals placed the orders");
+  assert.doesNotMatch(setup.detail, /bot writes|is piloting/, "stage 2 says the bot writes the standard or the pilot runs");
+  assert.match(setup.detail, /by 31 Oct those domains had sent nothing, so it hadn't changed a limit\.$/);
+  assert.match(bill.detail, /It changes nothing at the provider; it only marks the retire and check inboxes on the bot's own tracker/);
+  assert.doesNotMatch(bill.detail, /changes nothing itself/);
+  // The wide line ends just past the last stage's dot, as it starts just before the first (a longer tail read as a
+  // missing eighth stage).
+  const wide = drawing.match(/<svg class="sketch-wide"[\s\S]*?<\/svg>/)[0];
+  const ends = wide.match(/<path class="ink" d="M(\d+) \d+ [^"]* (\d+) \d+"/);
+  const cx = [...wide.matchAll(/<circle cx="(\d+)" cy="(\d+)" r="5" class="(?:dot|open)"/g)].map((m) => Number(m[1]));
+  assert.ok(ends, "the wide line is missing");
+  assert.ok(cx[0] - Number(ends[1]) <= 15 && Number(ends[2]) <= cx[INBOX.stages.length - 1] && cx[INBOX.stages.length - 1] - Number(ends[2]) <= 15, `the wide line runs from ${ends[1]} to ${ends[2]}, the stages from ${cx[0]} to ${cx[INBOX.stages.length - 1]}`);
+  // What shows without a click: the lead line, the drawing, one caption and the credit; one click holds each stage's detail.
+  const shown = sec.replace(/<details[\s\S]*?<\/details>/g, "");
+  assert.deepEqual([...shown.matchAll(/<p class="([^"]+)">([\s\S]*?)<\/p>/g)].map((m) => [m[1], squash(plain(m[2]))]), [["body", INBOX.lead], ["body", INBOX.credit]]);
+  assert.equal(squash(plain(shown.match(/<figcaption class="cap">([\s\S]*?)<\/figcaption>/)?.[1] ?? "")), INBOX.caption);
+  assert.equal(INBOX.lead, "A bot runs the routine work on our sending inboxes; a person approves anything that costs money or puts a sender at risk.");
+  assert.equal(INBOX.caption, "About 350 sending inboxes tracked, as of 2 Nov.");
+  // His wording (3 Nov), with the bot's commit count beside it (git shortlog, 3 Nov: 365 of 386).
+  assert.equal(INBOX.credit, "My teammate built its renewal tracker; I improved it and built the rest: 365 of the bot's 386 commits are mine.");
+  const clicks = [...sec.matchAll(/<details[\s\S]*?<\/details>/g)].map((m) => m[0]);
+  assert.equal(clicks.length, 1, "#inbox-fleet should hold one click");
+  assert.equal(INBOX.summary, "How the inbox bot works");
+  assert.match(clicks[0], /^<details class="more" id="inbox-bot"><summary><span class="more-line more-label">How the inbox bot works<\/span>/);
+  const items = [...clicks[0].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => squash(plain(m[1])));
+  assert.deepEqual(items, INBOX.stages.map((s) => `${stageHead(s)} ${s.detail}`), "the click's stages are not the drawing's, in order");
+  assert.equal(stageHead(INBOX.stages[0]), "Order, a person decides.");
+  assert.equal(INBOX.never, "The bot never orders, renews or retires anything by itself.");
+  assert.ok(squash(plain(clicks[0])).includes(INBOX.never), "the never line is not in the click");
+  // No "automated" in this section, and none beside ordering, renewing, retiring or killing on the page or in its copy
+  // (the inventory: each waits on a person).
+  assert.doesNotMatch(squash(plain(sec)), /automat/i, "the inbox fleet says automated");
+  for (const s of [text(), copy]) {
+    assert.doesNotMatch(s, /\bautomat\w*\b[^.]{0,80}\b(?:order|renew|retir|kill)\w*|\b(?:order|renew|retir|kill)\w*\b[^.]{0,80}\bautomat\w*/i, "automated beside ordering, renewing, retiring or killing");
+  }
 });

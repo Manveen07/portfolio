@@ -179,7 +179,12 @@ export const JOBS: WorkItem[] = [
       "Since 16 Oct my Claude Code agents have drafted follow-ups to interested leads; a person approves each before it sends.",
       "Each draft I upload myself is checked claim by claim against the research.",
       "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
-      "I also built the Slack bot that buys and warms up the sending inboxes.",
+      // 3 Nov (his ask): was "I also built the Slack bot that buys and warms up the sending inboxes.", untrue as written
+      // (the bot's checked inventory: a teammate started it, a person places every order, and Smartlead does the
+      // warming). The bot's git history: 365 of its 386 commits are his, the health scores and the order code all his.
+      // 22 of the 365 are his pull-request merges, so the line says "are mine", never "I wrote" (the truth review, 3 Nov).
+      // 18 words; /how-i-build's The inbox fleet tells the rest.
+      "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and approved orders.",
       "I built the tool that turns a client's sequence into a ready campaign.",
       "My daily scan of five sales-tool Slack communities passes likely buyers to the sales team.",
     ],
