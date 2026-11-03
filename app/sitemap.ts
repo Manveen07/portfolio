@@ -2,22 +2,19 @@ import type { MetadataRoute } from "next";
 import { POSTS } from "@/data/posts";
 import { RESUME } from "@/data/resume";
 import { abs } from "@/lib/site";
+import { modified } from "@/lib/md/dates";
 
 // The addresses a search result should open: every page and the resume PDF. Google reads every sitemap URL as a
 // canonical, so the markdown copies, llms.txt and the resume as data stay out (until 28 Oct they were listed);
 // agents find those through llms.txt and each page's <link rel="alternate">. No changefreq or priority: Google
-// ignores both. The home page has no lastmod: its run count changes every morning, which isn't a content change.
+// ignores both. Each lastmod is the day the page's words last changed (lib/page-dates.ts: a date kept beside a hash of
+// the page's markdown copy, which a test holds to the build), so it moves when the words do; until 3 Nov two pages had
+// hand-set dates that went a day stale, and a post edited on 31 Oct still said its June publish date.
 export default function sitemap(): MetadataRoute.Sitemap {
-  const latest = POSTS.map((p) => p.date).sort().at(-1);
+  const pages = ["/", "/writing", "/how-i-build", "/working-with-me", ...POSTS.map((p) => `/writing/${p.slug}`)];
   return [
-    { url: abs("/") },
-    { url: abs("/writing"), lastModified: latest },
-    // The page for hiring managers (29 Oct 2026); its date is the day its words last changed (2 Nov: the v2 branch's
-    // date; set it to the merge day if that differs).
-    { url: abs("/how-i-build"), lastModified: "2026-11-02" },
-    // The freelance pilot's own page since the verify loop's round 3 (2 Nov); part of the home page until then.
-    { url: abs("/working-with-me"), lastModified: "2026-11-02" },
-    ...POSTS.map((p) => ({ url: abs(`/writing/${p.slug}`), lastModified: p.date })),
+    ...pages.map((p) => ({ url: abs(p), lastModified: modified(p) })),
+    // The PDF's own creation date (tests/ai.test.mjs holds it to the file).
     { url: abs(RESUME.pdf), lastModified: RESUME.updated },
   ];
 }

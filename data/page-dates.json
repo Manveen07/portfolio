@@ -1,0 +1,38 @@
+{
+  "/": {
+    "date": "2026-11-03",
+    "hash": "3df3fd655e65db02"
+  },
+  "/writing": {
+    "date": "2026-11-03",
+    "hash": "5fcd349e1f4f252a"
+  },
+  "/how-i-build": {
+    "date": "2026-11-03",
+    "hash": "cb11c054fa5fc051"
+  },
+  "/working-with-me": {
+    "date": "2026-11-03",
+    "hash": "f6aeb4a902e389b8"
+  },
+  "/writing/a-champion-tracker-that-can-say-it-isnt-sure": {
+    "date": "2026-11-03",
+    "hash": "2342d0dd0c203857"
+  },
+  "/writing/149-tests-for-a-few-slack-buttons": {
+    "date": "2026-10-25",
+    "hash": "a0f8f359c1c46051"
+  },
+  "/writing/marking-the-ais-homework": {
+    "date": "2026-10-22",
+    "hash": "385795c4aaf16de5"
+  },
+  "/writing/things-ai-got-confidently-wrong": {
+    "date": "2026-11-03",
+    "hash": "41ea525a7fea8b65"
+  },
+  "/writing/schema-as-eval-spec": {
+    "date": "2026-10-31",
+    "hash": "47d2c37a43746a0e"
+  }
+}

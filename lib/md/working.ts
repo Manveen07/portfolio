@@ -5,7 +5,7 @@
 
 import { ME, WEEK_JOB, PILOT, FREELANCE } from "@/data/portfolio";
 import { WEEK, PILOT_DRAWN } from "@/lib/sketch-text";
-import { mdHref } from "@/lib/site";
+import { abs, mdHref } from "@/lib/site";
 import { para, link, pen } from "@/lib/md/format";
 
 /** The words of the week sketch, as drawn. */
@@ -22,6 +22,8 @@ function pilotDrawing(): string {
 export function workingMarkdown(): string {
   return [
     `# ${PILOT.head}`,
+    // 3 Nov (the AI-friendly audit): whose page this is and where it lives, as a post's copy says it.
+    para(`By ${ME.name}. Web page: ${abs(FREELANCE.href)}`),
     para(`*${FREELANCE.kicker}*`),
     para(`${WEEK_JOB.headline} ${WEEK_JOB.answer} ${WEEK_JOB.marked}`),
     para(pen(WEEK_JOB.nerdNote)),

@@ -10,12 +10,17 @@ export function abs(path: string): string {
 }
 
 /** The markdown copy of a page on this site: "/" is /index.md, a post (or /how-i-build, /working-with-me) is its
- *  address plus .md.
+ *  address plus .md. A page anchor ("/#proof-cards") is dropped: it names an HTML id, which the markdown copy doesn't
+ *  have (3 Nov; an agent following one landed at the top anyway, or called it broken).
  *  Anything else (a file, an outside link) is returned as is. */
 export function mdHref(href: string): string {
   if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return href;
-  const [path, hash] = href.split("#");
-  if (path === "" || path === "/") return abs(`/index.md${hash ? `#${hash}` : ""}`);
-  if (/^\/writing(\/[a-z0-9-]+)?$/.test(path) || path === "/how-i-build" || path === "/working-with-me") return abs(`${path}.md${hash ? `#${hash}` : ""}`);
+  const path = href.split("#")[0];
+  if (path === "" || path === "/") return abs("/index.md");
+  if (/^\/writing(\/[a-z0-9-]+)?$/.test(path) || path === "/how-i-build" || path === "/working-with-me") return abs(`${path}.md`);
   return abs(href);
 }
+
+/** The home page's share card (app/opengraph-image.tsx: its size, type and alt), for the pages that share it
+ *  (/writing, /working-with-me). Named whole, so those pages send its size and alt like home does (3 Nov). */
+export const HOME_CARD = { url: "/opengraph-image", width: 1200, height: 630, type: "image/png", alt: "Manveen Singh, GTM engineer" };

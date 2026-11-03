@@ -37,6 +37,9 @@ export function resumeMarkdown(): string {
     .concat("\n");
 }
 
+/** A profile's handle: the last part of its address. */
+const handle = (href: string) => href.replace(/\/+$/, "").split("/").pop();
+
 /** The resume in the JSON Resume schema (https://jsonresume.org/schema, v1.2.1 checked 22 Oct 2026). */
 export function resumeJson() {
   const r = RESUME;
@@ -55,9 +58,11 @@ export function resumeJson() {
       summary: LLMS_INTRO.summary,
       // The resume's line ("India (remote, US/EU overlap)") as the address; the city is the site's (Delhi, India).
       location: { address: r.location, city: ME.location.split(",")[0], countryCode: "IN" },
+      // The handle is the address's last part: the PDF's LinkedIn label is the word "LinkedIn", which resume.json gave
+      // as his username until 3 Nov.
       profiles: [
-        { network: "LinkedIn", username: linkedin.label.split("/").pop(), url: linkedin.href },
-        { network: "GitHub", username: github.label.split("/").pop(), url: github.href },
+        { network: "LinkedIn", username: handle(linkedin.href), url: linkedin.href },
+        { network: "GitHub", username: handle(github.href), url: github.href },
       ],
     },
     work: r.experience.map((j) => ({

@@ -47,9 +47,12 @@ const page = () => {
 const text = () => squash(plain(page()));
 const md = () => app("how-i-build.md.body");
 const section = (id) => page().match(new RegExp(`<section id="${id}" class="wrap sec[^"]*">[\\s\\S]*?</section>`))?.[0] ?? "";
-/** Words a reader sees without opening anything: each <details> counts by its <summary>; drawings left out. */
+/** Words a reader sees without opening anything: each <details> counts by its <summary>; drawings left out, and so is
+    text hidden for screen readers and text tools (since 3 Nov each drawing's reading is one, components/Sketch.tsx). */
 const visibleWords = () => {
-  const shown = page().replace(/<details[\s\S]*?<\/details>/g, (d) => d.match(/<summary[\s\S]*?<\/summary>/)?.[0] ?? " ");
+  const shown = page()
+    .replace(/<span class="sr-only">[^<]*<\/span>/g, " ")
+    .replace(/<details[\s\S]*?<\/details>/g, (d) => d.match(/<summary[\s\S]*?<\/summary>/)?.[0] ?? " ");
   return words(plain(shown));
 };
 /** A drawing by its reading (the Sketch wrapper's aria-label). */
@@ -74,7 +77,8 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.equal(JSON.parse(app("how-i-build.md.meta")).headers["content-type"], "text/markdown; charset=utf-8");
   assert.match(app("sitemap.xml.body"), /<loc>https:\/\/manveen\.me\/how-i-build<\/loc>/);
   assert.ok(app("llms.txt.body").includes(`](${SITE}/how-i-build.md)`), "llms.txt does not link the copy");
-  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} How my Claude Code agents work and where a person approves`), "llms.txt's blurb is the old one");
+  // 3 Nov: the blurb names the sections in page order, read off this copy (tests/ai.test.mjs holds the order).
+  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} In page order: ${VISUAL.kickers.agents} (`), "llms.txt's blurb is the old one");
   assert.ok(app("llms-full.txt.body").includes(md().trim()), "llms-full.txt does not hold the copy whole");
 });
 

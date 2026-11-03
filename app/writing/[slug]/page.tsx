@@ -7,7 +7,8 @@ import Prose from "@/components/Prose";
 import Drawings from "@/components/Drawings";
 import Wrong from "@/components/Wrong";
 import Namesake from "@/components/Namesake";
-import { postJsonLd } from "@/lib/md/person";
+import { postJsonLd, ldJson } from "@/lib/md/person";
+import { modified } from "@/lib/md/dates";
 import { abs } from "@/lib/site";
 
 /** Posts drawn by their own component (data/posts.ts says which). */
@@ -36,7 +37,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url,
       type: "article",
       siteName: "Manveen Singh",
+      locale: "en_US",
       publishedTime: post.date,
+      // The day its words last changed (lib/md/dates.ts), as in the sitemap and the BlogPosting (3 Nov).
+      modifiedTime: modified(url),
       authors: [abs("/")],
       tags: post.tags,
     },
@@ -54,10 +58,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   return (
     <article className="wrap sec hero post">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd(post)).replace(/</g, "\\u003c") }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(postJsonLd(post)) }} />
       {/* Back link and date: in the side rail from 1100px, above the title below that. */}
       <div className="post-meta">
         <p className="small">

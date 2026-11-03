@@ -18,6 +18,7 @@ import InboxFleet from "@/components/sketches/InboxFleet";
 import FreeCheckFirst from "@/components/sketches/FreeCheckFirst";
 import OnItsOwn from "@/components/sketches/OnItsOwn";
 import { ClaygentUnits, BounceBars } from "@/components/HowCharts";
+import { pageJsonLd, ldJson } from "@/lib/md/person";
 
 // How Manveen works, his AI edge, his skills and things a stranger can check, for a GTM founder or hiring manager with
 // about 30 seconds (2 Nov 2026; design: the 2 Nov design doc, outside this repo). Order: the h1 and its two sub lines,
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
   title: `${HOW.title} | Manveen Singh`,
   description: DESCRIPTION,
   alternates: { canonical: "/how-i-build", types: { "text/markdown": "/how-i-build.md" } },
-  openGraph: { title: HOW.title, description: DESCRIPTION, url: "/how-i-build", type: "website", siteName: "Manveen Singh" },
+  openGraph: { title: HOW.title, description: DESCRIPTION, url: "/how-i-build", type: "website", siteName: "Manveen Singh", locale: "en_US" },
   twitter: { card: "summary_large_image", title: HOW.title, description: DESCRIPTION },
 };
 
@@ -53,6 +54,8 @@ export default function HowIBuild() {
   const K = VISUAL.kickers;
   return (
     <>
+      {/* 3 Nov: the page about him, by him, in schema.org terms (lib/md/person.ts). */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(pageJsonLd("/how-i-build", "AboutPage", HOW.title, DESCRIPTION)) }} />
       <section id="top" className="wrap sec hero how">
         <div className="hero-head">
           {PHOTO && (

@@ -10,7 +10,10 @@
 // sentence; verify loop round 2), again in round 3 (the measured line, the hours line) and in round 4 (the hero's two
 // lines, which say what an AI step is) and in round 5 (where the 82 steps are). Round 6 (2 Nov): his 15 Oct story is
 // back on the home page, so it is back here as he wrote it, one paragraph. `howToRead` is a first draft for Manveen to
-// rewrite. 3 Nov: the story's last sentence is reworded at his ask, as on the home page.
+// rewrite. 3 Nov: the story's last sentence is reworded at his ask, as on the home page. 3 Nov (the AI-friendly audit):
+// `howToRead` says what llms-full.txt really holds (/how-i-build and /working-with-me too, since 29 Oct and 2 Nov), and
+// the last line is the ask both pages make ("If you're hiring a GTM engineer, email me about the role."), so an agent
+// asked whether he is looking for work, and as what, doesn't have to guess.
 // Plain text: the llms.txt format allows paragraphs and lists here, but no headings.
 
 export const LLMS_INTRO = {
@@ -25,7 +28,7 @@ export const LLMS_INTRO = {
   /** How to read this site. Draft, written by Claude on 22 Oct: rewrite it in your own words. */
   howToRead: [
     "My resume is under Resume below, as markdown, as JSON Resume and as the original PDF.",
-    "Every page here has a markdown copy at its own address plus .md (the home page's is /index.md), and /llms-full.txt has the resume, the home page and every post in one file.",
-    "The easiest way to reach me is email: manveen9650@gmail.com.",
+    "Every page here has a markdown copy at its own address plus .md (the home page's is /index.md). /llms-full.txt has the resume, the home page, how I build GTM systems, how working with me goes and every post in one file.",
+    "If you're hiring a GTM engineer, email me about the role: manveen9650@gmail.com.",
   ],
 };

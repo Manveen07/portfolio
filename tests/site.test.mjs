@@ -246,12 +246,13 @@ test("Tender Radar is off the home page and its copies, and the corrections log 
   for (const [name, s] of copies) {
     assert.doesNotMatch(s, /Running right now|worth bidding|worth a look|started on its own|Numbers saved|3,671|Its worst stretch|watch it work/i, `${name} still shows the panel's numbers or says it works`);
   }
-  // The corrections log on /how-i-build says why, dated, and llms.txt carries the same words beside the code link.
-  const entry = LIVE.log[0];
-  assert.equal(entry.id, "log-2026-11-03-tender-radar");
+  // The corrections log on /how-i-build says why, dated. llms.txt carried the entry beside the code link until 3 Nov; now
+  // it carries the code link's own line from Check it yourself, which says the AI step is down (tests/ai.test.mjs).
+  const entry = LIVE.log.find((e) => e.id === "log-2026-11-03-tender-radar");
   assert.equal(entry.text, "Took Tender Radar off my home page: its AI step had been failing on every new notice since September (a suspended API key), and no run went red for it.");
   assert.ok(text("how-i-build.html").includes(entry.text), "the log entry is not on /how-i-build");
-  assert.ok(read(".next/server/app/llms.txt.body").includes(entry.text), "llms.txt does not say why");
+  const radar = LIVE.items.find((l) => l.id === "live-radar");
+  assert.ok(read(".next/server/app/llms.txt.body").includes(radar.text), "llms.txt does not say its AI step is down");
 });
 
 test("live and saved run numbers both count scheduled runs only", () => {
@@ -1170,11 +1171,12 @@ test("pilot timeline is drawn, the steps list stays for screen readers", () => {
   const c = working();
   assert.match(c, /<ol class="steps sr-only">/);
   assert.match(c, /class="sketch"[^>]*role="img"/);
-  // Each step title is in the wide SVG and the tall SVG. "every miss logged," is also in the sketch's aria-label, so 3.
+  // Each step title is in the wide SVG and the tall SVG. "every miss logged," is also in the sketch's aria-label and,
+  // since 3 Nov, in the same reading as hidden text (components/Sketch.tsx), so 4.
   for (const s of ["1 · a call", "2 · a fixed quote", "3 · a month, for real", "4 · you decide"]) {
     assert.equal(count(c, s), 2, `"${s}" once per layout`);
   }
-  assert.equal(count(c, "every miss logged,"), 3, `"every miss logged," in both layouts and the aria-label`);
+  assert.equal(count(c, "every miss logged,"), 4, `"every miss logged," in both layouts, the aria-label and its hidden text`);
   // Round 2 (2 Nov) cut "not just a score" from the step and the timeline's pen note on blind readers' flags; round 6
   // (2 Nov, the round 5 jury) put both back word for word: his own offer terms (claims row 56).
   assert.match(c, /<li class="body">The pilot runs on a month of your real requests\. Every miss gets logged, and you see the list, not just a score\.<\/li>/);

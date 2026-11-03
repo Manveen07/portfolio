@@ -15,6 +15,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { RESUME, PDF_OVERRIDES } from "../data/resume.ts";
 import { LLMS_INTRO } from "../data/llms-intro.ts";
+import { ME, HERO, JOBS, PILOT, FREELANCE } from "../data/portfolio.ts";
+import { HOW, LIVE, CONTACT, SKILLS, VISUAL } from "../data/how.ts";
+import { PROOF } from "../data/proof.ts";
+import { pageHash, bodyFile } from "../lib/page-dates.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (rel) => readFileSync(path.join(root, rel), "utf8");
@@ -137,7 +141,9 @@ test("llms.txt: H1 first, a blockquote summary, plain paragraphs, then H2 sectio
   assert.ok(top.every((l) => !/^#/.test(l)), "a heading before the first H2 section");
   // Sections in order, Optional last; every line in them is a list item "- [title](url)" with optional ": notes".
   const sections = [...txt.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
-  assert.deepEqual(sections, ["Resume", "Pages", "Projects and work", "Writing", "Optional"]);
+  // 3 Nov (the AI-friendly audit): Contact after Resume; LinkedIn and GitHub were under Optional, which llmstxt.org
+  // defines as links an agent can skip.
+  assert.deepEqual(sections, ["Resume", "Contact", "Pages", "Projects and work", "Writing", "Optional"]);
   for (const line of lines.slice(firstH2).filter((l) => l.trim() && !/^## /.test(l))) {
     assert.match(line, /^- \[[^\]]+\]\((?:https?|mailto):[^)\s]+\)(?:: .+)?$/, `not a file-list item: ${line}`);
   }
@@ -213,9 +219,10 @@ test("every project and job title on the page is in llms.txt, index.md and llms-
     for (const t of titles) assert.ok(unmark(body).includes(t), `${name} is missing "${t}"`);
   }
   // Round 6 (2 Nov): Tender Radar left the home page (its AI step had failed on every new notice since September), so
-  // index.md no longer has it; llms.txt still lists its code, with the corrections log's words for why.
+  // index.md no longer has it; llms.txt still lists its code. Since 3 Nov in /how-i-build's Check it yourself words,
+  // last under Projects and work (it led the list, with an old "every morning" intro).
   assert.ok(!unmark(route("index.md").body).includes("Tender Radar"), "index.md still has Tender Radar");
-  assert.match(route("llms.txt").body, /\[Tender Radar\]\(https:\/\/github\.com\/Manveen07\/tender-radar-showcase\): [^\n]*Took Tender Radar off my home page/);
+  assert.match(route("llms.txt").body, /\[Tender Radar\]\(https:\/\/github\.com\/Manveen07\/tender-radar-showcase\): UK tenders; its AI step has been down since September/);
 });
 
 test("llms.txt lists every post under Writing, newest first, with the date its page shows; the moved blocks are posts, not projects", () => {
@@ -413,12 +420,21 @@ test("the home page says who this is in schema.org JSON-LD, from the site and th
   const site = graph.find((n) => n["@type"] === "WebSite");
   assert.equal(site?.name, "Manveen Singh");
   assert.equal(site?.url, `${SITE}/`);
-  // The description is the visible paragraph under the hero, so it says what the page says.
-  assert.ok(plain(html).includes(p.description), "Person.description is not on the page");
+  // The description is the hero's h1 and the paragraph under it (the h1 since 3 Nov: it names outbound and the AI),
+  // so it says what the page says.
+  assert.equal(p.description, [HERO.headline, ...HERO.how].join(" "));
+  for (const s of [HERO.headline, ...HERO.how]) assert.ok(squash(plain(html)).includes(s), `Person.description: not on the page: ${s}`);
   assert.equal(p.name, "Manveen Singh");
-  assert.equal(p.jobTitle, RESUME.role);
+  // 3 Nov: the site's title, which the page shows (kicker, <title>), not the resume's headline, which it doesn't.
+  assert.equal(p.jobTitle, ME.role);
+  assert.ok(app("index.html").includes(`<title>Manveen Singh | ${ME.role}</title>`));
   assert.equal(p.url, `${SITE}/`);
   assert.equal(p.address.addressLocality, "Delhi");
+  assert.equal(p.address.addressCountry, "IN", "schema.org recommends the ISO country code");
+  // The current job, which the home page's Work section names.
+  assert.equal(p.worksFor?.name, "Precise Leads");
+  assert.ok(plain(html).includes(`At ${p.worksFor.name}`), "worksFor is not on the page");
+  assert.deepEqual(site?.publisher, { "@id": p["@id"] });
   const foot = html.slice(html.lastIndexOf("<footer"));
   for (const href of p.sameAs) assert.ok(foot.includes(`href="${href}"`), `${href} is not the footer's link`);
   assert.equal(p.sameAs.length, 2);
@@ -465,4 +481,215 @@ test("each markdown copy points search engines to its page as canonical", () => 
     assert.ok(link.includes('</llms.txt>; rel="describedby"'), `${md} lost describedby`);
   }
   assert.doesNotMatch(linkFor("/writing"), /canonical/, "the page itself gets no canonical header");
+});
+
+// ── 7. The AI-friendly audit (3 Nov 2026) ───────────────────────────────
+// Manveen, 3 Nov: "make sure website is completly ai friednly". Four read-only audits (access, copies, structured data,
+// current practice) and three blind AI readers; each test below pins one fix.
+
+const DATES = JSON.parse(read("data/page-dates.json"));
+const PAGES = ["/", "/writing", "/how-i-build", "/working-with-me", ...posts.map((s) => `/writing/${s}`)];
+/** A built page's HTML file. */
+const htmlOf = (p) => (p === "/" ? "index.html" : `${p.slice(1)}.html`);
+/** The JSON-LD on a built page, parsed. */
+const ldOf = (p) => JSON.parse(app(htmlOf(p)).match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1] ?? "null");
+/** One H2 section of llms.txt, its list only. */
+const part = (txt, name) => txt.split(`\n## ${name}\n`)[1].split("\n## ")[0].trim();
+
+test("each page's date is the day its words last changed: the saved hash matches the build, and the sitemap and JSON-LD use it", () => {
+  // Was: two hand-set dates a day stale and a post edited on 31 Oct still on its June date (lib/page-dates.ts).
+  assert.deepEqual(Object.keys(DATES).sort(), [...PAGES].sort(), "data/page-dates.json does not list exactly the pages");
+  for (const p of PAGES) {
+    const hash = pageHash(app(bodyFile(p)), SITE);
+    assert.equal(hash, DATES[p].hash, `words changed on ${p}: run npm run page-dates after a build, then build again and commit data/page-dates.json`);
+    assert.match(DATES[p].date, /^\d{4}-\d{2}-\d{2}$/);
+  }
+  const xml = route("sitemap.xml").body;
+  const lastmod = Object.fromEntries([...xml.matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map((m) => [m[1], m[2]]));
+  for (const p of PAGES) assert.equal(lastmod[`${SITE}${p === "/" ? "/" : p}`], DATES[p].date, `sitemap lastmod for ${p}`);
+  assert.equal(lastmod[`${SITE}/resume.pdf`], RESUME.updated);
+  // A post's date never comes before it was published, and the post edited on 31 Oct says so.
+  for (const s of posts) assert.ok(DATES[`/writing/${s}`].date >= read("data/posts.ts").match(new RegExp(`slug: "${s}"[\\s\\S]*?date: "([^"]+)"`))[1], `${s} modified before published`);
+  assert.equal(DATES["/writing/schema-as-eval-spec"].date, "2026-10-31");
+  // The JSON-LD and the post's share tags carry the same day.
+  const home = ldOf("/")["@graph"].find((n) => n["@type"] === "ProfilePage");
+  assert.equal(home.dateModified, DATES["/"].date);
+  for (const p of ["/writing", "/how-i-build", "/working-with-me"]) assert.equal(ldOf(p).dateModified, DATES[p].date, `${p} dateModified`);
+  for (const s of posts) {
+    const p = `/writing/${s}`;
+    assert.equal(ldOf(p).dateModified, DATES[p].date, `${s}: BlogPosting dateModified`);
+    assert.ok(app(htmlOf(p)).includes(`<meta property="article:modified_time" content="${DATES[p].date}"/>`), `${s}: no article:modified_time`);
+  }
+  // The hash ignores a post's "More writing" list (a new post is not an edit to the old ones) and the site's address.
+  const md = route(`md/writing/${posts[0]}`).body;
+  assert.equal(pageHash(md.replace(/## More writing[\s\S]*$/, "## More writing\n\n- something new\n"), SITE), pageHash(md, SITE));
+  assert.equal(pageHash(md.split(SITE).join("http://localhost:3107"), "http://localhost:3107"), pageHash(md, SITE));
+});
+
+test("llms.txt and llms-full.txt say the same thing about what llms-full.txt holds", () => {
+  // Was: "the resume, the home page and every post" (22 Oct), though /how-i-build and /working-with-me are inside it.
+  const full = route("llms-full.txt").body;
+  const holds = full.match(/\nWhat follows, in order: (.+), each with the address it comes from\./)?.[1];
+  assert.ok(holds, "llms-full.txt does not say what it holds");
+  assert.equal(holds, `the resume, the home page, ${HOW.title.charAt(0).toLowerCase()}${HOW.title.slice(1)}, ${PILOT.head.charAt(0).toLowerCase()}${PILOT.head.slice(1)} and every post`);
+  const sources = [...full.matchAll(/^Source: (\S+)$/gm)].map((m) => m[1]);
+  assert.deepEqual(sources.slice(0, 4), [`${SITE}/resume.md`, `${SITE}/index.md`, `${SITE}/how-i-build.md`, `${SITE}/working-with-me.md`], "llms-full.txt's order is not the one it states");
+  assert.deepEqual(sources.slice(4).map((u) => u.match(/\/writing\/([a-z0-9-]+)\.md$/)?.[1]).sort(), [...posts].sort(), "the rest is not every post");
+  const txt = route("llms.txt").body;
+  assert.ok(LLMS_INTRO.howToRead.some((l) => l.includes(`/llms-full.txt has ${holds} in one file`)), "howToRead says something else");
+  assert.ok(txt.includes(`[Everything in one file](${SITE}/llms-full.txt): ${holds}, inline`), "the Pages entry says something else");
+  assert.doesNotMatch(txt, /the home page and every post/);
+});
+
+test("llms.txt says he is open to a GTM engineer role and gives contact links their own section", () => {
+  const txt = route("llms.txt").body;
+  // The ask both pages make, word for word.
+  assert.ok(LLMS_INTRO.howToRead.includes(`${CONTACT.ask.replace(/\.$/, "")}: ${ME.email}.`), "the intro does not make the job ask");
+  assert.equal(part(txt, "Contact").trim(), [
+    `- [Email](mailto:${ME.email}): ${CONTACT.ask}`,
+    `- [LinkedIn](${ME.linkedin}): Manveen's LinkedIn profile`,
+    `- [GitHub](${ME.github}): Manveen's GitHub profile`,
+  ].join("\n"));
+  assert.doesNotMatch(part(txt, "Optional"), /linkedin\.com|github\.com\/Manveen07\)/, "a profile link is still in Optional");
+});
+
+test("llms.txt's /how-i-build line names its sections in page order, read off the copy", () => {
+  // Was: a hand-written list from 2 Nov, before The inbox fleet and both 3 Nov clicks, in the wrong order.
+  const txt = route("llms.txt").body;
+  const line = part(txt, "Pages").split("\n").find((l) => l.startsWith(`- [${HOW.title}](${SITE}/how-i-build.md): `));
+  assert.ok(line, "no /how-i-build line");
+  const order = line.match(/In page order: (.+)\.$/)?.[1].replace(/ \([^)]*\)/g, "").split("; ").filter((s) => s !== "My corrections log");
+  const h2s = [...app("how-i-build.md.body").matchAll(/^## (.+)$/gm)].map((m) => m[1]);
+  assert.deepEqual(order, h2s);
+  assert.deepEqual(h2s.slice(0, 3), [VISUAL.kickers.agents, VISUAL.kickers.skills, VISUAL.kickers.fleet]);
+  // Every click on the page is named (the verifier, 3 Nov: the habit's and both failure stories' were missing); the
+  // corrections log is named by its own summary.
+  const summaries = [...app("how-i-build.html").matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) => m[1].replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").trim());
+  assert.ok(summaries.length >= 8, `only ${summaries.length} clicks found`);
+  for (const s of summaries) assert.ok(line.toLowerCase().includes(s.toLowerCase()), `the llms.txt line misses the click "${s}"`);
+  for (const click of ["on-its-own", "held-list", "identity", "claygent", "bounces"].map((k) => VISUAL.clicks[k])) assert.ok(line.toLowerCase().includes(click.toLowerCase()), `the line misses the click ${click}`);
+  // Second in the list, after the home page: it is the page for hiring managers.
+  assert.match(part(txt, "Pages"), /^- \[Home page\][^\n]*\n- \[How I build GTM systems\]/);
+  // The home page's line names the strip that sits under its hero since 3 Nov.
+  assert.match(part(txt, "Pages"), /what I build and what I measured, five things I do, and a time I did each, how I check my AI/);
+});
+
+test("llms.txt's Projects and work: the jobs whole, the held list with its caveat, then the repos in Check it yourself's words", () => {
+  const txt = route("llms.txt").body;
+  const items = part(txt, "Projects and work").trim().split("\n");
+  // Every point of the job, and the reference line, as on the home page.
+  for (const w of JOBS) for (const pt of w.points ?? []) assert.ok(items[0].includes(pt), `missing point: ${pt.slice(0, 50)}`);
+  assert.ok(items.some((l) => l.includes("Zackary Beckham, COO of Caprae Capital Partners")), "no reference line");
+  // The lead proof, its numbers and its caveat together.
+  const card = PROOF["held-list"];
+  const held = items.find((l) => l.startsWith(`- [${card.title}](${SITE}/how-i-build.md): `));
+  assert.ok(held, "no held-list line");
+  assert.ok(held.includes(SKILLS.find((s) => s.id === "skill-checking").line) && held.endsWith(card.limit), "the held list lost its numbers or its caveat");
+  // The repos, after the jobs and the held list, in the page's words; Tender Radar last, with its own caveat.
+  const repos = LIVE.items.filter((l) => l.code || l.text);
+  assert.deepEqual(items.slice(-repos.length).map((l) => l.match(/^- \[([^\]]+)\]\(([^)]+)\)/).slice(1)), repos.map((l) => [l.label.replace(/\s*[↗→]$/, ""), l.href]));
+  for (const l of repos) assert.ok(items.some((i) => i.includes(l.text)), `${l.id}: not in its page words`);
+  assert.doesNotMatch(txt, /every morning|Tender Radar code\]/, "the old Tender Radar line is back");
+});
+
+test("llms.txt carries the corrections log's word on a post beside the post's numbers", () => {
+  const txt = route("llms.txt").body;
+  for (const e of LIVE.log.filter((x) => x.link?.href.startsWith("/writing/"))) {
+    const slug = e.link.href.slice("/writing/".length);
+    const line = part(txt, "Writing").split("\n").find((l) => l.includes(`/writing/${slug}.md)`));
+    assert.ok(line.includes(e.text), `${slug}: the log's entry is not on its line`);
+  }
+  assert.match(txt, /it caught 9\. Corrections log, 31 Oct: A later audit found two more leaks in my leadlens test, so its 9 of 11 needs a re-run\./);
+});
+
+test("the markdown copies of /how-i-build and /working-with-me say whose they are and where the page lives", () => {
+  // Was: how-i-build.md named him only inside github.com/Manveen07 links; working-with-me.md not at all.
+  const how = app("how-i-build.md.body").split("\n\n").slice(0, 5).join("\n\n");
+  assert.ok(how.startsWith(`![${ME.name}](${SITE}/me.jpg)`), "the photo does not open how-i-build.md, as it opens the page");
+  assert.ok(how.includes(`*${HOW.title}*. By ${ME.name}. Web page: ${SITE}/how-i-build`));
+  const working = route("working-with-me.md").body.split("\n\n").slice(0, 2).join("\n\n");
+  assert.equal(working, `# ${PILOT.head}\n\nBy ${ME.name}. Web page: ${SITE}${FREELANCE.href}`);
+});
+
+test("no markdown link points at an HTML anchor, and resume.json gives real handles", () => {
+  // #proof-cards and #held-list are HTML ids; the markdown copies don't have them.
+  for (const name of ["llms.txt", "llms-full.txt", "index.md", "writing.md", "working-with-me.md", "resume.md", ...posts.map((s) => `md/writing/${s}`)]) {
+    assert.doesNotMatch(route(name).body, /manveen\.me\/[^)\s]*\.md#/, `${name} links a markdown anchor`);
+  }
+  assert.doesNotMatch(app("how-i-build.md.body"), /manveen\.me\/[^)\s]*\.md#/);
+  const profiles = JSON.parse(route("resume.json").body).basics.profiles;
+  assert.deepEqual(profiles.map((p) => p.username), ["manveen-singh-b9b7672a0", "Manveen07"]);
+});
+
+test("every page has JSON-LD that ties it to the Person, and the two vague descriptions say whose page it is", () => {
+  // Was: none on /how-i-build, /working-with-me and /writing.
+  const person = `${SITE}/#person`;
+  const how = ldOf("/how-i-build");
+  assert.equal(how["@type"], "AboutPage");
+  assert.equal(how.name, HOW.title);
+  const working = ldOf("/working-with-me");
+  assert.equal(working["@type"], "WebPage");
+  for (const [p, ld] of [["/how-i-build", how], ["/working-with-me", working]]) {
+    assert.equal(ld.url, `${SITE}${p}`);
+    assert.equal(ld.about["@id"], person, `${p}: not about the Person`);
+    assert.equal(ld.isPartOf["@id"], `${SITE}/#website`);
+    const desc = decode(app(htmlOf(p)).match(/<meta name="description" content="([^"]*)"/)[1]);
+    assert.equal(ld.description, desc, `${p}: JSON-LD and meta description differ`);
+  }
+  const blog = ldOf("/writing");
+  assert.equal(blog["@type"], "Blog");
+  assert.equal(blog.author["@id"], person);
+  assert.deepEqual(blog.blogPost.map((b) => b.url).sort(), posts.map((s) => `${SITE}/writing/${s}`).sort());
+  for (const s of posts) assert.equal(ldOf(`/writing/${s}`).isPartOf["@id"], `${SITE}/#website`);
+  // The two descriptions name him and the kind of work; the visible h1s stay.
+  const writing = decode(app("writing.html").match(/<meta name="description" content="([^"]*)"/)[1]);
+  assert.equal(writing, `Posts by ${ME.name}, ${ME.role}, on testing AI steps and workflows: what I tried, what broke, what fixed it.`);
+  assert.match(app("writing.html"), /<h1>What I tried, what broke, what fixed it\.<\/h1>/);
+  const free = decode(app("working-with-me.html").match(/<meta name="description" content="([^"]*)"/)[1]);
+  assert.ok(free.startsWith(`${FREELANCE.kicker} with ${ME.name}: a call about what wastes your time`), free);
+  // Their share card is the home card, named whole (size and alt), and every page says its locale.
+  for (const page of ["writing.html", "working-with-me.html"]) {
+    const head = app(page).match(/<head[\s\S]*?<\/head>/)[0];
+    assert.ok(head.includes('<meta property="og:image:width" content="1200"/>') && head.includes('<meta property="og:image:alt" content="Manveen Singh, GTM engineer"/>'), `${page}: card without size or alt`);
+    assert.ok(head.includes('<meta name="twitter:image:alt" content="Manveen Singh, GTM engineer"/>'), `${page}: no twitter:image:alt`);
+  }
+  assert.match(read("app/opengraph-image.tsx"), /export const alt = "Manveen Singh, GTM engineer";/, "the home card's alt moved: update HOME_CARD in lib/site.ts");
+  for (const page of ["how-i-build.html", "writing.html", "working-with-me.html", ...posts.map((s) => `writing/${s}.html`)]) {
+    assert.ok(app(page).includes('<meta property="og:locale" content="en_US"/>'), `${page}: no og:locale`);
+  }
+});
+
+test("an agent that asks a page for markdown gets its copy at the page's address; a browser gets the page", () => {
+  // Claude Code sends this Accept header on every fetch (checked 3 Nov); Chrome sends the second.
+  const agent = "text/markdown, text/html, */*";
+  const browser = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
+  const manifest = JSON.parse(read(".next/routes-manifest.json"));
+  const pages = [["/", "/index.md"], ["/writing", "/writing.md"], ["/how-i-build", "/how-i-build.md"], ["/working-with-me", "/working-with-me.md"], [`/writing/${posts[0]}`, `/md/writing/${posts[0]}`]];
+  for (const [page, copy] of pages) {
+    const rule = manifest.rewrites.beforeFiles.find((r) => r.has && new RegExp(r.regex).test(page));
+    assert.ok(rule, `${page}: no rewrite for Accept: text/markdown`);
+    const h = rule.has[0];
+    assert.equal(h.type, "header");
+    assert.equal(h.key, "accept");
+    assert.match(agent, new RegExp(`^${h.value}$`));
+    assert.doesNotMatch(browser, new RegExp(`^${h.value}$`), "a browser would get markdown");
+    assert.equal(rule.destination.replace(":slug", posts[0]), copy);
+    // A shared cache keys on Accept for this address.
+    assert.ok(manifest.headers.some((r) => new RegExp(r.regex).test(page) && r.headers.some((x) => x.key === "Vary" && x.value === "Accept")), `${page}: no Vary: Accept`);
+  }
+  // A post's .md address is still the first rule, and the Accept rule never takes it.
+  const accept = manifest.rewrites.beforeFiles.filter((r) => r.has);
+  assert.ok(!accept.some((r) => new RegExp(r.regex).test(`/writing/${posts[0]}.md`)), "an Accept rule matches a .md address");
+  // The resume's markdown names the PDF as canonical, as each page's copy names its page.
+  const rule = manifest.headers.filter((r) => new RegExp(r.regex).test("/resume.md")).at(-1);
+  assert.match(rule.headers.find((x) => x.key === "Link").value, /<https:\/\/manveen\.me\/resume\.pdf>; rel="canonical"/);
+});
+
+test("each drawing's reading is text in the page too, hidden from sight, for tools that drop SVG and attributes", () => {
+  for (const page of ["how-i-build.html", "working-with-me.html"]) {
+    const html = app(page);
+    const wrappers = [...html.matchAll(/<div class="sketch" role="img" aria-label="([^"]*)">(<span class="sr-only">([^<]*)<\/span>)?/g)];
+    assert.ok(wrappers.length >= 2, `${page}: no drawings found`);
+    for (const [, label, , text] of wrappers) assert.equal(text, label, `${page}: a drawing's reading is not in the page as text`);
+  }
 });

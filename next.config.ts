@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 import { SITE } from "./lib/site";
 
+/** Each page and the route that serves its markdown copy. A post's slug has no dot, so /writing/<slug>.md is the rule
+    above it, never this one. */
+const MARKDOWN_COPIES: [string, string][] = [
+  ["/", "/index.md"],
+  ["/writing", "/writing.md"],
+  ["/how-i-build", "/how-i-build.md"],
+  ["/working-with-me", "/working-with-me.md"],
+  ["/writing/:slug([a-z0-9-]+)", "/md/writing/:slug"],
+];
+
 const nextConfig: NextConfig = {
   // Speed, tried 22 Oct and measured with Lighthouse (mobile, 3 to 8 runs each), none kept:
   // - experimental.inlineCss: first paint 0.94 s to 1.07 s; the CSS rode along in every page and prefetch.
@@ -12,7 +22,20 @@ const nextConfig: NextConfig = {
   async rewrites() {
     // A post's markdown copy lives at its own address plus .md (llmstxt.org). A route segment can't be
     // "[slug].md", so app/md/writing/[slug]/route.ts serves it. beforeFiles: ahead of the /writing/[slug] page.
-    return { beforeFiles: [{ source: "/writing/:slug.md", destination: "/md/writing/:slug" }], afterFiles: [], fallback: [] };
+    // 3 Nov (the AI-friendly audit): an agent that asks a page for markdown (an Accept header naming text/markdown, as
+    // Claude Code sends on every fetch, checked that day) gets the page's markdown copy at the page's own address;
+    // the pattern is Vercel's (blog, 3 Feb 2026, "Making agent-friendly pages with content negotiation"). A browser
+    // never names text/markdown, so it gets the page. The copy says everything the page says, the words inside
+    // closed clicks and drawings included, which an HTML-to-text tool can lose.
+    const wantsMarkdown = [{ type: "header" as const, key: "accept", value: "(.*)text/markdown(.*)" }];
+    return {
+      beforeFiles: [
+        { source: "/writing/:slug.md", destination: "/md/writing/:slug" },
+        ...MARKDOWN_COPIES.map(([source, destination]) => ({ source, has: wantsMarkdown, destination })),
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async headers() {
     // Every response, the markdown files included, points to the llms.txt that describes it (llmstxt.org's
@@ -29,6 +52,12 @@ const nextConfig: NextConfig = {
       { source: "/how-i-build.md", headers: copyOf("/how-i-build") },
       { source: "/working-with-me.md", headers: copyOf("/working-with-me") },
       { source: "/writing/:slug.md", headers: copyOf("/writing/:slug") },
+      // 3 Nov: the resume's markdown is the text of the PDF, so the PDF is its canonical, as each page is its copy's.
+      { source: "/resume.md", headers: copyOf("/resume.pdf") },
+      // A page's answer depends on the Accept header now, so a shared cache must key on it too (3 Nov). Checked with
+      // `next start`: the markdown answer carries "Vary: Accept" beside Next's own Vary, so no cache hands it to a
+      // browser; on the HTML answer Next's Vary (rsc, ...) replaces this one, which at worst gives an agent the page.
+      ...MARKDOWN_COPIES.map(([source]) => ({ source, headers: [{ key: "Vary", value: "Accept" }] })),
     ];
   },
 };

@@ -4,10 +4,10 @@
 // and number against the built page.
 
 import { HOW, AGENTS, SPLIT, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
-import { ME } from "@/data/portfolio";
+import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
-import { para, list, link, pen } from "@/lib/md/format";
+import { para, list, link, image, pen } from "@/lib/md/format";
 import { claygentLabel, bounceLabel } from "@/components/HowCharts";
 import { proofMarkdown } from "@/lib/md/proof";
 
@@ -63,9 +63,12 @@ const story = (s: Story, level: number) => {
 export function howMarkdown(): string {
   const K = VISUAL.kickers;
   return [
+    // 3 Nov (the AI-friendly audit): the photo opens the page, as on it, and the title line says whose page this is and
+    // where it lives, as a post's copy does: handed to a model on its own, this copy never named him.
+    PHOTO ? para(image(PHOTO.alt, abs(PHOTO.src))) : "",
     para(`*${HOW.kicker}*`),
     `# ${HOW.headline}`,
-    para(`*${HOW.title}*`),
+    para(`*${HOW.title}*. By ${ME.name}. Web page: ${abs("/how-i-build")}`),
     ...HOW.sub.map(para),
     ...(VISUAL.heroLinks.length ? [list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href))))] : []),
 
@@ -142,6 +145,7 @@ export function howMarkdown(): string {
       [link("LinkedIn", ME.linkedin), link("GitHub", ME.github), link("Résumé (PDF)", abs("/resume.pdf")), link("Home", mdHref("/")), link("Writing", mdHref("/writing"))].join(" · "),
     ),
   ]
+    .filter(Boolean)
     .join("\n\n")
     .concat("\n");
 }

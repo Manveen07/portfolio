@@ -1,7 +1,7 @@
 // /llms.txt (the llmstxt.org format, checked 22 Oct 2026) and /llms-full.txt.
 // Manveen's words come first (data/llms-intro.ts); every section after them is generated from the site's data.
 
-import { ME, PIPELINE, JOBS, DRAWINGS as D, WRONG, NAMESAKE, PILOT, FREELANCE, type WorkItem } from "@/data/portfolio";
+import { ME, PIPELINE, JOBS, DRAWINGS as D, WRONG, NAMESAKE, PILOT, FREELANCE, FIVE_HABITS, REFERENCE, type WorkItem } from "@/data/portfolio";
 import { NEWEST_FIRST, postDate, type Post } from "@/data/posts";
 import { RESUME } from "@/data/resume";
 import { LLMS_INTRO } from "@/data/llms-intro";
@@ -12,10 +12,17 @@ import { resumeMarkdown } from "@/lib/md/resume";
 import { postMarkdown } from "@/lib/md/posts";
 import { howMarkdown } from "@/lib/md/how";
 import { workingMarkdown } from "@/lib/md/working";
-import { HOW, LIVE } from "@/data/how";
+import { HOW, LIVE, CONTACT, SKILLS, VISUAL, SPLIT, NERD, INBOX, logSummary, shortDate } from "@/data/how";
+import { PROOF } from "@/data/proof";
 
-/** The corrections log's entry for Tender Radar, word for word (round 6, 2 Nov). */
-const LOG_RADAR = LIVE.log.find((e) => e.id === "log-2026-11-03-tender-radar")?.text ?? "";
+const lc = (s: string) => `${s.charAt(0).toLowerCase()}${s.slice(1)}`;
+/** A link label without its drawn arrow. */
+const bare = (s: string) => s.replace(/\s*[↑↓→↗]$/, "");
+
+/** What llms-full.txt holds, in its order. Its own intro says this, and so do llms.txt's Pages list and howToRead in
+    data/llms-intro.ts; tests/ai.test.mjs holds the three together (3 Nov: two of them still said "the resume, the home
+    page and every post" from 22 Oct, before /how-i-build and /working-with-me were added). */
+const FULL_HOLDS = `the resume, the home page, ${lc(HOW.title)}, ${lc(PILOT.head)} and every post`;
 
 /** H1, the blockquote summary, then Manveen's paragraphs: the part of both files he writes. */
 function intro(title: string): string {
@@ -30,8 +37,43 @@ function workLine(w: WorkItem): string {
     ? [`${w.scorecard.caption} ${w.scorecard.caught} caught, ${w.scorecard.missed} missed, ${w.scorecard.falseAlarms} false alarms, ${w.scorecard.leftAlone} left alone`]
     : w.metrics.map(([n, label]) => `${n} ${label}`);
   const where = [w.where, w.role].filter(Boolean).join(", ");
-  return `${link(w.title, home)}: ${where}. ${w.lead ?? w.detail ?? ""}${nums.length ? ` Numbers: ${nums.join("; ")}.` : ""}`;
+  // 3 Nov (the AI-friendly audit): the job's points too (the Claude Code agents, the inbox bot's commits), and the
+  // reference line under the card: an agent working from this file alone saw only the counts.
+  const points = w.points?.length ? ` ${w.points.join(" ")}` : "";
+  const reference = w.reference ? ` ${REFERENCE}` : "";
+  return `${link(w.title, home)}: ${where}. ${w.lead ?? w.detail ?? ""}${points}${nums.length ? ` Numbers: ${nums.join("; ")}.` : ""}${reference}`;
 }
+
+/** /how-i-build's line: the h1, then its sections in page order, read off its markdown copy so a new section shows up
+    here by itself, with the clicks under each in brackets (3 Nov: the hand-written list predated The inbox fleet and
+    both of that day's clicks, and had the sections out of order). */
+function howLine(): string {
+  const K = VISUAL.kickers;
+  const clicks: Record<string, string[]> = {
+    [K.agents]: [VISUAL.clicks[SPLIT.id]],
+    [K.skills]: [VISUAL.clicks["held-list"], NERD.summary],
+    [K.habits]: [VISUAL.clicks.identity],
+    [K.failures]: [VISUAL.clicks.claygent, VISUAL.clicks.bounces],
+    [K.fleet]: [INBOX.summary],
+  };
+  const sections = [...howMarkdown().matchAll(/^## (.+)$/gm)].flatMap(([, h]) => {
+    if (h === K.live) return [h, logSummary()];
+    return [clicks[h] ? `${h} (${clicks[h].map(lc).join("; ")})` : h];
+  });
+  return `for hiring managers: ${HOW.headline} In page order: ${sections.join("; ")}.`;
+}
+
+/** The held list, the lead proof on the home page and /how-i-build, in the skills row's words with the card's caveat. */
+function heldListLine(): string {
+  const card = PROOF["held-list"];
+  const row = SKILLS.find((s) => s.id === "skill-checking");
+  return `${link(card.title, mdHref("/how-i-build"))}: ${row?.line ?? ""} ${card.limit ?? ""}`.trim();
+}
+
+/** The repos /how-i-build's Check it yourself leads with, in its words (a repo with a command or a line; the profile
+    link is under Contact). Tender Radar is last, with its own caveat. */
+const repoLines = () =>
+  LIVE.items.filter((l) => l.code || l.text).map((l) => `${link(bare(l.label), l.href)}: ${l.code ? `\`${l.code}\` ` : ""}${l.text ?? ""}`);
 
 /** What a post's line adds after its summary: drawing-proof's scores, the dates and titles of the notes, the gate's two
     runs from the champion-move-checker README with its caveat, and the blind sets' first runs (review, 3 Nov: the line
@@ -48,9 +90,20 @@ function postFacts(p: Post): string {
   return ` ${WRONG.pins.map((n) => `${n.date}, ${n.title}`).join("; ")}.`;
 }
 
+/** The corrections log's entries about a post (/how-i-build, Check it yourself), dated, so a number the log has since
+    qualified never travels without it (3 Nov: the leaked-eval post's line gave "it caught 9" and not that a 31 Oct
+    audit says the 9 needs a re-run). */
+function corrections(p: Post): string {
+  return LIVE.log
+    .filter((e) => e.link?.href === `/writing/${p.slug}`)
+    .map((e) => ` Corrections log, ${shortDate(e.date)}: ${e.text}`)
+    .join("");
+}
+
 export function llmsTxt(): string {
-  // Round 6 (2 Nov): Tender Radar is off the home page, so its line links the code and says why, with no run numbers.
-  const radar = `${link("Tender Radar", PIPELINE.repo)}: ${PIPELINE.intro.join(" ")} ${LOG_RADAR}`;
+  // Round 6 (2 Nov): Tender Radar is off the home page. Its line led Projects and work with the old intro ("every
+  // morning") and the corrections log's entry until 3 Nov; now it is /how-i-build's Check it yourself line, after the
+  // jobs, the held list and the two repos that section leads with.
   const outside = JOBS.flatMap((w) => (w.links ?? []).filter((l) => /^https?:/.test(l.href)).map((l) => ({ ...l, title: w.title })));
 
   return [
@@ -61,27 +114,35 @@ export function llmsTxt(): string {
       `${link("Resume (JSON)", abs("/resume.json"))}: the same resume in the JSON Resume schema (jsonresume.org)`,
       `${link("Resume (PDF)", abs(RESUME.pdf))}: the original file`,
     ]),
+    // 3 Nov (the AI-friendly audit): email, LinkedIn and GitHub have their own section. Under Optional, which
+    // llmstxt.org defines as links an agent can skip when it needs a shorter context, an agent trimming its context
+    // dropped the profiles a recruiter's tool wants first.
+    "## Contact",
+    list([
+      `${link("Email", `mailto:${ME.email}`)}: ${CONTACT.ask}`,
+      `${link("LinkedIn", ME.linkedin)}: Manveen's LinkedIn profile`,
+      `${link("GitHub", ME.github)}: Manveen's GitHub profile`,
+    ]),
     "## Pages",
     list([
-      `${link("Home page", home)}: the whole home page as markdown, in page order: what I build and what I measured, how I check my AI (a proof card: what broke, the check, the measured result), two jobs, AI checks on my own projects, the three newest posts, contact`,
+      `${link("Home page", home)}: the whole home page as markdown, in page order: what I build and what I measured, ${lc(FIVE_HABITS.head)}, how I check my AI (a proof card: what broke, the check, the measured result), two jobs, AI checks on my own projects, the three newest posts, contact`,
+      // Second since 3 Nov: the page written for hiring managers.
+      `${link(HOW.title, mdHref("/how-i-build"))}: ${howLine()}`,
       `${link("Writing", mdHref("/writing"))}: every post, newest first`,
-      `${link(HOW.title, mdHref("/how-i-build"))}: for hiring managers: ${HOW.headline} How my Claude Code agents work and where a person approves, my own AI check with the number that went wrong, an email match check I re-ran on past data before switching it, failures from the day job, what I can do and what not yet, links you can check, and where I corrected myself`,
-      `${link(PILOT.head, mdHref(FREELANCE.href))}: for freelance automation: ${PILOT.sketchLabel.charAt(0).toLowerCase()}${PILOT.sketchLabel.slice(1)}`,
-      `${link("Everything in one file", abs("/llms-full.txt"))}: the resume, the home page and every post, inline`,
+      `${link(PILOT.head, mdHref(FREELANCE.href))}: for freelance automation: ${lc(PILOT.sketchLabel)}`,
+      `${link("Everything in one file", abs("/llms-full.txt"))}: ${FULL_HOLDS}, inline`,
     ]),
     "## Projects and work",
-    list([radar, ...JOBS.map(workLine)]),
+    list([...JOBS.map(workLine), heldListLine(), ...repoLines()]),
     "## Writing",
-    list(NEWEST_FIRST.map((p) => `${link(p.title, mdHref(`/writing/${p.slug}`))}: ${p.summary}${postFacts(p)} (${postDate(p)})`)),
+    list(NEWEST_FIRST.map((p) => `${link(p.title, mdHref(`/writing/${p.slug}`))}: ${p.summary}${postFacts(p)}${corrections(p)} (${postDate(p)})`)),
     "## Optional",
     list([
-      `${link("Tender Radar code", PIPELINE.repo)}: the public showcase repo`,
+      // 3 Nov: the code's link is under Projects and work; GitHub and LinkedIn moved up to Contact.
       // Round 6 (2 Nov): "watch it work" until then; the AI step the video shows has failed on every new notice since
       // September (data/how.ts LIVE.log, 2 Nov).
       `${link("Tender Radar video", PIPELINE.loom)}: a walkthrough, under 5 minutes`,
       ...outside.map((l) => `${link(`${l.title}: ${l.label.replace(/\s*[↗→]$/, "")}`, l.href)}`),
-      `${link("GitHub", ME.github)}: Manveen's GitHub profile`,
-      `${link("LinkedIn", ME.linkedin)}: Manveen's LinkedIn profile`,
       `${link("Calendar", ME.calendly)}: pick a time for a call`,
     ]),
   ]
@@ -102,7 +163,7 @@ export function llmsFullTxt(): string {
   ];
   return [
     intro(`${ME.name}: everything on manveen.me in one file`),
-    para(`What follows, in order: the resume, the home page, how I build GTM systems, how working with me goes and every post, each with the address it comes from. The short index is ${link("llms.txt", abs("/llms.txt"))}.`),
+    para(`What follows, in order: ${FULL_HOLDS}, each with the address it comes from. The short index is ${link("llms.txt", abs("/llms.txt"))}.`),
     ...sources.map((s) => `---\n\nSource: ${s.url}\n\n${s.md.trim()}`),
   ]
     .join("\n\n")

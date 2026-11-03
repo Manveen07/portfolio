@@ -5,7 +5,7 @@ import Work from "@/components/Work";
 import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 import type { Metadata } from "next";
-import { homeJsonLd } from "@/lib/md/person";
+import { homeJsonLd, ldJson } from "@/lib/md/person";
 import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS } from "@/data/proof";
 
 // The page's canonical address (one URL per page for search engines) and its markdown copy, for AI agents (llmstxt.org).
@@ -19,10 +19,7 @@ export const metadata: Metadata = { alternates: { canonical: "/", types: { "text
 export default function Home() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd()).replace(/</g, "\\u003c") }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(homeJsonLd()) }} />
       <Hero />
       <section id="proof-cards" className="wrap sec">
         <h2 className="kicker">{HOME_BAND.kicker}</h2>
