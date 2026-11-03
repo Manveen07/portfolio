@@ -188,7 +188,10 @@ export const JOBS: WorkItem[] = [
     // own: one email batch, never a find rate (SOURCES.md rows 17 and 18; claims row 82a), "in one batch" beside it.
     // "claude code" joins the stack: the follow-up drafts are his Claude Code agents' (data/how.ts AGENTS), and the round
     // 2 founder's edge sentence never said AI.
+    // 3 Nov (his ask, "you can decide on these"): the bounce result and its control lead the tiles, the outcome every
+    // blind reader asked for that has a public source (SOURCES.md row 31; the /how-i-build bounce story).
     metrics: [
+      ["2.74% → 0.73%", "bounces on my lists after the mail-server screen; a teammate's lists without it: 2.26% → 2.09%"],
       ["12,030", "verified emails for 15,514 decision-makers, in one batch"],
       ["34,044", "companies sorted in four days"],
     ],
@@ -411,7 +414,7 @@ export const SAY_HI = {
 // footer of every page. The label is the session's wording. ──
 export const FREELANCE = {
   kicker: "Freelance automation",
-  link: "Freelance automation: how working with me goes",
+  link: "Freelance: automation projects",
   href: "/working-with-me",
 } as const;
 

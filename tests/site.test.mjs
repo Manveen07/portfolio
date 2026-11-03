@@ -336,7 +336,7 @@ test("Work runs Precise Leads, Caprae, the reference; no Built on my own", () =>
   assert.doesNotMatch(markup("index.html"), /<p class="group">/, "a group label is back");
 });
 
-test("the Precise Leads entry: meta, title, a lead, short points, two metrics, stack; no note and no link (round 3)", () => {
+test("the Precise Leads entry: meta, title, a lead, short points, three metrics, stack; no note and no link (round 3)", () => {
   // Rewritten 15 Oct from Manveen's own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
@@ -371,6 +371,8 @@ test("the Precise Leads entry: meta, title, a lead, short points, two metrics, s
   assert.match(entry, /<dt>12,030<\/dt><dd>verified emails for 15,514 decision-makers, in one batch<\/dd>/);
   assert.doesNotMatch(entry, /contradicted claims|AI judge|find rate/);
   assert.match(entry, /<dt>34,044<\/dt><dd>companies sorted in four days<\/dd>/);
+  // 3 Nov: the bounce result leads, with the teammate's lists as the control beside it.
+  assert.match(entry, /<dl class="metrics"><div><dt>2\.74% → 0\.73%<\/dt><dd>bounces on my lists after the mail-server screen; a teammate(?:'|&#x27;)s lists without it: 2\.26% → 2\.09%<\/dd>/);
   // The day job's AI is named (the round 2 founder's edge sentence never said AI).
   assert.match(entry, /<p class="stack">built with (?:<!-- -->)?claude code, python, typescript, clay, smartlead, n8n<\/p>/);
   assert.doesNotMatch(entry, /Lead research, automated|watches Slack communities as messages come in/);
@@ -666,7 +668,7 @@ test("/working-with-me holds the pilot word for word and in order, and every pag
     assert.equal(count(foot, `<a href="${FREELANCE.href}">${FREELANCE.link}</a>`), 1, `${page}: the footer link`);
   }
   assert.equal(count(markup("index.html"), `href="${FREELANCE.href}"`), 1, "home links /working-with-me more than once");
-  assert.equal(FREELANCE.link, "Freelance automation: how working with me goes");
+  assert.equal(FREELANCE.link, "Freelance: automation projects");
 });
 
 test("no dashes, banned words, slogans or 'honest' in the home page copy", () => {
