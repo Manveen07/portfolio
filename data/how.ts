@@ -46,10 +46,9 @@ export const HOW = {
   // is the same on both pages; three round 5 readers thought the link was broken). The nav link's own words.
   kicker: "How I build",
   headline: "I build AI agents for outbound and measure what they get wrong.",
-  sub: [
-    "GTM engineer at an outbound agency since November 2025.",
-    "Across the agency's tools and my own projects, 82 steps have an AI deciding or writing: 11 have a solid test, 31 a partial one, 40 none yet.",
-  ] as [string, string],
+  // 3 Nov (his ask, "i just want us to not look weak"): the step count left the first screen; it is the skills row
+  // "Testing AI steps", said from what is done (the 31 Oct eval inventory).
+  sub: ["GTM engineer at an outbound agency since November 2025."] as [string],
 } as const;
 
 // ── Me and my agents: what runs each day, where a person approves ──
@@ -283,6 +282,10 @@ export const SKILLS: Skill[] = [
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
   // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
   // row 11: "70,508 rows in 382 queries, search quota only"). 23 words.
+  // 3 Nov (his ask): the eval inventory's count, said from what is done; the first screen no longer carries it.
+  // the 31 Oct eval inventory: 42 of 82 have some known-answer test, 11 solid. An AI step is a place where a model
+  // decides or writes something (rules with no model are left out). 25 words.
+  { id: "skill-testing", title: "Testing AI steps", line: "42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid." },
   { id: "skill-clay", title: "Clay", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
   // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
   { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },

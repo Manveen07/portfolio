@@ -91,9 +91,11 @@ test("the first screen: the photo, the kicker, the h1, two sub lines (the role, 
   assert.equal(HOW.sub[0], "GTM engineer at an outbound agency since November 2025.");
   // Review (2 Nov): the h1's limit sits on the same screen as the h1 (the eval inventory's count line), and no tool list.
   // Round 5 (2 Nov): it says where the 82 steps are (all 4 round 4 readers asked "steps of what?").
-  assert.match(HOW.sub[1], /^Across the agency's tools and my own projects, 82 steps have an AI deciding or writing: 11 have a solid test, 31 a partial one, 40 none yet\.$/);
+  // 3 Nov (his ask, "i just want us to not look weak"): the step count is the skills row "Testing AI steps" now.
+  assert.equal(HOW.sub.length, 1, "the sub is back to two lines");
+  assert.doesNotMatch(HOW.sub.join(" "), /\b82\b|none yet/, "the step count is back in the first screen");
   // Round 6 (2 Nov): home's hero has his 15 Oct story back where this line stood; the 82-step line is on this page only.
-  assert.ok(!HERO.how.includes(HOW.sub[1]), "the 82-step line is in home's hero again");
+  assert.ok(!HERO.how.some((l) => /\b82\b/.test(l)), "the step count is in home's hero");
   assert.doesNotMatch(HOW.sub.join(" "), /Clay, n8n and Python/, "the tool list is back in the sub line");
   // Round 4: the held-list card left the first screen (three round 3 readers thought home's link "hadn't changed pages"),
   // so Me and my agents follows the hero.
@@ -440,11 +442,11 @@ test("the review's retired wordings stay off the page and its copy (2 Nov)", () 
 });
 
 // ── 2 Nov: the new sections' data rules ─────────────────────────────────
-test("skills: eight rows, one plain sentence each with its number, then one Not yet line (v2.1)", () => {
+test("skills: nine rows, one plain sentence each with its number, then one Not yet line (v2.1)", () => {
   // Manveen, 2 Nov, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
   assert.deepEqual(
     SKILLS.map((s) => s.title),
-    ["AI agents", "Checking AI output", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
+    ["AI agents", "Checking AI output", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
   );
   assert.equal(new Set(SKILLS.map((s) => s.id)).size, SKILLS.length, "two rows share an id");
   for (const s of SKILLS) {
@@ -465,6 +467,8 @@ test("skills: eight rows, one plain sentence each with its number, then one Not 
   // "a second Claude session", as on the card.
   assert.match(row("skill-checking"), /My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones\./);
   assert.doesNotMatch(row("skill-checking"), /fit check/, "the held list is called the fit check");
+  // 3 Nov: the eval inventory's count, from what is done (the 31 Oct eval inventory).
+  assert.match(row("skill-testing"), /42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid\./);
   // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
   assert.match(row("skill-clay"), /I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0\.18 credits each\./);
   assert.match(row("skill-emails"), /verified emails for 12,030 of 15,514 decision-makers \(78%\) in one batch\./);
