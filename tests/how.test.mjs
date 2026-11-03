@@ -653,7 +653,7 @@ test("the inbox fleet: seven stages in order, the person's three circled in red,
   const shown = sec.replace(/<details[\s\S]*?<\/details>/g, "");
   assert.deepEqual([...shown.matchAll(/<p class="([^"]+)">([\s\S]*?)<\/p>/g)].map((m) => [m[1], squash(plain(m[2]))]), [["body", INBOX.lead], ["body", INBOX.credit]]);
   assert.equal(squash(plain(shown.match(/<figcaption class="cap">([\s\S]*?)<\/figcaption>/)?.[1] ?? "")), INBOX.caption);
-  assert.equal(INBOX.lead, "A bot runs the routine work on our sending inboxes; a person approves anything that costs money or puts a sender at risk.");
+  assert.equal(INBOX.lead, "A bot runs the routine work on our sending inboxes; a person decides what we buy and what we retire.");
   assert.equal(INBOX.caption, "About 350 sending inboxes tracked, as of 2 Nov.");
   // His wording (3 Nov), with the bot's commit count beside it (git shortlog, 3 Nov: 365 of 386).
   assert.equal(INBOX.credit, "My teammate built its renewal tracker; I improved it and built the rest: 365 of the bot's 386 commits are mine.");

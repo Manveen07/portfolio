@@ -184,7 +184,7 @@ export const JOBS: WorkItem[] = [
       // warming). The bot's git history: 365 of its 386 commits are his, the health scores and the order code all his.
       // 22 of the 365 are his pull-request merges, so the line says "are mine", never "I wrote" (the truth review, 3 Nov).
       // 18 words; /how-i-build's The inbox fleet tells the rest.
-      "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and approved orders.",
+      "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and orders a person approves.",
       "I built the tool that turns a client's sequence into a ready campaign.",
       "My daily scan of five sales-tool Slack communities passes likely buyers to the sales team.",
     ],

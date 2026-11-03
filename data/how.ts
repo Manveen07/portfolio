@@ -471,7 +471,7 @@ const INBOX_TEST = INBOX_STAGES.findIndex((s) => s.who === "test") + 1;
 export const stageHead = (s: InboxStage) => `${s.name[0].toUpperCase()}${s.name.slice(1)}, ${INBOX_KEY[s.who]}.`;
 
 export const INBOX = {
-  lead: "A bot runs the routine work on our sending inboxes; a person approves anything that costs money or puts a sender at risk.",
+  lead: "A bot runs the routine work on our sending inboxes; a person decides what we buy and what we retire.",
   stages: INBOX_STAGES,
   key: INBOX_KEY,
   note: INBOX_NOTE,

@@ -363,7 +363,7 @@ test("the Precise Leads entry: meta, title, a lead, short points, three metrics,
     "A merge once put emails on the wrong people; now the list check blocks one address on two people.",
     // 3 Nov (his ask): the old inbox-bot point was untrue as written; the bot's git history backs the new one ("are
     // mine": 22 of the 365 are his pull-request merges, so never "I wrote 365").
-    "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and approved orders.",
+    "365 of our inbox bot's 386 commits are mine: daily health scores for every inbox, and orders a person approves.",
     "I built the tool that turns a client's sequence into a ready campaign.",
     "My daily scan of five sales-tool Slack communities passes likely buyers to the sales team.",
   ]);
