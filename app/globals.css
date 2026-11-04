@@ -559,8 +559,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .held-click .pc-full { margin: 4px 0 16px; }  /* /how-i-build's held-list card behind its click (round 5, 2 Nov) */
 
 /* ── /how-i-build's two figures that play once in view (3 Nov): the free check under Clay in depth (components/sketches/
-   FreeCheckFirst.tsx) and what runs on its own, behind the click under the agents lines (components/sketches/
-   OnItsOwn.tsx). On the paper, no box. Ink, dim and the pencil rule; one red each: the hatched cut, the calls' edges.
+   FreeCheckFirst.tsx; since 3 Nov late, in the home page's Precise Leads entry too) and what runs on its own, behind
+   the click under the agents lines (components/sketches/OnItsOwn.tsx). On the paper, no box. Ink, dim and the pencil rule; one red each: the hatched cut, the calls' edges.
    Every word takes its place from the first paint: the motion is opacity and transform only, so nothing shifts. */
 /* Their replay button, and the home strip's: shown once the figure has played (so never without JavaScript); its place
    is kept either way. */
@@ -575,6 +575,15 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* The free check: one row per stage, its name and grey line, then its bar to scale with the number. Phones stack the bar
    under the name; from 640px it sits beside it. A bar takes up to 75% of its track, so the number always fits. */
 .fc { margin: 8px 0 26px; }
+/* On the home page it sits in the Precise Leads entry, under the points (3 Nov late): a little air above its head, and
+   more under it, so the entry's one tile reads as its own number, not the funnel's last row. Its head steps down there,
+   under the entry's 21px title (review, 3 Nov: at 19px it read as a second title). */
+.entry .fc { margin: 20px 0 34px; }
+.entry .fc-head { font-size: 17px; }
+/* A hyphenated word stays whole in both figures (components/sketches/whole.tsx): never "mail-" / "server" or "do-" /
+   "not-contact". One unbreakable box, so text-wrap: balance weighs it as a word: as a nowrap inline span, balance split
+   the bounce row's line 9 characters against 25 ("after the" / "mail-server check went in", review 3 Nov). */
+.fc .nw, .split .nw { display: inline-block; white-space: nowrap; }
 .fc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 0 16px; }
 .fc-head { margin: 2px 0 0; font-size: 19px; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; }
 .fc-rows { list-style: none; padding: 0; margin: 0; }
@@ -601,7 +610,6 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .split-cols { display: grid; row-gap: 24px; }
 .split-head { margin: 0 0 10px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
 .split-head-person { color: var(--red); }
-.split .nw { white-space: nowrap; }  /* a hyphenated word stays whole: never "do-" / "not-contact" */
 .split-bots { list-style: none; padding: 0; margin: 0; }
 .split-bots li { position: relative; margin: 0 0 9px; padding-left: 18px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13.5px; line-height: 1.5; text-wrap: pretty; }
 .split-bots li::before { content: ""; position: absolute; left: 1px; top: 0.55em; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }

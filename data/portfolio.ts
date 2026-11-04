@@ -228,6 +228,9 @@ export type WorkItem = {
   shot?: { src: string; alt: string; width: number; height: number };
   /** A red margin note beside the card (wide screens) or under it (phones). None since 1 Nov; the quote has its own. */
   note?: string;
+  /** The free check figure (components/sketches/FreeCheckFirst.tsx, words in data/how.ts FREE_CHECK), drawn after the
+      points and before the tiles. */
+  freeCheck?: true;
 };
 
 export const JOBS: WorkItem[] = [
@@ -275,13 +278,17 @@ export const JOBS: WorkItem[] = [
     // own: one email batch, never a find rate (SOURCES.md rows 17 and 18; claims row 82a), "in one batch" beside it.
     // "claude code" joins the stack: the follow-up drafts are his Claude Code agents' (data/how.ts AGENTS), and the round
     // 2 founder's edge sentence never said AI.
-    // 3 Nov (his ask, "you can decide on these"): the bounce result and its control lead the tiles, the outcome every
+    // 3 Nov (his ask, "you can decide on these"): the bounce result and its control led the tiles, the outcome every
     // blind reader asked for that has a public source (SOURCES.md row 31; the /how-i-build bounce story).
-    metrics: [
-      ["2.74% → 0.73%", "bounces on my lists after the mail-server screen; a teammate's lists without it: 2.26% → 2.09%"],
-      ["12,030", "verified emails for 15,514 decision-makers, in one batch"],
-      ["34,044", "companies sorted in four days"],
-    ],
+    // 3 Nov, late (his "whatever makes sense"): the free check figure takes the place of two tiles. 3 of 4 blind readers
+    // called it the most commercial thing on the site (the free check before the AI spend) and said it was buried in a
+    // click on /how-i-build. Moved, not removed: its bounce row has "2.74% (8,649 leads) to 0.73% (2,047 leads)" with the
+    // teammate's "2.26% to 2.09%" beside it and the "after, not because" caveat, and its market row has the 34,044 with
+    // "All of them sorted by the checks below, in four days." (claims rows 79 and 82). What passed keeps the fit check's caveat right beside
+    // it, which is what kept the cheap-check-first card off (data/proof.ts: it read bigger than the Claygent story).
+    // tests/site.test.mjs pins the figure here and the one tile left.
+    freeCheck: true,
+    metrics: [["12,030", "verified emails for 15,514 decision-makers, in one batch"]],
     stack: ["claude code", "python", "typescript", "clay", "smartlead", "n8n"],
   },
   {

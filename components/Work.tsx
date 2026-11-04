@@ -4,6 +4,7 @@ import Link from "next/link";
 import { JOBS, REFERENCE, NOW_LINE, ME, type WorkItem } from "@/data/portfolio";
 import Annotated from "@/components/Annotated";
 import Scorecard from "@/components/Scorecard";
+import FreeCheckFirst from "@/components/sketches/FreeCheckFirst";
 
 /** One entry, on the paper: meta lines, bold title, plain text, then whatever it carries. */
 function Entry({ w }: { w: WorkItem }) {
@@ -25,6 +26,8 @@ function Entry({ w }: { w: WorkItem }) {
       {w.shot && (
         <Image className="shot" src={w.shot.src} alt={w.shot.alt} width={w.shot.width} height={w.shot.height} sizes="280px" />
       )}
+      {/* 3 Nov, late: the free check figure in the Precise Leads entry, where two of its tiles were. */}
+      {w.freeCheck && <FreeCheckFirst />}
       {w.metrics.length > 0 && (
         <dl className="metrics">
           {w.metrics.map(([n, label]) => (

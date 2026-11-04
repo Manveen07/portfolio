@@ -10,6 +10,7 @@ import { abs, mdHref, SITE } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
 import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS, type ProofCard } from "@/data/proof";
 import { proofMarkdown } from "@/lib/md/proof";
+import { freeCheck } from "@/lib/md/how";
 
 // The week and the pilot's drawings left with the pilot (round 3, 2 Nov): lib/md/working.ts. Tender Radar's section and
 // its drawing left the home page in round 6 (2 Nov; components/Proof.tsx says why).
@@ -25,6 +26,9 @@ function entry(w: WorkItem): string {
     out.push(list([`**${s.caught}** caught`, `**${s.missed}** missed`, `**${s.falseAlarms}** false alarms (circled in red)`, `**${s.leftAlone}** left alone`]));
   }
   if (w.shot) out.push(para(image(w.shot.alt, abs(w.shot.src))));
+  // 3 Nov, late: the free check figure, after the points and before the tile, as on the page; its head in bold, so the
+  // tile and the stack stay under the entry's heading.
+  if (w.freeCheck) out.push(...freeCheck("bold"));
   if (w.metrics.length) out.push(list(w.metrics.map(([n, label]) => `**${n}** ${label}`)));
   out.push(para(`built with ${w.stack.join(", ")}`));
   if (w.links) out.push(list(w.links.map((l) => link(l.label, mdHref(l.href)))));

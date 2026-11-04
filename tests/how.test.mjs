@@ -736,7 +736,8 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
     if (r.n) assert.equal(r.value, r.n.toLocaleString("en-US"));
   });
   assert.equal((fig.match(/class="fc-cut"/g) ?? []).length, 1, "not one red cut");
-  assert.match(rows[1], /^<p class="fc-name">Cut by a free mail-server check<\/p>/);
+  // Hyphenated words stay whole when a line wraps (3 Nov late, seen at 1440: "mail-" / "server").
+  assert.match(rows[1], /^<p class="fc-name">Cut by a free <span class="nw">mail-server<\/span> check<\/p>/);
 
   // The numbers are the Clay line's (CLAY_LINE), told as two facts: the cut is 28% of the market, and 24,506 is what
   // went to Claygent (its own count, not what the cut left), so the figure prints no 72%. Never "qualified".
@@ -751,11 +752,15 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
   // the claims table's short form ("none of the 5 niches cleared my full bar until I relabelled borderline companies;
   // then 3 did"). Review (3 Nov, truth): "Not every segment had passed its bar" understated it (none had, before the
   // relabels), and 3 of 4 readers could not decode the old line.
-  assert.equal(F.rows.findIndex((r) => r.note), 3, "the caveat is not beside what passed");
+  // Two rows carry a line under their number (3 Nov, late): the market its "sorted in four days" (the home page's old
+  // 34,044 tile, moved here when this figure took its place there), and what passed its caveat. The market's line says
+  // what sorted them (review, 3 Nov: three of four readers asked "sorted into what?").
+  assert.deepEqual(F.rows.map((r) => r.note !== undefined), [true, false, false, true], "the caveat is not beside what passed");
+  assert.equal(F.rows[0].note, "All of them sorted by the checks below, in four days.");
   assert.ok(claygent.changed.includes("Two ran with one check short"));
   assert.ok(claygent.tested.includes("only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof."));
   assert.ok(LIVE.log.some((e) => e.text.endsWith("It said one segment cleared my bar only after a relabel; three did.")));
-  assert.equal(F.rows[3].note, "No segment cleared my full bar until I relabelled borderline companies; three then did, which I don't count as proof, and two ran with one check short.");
+  assert.equal(F.rows[3].note, "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check.");
   assert.doesNotMatch(F.rows[3].note, /Not every segment/);
 
   // The bounce row: the bounces story's sentence, the teammate's lists beside mine, and its "after, not because".
@@ -775,12 +780,13 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
   assert.ok(bounces.changed.includes(`A teammate's lists, loaded without it, went from ${R.lines[1].split(": ")[1]} over the same weeks.`), "the teammate's line is not the story's");
   assert.ok(bounces.changed.endsWith(R.note.replace("the mail-server check", "this one check")), "the bounce caveat is not the story's");
 
-  // Short blocks, played in reading order, about 9 seconds.
+  // Short blocks, played in reading order, in about 3.6 seconds (3 Nov, late: about 9 until then, and the night's readers
+  // called it slow; the home page's copy plays the same schedule): the last part starts by 3.6 s and rises in 450ms.
   for (const b of [F.head, ...F.rows.flatMap((r) => [r.name, r.sub, r.value, r.note ?? ""]), R.name, R.sub, ...R.lines, R.note]) assert.ok(words(b) <= 30, `over 30 words: ${b}`);
   const d = delays(fig);
-  assert.equal(d.length, 13, "not one delay per bar, number, line and caveat");
+  assert.equal(d.length, 14, "not one delay per bar, number, line and caveat");
   assert.ok(inOrder(d), `delays out of order: ${d}`);
-  assert.ok(Math.max(...d) >= 7 && Math.max(...d) <= 10, `the last part starts at ${Math.max(...d)} s`);
+  assert.ok(Math.max(...d) >= 3 && Math.max(...d) <= 3.6, `the last part starts at ${Math.max(...d)} s`);
 });
 
 test("what runs on its own (3 Nov): its own click under the agents lines, two columns, real lines only, each in the site's words", () => {
@@ -905,7 +911,9 @@ test("the two figures (3 Nov) play once in view and hold their last frame; no Ja
   assert.match(styles, /\.fc-result\{grid-template-rows:auto 1fr\}/);
   assert.match(styles, /\.fc-sub\{[^}]*text-wrap:balance/);
   // Hyphenated words in the split stay whole when a line wraps ("do-" / "not-contact", seen in Edge on 3 Nov).
-  assert.match(styles, /\.split \.nw\{white-space:nowrap\}/);
+  // One rule with the free check's since 3 Nov late (components/sketches/whole.tsx): an inline-block, so text-wrap:
+  // balance weighs the word as one box.
+  assert.match(styles, /\.fc \.nw,\.split \.nw\{(?=[^}]*display:inline-block)(?=[^}]*white-space:nowrap)[^}]*\}/);
   assert.match(section("agents"), /<span class="nw">do-not-contact<\/span>/);
   // Phones: one column; the free check's two columns and the split's only from 640px.
   assert.doesNotMatch(outsideMedia640(styles), /\.split-cols\{[^}]*grid-template-columns/, "the split's two columns apply on phones");

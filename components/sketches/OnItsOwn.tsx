@@ -5,6 +5,7 @@ import { SPLIT } from "@/data/how";
 import { useReveal } from "@/lib/hooks";
 import { secs, replay } from "@/lib/motion";
 import { keep, keepDay } from "@/lib/text";
+import { whole as wholeWords } from "@/components/sketches/whole";
 
 // What runs on its own, and what waits for a person (3 Nov 2026), on /how-i-build behind its own click under the agents
 // lines: option 5 of that day's animation mockups. Two columns from 640px, stacked on phones: what the agents, bots and
@@ -26,10 +27,7 @@ const BOT = S.bots.map((_, i) => 0.2 + 0.3 * i);
 const CALL = S.person.map((_, j) => 2.1 + 0.5 * j);
 
 /** Counts, dates and hyphenated words stay whole when a line wraps (seen 3 Nov at 1440 and 390: "do-" / "not-contact"). */
-function whole(s: string): ReactNode {
-  const parts = keepDay(keep(s)).split(/([\w,.']+(?:-[\w']+)+)/);
-  return parts.map((p, k) => (k % 2 ? <span key={k} className="nw">{p}</span> : p));
-}
+const whole = (s: string): ReactNode => wholeWords(keepDay(keep(s)));
 
 export default function OnItsOwn() {
   const ref = useReveal<HTMLDivElement>();

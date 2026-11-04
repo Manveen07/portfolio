@@ -12,7 +12,7 @@ import { resumeMarkdown } from "@/lib/md/resume";
 import { postMarkdown } from "@/lib/md/posts";
 import { howMarkdown } from "@/lib/md/how";
 import { workingMarkdown } from "@/lib/md/working";
-import { HOW, LIVE, CONTACT, SKILLS, VISUAL, SPLIT, NERD, INBOX, logSummary, shortDate } from "@/data/how";
+import { HOW, LIVE, CONTACT, SKILLS, VISUAL, SPLIT, NERD, INBOX, FREE_CHECK, logSummary, shortDate } from "@/data/how";
 import { PROOF } from "@/data/proof";
 
 const lc = (s: string) => `${s.charAt(0).toLowerCase()}${s.slice(1)}`;
@@ -31,17 +31,27 @@ function intro(title: string): string {
 
 const home = mdHref("/");
 
+/** The free check figure's numbers as sentences, in its order, each caveat beside its number. 3 Nov, late: on the home
+    page the figure takes the place of the bounce tile and the 34,044 tile, so the job's line carries them from here. */
+function freeCheckNumbers(): string {
+  const F = FREE_CHECK;
+  const R = F.result;
+  const rows = F.rows.map((r) => `${r.name} (${r.sub}): ${r.value}.${r.note ? ` ${r.note}` : ""}`);
+  return [`${F.head}.`, ...rows, `${R.name} (${R.sub}): ${R.lines.join("; ")}.`, R.note].join(" ");
+}
+
 /** One line per piece of work: what it is, then its numbers as the page states them. */
 function workLine(w: WorkItem): string {
   const nums = w.scorecard
     ? [`${w.scorecard.caption} ${w.scorecard.caught} caught, ${w.scorecard.missed} missed, ${w.scorecard.falseAlarms} false alarms, ${w.scorecard.leftAlone} left alone`]
     : w.metrics.map(([n, label]) => `${n} ${label}`);
+  const numbers = [w.freeCheck ? freeCheckNumbers() : "", nums.length ? `${nums.join("; ")}.` : ""].filter(Boolean).join(" ");
   const where = [w.where, w.role].filter(Boolean).join(", ");
   // 3 Nov (the AI-friendly audit): the job's points too (the Claude Code agents, the inbox bot's commits), and the
   // reference line under the card: an agent working from this file alone saw only the counts.
   const points = w.points?.length ? ` ${w.points.join(" ")}` : "";
   const reference = w.reference ? ` ${REFERENCE}` : "";
-  return `${link(w.title, home)}: ${where}. ${w.lead ?? w.detail ?? ""}${points}${nums.length ? ` Numbers: ${nums.join("; ")}.` : ""}${reference}`;
+  return `${link(w.title, home)}: ${where}. ${w.lead ?? w.detail ?? ""}${points}${numbers ? ` Numbers: ${numbers}` : ""}${reference}`;
 }
 
 /** /how-i-build's line: the h1, then its sections in page order, read off its markdown copy so a new section shows up

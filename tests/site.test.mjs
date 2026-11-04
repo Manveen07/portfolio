@@ -8,7 +8,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE, FIVE_HABITS, JOBS, NAMESAKE } from "../data/portfolio.ts";
-import { HOW, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS } from "../data/how.ts";
+import { HOW, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS, FREE_CHECK } from "../data/how.ts";
 import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -338,7 +338,7 @@ test("Work runs Precise Leads, Caprae, the reference; no Built on my own", () =>
   assert.doesNotMatch(markup("index.html"), /<p class="group">/, "a group label is back");
 });
 
-test("the Precise Leads entry: meta, title, a lead, short points, three metrics, stack; no note and no link (round 3)", () => {
+test("the Precise Leads entry: meta, title, a lead, short points, the free check, one tile, stack; no note and no link (round 3)", () => {
   // Rewritten 15 Oct from Manveen's own repos (gtm, precise-automator, infra-bot, slack message exporter); claims rows 77 to 81.
   const work = markup("index.html").match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
   const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
@@ -346,7 +346,7 @@ test("the Precise Leads entry: meta, title, a lead, short points, three metrics,
   assert.match(entry, /<p class="small">At Precise Leads<\/p><p class="small">GTM automation engineer · Nov 2025 → now · remote<\/p><h3 class="h3">Outbound pipeline<\/h3>/);
   // 2 Nov (verify loop round 2): the 101-word paragraph (all 4 readers called it a wall) is a lead and five points.
   // Round 3: the old lead ("Finds the companies worth writing to ...", flagged by 2 round 2 readers) is cut, and 34,044
-  // prints once, on its tile.
+  // prints once: on its tile until 3 Nov late, since then in the free check's market row.
   assert.doesNotMatch(entry, /Finds the companies worth writing to/);
   assert.match(
     entry,
@@ -372,11 +372,10 @@ test("the Precise Leads entry: meta, title, a lead, short points, three metrics,
   for (const p of points) assert.ok(p.split(" ").length <= 20, `a long point: ${p}`);
   // Round 3: the AI-judge tile is out (claims row 81: all 4 round 2 readers said its caveat cancels it). One email batch
   // instead, its caveat beside it, never a find rate (SOURCES.md rows 17 and 18; claims row 82a).
-  assert.match(entry, /<dt>12,030<\/dt><dd>verified emails for 15,514 decision-makers, in one batch<\/dd>/);
+  // 3 Nov, late: that tile is the one left; the free check figure took the place of the other two (its own test below).
+  assert.match(entry, /<dl class="metrics"><div><dt>12,030<\/dt><dd>verified emails for 15,514 decision-makers, in one batch<\/dd><\/div><\/dl>/);
+  assert.equal(count(entry, "<dt>"), 1, "not one tile");
   assert.doesNotMatch(entry, /contradicted claims|AI judge|find rate/);
-  assert.match(entry, /<dt>34,044<\/dt><dd>companies sorted in four days<\/dd>/);
-  // 3 Nov: the bounce result leads, with the teammate's lists as the control beside it.
-  assert.match(entry, /<dl class="metrics"><div><dt>2\.74% → 0\.73%<\/dt><dd>bounces on my lists after the mail-server screen; a teammate(?:'|&#x27;)s lists without it: 2\.26% → 2\.09%<\/dd>/);
   // The day job's AI is named (the round 2 founder's edge sentence never said AI).
   assert.match(entry, /<p class="stack">built with (?:<!-- -->)?claude code, python, typescript, clay, smartlead, n8n<\/p>/);
   assert.doesNotMatch(entry, /Lead research, automated|watches Slack communities as messages come in/);
@@ -386,6 +385,113 @@ test("the Precise Leads entry: meta, title, a lead, short points, three metrics,
   assert.doesNotMatch(entry, /<a /, "the Precise Leads entry has a link");
   // No note: it is not inside an annotated block.
   assert.match(work, /<h2 class="kicker">Work<\/h2><article class="entry"><p class="small">At Precise Leads/);
+});
+
+// ── 3 Nov, late (his "whatever makes sense"): the free check figure from /how-i-build takes the place of two tiles in
+// the Precise Leads entry. 3 of 4 blind readers called it the most commercial thing on the site (the free check before
+// the AI spend) and said it was buried in a click. Moved, never removed: the bounce tile's numbers and the teammate's
+// control are its bounce row, the 34,044 tile's count and "sorted in four days" its market row (claims rows 79 and 82:
+// one run sorted all of them, the free check and Claygent both). What passed keeps the fit check's caveat right beside
+// it: data/proof.ts keeps the cheap-check-first card off because it "reads bigger than the Claygent story". ──
+test("home: the free check sits in the Precise Leads entry where two tiles were, their facts kept, each caveat beside its number", () => {
+  const F = FREE_CHECK;
+  const html = markup("index.html");
+  const work = html.match(/<section[^>]*id="work"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const entry = work.match(/<article class="entry"><p class="small">At Precise Leads<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  const caprae = work.match(/<article class="entry"><p class="small">At Caprae Capital Partners<\/p>[\s\S]*?<\/article>/)?.[0] ?? "";
+  const open = `<figure id="${F.id}" class="fc" aria-labelledby="${F.id}-head">`;
+  assert.equal(count(html, open), 1, "not one free check on the home page");
+  assert.ok(!caprae.includes('class="fc"'), "the Caprae entry has the figure");
+  // In the entry: after the points, before the one tile left and the stack.
+  const at = [entry.indexOf("</ul>"), entry.indexOf(open), entry.indexOf('<dl class="metrics">'), entry.indexOf('<p class="stack">')];
+  assert.ok(at.every((i) => i >= 0) && at.every((x, i) => i === 0 || x > at[i - 1]), `the entry is out of order: ${at}`);
+  const fig = entry.slice(at[1], entry.indexOf("</figure>", at[1]) + "</figure>".length);
+  assert.ok(
+    decodeText(fig).startsWith(`${open}<div class="fc-top"><h4 id="${F.id}-head" class="fc-head">${F.head}</h4><button type="button" class="replay">${F.replay}</button></div><ol class="fc-rows" role="list">`),
+    "the figure's head is not the /how-i-build figure's",
+  );
+
+  // The two tiles are gone, and every fact on them is in the figure, in the server HTML.
+  assert.doesNotMatch(entry, /<dt>2\.74% → 0\.73%<\/dt>|<dt>34,044<\/dt>|companies sorted in four days|mail-server screen/);
+  const blocks = (part) => [...part.matchAll(/<p class="(fc-[a-z]+)"[^>]*>([\s\S]*?)<\/p>/g)].map((m) => [m[1], plain(m[2]).trim()]);
+  const rows = [...fig.matchAll(/<li class="fc-row[^"]*">([\s\S]*?)<\/li>/g)].map((m) => blocks(m[1]));
+  assert.equal(rows.length, 4);
+  // The 34,044 tile: the market row's count, and its "sorted in four days" right under it, saying what sorted them
+  // (review, 3 Nov: three of four readers asked "sorted into what?").
+  assert.deepEqual(rows[0], [["fc-name", "Companies in the market"], ["fc-sub", "mapped with Clay's search, 0 data credits"], ["fc-val", "34,044"], ["fc-note", "All of them sorted by the checks below, in four days."]]);
+  assert.equal(count(text("index.html"), "four days"), 1, "\"four days\" is not on the home page once");
+  // What passed, with the fit check's caveat right after its number (the reason the card stays off).
+  assert.deepEqual(rows[3], [
+    ["fc-name", "Passed"],
+    ["fc-sub", "across five segments"],
+    ["fc-val", "16,728"],
+    ["fc-note", "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check."],
+  ]);
+  // The bounce tile: the drop on his lists, the teammate's lists beside it, and "after, not because".
+  assert.deepEqual(blocks(fig.slice(fig.indexOf('<div class="fc-result">'))), [
+    ["fc-name", "Bounces on all the lists I built"],
+    ["fc-sub", "after the mail-server check went in"],
+    ["fc-line", "2.74% (8,649 leads) to 0.73% (2,047 leads)"],
+    ["fc-line", "a teammate's lists, loaded without it: 2.26% to 2.09%"],
+    ["fc-note", "Not all of that drop is the mail-server check, so I say after, not because."],
+  ]);
+  assert.equal(count(fig, 'class="fc-cut"'), 1, "not one red cut");
+  assert.doesNotMatch(plain(fig), /\b72%|24,492|qualified/i);
+  // Seen at 1440 (3 Nov late): "after the mail-" / "server check went in". Hyphenated words stay whole.
+  assert.match(fig, /<p class="fc-sub">after the <span class="nw">mail-server<\/span> check went in<\/p>/);
+  // Review (3 Nov, later): as a nowrap inline span, text-wrap: balance split that line "after the" / "mail-server check
+  // went in"; as one inline-block box it wraps evenly. One rule for both figures (components/sketches/whole.tsx).
+  assert.match(css(), /\.fc \.nw,\.split \.nw\{(?=[^}]*display:inline-block)(?=[^}]*white-space:nowrap)[^}]*\}/);
+  // In the entry: air above the head and under the figure (the one tile is not its last row), and a head that steps
+  // down under the entry's title.
+  assert.match(css(), /\.entry \.fc\{margin:20px 0 34px\}/);
+  assert.match(css(), /\.entry \.fc-head\{font-size:17px\}/);
+
+  // Played in reading order, done in about 3.6 seconds (the night's readers called its 9 seconds slow, and three of
+  // four still waited on it at 4): the last part starts by 3.6 s and rises in 450ms, and the Passed caveat gets half a
+  // second before the bounce row moves (review, 3 Nov: it had 0.3 s).
+  const d = [...fig.matchAll(/--at:([\d.]+)s/g)].map((m) => Number(m[1]));
+  assert.equal(d.length, 14, "not one delay per bar, number, line and caveat");
+  assert.ok(d.every((x, i) => i === 0 || x >= d[i - 1]), `delays out of order: ${d}`);
+  assert.ok(Math.max(...d) >= 3 && Math.max(...d) <= 3.6, `the last part starts at ${Math.max(...d)} s`);
+  // d[10] is the Passed caveat, d[11] the bounce row's first line (DOM order).
+  assert.ok(d[11] - d[10] >= 0.49, `the bounce row moves ${(d[11] - d[10]).toFixed(2)} s after the Passed caveat starts`);
+
+  // The markdown copy prints the figure where the page draws it: after the points, before the tile. Its head is bold,
+  // not a heading (review, 3 Nov): as ##### it filed the entry's tile and stack under the funnel for an agent that
+  // splits the file by headings.
+  const md = read(".next/server/app/index.md.body");
+  const mdAt = [
+    "#### Outbound pipeline\n",
+    `- ${JOBS[0].points.at(-1)}\n`,
+    `**${F.head}**\n`,
+    "1. **Companies in the market** (mapped with Clay's search, 0 data credits): 34,044. All of them sorted by the checks below, in four days.\n",
+    `4. **Passed** (across five segments): 16,728. ${F.rows[3].note}`,
+    "**Bounces on all the lists I built** (after the mail-server check went in): 2.74% (8,649 leads) to 0.73% (2,047 leads); a teammate's lists, loaded without it: 2.26% to 2.09%. Not all of that drop is the mail-server check, so I say after, not because.",
+    "- **12,030** verified emails for 15,514 decision-makers, in one batch\n",
+    "built with claude code",
+    "#### Resume screening, automated\n",
+  ].map((s) => md.indexOf(s));
+  assert.ok(mdAt.every((i) => i >= 0) && mdAt.every((x, i) => i === 0 || x > mdAt[i - 1]), `index.md is not in page order: ${mdAt}`);
+  assert.doesNotMatch(md, /\*\*2\.74% → 0\.73%\*\*|\*\*34,044\*\* companies sorted/, "an old tile is back in index.md");
+  assert.ok(!md.includes(`##### ${F.head}`), "index.md prints the figure's head as a heading");
+
+  // llms-full.txt holds index.md's figure the same way.
+  const full = read(".next/server/app/llms-full.txt.body");
+  const fullAt = [`**${F.head}**\n`, "1. **Companies in the market** (mapped with Clay's search, 0 data credits): 34,044. All of them sorted by the checks below, in four days.\n", "- **12,030** verified emails"].map((s) => full.indexOf(s));
+  assert.ok(fullAt.every((i) => i >= 0) && fullAt.every((x, i) => i === 0 || x > fullAt[i - 1]), `llms-full.txt lacks the home figure: ${fullAt}`);
+  // llms.txt's job line still carries the bounces with the control, and the 34,044 with its four days.
+  const job = read(".next/server/app/llms.txt.body").split("\n").find((l) => l.startsWith("- [Outbound pipeline]")) ?? "";
+  const nums = job.slice(job.indexOf(" Numbers: "));
+  assert.ok(job.includes(" Numbers: "), "the job line has no numbers");
+  for (const s of [
+    "Companies in the market (mapped with Clay's search, 0 data credits): 34,044. All of them sorted by the checks below, in four days.",
+    `Passed (across five segments): 16,728. ${F.rows[3].note}`,
+    "2.74% (8,649 leads) to 0.73% (2,047 leads); a teammate's lists, loaded without it: 2.26% to 2.09%. Not all of that drop is the mail-server check, so I say after, not because.",
+    "12,030 verified emails for 15,514 decision-makers, in one batch.",
+  ]) {
+    assert.ok(nums.includes(s), `the job line's numbers lack: ${s.slice(0, 60)}`);
+  }
 });
 
 test("the Caprae card has the company line, then the role line, and no card gets a role it doesn't have", () => {

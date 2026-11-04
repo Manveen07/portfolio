@@ -426,6 +426,14 @@ export const NERD = {
 // every segment had passed its bar" understated it, and 3 of 4 readers could not decode it); the bounces' is their
 // story's "so I say after, not because", naming the check. The mockup's "195 companies I labelled" had no source and is
 // out.
+// 3 Nov, late (his "whatever makes sense"): the figure also sits on the home page, in the Precise Leads entry, where it
+// takes the place of two tiles ("2.74% → 0.73%" with the teammate's control, and "34,044 / companies sorted in four
+// days"); the bounce row carries the first, and the market row now carries the second's "sorted in four days" (claims
+// rows 79 and 82: the one run, 6 to 9 Oct, that sorted all 34,044, the free check and Claygent both). It says the
+// sorting took four days, never the people or the emails, and never the bounces, which cover every list he built.
+// Review of the home change (3 Nov, later): three of four blind readers asked "sorted into what?" or "sorted how?" of
+// "All of them sorted in four days.", so the line names what sorted them: the checks below it (the pipeline doc's
+// stages 1 and 3, the free mail-server check and the Claygent fit check, whose undecided rows are re-read).
 // `n` is drawn to scale of the first row's; `cut` is a percent of it, hatched in red, the figure's one red mark.
 export type FunnelRow = { name: string; sub: string; value: string; n?: number; cut?: number; note?: string };
 
@@ -439,7 +447,7 @@ export const FREE_CHECK: {
   id: "free-check-first",
   head: "On one market, I ran the free check before the AI spend",
   rows: [
-    { name: "Companies in the market", sub: "mapped with Clay's search, 0 data credits", value: "34,044", n: 34044 },
+    { name: "Companies in the market", sub: "mapped with Clay's search, 0 data credits", value: "34,044", n: 34044, note: "All of them sorted by the checks below, in four days." },
     { name: "Cut by a free mail-server check", sub: "before a single credit was spent", value: "28%", cut: 28 },
     { name: "Checked by Claygent", sub: "about 0.18 credits each", value: "24,506", n: 24506 },
     {
@@ -447,7 +455,7 @@ export const FREE_CHECK: {
       sub: "across five segments",
       value: "16,728",
       n: 16728,
-      note: "No segment cleared my full bar until I relabelled borderline companies; three then did, which I don't count as proof, and two ran with one check short.",
+      note: "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check.",
     },
   ],
   result: {

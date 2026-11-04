@@ -41,13 +41,16 @@ function onItsOwn(): string[] {
 }
 
 /** components/sketches/FreeCheckFirst.tsx (3 Nov): the funnel under Clay in depth, each row's name, line and number, the
-    red cut written out, each caveat beside its number, then the bounce row. */
-function freeCheck(): string[] {
+    red cut written out, each caveat beside its number, then the bounce row. Since 3 Nov late, lib/md/home.ts prints it
+    in the Precise Leads entry too, where the page draws it. There its head is bold, not a heading (review, 3 Nov: as
+    ##### it put the entry's tile and stack under the funnel for an agent that splits the file by headings; on the page
+    the head sits inside its figure). */
+export function freeCheck(head: "heading" | "bold" = "heading"): string[] {
   const F = FREE_CHECK;
   const cut = F.rows.find((r) => r.cut);
   const R = F.result;
   return [
-    `##### ${F.head}`,
+    head === "bold" ? para(`**${F.head}**`) : `##### ${F.head}`,
     para(`Drawn as bars, each to scale of the first row's ${F.rows[0].value}${cut ? `; the ${cut.value} cut is hatched in red` : ""}.`),
     F.rows.map((r, i) => `${i + 1}. **${r.name}** (${r.sub}): ${r.value}${r.note ? `. ${r.note}` : ""}`).join("\n"),
     para(`**${R.name}** (${R.sub}): ${R.lines.join("; ")}. ${R.note}`),
