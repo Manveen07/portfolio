@@ -63,6 +63,9 @@ export const HERO = {
     "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
     // 3 Nov evening, his yes: four of four blind readers flagged "So now I build that missing piece too." as
     // AI-written; the missing piece is the measuring the first block names, so it says what it is.
+    // 4 Nov: a longer rewrite ("So these days I build the checks along with the automation. Five examples are just
+    // below.") was flagged by 4 of 4 readers too and pushed the link and hours line off a phone's first screen, so
+    // this line stays until he words it himself or cuts it.
     "So now I build the checks too.",
   ],
 } as const;
@@ -107,8 +110,10 @@ export type HabitStep = {
 
 export const FIVE_HABITS: { id: string; eyebrow: string; head: string; steps: HabitStep[]; notes: string[]; replay: string } = {
   id: "five-habits",
-  eyebrow: "how I work on outbound",
-  head: "Five things I do, and a time I did each",
+  // 4 Nov (his yes): 4 of 4 readers flagged "Five things I do, and a time I did each"; the heading says it plainly
+  // and the eyebrow, which said the same, is empty (the component skips it).
+  eyebrow: "",
+  head: "How I work on outbound",
   steps: [
     {
       name: "build it in code",

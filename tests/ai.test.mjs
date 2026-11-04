@@ -571,7 +571,7 @@ test("llms.txt's /how-i-build line names its sections in page order, read off th
   // Second in the list, after the home page: it is the page for hiring managers.
   assert.match(part(txt, "Pages"), /^- \[Home page\][^\n]*\n- \[How I build GTM systems\]/);
   // The home page's line names the strip that sits under its hero since 3 Nov.
-  assert.match(part(txt, "Pages"), /what I build and what I measured, five things I do, and a time I did each, how I check my AI/);
+  assert.match(part(txt, "Pages"), /what I build and what I measured, how I work on outbound, how I check my AI/);
 });
 
 test("llms.txt's Projects and work: the jobs whole, the held list with its caveat, then the repos in Check it yourself's words", () => {

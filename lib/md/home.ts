@@ -43,7 +43,7 @@ function fiveHabits(): string[] {
   const H = FIVE_HABITS;
   const lines = (s: (typeof H.steps)[number]) =>
     s.lines.map((l, k) => (s.stamp?.line === k ? `${l} ${s.stamp.word} (stamped in red)` : l)).join(" · ");
-  return [para(`*${H.eyebrow}*`), `### ${H.head}`, H.steps.map((s, i) => `${i + 1}. **${s.name}** · ${lines(s)}`).join("\n"), ...H.notes.map(para)];
+  return [...(H.eyebrow ? [para(`*${H.eyebrow}*`)] : []), `### ${H.head}`, H.steps.map((s, i) => `${i + 1}. **${s.name}** · ${lines(s)}`).join("\n"), ...H.notes.map(para)];
 }
 
 /** components/Writing.tsx: the three newest posts, titles only (round 5, 2 Nov), and the way to the rest. */

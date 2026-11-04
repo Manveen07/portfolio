@@ -671,11 +671,11 @@ test("five things I do: at the end of the hero, every step and its example in th
   const hours = hero.indexOf("I can work US or UK hours");
   assert.ok(so > 0 && so < link && link < hours && hours < at, `the strip is not after his lines, the link down and the hours: ${[so, link, hours, at]}`);
   // 3 Nov, four of four blind readers: "Five habits, each with a real example" read as AI-written; "as an engineer" too.
-  assert.equal(H.eyebrow, "how I work on outbound");
-  assert.equal(H.head, "Five things I do, and a time I did each");
+  assert.equal(H.eyebrow, "");
+  assert.equal(H.head, "How I work on outbound");
   assert.match(
     fig,
-    new RegExp(`^<figure id="${H.id}" class="loop" aria-labelledby="${H.id}-head"><div class="loop-top"><div><p class="loop-eyebrow">${H.eyebrow}</p><h2 id="${H.id}-head" class="loop-head">${H.head}</h2></div><button type="button" class="replay">${H.replay}</button></div><ol class="loop-steps" role="list">`),
+    new RegExp(`^<figure id="${H.id}" class="loop" aria-labelledby="${H.id}-head"><div class="loop-top"><div><h2 id="${H.id}-head" class="loop-head">${H.head}</h2></div><button type="button" class="replay">${H.replay}</button></div><ol class="loop-steps" role="list">`),
   );
   // Step 5 is an action like the other four: "a mistake becomes a check" was a habit told as a rule (retired 2 Nov).
   assert.deepEqual(H.steps.map((s) => s.name), ["build it in code", "check a sample against my bar", "replay old data before switching", "ship, then watch the runs", "turn a mistake into a check"]);
@@ -699,7 +699,7 @@ test("five things I do: at the end of the hero, every step and its example in th
   assert.deepEqual([...cap.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map((m) => plain(m[1]).trim()), H.notes);
   assert.ok(cap.includes("rubric\u00a0· neither") && !/ ·/.test(cap), "a caption separator can start a line");
   // Short blocks: none over 30 words.
-  for (const b of [H.eyebrow, H.head, ...H.steps.flatMap((s) => [s.name, ...s.lines]), ...H.notes]) assert.ok(b.split(" ").length <= 30, `over 30 words: ${b}`);
+  for (const b of [H.head, ...H.steps.flatMap((s) => [s.name, ...s.lines]), ...H.notes]) assert.ok(b.split(" ").length <= 30, `over 30 words: ${b}`);
   // It plays in reading order and lasts about 3.5 seconds: every delay, in page order, is at or after the one before,
   // so the caption's caveats come after every step they point at (all four readers saw them before their steps).
   const delays = [...fig.matchAll(/--(?:dot|at):([\d.]+)s/g)].map((m) => +m[1]);
@@ -960,7 +960,7 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   assert.deepEqual(h2, [
     // 3 Nov: the strip at the end of the hero (his pick of the animation mockups, option 2) is a sub-part of the hero, so
     // its heading is an h2 under the h1, before the first section's kicker. Not a kicker: it stays in the column.
-    "Five things I do, and a time I did each",
+    "How I work on outbound",
     "How I check my AI",
     "Work",
     "AI checks on my own projects",

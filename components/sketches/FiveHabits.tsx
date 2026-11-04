@@ -55,7 +55,7 @@ export default function FiveHabits() {
     <figure ref={ref} id={H.id} className="loop" aria-labelledby={`${H.id}-head`}>
       <div className="loop-top">
         <div>
-          <p className="loop-eyebrow">{H.eyebrow}</p>
+          {H.eyebrow && <p className="loop-eyebrow">{H.eyebrow}</p>}
           <h2 id={`${H.id}-head`} className="loop-head">
             {H.head}
           </h2>
