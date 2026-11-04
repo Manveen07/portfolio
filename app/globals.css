@@ -105,6 +105,15 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
    of the page, not a framed form photo. In colour, a little softened so the pink flowers don't fight the
    red pen. 176px is as large as the 264px-wide file stays sharp. */
 .photo { display: block; width: 176px; height: auto; margin: 0 0 22px; filter: saturate(0.8); mix-blend-mode: multiply; transform: rotate(-1.5deg); }
+/* 4 Nov: on phones the home hero's gaps are tighter, so the link and the hours line stay in a 390x844 first screen
+   with his longer second line. Home only (the hero that is neither /how-i-build nor a post); the photo keeps its size. */
+@media (max-width: 719px) {
+  .hero:not(.how):not(.post) { padding-top: 14px; }
+  .hero:not(.how):not(.post) .photo { margin-bottom: 14px; }
+  .hero:not(.how):not(.post) .hero-head { margin-bottom: 12px; }
+  .hero:not(.how):not(.post) > .body { margin-bottom: 8px; }
+  .hero:not(.how):not(.post) .hero-links { margin: 2px 0 8px; }
+}
 @media (min-width: 720px) {
   .hero-head { display: grid; grid-template-columns: minmax(0, 1fr) 176px; grid-template-rows: auto 1fr; column-gap: 36px; align-items: start; }
   .photo { grid-column: 2; grid-row: 1 / span 2; margin: 0; }
