@@ -65,8 +65,8 @@ export const HERO = {
     // AI-written; the missing piece is the measuring the first block names, so it says what it is.
     // 4 Nov: a longer rewrite ("So these days I build the checks along with the automation. Five examples are just
     // below.") was flagged by 4 of 4 readers too and pushed the link and hours line off a phone's first screen, so
-    // this line stays until he words it himself or cuts it.
-    "So now I build the checks too.",
+    // 4 Nov, his words: "so now i build automated checks so we test it like software".
+    "So now I build automated checks and test it like software.",
   ],
 } as const;
 

@@ -200,7 +200,7 @@ test("hero leads with the AI edge and his 15 Oct story, his week (with its red n
   // his ask (was "So now I build the thing, and the test for the thing.").
   assert.deepEqual(HERO.how, [
     "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right.",
-    "So now I build the checks too.",
+    "So now I build automated checks and test it like software.",
   ]);
   assert.ok(t.includes(HERO.how.join(" ")), "the hero's two blocks are not on the page, in order");
   assert.doesNotMatch(t, /Of my 82 steps where/, "the round 4 line is back");
@@ -425,7 +425,7 @@ test("home: the free check sits in the Precise Leads entry where two tiles were,
     ["fc-name", "Passed"],
     ["fc-sub", "across five segments"],
     ["fc-val", "16,728"],
-    ["fc-note", "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check."],
+    ["fc-note", "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run."],
   ]);
   // The bounce tile: the drop on his lists, the teammate's lists beside it, and "after, not because".
   assert.deepEqual(blocks(fig.slice(fig.indexOf('<div class="fc-result">'))), [
@@ -570,7 +570,7 @@ test("the hero is the h1, two short paragraphs, the link down and the hours; /wo
   assert.ok(hero.indexOf("</h1>") < story && story < link && link < hours, "the hero is not h1, sentence, link, hours");
   // Round 6 (2 Nov): his story's last sentence is its own paragraph, after the first and before the link (the 82-step
   // line held this place in rounds 4 and 5; it is on /how-i-build only now).
-  const so = hero.indexOf("So now I build the checks too.");
+  const so = hero.indexOf("So now I build automated checks and test it like software.");
   assert.ok(story < so && so < link, "his 'So now' line is not between the story and the link");
   assert.equal(count(hero, '<p class="body">'), 2, "the hero does not have two paragraphs");
   assert.ok(!hero.includes('class="sketch') && !hero.includes('class="lede"'), "the week or its lede is still in the hero");
@@ -666,7 +666,7 @@ test("five things I do: at the end of the hero, every step and its example in th
   assert.ok(at > 0, "no five habits strip in the hero");
   // Code review (3 Nov): between his lines and the link, the strip pushed the link down and the hours line below the
   // first screen of a 1440x900 laptop, against HOME_BAND's approved rule (the first screen ends on the link).
-  const so = hero.indexOf("So now I build the checks too.");
+  const so = hero.indexOf("So now I build automated checks and test it like software.");
   const link = hero.indexOf('class="links hero-links"');
   const hours = hero.indexOf("I can work US or UK hours");
   assert.ok(so > 0 && so < link && link < hours && hours < at, `the strip is not after his lines, the link down and the hours: ${[so, link, hours, at]}`);

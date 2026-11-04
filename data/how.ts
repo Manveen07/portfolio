@@ -253,7 +253,7 @@ export const FAILURES: { stories: Story[] } = {
       tested:
         "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better), but it said no to one more I'd marked good, a borderline one. Then 30 more companies, every one labelled by me: it kept all 18 good ones and matched my labels on 27 of the 29 it decided. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. The bar I'd written down: no good company thrown out, 80% agreement with the labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote. This segment, like two others, only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof.",
       changed:
-        "Then the big run, across five segments: it checked 24,506 companies, and 16,728 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Making it stop is the next fix. The same check ran on new companies the lead finder brought in. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix to the shared file reaches every segment.",
+        "Then the big run, across five segments: it checked 24,506 companies, and 16,728 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Since 3 Nov it does in this market: a segment that misses its bar gets no Clay run and no emails until it passes on fresh labels. The same check ran on new companies the lead finder brought in. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix to the shared file reaches every segment.",
     },
     {
       // SOURCES.md rows 11, 12, 21, 22 and 31: 505,461 of the agency's sends; Mimecast 5.1%, Barracuda 2.4%, Google 0.5%
@@ -455,7 +455,7 @@ export const FREE_CHECK: {
       sub: "across five segments",
       value: "16,728",
       n: 16728,
-      note: "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check.",
+      note: "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run.",
     },
   ],
   result: {

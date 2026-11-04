@@ -760,7 +760,7 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
   assert.ok(claygent.changed.includes("Two ran with one check short"));
   assert.ok(claygent.tested.includes("only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof."));
   assert.ok(LIVE.log.some((e) => e.text.endsWith("It said one segment cleared my bar only after a relabel; three did.")));
-  assert.equal(F.rows[3].note, "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two never cleared it and ran, because the run didn't stop on a failed check.");
+  assert.equal(F.rows[3].note, "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run.");
   assert.doesNotMatch(F.rows[3].note, /Not every segment/);
 
   // The bounce row: the bounces story's sentence, the teammate's lists beside mine, and its "after, not because".

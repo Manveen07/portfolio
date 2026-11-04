@@ -22,7 +22,7 @@ export const LLMS_INTRO = {
     "Manveen Singh, GTM engineer, Delhi, India. I build AI agents for outbound and measure what they get wrong.",
   /** Paragraphs under the summary. */
   details: [
-    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right. So now I build the checks too.",
+    "I spent a year automating lead-finding for an outbound agency, got good at it, and noticed the same missing piece everywhere: almost nobody measures whether the automation is right. So now I build automated checks and test it like software.",
     "Delhi, India. I can work US or UK hours.",
   ],
   /** How to read this site. Draft, written by Claude on 22 Oct: rewrite it in your own words. */
