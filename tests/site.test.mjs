@@ -1858,3 +1858,32 @@ test("a post's code label and table head are 12px or more, and the namesake pick
   assert.doesNotMatch(prose, /fontSize: ?(?:[0-9]|1[01])(?:\.\d+)?\b/, "a post's code label or table head is under 12px again");
   assert.match(css(), /\.ns-pick\{[^}]*min-height:44px/, "the namesake picks are under 44px tall again");
 });
+
+// ── 7 Nov, the follow-ups (his "i approve all changes go ahead merge it"): the replay buttons were 32px to a thumb, and on
+// the narrowest phones the address, one post's exhibit line and /how-i-build's bounce chart ran past the column and
+// pushed the page sideways. ──
+test("a replay button takes a 44px tap, and the one under a summary leaves the summary its taps", () => {
+  const styles = css();
+  assert.match(styles, /(?<![\w-])\.replay\{[^}]*position:relative/, "the replay buttons lost the place their tap strip hangs from");
+  // 7px from inside the 1px border: 6px past it each way, 32 + 12 = 44.
+  assert.match(styles, /(?<![\w-])\.replay::?after\{[^}]*inset:-7px 0[;}]/, "the replay buttons are 32px to a thumb again");
+  // /how-i-build: the split figure's button sits right under "What runs on its own"; its strip goes below only, and the
+  // summary sits above the button so it keeps the pixel row they share.
+  assert.match(styles, /\.split-top \.replay::?after\{[^}]*inset:0 0 -13px/, "the split figure's tap strip reaches into the summary above it again");
+  assert.match(styles, /#on-its-own>summary\{[^}]*z-index:1/, "the split figure's button takes the summary's last pixel row again");
+  // "run the gate" beside the post's sticky column: on paper, so its text keeps its crisp edges on Windows.
+  assert.match(styles, /\.ns-run\{[^}]*background:var\(--paper\)/, "the run-the-gate button lost its paper background");
+});
+
+test("on the narrowest phones the email link, the exhibit lines and the bounce chart stay inside the column", () => {
+  const styles = css();
+  // (100vw - 40px) / 12.6, as the minifier writes it: 22px at 320, 19px at 280, 24px again from 342px.
+  assert.match(styles, /@media \(max-width:341px\)\{\.mail\{[^}]*font-size:calc\(7\.9365\d*vw - 3\.174\d*px\)/, "the address runs off a narrow phone again");
+  // 4.5vw meets 15px at 332px; the red notes keep their 15 : 13.5 ratio to the exhibit, never under 12px.
+  assert.match(styles, /@media \(max-width:332px\)\{\.exhibit\{[^}]*font-size:4\.5vw[^}]*\}\.scribble\{[^}]*font-size:max\(12px,4\.05vw\)/, "the exhibit lines (or their notes) no longer shrink on a narrow phone");
+  // The query must come after the base .scribble rule (same weight, so the later one wins), or the notes stay 13.5px.
+  const baseScribble = styles.search(/\.scribble\{[^}]*font-size:13\.5px/);
+  assert.ok(baseScribble >= 0 && styles.indexOf("@media (max-width:332px)") > baseScribble, "the base .scribble rule comes after the narrow-phone one and overrides it");
+  // /how-i-build's bounce chart: under 360px each value sits under its bar instead of running past the column.
+  assert.match(styles, /@media \(max-width:359px\)\{\.btrack\{[^}]*flex-wrap:wrap[^}]*\}\.bval\{[^}]*flex-basis:100%/, "the bounce chart's values run past the column on a narrow phone again");
+});

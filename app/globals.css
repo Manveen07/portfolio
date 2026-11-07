@@ -298,6 +298,14 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* The red scribble: under the exhibit on a phone (pointing up), beside it from 640px (pointing left). */
 .scribble { display: block; width: fit-content; margin-top: 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13.5px; line-height: 1.4; color: var(--red); transform: rotate(-2deg); }
 .arr-left { display: none; }
+/* 7 Nov (Hallmark's check, his yes): an exhibit never wraps, and "GET /confirm → changes nothing" is 281px at 15px:
+   under about 321px it ran past the column, and under 301px the page scrolled sideways. There the exhibits shrink with
+   the screen (about 14.4px at 320, 12.6px at 280), from 332px, where 4.5vw meets 15px, so the size never jumps. Their
+   red notes shrink in step (never under 12px), so a note never outweighs the line it marks. After .scribble, so it wins. */
+@media (max-width: 332px) {
+  .exhibit { font-size: 4.5vw; }
+  .scribble { font-size: max(12px, 4.05vw); }
+}
 .pin-text { margin: 0 0 8px; font-size: 17px; line-height: 1.5; }
 .pin-text:last-child { margin-bottom: 0; }
 @media (min-width: 640px) {
@@ -318,6 +326,12 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .ask { margin-top: 28px; }
 .mail-line { margin: 4px 0 10px; }
 .mail { font-size: 24px; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+/* 7 Nov (Hallmark's check, his yes): the address is one unbroken word, 296px at 24px: under about 336px it ran past the
+   column, and under 316px the page scrolled sideways. There it shrinks with the screen (about 22px at 320, 19px at
+   280) and stays whole. The rule starts at 341px, where the formula meets 24px, so the size never jumps. */
+@media (max-width: 341px) {
+  .mail { font-size: calc((100vw - 40px) / 12.6); }
+}
 
 /* ── Writing ── */
 .box { border: 1px solid var(--rule); background: var(--wash); }
@@ -387,6 +401,13 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .bar { display: block; flex: none; width: calc(var(--w) * 70%); height: 12px; border-radius: 0 4px 4px 0; background: var(--ink); }
 .bar.red { background: var(--red); }
 .bval { font-size: 13.5px; white-space: nowrap; }
+/* 7 Nov (Hallmark's check, his yes): under 360px the longest value, "5.1% · skipped", has no room beside its bar: it ran
+   past the column, and on the narrowest phones it pushed the page sideways. There every value sits under its own bar,
+   the bars still to scale, a little off the axis line. */
+@media (max-width: 359px) {
+  .btrack { flex-wrap: wrap; row-gap: 2px; }
+  .bval { flex-basis: 100%; padding-left: 5px; }
+}
 .bsub { display: block; margin: 14px 0 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
 .bafter { display: block; margin-top: 4px; font-size: 14px; color: var(--dim); }
 .linkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px 24px; list-style: none; padding: 0; margin: 4px 0 14px; }
@@ -590,6 +611,17 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 }
 .fc.in .replay, .split.in .replay, .loop.in .replay { visibility: visible; }
 .replay:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+/* 7 Nov (Hallmark's check, his yes): the button stays 32px to look at, but a thumb gets 44px: an invisible strip 6px
+   past its border above and below takes the tap (7px from inside the 1px border). On /how-i-build the one under "What
+   runs on its own" sits right against that summary, so its 12px all go below, and the summary keeps its taps. */
+.replay { position: relative; }
+.replay::after { content: ""; position: absolute; inset: -7px 0; }
+.split-top .replay::after { inset: 0 0 -13px; }
+/* The positioned button comes later in the page than that summary, so it would win the pixel row they share: the summary
+   sits above it. And "run the gate" sits beside the post's sticky side column, where a positioned button with no
+   background gets its own layer and loses its crisp text on Windows; on paper it keeps it. */
+#on-its-own > summary { z-index: 1; }
+.ns-run { background: var(--paper); }
 /* The free check: one row per stage, its name and grey line, then its bar to scale with the number. Phones stack the bar
    under the name; from 640px it sits beside it. A bar takes up to 75% of its track, so the number always fits. */
 .fc { margin: 8px 0 26px; }

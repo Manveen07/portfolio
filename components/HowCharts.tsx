@@ -38,7 +38,8 @@ export function ClaygentUnits() {
 }
 
 // --w is the bar's share of the longest (5.1%, the same scale for both groups, so the two read together); CSS turns it
-// into a width (70% of the track, 52% on a phone), so the value label always fits beside the longest bar.
+// into a width (70% of the track, 52% on a phone), so the value label fits beside the longest bar; on the narrowest
+// phones (under 360px) each value sits under its bar instead (app/globals.css, 7 Nov).
 const MAX = Math.max(...C.bounces.bars.map((b) => b.value));
 
 export const bounceLabel = () =>
