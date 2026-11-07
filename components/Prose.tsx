@@ -112,10 +112,12 @@ export default function Prose({ body }: { body: Block[] }) {
         if (b.t === "code")
           return (
             <div key={i} className="box" style={{ margin: "0 0 22px", overflow: "hidden" }}>
+              {/* 7 Nov (Hallmark's check, his yes): was 10px, too small to read; now the site's own label, the .kicker's 12px and
+                  tracking, and inset 18px like the code under it (it was 14px, so the label started left of the code). */}
               <div style={{
-                padding: "8px 14px", borderBottom: `1px solid ${T.rule}`,
-                fontFamily: T.mono, fontSize: 10, color: T.dim,
-                letterSpacing: "0.1em", textTransform: "uppercase",
+                padding: "8px 18px", borderBottom: `1px solid ${T.rule}`,
+                fontFamily: T.mono, fontSize: 12, color: T.dim,
+                letterSpacing: "0.08em", textTransform: "uppercase",
               }}>{b.lang}</div>
               <pre style={{
                 margin: 0, padding: "16px 18px", overflow: "auto",
@@ -159,8 +161,8 @@ export default function Prose({ body }: { body: Block[] }) {
                       <th key={k} style={{
                         textAlign: "left", padding: "12px 16px",
                         borderBottom: `1px solid ${T.rule}`,
-                        color: T.dim, fontWeight: 500, fontSize: 10,
-                        letterSpacing: "0.1em", textTransform: "uppercase",
+                        color: T.dim, fontWeight: 500, fontSize: 12,  // 7 Nov (Hallmark's check, his yes): was 10px; the .kicker's 12px and tracking
+                        letterSpacing: "0.08em", textTransform: "uppercase",
                       }}>{h}</th>
                     ))}
                   </tr>
