@@ -1841,3 +1841,20 @@ test("the figures' hidden words show after 5 seconds if the page's JavaScript ne
   assert.match(read("components/PenLive.tsx"), /useEffect\(\(\) => \{\s*document\.documentElement\.classList\.add\("pen-live"\);\s*\}, \[\]\);/);
   assert.match(read("app/layout.tsx"), /<PenLive \/>/);
 });
+
+// ── 7 Nov: three of Hallmark's checks on the live site (his yes: "work on fix for it"). On a 320px phone the header read
+// "How I / build" and "Write to / me"; a code block's language label was 10px; the namesake picks were 36px tall. ──
+test("a header link never breaks inside its words, and under 340px the three still fit one line", () => {
+  const styles = css();
+  assert.match(styles, /\.head-link,\.head-cta\{white-space:nowrap\}/, "a header link can break inside its words again");
+  // 296px of links and gaps at 19px; a 320px phone has 280px inside the margins, so 18px links with 16px gaps there.
+  // (autoprefixer writes -moz-column-gap before column-gap)
+  assert.match(styles, /@media \(max-width:339px\)\{\.head-links\{(?:-moz-column-gap:16px;)?column-gap:16px\}\.head-link,\.head-cta\{font-size:18px\}\}/);
+  assert.match(styles, /\.head-links\{[^}]*flex-wrap:wrap/, "narrower than 320px, the links would push the page sideways");
+});
+
+test("a post's code label and table head are 12px or more, and the namesake picks are 44px tall", () => {
+  const prose = read("components/Prose.tsx");
+  assert.doesNotMatch(prose, /fontSize: ?(?:[0-9]|1[01])(?:\.\d+)?\b/, "a post's code label or table head is under 12px again");
+  assert.match(css(), /\.ns-pick\{[^}]*min-height:44px/, "the namesake picks are under 44px tall again");
+});

@@ -89,10 +89,19 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .head-name { font-weight: 800; text-decoration: none; }
 .head-cta { font-weight: 600; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 /* Writing sits beside the mail link, plain, so the mail link stays the one underlined thing in the header.
-   On a narrow phone the two links drop under the name instead of squeezing it. */
+   On a narrow phone the links drop under the name instead of squeezing it. */
 .head { flex-wrap: wrap; row-gap: 4px; }
-.head-links { display: flex; align-items: baseline; gap: 20px; }
+.head-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 20px; }
 .head-link { font-weight: 600; text-decoration: none; }
+/* 7 Nov (Hallmark's check, his yes): a link never breaks inside its words; on a 320px phone it read "How I / build" and
+   "Write to / me". The three need 296px at 19px with their 20px gaps, which fits inside the margins from about 337px,
+   so under 340px (a little room to spare) they are a pixel smaller and a little closer: still one line under the name.
+   Narrower still, a whole link moves down a line instead of pushing the header wider than the screen. */
+.head-link, .head-cta { white-space: nowrap; }
+@media (max-width: 339px) {
+  .head-links { column-gap: 16px; }
+  .head-link, .head-cta { font-size: 18px; }
+}
 .foot { padding-top: 32px; padding-bottom: 48px; background-image: var(--divider); background-repeat: no-repeat; background-position: top center; background-size: calc(100% - 40px) 14px; }
 .foot a { text-decoration: underline; text-underline-offset: 2px; }
 /* Photo and headline share one block: stacked on phones, side by side from 720px (both tops on the
@@ -755,8 +764,10 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .ns-tag { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; font-weight: 400; color: var(--dim); }
 .ns-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; visibility: hidden; }
 .pen-js .ns-picks { visibility: visible; }
+/* 7 Nov (Hallmark's check, his yes): 44px tall, the size a thumb hits without aiming (was 36px), with 16px at the sides
+   so the label sits as evenly as it did at 36px; the three still fit one row on a 320px phone. */
 .ns-pick {
-  min-height: 36px; padding: 0 14px;
+  min-height: 44px; padding: 0 16px;
   font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1; color: var(--ink);
   background: var(--paper); border: 1px solid var(--ink); border-radius: 4px; cursor: pointer;
   transition: background-color 150ms ease, color 150ms ease;
