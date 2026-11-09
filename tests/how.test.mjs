@@ -132,7 +132,8 @@ test("the first screen: the photo, the kicker, the h1, the role line, no proof c
 // whose labels on which rows, its caption drops "tuned on", and the held list's tag drops the bar it repeated: 756.
 // 9 Nov evening, his call ("i think they add value"): the Checking AI output row and the email card's "costs twice"
 // line came back, past the 760 ceiling the comments above name: 804. The cap still stops any growth without a decision.
-const VISIBLE_CAP = 804;
+// Then (his yes) the first story says what the sample caught instead of repeating the row: 799.
+const VISIBLE_CAP = 799;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -210,7 +211,13 @@ test("sections in order: failures (the held list first, then the two charts), sk
   // keep() holds each number to its words with no-break spaces, so it never wraps alone.
   assert.match(heldStory, /<p class="habit-exhibit"><span class="pen"><s class="pen-strike">43[ \u00a0]of[ \u00a0]50<\/s><\/span>/, "43 of 50 is not struck");
   assert.match(heldStory, /<span class="pen pen-circle">47[ \u00a0]of[ \u00a0]50<svg/, "47 of 50 is not circled");
-  for (const s of [HELD.line, HELD.checked, HELD.limit]) assert.ok(squash(plain(heldStory)).includes(s), `the held story lost: ${s}`);
+  for (const s of [HELD.caught, HELD.checked, HELD.limit]) assert.ok(squash(plain(heldStory)).includes(s), `the held story lost: ${s}`);
+  // 9 Nov, his yes: the story's line is what the sample caught, in the card's words; the row says the numbers.
+  const before = PROOF["held-list"].before;
+  assert.ok(HELD.caught.includes(before.lines[0].replace(/ \([^)]*\)$/, "")) && HELD.caught.includes(before.lines[1]), "the caught line is not the card's words");
+  assert.match(before.note, /^7 misses in 50/);
+  assert.ok(HELD.caught.startsWith("The sample caught 7 misses: "), "the caught line lost its count");
+  assert.ok(!squash(plain(heldStory)).includes(HELD.line), "the held story repeats the Checking AI output row");
   // Jury (9 Nov, tests): pinned to their sources, so a cut caveat fails here and not only behind the click.
   assert.equal(HELD.limit, PROOF["held-list"].limit, "the story's limit is not the card's three caveats");
   assert.equal(HELD.checked, "checked against: a second Claude session");
@@ -527,7 +534,7 @@ test("skills: nine rows, one plain sentence each with its number, then one Not y
   // 9 Nov: the sentence is the first story's line now (HELD.line), word for word, and still never "fit check".
   assert.equal(HELD.line, "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones.");
   assert.doesNotMatch(HELD.line, /fit check/, "the held list is called the fit check");
-  assert.ok(squash(plain(section("failures"))).includes(HELD.line), "the held list's sentence is not on the page");
+  assert.ok(squash(plain(section("failures"))).includes(HELD.caught), "the held list's story line is not on the page");
   assert.equal(row("skill-checking"), `Checking AI output ${HELD.line}`, "the Checking AI output row is not the held list's sentence");
   // 3 Nov: the eval inventory's count, from what is done (the 31 Oct eval inventory).
   assert.match(row("skill-testing"), /42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid\./);

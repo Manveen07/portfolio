@@ -99,7 +99,7 @@ export default function HowIBuild() {
           id="held"
           head={HELD.head}
           picture={<PenExhibit x={HELD.exhibit} />}
-          lines={[HELD.line]}
+          lines={[HELD.caught]}
           checked={HELD.checked}
           limit={HELD.limit}
           click={

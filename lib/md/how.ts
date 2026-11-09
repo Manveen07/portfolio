@@ -84,7 +84,7 @@ const penLine = (x: { struck?: string; circled: string; rest?: string }) => {
 const held = () => [
   `### ${HELD.head}`,
   penLine(HELD.exhibit),
-  para(HELD.line),
+  para(HELD.caught),
   para(HELD.checked),
   para(HELD.limit),
   `#### ${VISUAL.clicks["held-list"]}`,

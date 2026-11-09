@@ -252,7 +252,13 @@ export const HELD = {
   // 50 improving (jury, 9 Nov: the "resampling until it passed" reading data/proof.ts guards against), so " new ones",
   // the line's own words ("47 of 50 new ones").
   exhibit: { struck: "43 of 50", circled: "47 of 50", rest: " new ones" },
-  // The one line is the skills row's sentence (3 Nov truth review), so home's five steps still quote this page.
+  // 9 Nov, his yes ("yes go ahead"): with the Checking AI output row back, the story's line would repeat it, so the
+  // story shows what the sample caught, in the held-list card's own words (data/proof.ts: before.note "7 misses in 50",
+  // before.lines without the card's "(a place, building types)"). A jury founder: "his agent made up details and he
+  // caught it in a sample" is what a reader remembers.
+  caught: "The sample caught 7 misses: 3 picks added details the company's own words didn't say, and 4 quoted lines weren't about who the company serves.",
+  // The skills row's sentence (3 Nov truth review): the Checking AI output row and llms.txt print it, and home's five
+  // steps quote it.
   line: "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones.",
   // Jury (9 Nov, 2 of 4): the 90% bar was on screen three times; the heading and the line say it, the card keeps its
   // circled label ("my bar: 90% agreement") behind the click.
