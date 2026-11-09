@@ -222,7 +222,9 @@ test("every project and job title on the page is in llms.txt, index.md and llms-
   // index.md no longer has it; llms.txt still lists its code. Since 3 Nov in /how-i-build's Check it yourself words,
   // last under Projects and work (it led the list, with an old "every morning" intro).
   assert.ok(!unmark(route("index.md").body).includes("Tender Radar"), "index.md still has Tender Radar");
-  assert.match(route("llms.txt").body, /\[Tender Radar\]\(https:\/\/github\.com\/Manveen07\/tender-radar-showcase\): UK tenders; its AI step has been down since September/);
+  // 9 Nov, late (his pick, "Drop them"; his words: "tender radar will work live only api was down"): its line left
+  // Check it yourself, so llms.txt no longer lists the repo with a down line; its video stays under Optional.
+  assert.doesNotMatch(route("llms.txt").body, /its AI step has been down since September/);
 });
 
 test("llms.txt lists every post under Writing, newest first, with the date its page shows; the moved blocks are posts, not projects", () => {
@@ -562,7 +564,8 @@ test("llms.txt's /how-i-build line names its sections in page order, read off th
   const h2s = [...app("how-i-build.md.body").matchAll(/^## (.+)$/gm)].map((m) => m[1]);
   assert.deepEqual(order, h2s);
   // 9 Nov (his pick, "Proof first"): What broke, and what I changed opens the page.
-  assert.deepEqual(h2s.slice(0, 3), [VISUAL.kickers.failures, VISUAL.kickers.skills, VISUAL.kickers.habits]);
+  // 9 Nov, late (his pick, "What I've built"): built, then how he tests, then the stories.
+  assert.deepEqual(h2s.slice(0, 3), [VISUAL.kickers.skills, VISUAL.kickers.failures, VISUAL.kickers.testing]);
   // Every click on the page is named (the verifier, 3 Nov: the habit's and both failure stories' were missing); the
   // corrections log is named by its own summary.
   const summaries = [...app("how-i-build.html").matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) => m[1].replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").trim());

@@ -36,7 +36,8 @@ export default function StoryCard({
         </p>
       ))}
       <p className="habit-tag story-tag">{checked}</p>
-      {limit && <p className="habit-cap story-limit">{keep(limit)}</p>}
+      {/* 9 Nov, late ("we should not undersell"): the limit at caption size, under the tag; still on view. */}
+      {limit && <p className="cap story-limit">{keep(limit)}</p>}
       {click}
     </article>
   );

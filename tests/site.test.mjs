@@ -8,7 +8,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE, FIVE_HABITS, JOBS, NAMESAKE } from "../data/portfolio.ts";
-import { HOW, HELD, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS, FREE_CHECK } from "../data/how.ts";
+import { HOW, HELD, CONTACT, VISUAL, LIVE, NERD, SKILLS, TESTING, HABITS, EMAILS, FREE_CHECK } from "../data/how.ts";
 import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -251,8 +251,8 @@ test("Tender Radar is off the home page and its copies, and the corrections log 
   const entry = LIVE.log.find((e) => e.id === "log-2026-11-03-tender-radar");
   assert.equal(entry.text, "Took Tender Radar off my home page: its AI step had been failing on every new notice since September (a suspended API key), and no run went red for it.");
   assert.ok(text("how-i-build.html").includes(entry.text), "the log entry is not on /how-i-build");
-  const radar = LIVE.items.find((l) => l.id === "live-radar");
-  assert.ok(read(".next/server/app/llms.txt.body").includes(radar.text), "llms.txt does not say its AI step is down");
+  // 9 Nov, late (his pick, "Drop them"): Tender Radar left Check it yourself; the log entry above keeps the why.
+  assert.ok(!LIVE.items.some((l) => l.id === "live-radar"), "Tender Radar is back in Check it yourself");
 });
 
 test("live and saved run numbers both count scheduled runs only", () => {
@@ -425,7 +425,7 @@ test("home: the free check sits in the Precise Leads entry where two tiles were,
     ["fc-name", "Passed"],
     ["fc-sub", "across five segments"],
     ["fc-val", "16,728"],
-    ["fc-note", "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run."],
+    ["fc-note", "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and ran; on 3 Nov I merged a check to stop that."],
   ]);
   // The bounce tile: the drop on his lists, the teammate's lists beside it, and "after, not because".
   assert.deepEqual(blocks(fig.slice(fig.indexOf('<div class="fc-result">'))), [
@@ -715,7 +715,8 @@ test("five things I do: at the end of the hero, every step and its example in th
 test("five habits: every example is already on the site, in its words, with its caveat beside it", () => {
   const [code, sample, replay, ship, mistake] = FIVE_HABITS.steps;
   // 9 Nov: "Checking AI output" left the skills rows; its sentence is the first story's line (HELD.line), on the page.
-  const skill = (id) => (id === "skill-checking" ? HELD.line : (SKILLS.find((s) => s.id === id)?.line ?? ""));
+  // 9 Nov, late: the n8n and Python rows moved to How I test (TESTING), ids kept.
+  const skill = (id) => (id === "skill-checking" ? HELD.line : ([...SKILLS, ...TESTING].find((s) => s.id === id)?.line ?? ""));
   // 1. Clay in depth (/how-i-build).
   assert.ok(NERD.clay.some((l) => l.startsWith(`${code.lines[0]},`)), "step 1 is not the Clay line's words");
   // 2. The Checking AI output row and the held-list card: the picks, 43 of 50 (86%) against a 90% bar, held until a fix
@@ -1090,7 +1091,7 @@ test("claims and README follow the new hero and the Precise Leads entry", () => 
 test("the Loom link states the video's real length (281 s per Loom's oEmbed, so under 5 minutes)", () => {
   // Round 6 (2 Nov): the link left the home page with Tender Radar's section; /how-i-build's Check it yourself and
   // llms.txt keep it, and llms.txt no longer says "watch it work" (its AI step has failed since September).
-  assert.match(text("how-i-build.html"), /Its 5-minute video/);
+  // 9 Nov, late: the link left /how-i-build with Tender Radar's Check it yourself line; llms.txt keeps it.
   assert.match(read(".next/server/app/llms.txt.body"), /: a walkthrough, under 5 minutes/);
   for (const page of ["index.html", "how-i-build.html"]) assert.doesNotMatch(text(page), /\(3 min\)/);
 });

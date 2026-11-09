@@ -3,7 +3,7 @@
 // is written out (what is struck, what is circled), so nothing is only a picture. tests/how.test.mjs checks every block
 // and number against the built page.
 
-import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, SKILLS, TESTING, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
@@ -103,25 +103,28 @@ export function howMarkdown(): string {
     ...HOW.sub.map(para),
     ...(VISUAL.heroLinks.length ? [list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href))))] : []),
 
-    `## ${K.failures}`,
-    // 9 Nov (his pick, "Proof first"): the first section, the held list first.
-    ...held(),
-    ...FAILURES.stories.flatMap((s) => story(s, 3)),
-
     `## ${K.skills}`,
     list(SKILLS.map((s) => `**${s.title}**: ${md(s.line)}`)),
-    para(`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`),
     `### ${NERD.summary}`,
     para(`Drawing: ${PIPELINE_STEPS.label}`),
     para(pen(PIPELINE_STEPS.note)),
     para(NERD.caption),
     PIPELINE_STEPS.steps.map((s, i) => `${i + 1}. **${s.name}${s.gate ? " (gate)" : ""}.** ${s.what} Check: ${s.check}`).join("\n"),
-    `#### ${NERD.testingHead}`,
-    list(NERD.testing.map(md)),
     `#### ${NERD.clayHead}`,
     // 3 Nov: the free check figure sits under the heading, before the list, as on the page.
     ...freeCheck(),
     list(NERD.clay.map(md)),
+
+    `## ${K.failures}`,
+    // 9 Nov (his pick, "Proof first"): the first section, the held list first.
+    ...held(),
+    ...FAILURES.stories.flatMap((s) => story(s, 3)),
+
+    // 9 Nov, late: how he tests, after what he caught (9 Nov, late), as on the page.
+    `## ${K.testing}`,
+    list(TESTING.map((s) => `**${s.title}**: ${md(s.line)}`)),
+    `### ${VISUAL.clicks["how-i-test"]}`,
+    list(NERD.testing.map(md)),
 
     `## ${K.habits}`,
     ...HABITS.flatMap((h) => {

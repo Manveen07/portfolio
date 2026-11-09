@@ -1,17 +1,18 @@
 import { Inline } from "@/components/Prose";
-import { SKILLS, SKILLS_NOT_YET } from "@/data/how";
+import { SKILLS, type Skill } from "@/data/how";
 import { keep } from "@/lib/text";
 
-// What I can do (v2.1, 2 Nov), on /how-i-build: one row per skill, the skill in a hiring manager's words and one plain
+// What I've built (9 Nov; What I can do from v2.1, 2 Nov), on /how-i-build: one row per system, the skill in a hiring manager's words and one plain
 // sentence of what I did, with its number, readable on its own; then one "Not yet" line for the gaps, in the same
 // columns. No bars, no percentages, no level pills, no arrow-only links, and no red anywhere in this section. Each row
-// has an id, so a DM can link one row. Words in data/how.ts (SKILLS, SKILLS_NOT_YET).
+// has an id, so a DM can link one row. Words in data/how.ts (SKILLS).
 
-export default function SkillRows() {
+// 9 Nov, late: the same rows carry How I test (data/how.ts TESTING).
+export default function SkillRows({ rows = SKILLS }: { rows?: Skill[] }) {
   return (
     <>
       <ul className="skills">
-        {SKILLS.map((s) => (
+        {rows.map((s) => (
           <li key={s.id} id={s.id} className="skill">
             <h3 className="skill-title">{s.title}</h3>
             <p className="skill-line">
@@ -20,9 +21,7 @@ export default function SkillRows() {
           </li>
         ))}
       </ul>
-      <p className="skills-notyet" id="skills-not-yet">
-        <span className="skills-notyet-label">{SKILLS_NOT_YET.label}</span> <span>{SKILLS_NOT_YET.text}</span>
-      </p>
+      {/* 9 Nov, late (his pick): the "Not yet" line under the rows is gone; a gap stays out unless they ask (his 5 Nov rule). */}
     </>
   );
 }

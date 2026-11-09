@@ -20,7 +20,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, TESTING, NERD, FREE_CHECK, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
 import { HERO, JOBS, FIVE_HABITS } from "../data/portfolio.ts";
 import { PROOF } from "../data/proof.ts";
 
@@ -78,12 +78,12 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.match(app("sitemap.xml.body"), /<loc>https:\/\/manveen\.me\/how-i-build<\/loc>/);
   assert.ok(app("llms.txt.body").includes(`](${SITE}/how-i-build.md)`), "llms.txt does not link the copy");
   // 3 Nov: the blurb names the sections in page order, read off this copy (tests/ai.test.mjs holds the order). 9 Nov:
-  // the page opens on What broke, and what I changed (his pick, "Proof first").
-  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} In page order: ${VISUAL.kickers.failures} (`), "llms.txt's blurb is the old one");
+  // the page opens on What broke, and what I changed (his pick, "Proof first"); since 9 Nov late on What I've built.
+  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} In page order: ${VISUAL.kickers.skills} (`), "llms.txt's blurb is the old one");
   assert.ok(app("llms-full.txt.body").includes(md().trim()), "llms-full.txt does not hold the copy whole");
 });
 
-test("the first screen: the photo, the kicker, the h1, the role line, no proof card, then What broke, and what I changed", () => {
+test("the first screen: the photo, the kicker, the h1, the role line, no proof card, then What I've built", () => {
   const hero = section("top");
   assert.equal((page().match(/<h1[\s>]/g) ?? []).length, 1);
   assert.equal(squash(plain(hero.match(/<h1>([\s\S]*?)<\/h1>/)[1])), HOW.headline);
@@ -111,7 +111,8 @@ test("the first screen: the photo, the kicker, the h1, the role line, no proof c
   // found the measured miss three screens down, so the held list comes back as the first story, in the story shape
   // (the red-pen line, its checker and its limit), not as the home page's proof card; that card sits behind its click.
   assert.ok(!hero.includes('class="pc '), "a proof card is back in the hero");
-  assert.deepEqual([...page().matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]).slice(0, 2), ["top", "failures"]);
+  // 9 Nov, late (his pick, "What I've built"): the systems he built open the page, then How I test, then the stories.
+  assert.deepEqual([...page().matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]).slice(0, 2), ["top", "skills"]);
   // No paragraph outside the sub block: anything else the hero says in a <p> is a row of links.
   const rest = hero.replace(/<div class="how-sub">[\s\S]*?<\/div>/, "").replace(/<p class="kicker hero-kicker">[^<]*<\/p>/, "");
   for (const [, p] of rest.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
@@ -133,7 +134,12 @@ test("the first screen: the photo, the kicker, the h1, the role line, no proof c
 // 9 Nov evening, his call ("i think they add value"): the Checking AI output row and the email card's "costs twice"
 // line came back, past the 760 ceiling the comments above name: 804. The cap still stops any growth without a decision.
 // Then (his yes) the first story says what the sample caught instead of repeating the row: 799.
-const VISIBLE_CAP = 799;
+// 9 Nov, late (his asks: a portfolio that doesn't undersell, a narrative, workflows "tested like software"): What I've
+// built opens the page with three more systems, How I test is a section of its own, and the gap lines are out: 979. The
+// cap still stops growth without a decision.
+// The 9 Nov late jury: the rows say who the follow-ups are for, where the lead finder ran and why it stopped, what the
+// HubSpot sync wrote, and the gate as merged; the n8n and Python rows moved to How I test: 1012. Round 2: 1013.
+const VISIBLE_CAP = 1013;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -172,7 +178,7 @@ test("short blocks: no visible paragraph over 30 words outside a card, and each 
   }
 });
 
-test("sections in order: failures (the held list first, then the two charts), skills, habits, agents, the inbox fleet, live, contact, each holding its own picture", () => {
+test("sections in order: what I've built, how I test, how I check the work (the held list first), the habit, agents, the inbox fleet, live, contact, each holding its own picture", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
   const K = VISUAL.kickers;
@@ -181,15 +187,18 @@ test("sections in order: failures (the held list first, then the two charts), sk
   // 3 Nov: the inbox fleet after What I can do and its clicks, before the habit (his ask).
   // 9 Nov (his pick of three judged outlines, "Proof first"): What broke, and what I changed opens the page, then the
   // skills, the habit, the agents, the inbox fleet. Four readers found the measured miss three screens down.
-  assert.deepEqual(h2, [K.failures, K.skills, K.habits, K.agents, K.fleet, K.live, K.contact]);
+  // 9 Nov, late (his picks, "What I've built" and the narrative he asked for): built, test, check, change, decide, check
+  // it yourself, say hi.
+  // Jury (9 Nov, late, editor): the stories right after What I've built (pictures sooner), then How I test.
+  assert.deepEqual(h2, [K.skills, K.failures, K.testing, K.habits, K.agents, K.fleet, K.live, K.contact]);
   // Round 5 (2 Nov): the held-list card, in full, sits behind a click right under the skills rows (its label since round 6:
   // "How the held list actually went")
   // (all 4 round 4 readers said its story repeats); round 4 gave it a section of its own after What I can do.
-  const at = ["failures", "skills", "habits", "agents", "inbox-fleet", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
+  const at = ["skills", "failures", "how-i-test", "habits", "agents", "inbox-fleet", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `a section is missing: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "the sections are out of order");
   assert.ok(!html.includes('<section id="held"'), "the held-list card has its own section again");
-  const mdAt = [`## ${K.failures}`, `### ${HELD.head}`, `#### ${VISUAL.clicks["held-list"]}`, `##### ${PROOF["held-list"].title}`, `## ${K.skills}`, `### ${NERD.summary}`, `## ${K.habits}`, `## ${K.agents}`, `## ${K.fleet}`, `### ${INBOX.summary}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
+  const mdAt = [`## ${K.skills}`, `### ${NERD.summary}`, `## ${K.failures}`, `### ${HELD.head}`, `#### ${VISUAL.clicks["held-list"]}`, `##### ${PROOF["held-list"].title}`, `## ${K.testing}`, `### ${VISUAL.clicks["how-i-test"]}`, `## ${K.habits}`, `## ${K.agents}`, `## ${K.fleet}`, `### ${INBOX.summary}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
   assert.ok(mdAt.every((i) => i >= 0), `a section is missing from the copy: ${mdAt}`);
   assert.deepEqual([...mdAt].sort((a, b) => a - b), mdAt, "the copy is not in page order");
   assert.ok(sketch(section("agents"), AGENTS.label), "#agents does not hold the agents drawing");
@@ -278,8 +287,8 @@ test("every click names what it opens, and no two on a page share a label (round
     assert.ok(!list.includes("How it actually went"), `${name}: a click with the old shared label`);
   }
   // 3 Nov: "on-its-own", the click under the agents lines (option 5 of the animation mockups).
-  assert.deepEqual(Object.keys(VISUAL.clicks).sort(), ["bounces", "caught-my-own-test", "claygent", "held-list", "identity", "labelled-drawings", "on-its-own"]);
-  for (const k of ["held-list", "identity", "claygent", "bounces", "on-its-own"]) assert.ok(how.includes(VISUAL.clicks[k]), `/how-i-build: no click "${VISUAL.clicks[k]}"`);
+  assert.deepEqual(Object.keys(VISUAL.clicks).sort(), ["bounces", "caught-my-own-test", "claygent", "held-list", "how-i-test", "identity", "labelled-drawings", "on-its-own"]);
+  for (const k of ["held-list", "identity", "claygent", "bounces", "on-its-own", "how-i-test"]) assert.ok(how.includes(VISUAL.clicks[k]), `/how-i-build: no click "${VISUAL.clicks[k]}"`);
   for (const k of ["caught-my-own-test", "labelled-drawings"]) assert.ok(home.includes(VISUAL.clicks[k]), `home: no click "${VISUAL.clicks[k]}"`);
   assert.ok(!("readStory" in VISUAL), "the shared label is back in the data");
 });
@@ -468,7 +477,7 @@ test("links: outside ones open in a new tab, inside ones point at pages that wer
 
 test("the words match their sources, as written down in data/how.ts", () => {
   const t = text();
-  for (const s of [`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`, "34,044", "24,506", "505,461", "a second Claude session agrees on 43"]) assert.ok(t.includes(s), `${s} is missing`);
+  for (const s of ["34,044", "24,506", "505,461", "a second Claude session agrees on 43"]) assert.ok(t.includes(s), `${s} is missing`);
   const all = unmark(md());
   for (const s of ["2,800+", "28%", "8,649", "2,047", "16,728", "12,030", "15,514", "872", "149", "45", "so I say after, not because"]) {
     assert.ok(all.includes(s), `${s} is missing from the page's full text`);
@@ -506,13 +515,15 @@ test("the review's retired wordings stay off the page and its copy (2 Nov)", () 
 });
 
 // ── 2 Nov: the new sections' data rules ─────────────────────────────────
-test("skills: nine rows, one plain sentence each with its number, then one Not yet line (v2.1; 9 Nov)", () => {
+test("what I've built: eleven systems, one plain sentence each with its number, no Not yet line (v2.1; 9 Nov late)", () => {
   // Manveen, 2 Nov, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
   // 9 Nov: "Checking AI output" left the rows with the redesign and came back the same evening, his call ("i think they
   // add value"), in the same sentence as the first story's line (HELD.line).
   assert.deepEqual(
     SKILLS.map((s) => s.title),
-    ["AI agents", "Checking AI output", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
+    // 9 Nov, late (his pick, "What I've built"): the rows name the systems; Testing AI steps is out, three systems are in.
+    // Jury (9 Nov, late): Checking AI output first; the n8n and Python rows moved to How I test; the CRM row names its sync.
+    ["Checking AI output", "AI follow-up agents", "Inbox bot", "Clay lead finder", "Clay and Claygent", "Finding emails", "Deliverability", "HubSpot exclusions", "HubSpot reply sync"],
   );
   assert.equal(new Set(SKILLS.map((s) => s.id)).size, SKILLS.length, "two rows share an id");
   for (const s of SKILLS) {
@@ -526,7 +537,7 @@ test("skills: nine rows, one plain sentence each with its number, then one Not y
   }
   const row = (id) => squash(plain(section("skills").match(new RegExp(`<li id="${id}" class="skill">[\\s\\S]*?</li>`))?.[0] ?? ""));
   // Review (2 Nov, truth): the approval is a gate on sending, never "a person approves each one" (cards wait unapproved).
-  assert.match(row("skill-agents"), /My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes\./);
+  assert.match(row("skill-agents"), /Since 16 Oct my Claude Code agents have drafted follow-ups to leads who replied with interest; each send needs a person's yes\./);
   assert.doesNotMatch(row("skill-agents"), /approves each/, "the agents row claims every draft was approved");
   // The held list (SOURCES.md row 34): agreement with a Claude review, never hand labels; under the bar, then a fix and
   // 47 on new rows. Review (2 Nov): the card's terms, never "fit check" (the Claygent step's name on this page). Round 4:
@@ -536,26 +547,50 @@ test("skills: nine rows, one plain sentence each with its number, then one Not y
   assert.doesNotMatch(HELD.line, /fit check/, "the held list is called the fit check");
   assert.ok(squash(plain(section("failures"))).includes(HELD.caught), "the held list's story line is not on the page");
   assert.equal(row("skill-checking"), `Checking AI output ${HELD.line}`, "the Checking AI output row is not the held list's sentence");
-  // 3 Nov: the eval inventory's count, from what is done (the 31 Oct eval inventory).
-  assert.match(row("skill-testing"), /42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid\./);
+  // 9 Nov, late (his pick, "Drop them"; his 5 Nov rule: a gap stays out unless they ask): the 42-of-82 row is gone.
+  assert.ok(!SKILLS.some((s) => s.id === "skill-testing"), "the Testing AI steps row is back");
+  assert.doesNotMatch(text(), /42 of my 82 AI steps|11 of them are solid/, "the step count is back on the page");
+  // 9 Nov, late: three systems from his claims table, each with its must-say.
+  // Jury (9 Nov, late, truth): never "scores about 350" (on 2 Nov it scored one client's 72); the credit and the person's call stay.
+  assert.match(row("skill-inbox"), /I built most of our inbox bot \(a teammate built its renewal tracker\): it scores our sending inboxes 0 to 100, and a person decides what we buy\./);
+  assert.doesNotMatch(row("skill-inbox"), /scores about 350/, "the tracked count is said as scored");
+  assert.match(row("skill-finder"), /for the agency and 2 clients until 27 Oct, when the searches paused to save search quota\./);
+  assert.match(row("skill-exclusions"), /found 13 live leads, 5 already emailed, all removed; a daily n8n sync now keeps excluded companies out of new uploads\./);
+  assert.doesNotMatch(row("skill-exclusions"), /BettrData|Bettr/i, "the client is named");
   // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
   assert.match(row("skill-clay"), /I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0\.18 credits each\./);
   assert.match(row("skill-emails"), /verified emails for 12,030 of 15,514 decision-makers \(78%\) in one batch\./);
   assert.match(row("skill-deliverability"), /^Deliverability After I screened out high-bounce mail servers, bounces on my lists went from 2\.7% to 0\.7%/);
   assert.doesNotMatch(row("skill-deliverability"), /\bbecause\b/, "the bounce drop said as because");
-  assert.match(row("skill-n8n"), /On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests\./);
+  const testRow = (id) => squash(plain(section("how-i-test").match(new RegExp(`<li id="${id}" class="skill">[\\s\\S]*?</li>`))?.[0] ?? ""));
+  assert.match(testRow("skill-n8n"), /On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests\./);
   // Past tense, one sync (nothing has come in since 2 Oct).
-  assert.match(row("skill-crm"), /I built a reply-event sync into HubSpot through n8n\./);
-  assert.match(row("skill-python"), /60 tests and a release gate in CI: champion-move-checker\./);
-  // The gaps, once, after the rows, in ink.
+  assert.match(row("skill-crm"), /I built an n8n sync that wrote the last reply date, campaign and lead category from the sending tool into HubSpot contact properties\./);
+  assert.match(testRow("skill-python"), /60 tests and a release gate in CI: champion-move-checker\./);
+  // 9 Nov, late (his pick, "Drop them"): no "Not yet" line; a gap stays out unless they ask (his 5 Nov rule).
   const skills = section("skills");
-  assert.equal(`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`, "Not yet: Salesforce, SQL at work, and a graded test on my agents' drafts.");
-  const notYet = skills.match(/<p class="skills-notyet" id="skills-not-yet">([\s\S]*?)<\/p>/)?.[1] ?? "";
-  assert.equal(squash(plain(notYet)), `${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`);
-  assert.ok(skills.indexOf('class="skills-notyet"') > skills.indexOf("</ul>"), "the Not yet line is not under the rows");
-  assert.ok(skills.indexOf('class="skills-notyet"') < skills.indexOf("<details"), "the Not yet line is not above the click");
+  assert.ok(!skills.includes("skills-notyet") && !/Not yet:/.test(text()), "the Not yet line is back");
   assert.doesNotMatch(skills, /skill-gap|skill-proof|skill-to/, "a gap label, receipt or arrow link is back");
-  assert.equal(VISUAL.kickers.skills, "What I can do");
+  assert.equal(VISUAL.kickers.skills, "What I've built");
+  // How I test (9 Nov, late): the rows' shape, one sentence each, in their sources' words.
+  assert.equal(VISUAL.kickers.testing, "How I test");
+  const tests = section("how-i-test");
+  assert.deepEqual([...tests.matchAll(/<li id="([^"]+)" class="skill">/g)].map((m) => m[1]), TESTING.map((s) => s.id));
+  for (const s of TESTING) {
+    assert.equal((s.line.match(/[.!?](?=\s|$)/g) ?? []).length, 1, `${s.id}: not one sentence`);
+    assert.ok(squash(plain(tests)).includes(s.line.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")), `${s.id}: not on the page`);
+  }
+  const test = (id) => TESTING.find((s) => s.id === id)?.line ?? "";
+  assert.ok(NERD.testing[0].includes("149 automated tests") && test("test-code").includes("149 tests"));
+  assert.ok(NERD.testing[1].includes("passed 872 tests on 19 Oct") && test("test-suite").includes("passed 872 tests on 19 Oct"));
+  assert.match(test("test-alerts"), /when I replayed 13 Oct, a day our webhook dropped a reply, it flagged the miss\.$/);
+  assert.doesNotMatch(test("test-alerts"), /\bcaught\b/, "the regression test is told as a catch");
+  assert.match(test("test-gates"), /^On campaigns I upload myself, /, "the gate lost its scope");
+  // Jury (9 Nov, late, truth, a blocker): the gate is merged, never live (SOURCES.md "Claygent production gate").
+  assert.ok(FAILURES.stories[0].changed.includes("On 3 Nov I merged a check for this market: a segment that misses its bar stops before it runs"));
+  assert.match(test("test-stop"), /^On 3 Nov I merged a gate for the 34,044-company market: /, "the gate lost its date, its market or its merged");
+  for (const s of [text(), unmark(md())]) assert.doesNotMatch(s, /(?<!it said a miss stops the run )since 3 Nov,? a miss stops|Since 3 Nov it does|The same check ran on new companies/i, "the gate is told as running live");
+  assert.ok(FAILURES.stories[0].changed.includes("Until the lead finder paused on 27 Oct, Claygent also checked the new companies it brought in, with no gate."), "the lead finder's checks read as the merged gate's");
 });
 
 test("labels say what the section is: no slogans (verify loop round 2, 2 Nov)", () => {
@@ -569,12 +604,15 @@ test("labels say what the section is: no slogans (verify loop round 2, 2 Nov)", 
   // teammate's bars that show it.
   assert.equal(VISUAL.stories.bounces.after, "The teammate's list fell a little too, so the screen isn't the whole cause.");
   assert.doesNotMatch(text(), /After, not because|Not all of the drop is the screen/);
-  // Round 5: "Two times it broke" undersold the bounce chart under it (the round 4 agency reader).
-  assert.equal(VISUAL.kickers.failures, "What broke, and what I changed");
+  // Round 5: "Two times it broke" undersold the bounce chart under it (the round 4 agency reader). 9 Nov, late: the
+  // stories follow What I've built and How I test, and the label says what they show.
+  assert.equal(VISUAL.kickers.failures, "What I caught, and what I changed");
   assert.doesNotMatch(text(), /Two times it broke/);
   // Round 4 (2 Nov): the click is named by its own three sub-heads, and the GitHub profile is a link only (its gloss was
   // flagged by 3 of 4 round 3 readers; the repos above it show what can be checked).
-  assert.equal(NERD.summary, "The pipeline, how I test, and Clay in depth");
+  // 9 Nov, late (jury, 3 of 4): How I test is a section with its own click, so this click names what it holds.
+  assert.equal(NERD.summary, "The pipeline and Clay in depth");
+  assert.equal(VISUAL.clicks["how-i-test"], "How each test works");
   const profile = LIVE.items.find((l) => l.id === "live-profile");
   assert.ok(profile && !profile.text && !profile.code, "the GitHub profile has a gloss again");
   assert.match(section("live"), /<li id="live-profile"><a class="link" href="https:\/\/github\.com\/Manveen07" target="_blank" rel="noopener">My GitHub profile ↗<\/a><\/li>/);
@@ -818,7 +856,7 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
   assert.ok(claygent.changed.includes("Two ran with one check short"));
   assert.ok(claygent.tested.includes("only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof."));
   assert.ok(LIVE.log.some((e) => e.text.endsWith("It said one segment cleared my bar only after a relabel; three did.")));
-  assert.equal(F.rows[3].note, "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run.");
+  assert.equal(F.rows[3].note, "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and ran; on 3 Nov I merged a check to stop that.");
   assert.doesNotMatch(F.rows[3].note, /Not every segment/);
 
   // The bounce row: the bounces story's sentence, the teammate's lists beside mine, and its "after, not because".
@@ -881,13 +919,15 @@ test("what runs on its own (3 Nov): its own click under the agents drawing, the 
   // Left: every line is already on this page, in its words, in the order things ran (review, 3 Nov: the free check
   // before the Claygent spend, as the free check figure shows).
   // 9 Nov: "Checking AI output" left the skills rows; its sentence is the first story's line (HELD.line).
-  const skill = (id) => (id === "skill-checking" ? HELD.line : (SKILLS.find((s) => s.id === id)?.line ?? ""));
+  // 9 Nov, late: the n8n and Python rows moved to How I test (TESTING), ids kept.
+  const skill = (id) => (id === "skill-checking" ? HELD.line : ([...SKILLS, ...TESTING].find((s) => s.id === id)?.line ?? ""));
   const [cutLine, claygentLine, agentsLine, inboxLine, alertsLine, listLine] = S.bots;
   assert.ok(CLAY_LINE.includes(`${claygentLine}, and 16,728 passed.`), "the Claygent line is not the Clay line's");
   assert.ok(CLAY_LINE.includes("a free mail-server check cut 28% of it"));
   assert.ok(FAILURES.stories[1].tested.includes("On the 34,044-company market it cut 28% before a single credit was spent"));
   assert.equal(cutLine, "a free mail-server check cut 28% of a 34,044-company market before a single credit was spent");
-  assert.ok(skill("skill-agents").startsWith(`M${agentsLine.slice(1)}; `), "the agents line is not the AI agents row's");
+  // 9 Nov, late: the row says who the follow-ups are for; the click's line is its first words.
+  assert.ok(skill("skill-agents").startsWith(`Since 16 Oct m${agentsLine.slice(1).replace(" since 16 Oct", "")}`), "the agents line is not the AI agents row's");
   assert.match(INBOX.stages.find((s) => s.name === "score")?.detail ?? "", /scores it 0 to 100/);
   assert.equal(INBOX.caption, "About 350 sending inboxes tracked, as of 2 Nov.");
   assert.equal(inboxLine, "our inbox bot scores every sending inbox 0 to 100; about 350 are tracked, as of 2 Nov");

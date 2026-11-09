@@ -62,6 +62,8 @@ function howLine(): string {
   const clicks: Record<string, string[]> = {
     [K.agents]: [VISUAL.clicks[SPLIT.id]],
     [K.skills]: [NERD.summary],
+    // 9 Nov, late: How I test's own click.
+    [K.testing]: [VISUAL.clicks["how-i-test"]],
     [K.habits]: [VISUAL.clicks.identity],
     [K.failures]: [VISUAL.clicks["held-list"], VISUAL.clicks.claygent, VISUAL.clicks.bounces],
     [K.fleet]: [INBOX.summary],

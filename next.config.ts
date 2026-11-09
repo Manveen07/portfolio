@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
   // - AVIF (images.formats): the photo grew from 19.6 KiB (WebP) to 21.1 KiB; the source is only 264px wide.
   // - Plex Mono not preloaded (app/layout.tsx): first paint 0.91 s to 1.22 s, in all 8 runs.
   // - content-visibility: auto on sections below the first screen: LCP within run-to-run noise.
+  // - 9 Nov: a modern "browserslist" (chrome 92, safari 15.4 and up, for Lighthouse's legacy-JavaScript flag): script
+  //   159 to 160 KiB, /how-i-build median score 90 to 91 and TBT 269 to 231 ms over 3 runs each, inside the run-to-run
+  //   spread (TBT 140 to 454 ms on one build); this Next 16 build ships the same runtime either way.
   // What is left is React and the Next router (about 130 of the page's 138 KiB of script), the Archivo font
   // and the photo, all needed for the page to look the way it does.
   async rewrites() {

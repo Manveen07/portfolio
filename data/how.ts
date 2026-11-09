@@ -292,7 +292,7 @@ export const FAILURES: { stories: Story[] } = {
       tested:
         "I rewrote it as a briefing, the way you'd brief a new SDR: what we look for, good signs, the usual not-a-fit cases, past calls as examples. Five hard rules stayed, like quote their own site for every yes. First question: does it still throw out good companies? On the 25 I tuned it on, it kept all four (it had better), but it said no to one more I'd marked good, a borderline one. Then 30 more companies, every one labelled by me: it kept all 18 good ones and matched my labels on 27 of the 29 it decided. I labelled those 30 after reading its answers, though, so it isn't a blind test; the next one gets labelled before it runs. The bar I'd written down: no good company thrown out, 80% agreement with the labels, at most 20% sent to a person for review, and 90% of yeses backed by a quote. This segment, like two others, only cleared it after I changed borderline companies' labels to toss-ups, with the same answers from the model, so I don't count those passes as proof.",
       changed:
-        "Then the big run, across five segments: it checked 24,506 companies, and 16,728 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. Since 3 Nov it does in this market: a segment that misses its bar gets no Clay run and no emails until it passes on fresh labels. The same check ran on new companies the lead finder brought in. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix to the shared file reaches every segment.",
+        "Then the big run, across five segments: it checked 24,506 companies, and 16,728 passed. Not every segment had passed its bar. Two ran with one check short (quotes behind 87.5% and 78.6% of yeses, under the 90% bar), because nothing in the run stopped on a failed gate. On 3 Nov I merged a check for this market: a segment that misses its bar stops before it runs, and all five are on hold until they're re-scored on fresh labels. Until the lead finder paused on 27 Oct, Claygent also checked the new companies it brought in, with no gate. The prompt's a shared template now: one file for what's common, each segment adds its own question and edge cases, and a script builds all five prompts, so a fix to the shared file reaches every segment.",
     },
     {
       // SOURCES.md rows 11, 12, 21, 22 and 31: 505,461 of the agency's sends; Mimecast 5.1%, Barracuda 2.4%, Google 0.5%
@@ -333,7 +333,7 @@ export const PIPELINE_STEPS: { label: string; note: string; steps: Step[] } = {
     { name: "strategy", what: "Picks the campaigns worth running from past reply data.", check: "Each test changes one thing, and the rule for the winner is written before the data comes in." },
     { name: "client context", what: "Writes down what the client sells, who to reach, and who to leave alone.", check: "A checker blocks a brief with open questions, a sender who isn't a real person, or no approval." },
     { name: "find companies", what: "Maps the market with Clay's search first, and pays only to fill measured gaps.", check: "Every new search is judged on a sample before it runs at scale; a search that finds too few fits is dropped." },
-    { name: "fit check", what: "A free mail-server check first, then a Claygent fit check reads each company's own site.", check: "On labelled samples, 90% of yeses must quote the company's own site; rows it can't decide are re-read.", gate: true },
+    { name: "fit check", what: "A free mail-server check first, then a Claygent fit check reads each company's own site.", check: "My bar on labelled samples is 90% of yeses quoting the company's own site; rows it can't decide are re-read.", gate: true },
     { name: "research signals", what: "Finds a reason to write now: hiring, news, changes on the site.", check: "Right company, the exact words, a recent date; paid sources are capped." },
     { name: "find people", what: "Finds the decision makers at each company.", check: "A title needs both the right seniority and the right function, and people who've left are dropped." },
     // 1 Nov: "multi-provider", never "cheapest first" (the 12,030 batch ran one provider first; SOURCES.md row 19).
@@ -361,22 +361,38 @@ export type Skill = {
   line: string;
 };
 
+// 9 Nov, late (his ask: "i want this page to act as my portfolio show my edge with ai in gtm space we should not
+// undersell"; his picks: "What I've built" opens the page, and the lines that volunteer gaps go, per his 5 Nov rule that a
+// gap stays out unless they ask). The rows are the systems he built, each one sentence with its number; the titles name
+// the system. The claims-checked lines stay word for word; three rows are new, from his claims table: the inbox bot (its
+// fleet section's facts, the teammate credit and the person's call kept), the Clay lead finder (NERD.clay's first line,
+// past tense: paused 27 Oct) and the client exclusion sync (SOURCES.md "CRM builds" row 4: the 13 leads came from his
+// first check of live campaigns on 30 Oct, before the daily job existed, so the job is said to keep them out now; the 5
+// already emailed are the must-say; the client is never named). Out: "Testing AI steps" (42 of 82, 11 solid) and the
+// "Not yet" line.
 export const SKILLS: Skill[] = [
+  // Jury (9 Nov, late, hiring manager): Checking AI output first, the line that proves the h1; the n8n alerts and the
+  // public Python repo moved to How I test (TESTING), ids kept so DM links still work.
+  // 9 Nov: back the same evening, his call: "i think they add value". Its sentence is HELD.line.
+  { id: "skill-checking", title: "Checking AI output", line: HELD.line },
   // SOURCES.md row 33 and the follow-up step (line 13: "daily 09:00 IST since 16 Oct"; the 16 Oct run has drafts).
   // Never "every morning". Review (2 Nov, truth): the approval is a gate ("approves each draft before it sends"), not a
   // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
-  { id: "skill-agents", title: "AI agents", line: "My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes." },
-  // 9 Nov: the "Checking AI output" row left the rows when the first story told the held list; back the same evening,
-  // his call: "i think they add value". Its sentence is HELD.line, one string for both places.
-  { id: "skill-checking", title: "Checking AI output", line: HELD.line },
+  // Jury (9 Nov, late, founder): who the follow-ups are for (SOURCES.md row 34, "leads who replied with interest").
+  { id: "skill-agents", title: "AI follow-up agents", line: "Since 16 Oct my Claude Code agents have drafted follow-ups to leads who replied with interest; each send needs a person's yes." },
+  // Proof bank 9 and the fleet section below: "365 of the bot's 386 commits are mine" (so "most", with the teammate
+  // credit beside it), "scores it 0 to 100", "a person decides what we buy". Jury (9 Nov, late, truth): never "scores
+  // about 350": on 2 Nov it scored one client's 72 while about 281 dropped out (the plan lapse); 350 is the tracked count,
+  // in the fleet caption. 28 words.
+  { id: "skill-inbox", title: "Inbox bot", line: "I built most of our inbox bot (a teammate built its renewal tracker): it scores our sending inboxes 0 to 100, and a person decides what we buy." },
+  // NERD.clay[0] (SOURCES.md row 9: 31 loops across 3 accounts), past tense: the searches paused on 27 Oct.
+  // Jury (9 Nov, late, hiring manager): "3 accounts" read as 3 target accounts, and "until 27 Oct" as broken; NERD.clay[0]
+  // says why it stopped ("paused to save search quota").
+  { id: "skill-finder", title: "Clay lead finder", line: "My 31 Clay workflows found new people on a schedule for the agency and 2 clients until 27 Oct, when the searches paused to save search quota." },
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
   // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
-  // row 11: "70,508 rows in 382 queries, search quota only"). 23 words.
-  // 3 Nov (his ask): the eval inventory's count, said from what is done; the first screen no longer carries it.
-  // the 31 Oct eval inventory: 42 of 82 have some known-answer test, 11 solid. An AI step is a place where a model
-  // decides or writes something (rules with no model are left out). 25 words.
-  { id: "skill-testing", title: "Testing AI steps", line: "42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid." },
-  { id: "skill-clay", title: "Clay", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
+  // row 11: "70,508 rows in 382 queries, search quota only").
+  { id: "skill-clay", title: "Clay and Claygent", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
   // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
   { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },
   // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
@@ -384,21 +400,56 @@ export const SKILLS: Skill[] = [
   // inbox checks: the capabilities index (the DNS auth checker, the daily setup audit with its warm-up checks, the
   // placement testing suite), his own commits from July to November.
   { id: "skill-deliverability", title: "Deliverability", line: "After I screened out high-bounce mail servers, bounces on my lists went from 2.7% to 0.7%; I built DNS, inbox placement and warm-up checks." },
-  // SOURCES.md row 74: 40 is the 14 Oct count (the error workflow was linked that day). The public repo's README: 45
-  // tests.
-  { id: "skill-n8n", title: "n8n", line: "On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests." },
+  // SOURCES.md "CRM builds" row 4 (his 4 Nov "we built it though both of them"): from an agency client's HubSpot, the
+  // live check of 30 Oct found 13 leads at 6 excluded companies, 5 already sent the first email; the daily n8n job
+  // (06:15 IST since 30 Oct) adds new customers to the sending tool's block list, which stops uploads. 29 words.
+  // Jury (9 Nov, late, truth): the 13 were removed by hand, and the sync keeps excluded companies, not those leads, out of
+  // new uploads (Proof bank 10's short form). 30 words.
+  { id: "skill-exclusions", title: "HubSpot exclusions", line: "My first check of an agency client's HubSpot exclusions found 13 live leads, 5 already emailed, all removed; a daily n8n sync now keeps excluded companies out of new uploads." },
   // SOURCES.md's HubSpot section (2 Nov): "a reply-event sync into HubSpot through n8n", past tense (nothing has come
   // in since 2 Oct); never "HubSpot admin" or CRM work beyond it.
-  { id: "skill-crm", title: "CRM", line: "I built a reply-event sync into HubSpot through n8n." },
-  // The public README (snapshot of 31 Oct, line 9): 60 tests and a release gate in CI. Rules code with AI-written labels
-  // on made-up data, so it backs no claim about AI steps; its README says so itself.
-  { id: "skill-python", title: "Python and tests", line: "My public Python repo has 60 tests and a release gate in CI: [champion-move-checker](https://github.com/Manveen07/champion-move-checker)." },
+  // Jury (9 Nov, late, hiring manager): the row a RevOps reader looks for named no fields; SOURCES.md's HubSpot section
+  // (his 7 Nov wording: "writes last reply date, campaign and lead category into contact properties"), past tense.
+  { id: "skill-crm", title: "HubSpot reply sync", line: "I built an n8n sync that wrote the last reply date, campaign and lead category from the sending tool into HubSpot contact properties." },
 ];
 
-// The gaps, said once, under the rows. Salesforce: his profile ("No Salesforce."); SQL: his profile lists PostgreSQL,
-// and the knowledge map's gaps line says "SQL unproven at work", so "SQL at work"; the drafts: the follow-up writer has
-// no graded test (SOURCES.md row 33).
-export const SKILLS_NOT_YET = { label: "Not yet:", text: "Salesforce, SQL at work, and a graded test on my agents' drafts." };
+// ── How I test (9 Nov, late): the second section, right after What I've built ──
+// Manveen, 9 Nov: "i want it to showcase how i build and make sure it has a narative and shows my skills and make them
+// belive in me without saying out loud that they should hire me" and "all should have test wherever needed as i come from
+// enginnering i want my workflows to be tested like software and i should know if anything breaks or goes live". The
+// page reads as one story: what he built, how he tests it, how he checks what AI gets wrong, how he changes a rule,
+// where a person decides, what a reader can check. Every row is a fact already on this page or in his claims table, in
+// its words, one sentence each, never a standing rule ("when X, I always Y"):
+// - test-code: NERD.testing[0] (SOURCES.md row 79: 149 tests).
+// - test-suite: NERD.testing[1] (SOURCES.md row 25: "full suite 872 passed, 6 skipped", 19 Oct).
+// - test-alerts: the daily health check, Proof bank 8 ("compares each day's replies and bounces with the webhook runs
+//   that received them; when I replayed 13 Oct's data, a day our webhook had dropped a reply, it flagged the miss"). A
+//   regression test: the miss was first found by hand, so never "it caught". The 40 error alerts are the n8n row's.
+// - test-gates: NERD.testing[2], scoped "On campaigns I upload myself" (ticked rows reach the sending tool without these
+//   checks); the reader's own caveat ("no known-answer test yet") stays behind the click.
+// - test-stop: SOURCES.md "Claygent production gate (3 Nov 2026)", his Say line, merged and never live (the jury, 9 Nov
+//   late: the old "Since 3 Nov it does" said it ran); the market is the 34,044-company one.
+export const TESTING: Skill[] = [
+  // Jury (9 Nov, late, round 2): the day-job suite first, then his own tracker.
+  { id: "test-suite", title: "A test suite", line: "My day-job pipeline's test suite passed 872 tests on 19 Oct, including replays of stored data and old-versus-new runs on past results." },
+  // Jury (9 Nov, late, truth): "My own n8n task tracker" (NERD.testing[0]), so the 149 tests don't read as the agency's
+  // workflows'. The agency's 40 live workflows have error alerts (the next row), not tests.
+  { id: "test-code", title: "My n8n task tracker", line: "My own n8n task tracker has 149 tests: its JavaScript runs in Node exactly as n8n runs it, and recorded Slack clicks are replayed against the webhook." },
+  // SOURCES.md row 74: 40 is the 14 Oct count (the error workflow was linked that day). The public repo's README: 45
+  // tests.
+  { id: "skill-n8n", title: "n8n error alerts", line: "On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests." },
+  // Jury (9 Nov, late, truth): the replay with its actor, a regression test (Proof bank 8: "when I replayed 13 Oct's data,
+  // a day our webhook had dropped a reply, it flagged the miss"), in 27 words.
+  { id: "test-alerts", title: "Knowing when it breaks", line: "A daily health check matches replies and bounces to webhook runs; when I replayed 13 Oct, a day our webhook dropped a reply, it flagged the miss." },
+  // The public README (snapshot of 31 Oct, line 9): 60 tests and a release gate in CI. Rules code with AI-written labels
+  // on made-up data, so it backs no claim about AI steps; its README says so itself.
+  { id: "skill-python", title: "Public Python repo", line: "My public Python repo has 60 tests and a release gate in CI: [champion-move-checker](https://github.com/Manveen07/champion-move-checker)." },
+  { id: "test-gates", title: "Checks before a send", line: "On campaigns I upload myself, my scripts can't upload, start or resume a campaign until every email's facts trace to the research and a fresh AI reader passes it." },
+  // Jury (9 Nov, late, truth, a blocker): merged, never live (SOURCES.md "Claygent production gate (3 Nov 2026)", his Say
+  // line: "On 3 Nov I merged that check for those 5 niches: any niche that misses its bar stops before it runs, and it put
+  // all five on hold until they're re-scored").
+  { id: "test-stop", title: "A gate on the fit check", line: "On 3 Nov I merged a gate for the 34,044-company market: a Claygent segment that misses its bar stops before it runs, and all five segments wait for fresh labels." },
+];
 
 // ── The click under the skills: the pipeline drawing, how he tests, Clay in depth ──
 // v2.1 (2 Nov): the email story and its one-line twin in How I test left this click; the habit card tells it once.
@@ -407,7 +458,9 @@ export const SKILLS_NOT_YET = { label: "Not yet:", text: "Salesforce, SQL at wor
 export const NERD = {
   // Round 4 (2 Nov): the click's own three sub-heads ("The pipeline, and nerd details" until then; a round 3 reader
   // flagged it).
-  summary: "The pipeline, how I test, and Clay in depth",
+  // 9 Nov, late (jury, 3 of 4): the How I test section sits right under this click, so the click names only what it holds.
+  summary: "The pipeline and Clay in depth",
+  // 9 Nov, late: the testing list is How I test's own click now (VISUAL.clicks["how-i-test"]).
   caption: "Built at my day job, an outbound agency, since November 2025.",
   testingHead: "How I test",
   clayHead: "Clay in depth",
@@ -424,7 +477,7 @@ export const NERD = {
     // things-ai-got-confidently-wrong, 11 Aug note. 2 Nov: the October outage line is out until it has a claims-table
     // row. Round 6 (2 Nov): the bars left the home page (its runs showed green while its AI step failed on every new
     // notice since September, a suspended API key), so the line says that instead of pointing at them.
-    "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. From September its AI step failed on every new notice and no run went red for it, so it came off my home page. [The three-week story](/writing/things-ai-got-confidently-wrong)",
+    "My Tender Radar once passed 12 of 12 tests and still crashed every morning for three weeks, because no test opened the new files. [The three-week story](/writing/things-ai-got-confidently-wrong)",
   ],
   clay: [
     // SOURCES.md row 9 (31 loops enabled across 3 accounts); the lead finder in the past tense, paused 27 Oct. 2 Nov: no
@@ -439,7 +492,7 @@ export const NERD = {
     // workflow"; the line before already says Clay posted people to n8n.
     "I built a Clay workflow that takes a company from n8n by webhook and posts its lookalikes back.",
     // SOURCES.md's HubSpot section (2 Nov). Past tense: nothing received since 2 Oct. "No Salesforce" (his profile).
-    "Reply events from the sending tool updated HubSpot contact properties through n8n: last reply date, campaign and lead category. I haven't used Salesforce yet.",
+    "Reply events from the sending tool updated HubSpot contact properties through n8n: last reply date, campaign and lead category.",
   ],
 };
 
@@ -491,7 +544,7 @@ export const FREE_CHECK: {
       sub: "across five segments",
       value: "16,728",
       n: 16728,
-      note: "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and still ran; since 3 Nov a miss stops the run.",
+      note: "Three segments cleared my bar only after I relabelled borderline companies, so that's not proof. Two missed it and ran; on 3 Nov I merged a check to stop that.",
     },
   ],
   result: {
@@ -659,17 +712,8 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
       code: "npm test",
       text: "runs 45 tests on a small n8n workflow.",
     },
-    {
-      id: "live-radar",
-      href: "https://github.com/Manveen07/tender-radar-showcase",
-      label: "Tender Radar ↗",
-      // 2 Nov: no "each morning" (the builder check: nine mornings failed in October). Review (2 Nov): "Its Limits list"
-      // read as a broken phrase; the README's section is called Limits. Verify loop round 2 (2 Nov): the morning count is
-      // out ("104 mornings, 4 July to 15 Oct" from the README beside the home page's live count: all 4 readers flagged
-      // the two numbers as disagreeing).
-      text: "UK tenders; its AI step has been down since September, and its README lists an earlier three-week crash.",
-      extra: { href: "https://www.loom.com/share/ed073589208c4e24a7543ba30b9d24dc", label: "Its 5-minute video ↗" },
-    },
+    // 9 Nov, late (his pick, "Drop them"): Tender Radar left Check it yourself; its AI step is down since September, and
+    // the corrections log's 3 Nov entry says so.
     {
       // Round 4 (2 Nov): the link only. Its gloss ("where I've measured it, each project says how often it's wrong",
       // from the profile README) was flagged as AI-sounding by 3 of 4 round 3 readers; the repos above show it.
@@ -684,6 +728,13 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
   // records; tests/how.test.mjs warns when the newest is more than 21 days old. The two 1 Nov entries carry no commit
   // link: that commit's diff shows old comments with internal folder names (decision 4).
   log: [
+    {
+      // 9 Nov, late (jury, truth): "since 3 Nov a miss stops the run" on this page and the home page's figure said the
+      // gate runs live; SOURCES.md "Claygent production gate (3 Nov 2026)": merged, and the lead finder it guards is paused.
+      id: "log-2026-11-09-claygent-gate",
+      date: "2026-11-09",
+      text: "Corrected how I described my Claygent gate: it said a miss stops the run since 3 Nov. I merged that check on 3 Nov, but the lead finder it was built for has been paused since 27 Oct and doesn't run it yet.",
+    },
     {
       // Round 6 (2 Nov, the round 5 jury's blocker): the 1 Nov run ended "success" with 8,274 403 errors (a suspended
       // key), and the classified total has stood at 3,671 since 3 Sep. The session's wording.
@@ -775,10 +826,12 @@ export const VISUAL = {
       // and only 10 of the 25 tuning rows carry his labels. The tag says which rows: the chart's, his labels, the 30 written
       // after seeing its answers.
       checked: "checked against: my labels on these rows, the 30 written after seeing its answers",
+      // 9 Nov, late (jury, truth): "since 3 Nov a miss stops the run" said the gate runs live; SOURCES.md "Claygent production
+      // gate (3 Nov 2026)": "Merged", never "now stops" (the lead finder's checkout lacks it, and the finder is paused).
       // 30 words (the page's cap for a visible block): FREE_CHECK.rows[3].note with the story's scope. "companies" (truth:
       // "ones" read as relabelled segments) and "their bar" (hiring manager: "my bar" two cards from "my 90% bar" read as
       // the same bar).
-      limit: "Three segments passed only after I relabelled borderline companies, which isn't proof. Two missed their bar and still ran; since 3 Nov a miss stops the run in this market.",
+      limit: "Three segments passed only after I relabelled borderline companies, which isn't proof; two missed their bar and ran, so on 3 Nov I merged a check that stops a miss.",
       // The four good ones are his labels in the tuning set; the r4 and r6 runs answer "fit" for all four after the
       // rewrite. The last row is segment 5's 30 later rows he labelled: 18 good, all 18 answered "fit". He labelled
       // them after reading the model's answers, so the caveat sits in the row's own label (2 Nov), and both rows after
@@ -835,6 +888,8 @@ export const VISUAL = {
     "labelled-drawings": "How the drawing test actually went",
     // 3 Nov: the click under the agents lines (SPLIT above).
     "on-its-own": "What runs on its own, and what waits for a person",
+    // 9 Nov, late: How I test's own click, holding the testing list that sat in the pipeline click.
+    "how-i-test": "How each test works",
   } as Record<string, string>,
   // The rail on wide screens, read top to bottom as one story.
   kickers: {
@@ -846,9 +901,16 @@ export const VISUAL = {
     // first (HELD), and the section opens the page. Round 5 (2 Nov): "Two times it
     // broke" until then; the round 4 agency reader called the bounce chart under it his strongest deliverability proof,
     // and the old label undersold it.
-    failures: "What broke, and what I changed",
+    // 9 Nov, late (his ask, "we should not undersell"): it follows What I've built, and its label says what the three
+    // stories show: how he checks the work (an AI check, an AI step, a data check). Was "What broke, and what I changed".
+    // 9 Nov, late (jury, founder): "How I check the work" right after "How I test" read as the same thing; the stories are
+    // what he caught and changed, and they now come straight after What I've built.
+    failures: "What I caught, and what I changed",
     // v2.1 (2 Nov): the gaps are one "Not yet" line under the rows, so the kicker names what he can do.
-    skills: "What I can do",
+    // 9 Nov, late (his pick, "What I've built"): the rows are the systems he built, and they open the page.
+    skills: "What I've built",
+    // 9 Nov, late (his ask: workflows "tested like software", and he "should know if anything breaks or goes live").
+    testing: "How I test",
     // 3 Nov: the agency's inbox bot, after the skills and their clicks (his ask; the mockup he approved).
     fleet: "The inbox fleet",
     live: "Check it yourself",

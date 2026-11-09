@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, TESTING, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
@@ -90,8 +90,40 @@ export default function HowIBuild() {
         )}
       </section>
 
-      {/* 9 Nov (his pick, "Proof first"): the page opens on what broke and what changed, the held list first, each story in
-          one shape (components/StoryCard.tsx). The held-list card in full sits behind the first story's click; its id,
+      <section id="skills" className="wrap sec">
+        <h2 className="kicker">{K.skills}</h2>
+        <SkillRows />
+        <details className="more" id="nerd">
+          <summary>
+            <span className="more-line more-label">{NERD.summary}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          <figure className="pipe">
+            <PipelineSketch />
+            <figcaption className="cap">{NERD.caption}</figcaption>
+          </figure>
+          <ol className="steps-full">
+            {PIPELINE_STEPS.steps.map((s) => (
+              <li key={s.name}>
+                <b>{s.name}{s.gate ? " (gate)" : ""}.</b> {s.what} <span className="check">Check: {s.check}</span>
+              </li>
+            ))}
+          </ol>
+          <h3 className="nerd-head">{NERD.clayHead}</h3>
+          {/* 3 Nov (option 4 of the animation mockups): the funnel the Clay list's second line tells in words, drawn. */}
+          <FreeCheckFirst />
+          <ul className="nerd-list">
+            {NERD.clay.map((t) => (
+              <li key={t}>
+                <Inline s={t} linkClass="link" />
+              </li>
+            ))}
+          </ul>
+        </details>
+      </section>
+
+      {/* 9 Nov (his pick, "Proof first"): the stories, the held list first, each in one shape (components/StoryCard.tsx);
+          since 9 Nov late (his pick, "What I've built") they follow the systems he built. The held-list card in full sits behind the first story's click; its id,
           held-list, still opens it from home's "The whole flow →" (components/OpenOnHash.tsx). */}
       <section id="failures" className="wrap sec">
         <h2 className="kicker">{K.failures}</h2>
@@ -131,38 +163,19 @@ export default function HowIBuild() {
         })}
       </section>
 
-      <section id="skills" className="wrap sec">
-        <h2 className="kicker">{K.skills}</h2>
-        <SkillRows />
-        <details className="more" id="nerd">
+      {/* 9 Nov, late (his ask: "tested like software", and to "know if anything breaks or goes live"): how he tests, in the
+          rows' shape, after what he caught (jury, editor: pictures come sooner). Words in data/how.ts (TESTING). */}
+      <section id="how-i-test" className="wrap sec">
+        <h2 className="kicker">{K.testing}</h2>
+        <SkillRows rows={TESTING} />
+        {/* 9 Nov, late (jury): the testing list that sat in the pipeline click, under its own click here. */}
+        <details className="more" id="how-each-test">
           <summary>
-            <span className="more-line more-label">{NERD.summary}</span>
+            <span className="more-line more-label">{VISUAL.clicks["how-i-test"]}</span>
             <span className="more-hint" aria-hidden="true" />
           </summary>
-          <figure className="pipe">
-            <PipelineSketch />
-            <figcaption className="cap">{NERD.caption}</figcaption>
-          </figure>
-          <ol className="steps-full">
-            {PIPELINE_STEPS.steps.map((s) => (
-              <li key={s.name}>
-                <b>{s.name}{s.gate ? " (gate)" : ""}.</b> {s.what} <span className="check">Check: {s.check}</span>
-              </li>
-            ))}
-          </ol>
-          <h3 className="nerd-head">{NERD.testingHead}</h3>
           <ul className="nerd-list">
             {NERD.testing.map((t) => (
-              <li key={t}>
-                <Inline s={t} linkClass="link" />
-              </li>
-            ))}
-          </ul>
-          <h3 className="nerd-head">{NERD.clayHead}</h3>
-          {/* 3 Nov (option 4 of the animation mockups): the funnel the Clay list's second line tells in words, drawn. */}
-          <FreeCheckFirst />
-          <ul className="nerd-list">
-            {NERD.clay.map((t) => (
               <li key={t}>
                 <Inline s={t} linkClass="link" />
               </li>
