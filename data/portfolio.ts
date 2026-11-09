@@ -76,7 +76,7 @@ export const HERO = {
 // told ("without stating it like we are better"). One step each, each with an example from a different change, every
 // line already on the site in its own words:
 // 1. data/how.ts NERD.clay: "Claygent prompts live as code: one shared template, five segments, built by a script".
-// 2. data/how.ts SKILLS, skill-checking: "My agents' company picks matched a second Claude session on 43 of 50, under
+// 2. data/how.ts HELD.line (the skills row skill-checking until 9 Nov; now /how-i-build's first story): "My agents' company picks matched a second Claude session on 43 of 50, under
 //    my 90% bar; I held the list until a fix passed 47 of 50 new ones". The 86% is the held-list card's (data/proof.ts:
 //    "agrees on 43 (86%)", "my bar: 90% agreement"). "until a fix passed", never "a second pass and a new 50", which
 //    reads as resampling until it passed. Review (3 Nov, truth): the line names whose picks and who reviewed (it said

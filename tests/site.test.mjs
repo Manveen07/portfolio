@@ -8,7 +8,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ME, HERO, HERO_KICKER, WEEK_JOB, SAY_HI, PILOT, FREELANCE, FIVE_HABITS, JOBS, NAMESAKE } from "../data/portfolio.ts";
-import { HOW, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS, FREE_CHECK } from "../data/how.ts";
+import { HOW, HELD, CONTACT, VISUAL, LIVE, NERD, SKILLS, HABITS, EMAILS, FREE_CHECK } from "../data/how.ts";
 import { PROOF } from "../data/proof.ts";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -714,7 +714,8 @@ test("five things I do: at the end of the hero, every step and its example in th
 
 test("five habits: every example is already on the site, in its words, with its caveat beside it", () => {
   const [code, sample, replay, ship, mistake] = FIVE_HABITS.steps;
-  const skill = (id) => SKILLS.find((s) => s.id === id)?.line ?? "";
+  // 9 Nov: "Checking AI output" left the skills rows; its sentence is the first story's line (HELD.line), on the page.
+  const skill = (id) => (id === "skill-checking" ? HELD.line : (SKILLS.find((s) => s.id === id)?.line ?? ""));
   // 1. Clay in depth (/how-i-build).
   assert.ok(NERD.clay.some((l) => l.startsWith(`${code.lines[0]},`)), "step 1 is not the Clay line's words");
   // 2. The Checking AI output row and the held-list card: the picks, 43 of 50 (86%) against a 90% bar, held until a fix

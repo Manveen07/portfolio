@@ -9,8 +9,9 @@ import type { Habit } from "@/data/how";
 // show), what it was checked against, and the story's four parts behind a "How it actually went" click. A wash box like
 // a proof card: no border, no shadow, no tilt. Red only through the pen. Words in data/how.ts (HABITS).
 
-export default function HabitRow({ h }: { h: Habit }) {
-  const x = h.exhibit;
+/** The red-pen line: the old number struck, an arrow, the new one circled with the words that belong to it. Since 9 Nov
+    the held-list story (components/StoryCard.tsx) draws its two samples the same way. */
+export function PenExhibit({ x }: { x: Habit["exhibit"] }) {
   // The circle keeps the words after it up to their first comma, or (round 5, 2 Nov) the one word after it when the rest
   // has no comma ("70 of them pass the new rules" whole is wider than a phone's line); the rest can wrap.
   const rest = x.rest ?? "";
@@ -18,22 +19,28 @@ export default function HabitRow({ h }: { h: Habit }) {
   const kept = cut > 0 ? rest.slice(0, cut + 1) : (rest.match(/^ ?\S+/)?.[0] ?? "");
   const tail = rest.slice(kept.length);
   return (
+    <p className="habit-exhibit">
+      {x.struck && (
+        <>
+          <Strike>{keep(x.struck)}</Strike>
+          <span aria-hidden="true"> → </span>
+        </>
+      )}
+      {/* The circle and the words after it stay on one line, so the circled number is never read alone. */}
+      <span className="pc-nb">
+        <Circle>{keep(x.circled)}</Circle>
+        {kept && keep(kept)}
+      </span>
+      {tail && keep(tail)}
+    </p>
+  );
+}
+
+export default function HabitRow({ h }: { h: Habit }) {
+  return (
     <article className="habit" id={h.id}>
       <h3 className="h3">{keep(h.head)}</h3>
-      <p className="habit-exhibit">
-        {x.struck && (
-          <>
-            <Strike>{keep(x.struck)}</Strike>
-            <span aria-hidden="true"> → </span>
-          </>
-        )}
-        {/* The circle and the words after it stay on one line, so the circled number is never read alone. */}
-        <span className="pc-nb">
-          <Circle>{keep(x.circled)}</Circle>
-          {kept && keep(kept)}
-        </span>
-        {tail && keep(tail)}
-      </p>
+      <PenExhibit x={h.exhibit} />
       {h.lines.map((l) => (
         <p key={l} className="habit-cap">
           {keep(l)}

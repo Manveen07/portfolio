@@ -139,7 +139,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .wrap { max-width: calc(var(--rail) + 60px + var(--col) + 40px); }
   .sec { display: grid; grid-template-columns: var(--rail) minmax(0, var(--col)); column-gap: 60px; align-items: start; }
   .sec > * { grid-column: 2; }
-  .sec > .kicker { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 28px; margin-top: 10px; }
+  /* text-wrap: balance (9 Nov): the rail broke "What broke, and what I changed" as "... AND WHAT I / CHANGED". */
+  .sec > .kicker { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: 28px; margin-top: 10px; text-wrap: balance; }
   .hero-head { display: contents; }
   .hero .photo { grid-column: 1; grid-row: 1 / span 60; margin: 6px 0 0; }
   .hero-kicker { grid-column: 2; }
@@ -384,6 +385,9 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .cap { margin: 2px 0 10px; font-size: 15px; line-height: 1.45; color: var(--dim); }
 .storycard { margin: 0 0 34px; }
 .storycard .h3 { margin-bottom: 12px; }
+/* 9 Nov: the story shape (components/StoryCard.tsx): the "checked against:" line gets air before the limit under it. */
+.storycard .story-tag { margin: 4px 0 10px; }
+.storycard .story-limit { margin-bottom: 4px; }
 .chart { margin: 0 0 4px; }
 .urow { display: grid; grid-template-columns: 190px minmax(0, 1fr); column-gap: 14px; align-items: center; margin: 0 0 10px; }
 .ulabel { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.3; color: var(--dim); }

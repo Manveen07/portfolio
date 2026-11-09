@@ -174,8 +174,8 @@ export const HOME_CARDS: ProofSlug[] = ["held-list"];
     recruiter stopped reading home at this band in round 2, and two of its card lines read as AI-written. */
 export const HOME_OWN_BAND = { id: "own-checks", kicker: "AI checks on my own projects" } as const;
 export const HOME_OWN_CARDS: ProofSlug[] = ["caught-my-own-test", "labelled-drawings"];
-// /how-i-build shows only the held-list card, in full, right after What I can do (round 4, 2 Nov: in its first screen
-// until then, where three round 3 readers thought the home page's link "hadn't changed pages").
+// /how-i-build shows only the held-list card, in full, behind the first story's click under What broke, and what I
+// changed (9 Nov, his pick "Proof first"; after What I can do from round 4, 2 Nov, until then).
 
 /** "{name}: {sub}", the line a compact card shows for a step. */
 export const stepLine = (s: ProofStep) => `${s.name}: ${s.sub}`;

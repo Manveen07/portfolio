@@ -12,7 +12,7 @@ import { resumeMarkdown } from "@/lib/md/resume";
 import { postMarkdown } from "@/lib/md/posts";
 import { howMarkdown } from "@/lib/md/how";
 import { workingMarkdown } from "@/lib/md/working";
-import { HOW, LIVE, CONTACT, SKILLS, VISUAL, SPLIT, NERD, INBOX, FREE_CHECK, logSummary, shortDate } from "@/data/how";
+import { HOW, HELD, LIVE, CONTACT, VISUAL, SPLIT, NERD, INBOX, FREE_CHECK, logSummary, shortDate } from "@/data/how";
 import { PROOF } from "@/data/proof";
 
 const lc = (s: string) => `${s.charAt(0).toLowerCase()}${s.slice(1)}`;
@@ -61,9 +61,9 @@ function howLine(): string {
   const K = VISUAL.kickers;
   const clicks: Record<string, string[]> = {
     [K.agents]: [VISUAL.clicks[SPLIT.id]],
-    [K.skills]: [VISUAL.clicks["held-list"], NERD.summary],
+    [K.skills]: [NERD.summary],
     [K.habits]: [VISUAL.clicks.identity],
-    [K.failures]: [VISUAL.clicks.claygent, VISUAL.clicks.bounces],
+    [K.failures]: [VISUAL.clicks["held-list"], VISUAL.clicks.claygent, VISUAL.clicks.bounces],
     [K.fleet]: [INBOX.summary],
   };
   const sections = [...howMarkdown().matchAll(/^## (.+)$/gm)].flatMap(([, h]) => {
@@ -73,11 +73,11 @@ function howLine(): string {
   return `for hiring managers: ${HOW.headline} In page order: ${sections.join("; ")}.`;
 }
 
-/** The held list, the lead proof on the home page and /how-i-build, in the skills row's words with the card's caveat. */
+/** The held list, the lead proof on the home page and /how-i-build, in one sentence (data/how.ts HELD.line, the skills
+    row's words until 9 Nov) with the card's caveat. */
 function heldListLine(): string {
   const card = PROOF["held-list"];
-  const row = SKILLS.find((s) => s.id === "skill-checking");
-  return `${link(card.title, mdHref("/how-i-build"))}: ${row?.line ?? ""} ${card.limit ?? ""}`.trim();
+  return `${link(card.title, mdHref("/how-i-build"))}: ${HELD.line} ${card.limit ?? ""}`.trim();
 }
 
 /** The repos /how-i-build's Check it yourself leads with, in its words (a repo with a command or a line; the profile

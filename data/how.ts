@@ -106,7 +106,7 @@ export const AGENTS: { label: string; note: string; lanes: { agents: string; per
 //   and shared addresses like info@; a person reads a sample"). Review (3 Nov, truth): its "what" ("Reads the whole list
 //   before anything uses it"), moved under "runs on its own", read as the retired "nothing moves on" (ticked rows reach a
 //   running campaign without these gates) and hid the person who reads a sample. Never "every list".
-// - person[0]: SKILLS skill-checking, split at its semicolon ("matched a second Claude session on 43 of 50, under my 90%
+// - person[0]: HELD.line (the skills row "Checking AI output" until 9 Nov), split at its semicolon ("matched a second Claude session on 43 of 50, under my 90%
 //   bar; I held the list until a fix passed 47 of 50 new ones"). Its caveats are the caption, the held-list card's limit.
 // - person[1]: SKILLS skill-agents ("each send needs a person's yes"); never "I approve" or the approver's name.
 // - person[2]: the inbox fleet's lead and its never line.
@@ -208,8 +208,10 @@ export const HABITS: Habit[] = [
     // the new rules": the same fact (the identity audit, line 11: "After the fix: 70 of 123 unique refusals pass").
     head: "Our email match check (right person, right company) refused real people, so I re-ran its refusals",
     exhibit: { struck: "123 refused", circled: "70 of them", rest: " pass the new rules" },
+    // 9 Nov: "Each wrong refusal costs twice: we paid for that email, then pay the next provider." cut from the visible
+    // lines; the click's first part already says it ("every wrong rejection costs twice", EMAILS.broke). Named to him
+    // for his yes (move, never remove).
     lines: [
-      "Each wrong refusal costs twice: we paid for that email, then pay the next provider.",
       "Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost.",
       "I built the rules from those 123, and no one has checked yet whether the 77 are the right people.",
     ],
@@ -225,6 +227,38 @@ export type Story = {
   found: string;
   tested: string;
   changed: string;
+};
+
+// ── The held list, the first story (9 Nov 2026) ──
+// Manveen, 9 Nov: "i want this page to be readable and understanble i want to showcase how i work and my ai edge to
+// them i want to show them how i am diffrent not just someone uses ai to build". Two cold readers (an agency founder, an
+// in-house RevOps head), Hormozi and Karpathy each said, unprompted, that the first screen showed only the "agents draft,
+// a person approves" lane every AI builder has, while the measured miss sat behind a click three screens down. Three
+// outlines were judged; his pick (9 Nov, "Proof first"): the page opens on "What broke, and what I changed", the held
+// list first, then Claygent and the mail servers, each in one shape: the picture, a "checked against:" line, the limit
+// at body size, then the click.
+// Every string is already on this page or the held-list card (data/proof.ts), in their words: the exhibit is the card's
+// two samples (SOURCES.md row 34: 43 of 50 under the 90% bar, then a second pass and a different 50 at 47); line 1 is
+// the card's first step and its "7 misses in 50, so the list waited"; line 2 its second pass and its note; the tag is
+// the card's circled label with the reviewer named (the card's steps: "a second Claude session"); the limit is the
+// card's. Never "hand labels" (a Claude session's verdicts), never "fit check" (the Claygent step's name here).
+// Visible words (9 Nov): the story shows the exhibit, one line, the tag and the limit; the card's own lines ("7 misses
+// in 50, so the list waited", the second pass) stay behind the click.
+// The skills row "Checking AI output" moved here (9 Nov): this story tells it, and its sentence stays as `line`, which
+// llms.txt prints (lib/md/llms.ts).
+export const HELD = {
+  id: "held-list",
+  head: "My agents' picks missed my 90% bar, so I held the list",
+  // The two samples (9 Nov). " on a different 50" wrapped on a 390px phone; without a tail the picture read as the same
+  // 50 improving (jury, 9 Nov: the "resampling until it passed" reading data/proof.ts guards against), so " new ones",
+  // the line's own words ("47 of 50 new ones").
+  exhibit: { struck: "43 of 50", circled: "47 of 50", rest: " new ones" },
+  // The one line is the skills row's sentence (3 Nov truth review), so home's five steps still quote this page.
+  line: "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones.",
+  // Jury (9 Nov, 2 of 4): the 90% bar was on screen three times; the heading and the line say it, the card keeps its
+  // circled label ("my bar: 90% agreement") behind the click.
+  checked: "checked against: a second Claude session",
+  limit: "That session also wrote the rubric. Neither sample included companies the agents dropped, and fifty is a small sample.",
 };
 
 // Cut 1 (2 Nov): the email identity story left the failures; since v2.1 it is the habit card's story (EMAILS above).
@@ -327,12 +361,8 @@ export const SKILLS: Skill[] = [
   // Never "every morning". Review (2 Nov, truth): the approval is a gate ("approves each draft before it sends"), not a
   // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
   { id: "skill-agents", title: "AI agents", line: "My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes." },
-  // SOURCES.md row 34 (the held list, told in full by the card after these rows): agreement with a separate Claude review,
-  // never hand labels; 43 of 50 under the 90% bar, then a second pass and a new sample of 50 at 47. Reviews (2 Nov):
-  // the hero card's terms ("Claude agents pick"), never "fit check", the Claygent step's name on this page; and the
-  // fix is named (EVALS 3a: "until a fix passed 50 fresh rows at 47 of 50"), so it can't read as resampling. Round 4
-  // (2 Nov): "a second Claude session", as on the card; "matched" keeps the row at 30 words.
-  { id: "skill-checking", title: "Checking AI output", line: "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones." },
+  // 9 Nov: the "Checking AI output" row (the held list in one sentence) moved to the first story, which tells it with its
+  // numbers and caveat on the first screen; its sentence is HELD.line.
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
   // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
   // row 11: "70,508 rows in 382 queries, search quota only"). 23 words.
@@ -728,7 +758,21 @@ export const VISUAL = {
   stories: {
     claygent: {
       head: "Claygent, Clay's AI step that reads websites, said no to the good companies",
-      caption: "Grey rows are ones I tuned on, or labelled after seeing its answers.",
+      // 9 Nov (jury, hiring manager): "tuned on" is jargon to a RevOps reader; the same fact in plain words.
+      caption: "Grey rows are ones I used while rewriting the prompt, or labelled after seeing its answers.",
+      // 9 Nov (the first-story shape): one line from the story behind the click, in its words ("I rewrote it as a
+      // briefing, the way you'd brief a new SDR"; two readers called it the most relatable idea on the page). Never "25
+      // companies I labelled": only 10 of the 25 tuning rows carry his labels. The tag names whose labels and when; the limit is the
+      // free check figure's caveat (FREE_CHECK.rows[3].note) with the story's scope ("Since 3 Nov it does in this market").
+      lines: ["I rewrote its prompt as a briefing, the way you'd brief a new SDR."],
+      // Jury (9 Nov, truth): "my labels" alone overclaimed: the segment bar's agreement partly used a cheap AI judge's key,
+      // and only 10 of the 25 tuning rows carry his labels. The tag says which rows: the chart's, his labels, the 30 written
+      // after seeing its answers.
+      checked: "checked against: my labels on these rows, the 30 written after seeing its answers",
+      // 30 words (the page's cap for a visible block): FREE_CHECK.rows[3].note with the story's scope. "companies" (truth:
+      // "ones" read as relabelled segments) and "their bar" (hiring manager: "my bar" two cards from "my 90% bar" read as
+      // the same bar).
+      limit: "Three segments passed only after I relabelled borderline companies, which isn't proof. Two missed their bar and still ran; since 3 Nov a miss stops the run in this market.",
       // The four good ones are his labels in the tuning set; the r4 and r6 runs answer "fit" for all four after the
       // rewrite. The last row is segment 5's 30 later rows he labelled: 18 good, all 18 answered "fit". He labelled
       // them after reading the model's answers, so the caveat sits in the row's own label (2 Nov), and both rows after
@@ -741,7 +785,11 @@ export const VISUAL = {
     },
     bounces: {
       head: "Mail servers that bounce you anyway",
-      caption: "505,461 of our sends by receiving server. Red ones get skipped before any paid lookup.",
+      // 9 Nov (jury, founder and hiring manager): the card sat under "what I changed" but said the change only in a
+      // passive caption, under the second chart. The change is now the card's line, in the Deliverability row's words
+      // ("I screened out high-bounce mail servers") and the caption's ("before any paid lookup"); it also says what "the
+      // screen" in the chart is.
+      caption: "505,461 of our sends by receiving server.",
       // `shown` is printed exactly as the claims table writes it (one decimal for the servers, two for the lists); the
       // width is value / 5.1, one scale for both groups.
       bars: [
@@ -762,6 +810,11 @@ export const VISUAL = {
       // teammate's bars show (SOURCES.md row 31: "a teammate's unscreened uploads 2.26% then 2.09%", "so not all of the
       // drop is the screen").
       after: "The teammate's list fell a little too, so the screen isn't the whole cause.",
+      // 9 Nov (the first-story shape): what the bars were checked against, in the bounces story's words ("A teammate's
+      // lists, loaded without it"); the chart already prints the limit (`after`).
+      lines: ["I screened out high-bounce mail servers before any paid lookup."],
+      checked: "checked against: a teammate's lists, loaded without the screen",
+      limit: "",
     },
   },
   // Each click says what it opens (round 6, 2 Nov, 2 of 3 jurors: "How it actually went" on all six read as a template,
@@ -783,7 +836,8 @@ export const VISUAL = {
     // Verify loop round 2 (2 Nov): was "One habit, with receipts" (4 of 4 round 1 readers flagged it as a slogan); now a
     // plain label for what the row shows.
     habits: "Before I change a rule",
-    // Cut 1: two stories show here; the third, the email check, is the habit card's (v2.1). Round 5 (2 Nov): "Two times it
+    // Cut 1: two stories showed here; the email check is the habit card's (v2.1). 9 Nov: three stories, the held list
+    // first (HELD), and the section opens the page. Round 5 (2 Nov): "Two times it
     // broke" until then; the round 4 agency reader called the bounce chart under it his strongest deliverability proof,
     // and the old label undersold it.
     failures: "What broke, and what I changed",

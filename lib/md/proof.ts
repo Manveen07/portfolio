@@ -12,7 +12,7 @@ const marked = (s: ProofStep, note = true) =>
 export function proofMarkdown(
   c: ProofCard,
   density: "full" | "compact",
-  opts: { level: 2 | 3 | 4; links: boolean; href: (h: string) => string },
+  opts: { level: 2 | 3 | 4 | 5; links: boolean; href: (h: string) => string },
 ): string {
   const out = [
     `${"#".repeat(opts.level)} ${c.title}`,

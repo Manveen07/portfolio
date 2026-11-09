@@ -254,21 +254,24 @@ test("home: held-list sits right under the hero, the other two cards after Work"
 });
 
 // ── 5. /how-i-build: held-list in full, the only card on the page (2 Nov); behind a click under the skills rows since round 5 ──
-test("/how-i-build: the full held-list card sits behind a closed click under the skills rows, five steps, both samples circled, no link to itself", () => {
+test("/how-i-build: the full held-list card sits behind a closed click in the first story, five steps, both samples circled, no link to itself", () => {
   // Round 4 (2 Nov): in the first screen until then; three round 3 readers thought home's link "hadn't changed pages".
   // Round 5 (2 Nov): a section of its own after the skills in round 4; now a click right under the rows (all 4 round 4
   // readers said its story repeats), which home's link opens through OpenOnHash (the card keeps id="held-list").
   assert.ok(!cardHtml(how().match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? "", "held-list"), "the card is back in the first screen");
-  const skills = how().match(/<section id="skills"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const held = skills.match(/<details class="more held-click" id="held">[\s\S]*?<\/details>/)?.[0] ?? "";
-  assert.ok(held, "the card's click is not in the skills section");
-  const [notYet, click, nerd] = ['class="skills-notyet"', 'id="held"', 'id="nerd"'].map((s) => skills.indexOf(s));
-  assert.ok(notYet < click && click < nerd, "the click is not right under the skills rows, above the pipeline click");
-  assert.match(held, /^<details class="more held-click" id="held"><summary><span class="more-line more-label">How the held list actually went<\/span>/);
+  // 9 Nov (his pick, "Proof first"): the click closes the first story of What broke, and what I changed.
+  const failures = how().match(/<section id="failures"[\s\S]*?<\/section>/)?.[0] ?? "";
+  const held = failures.match(/<details class="more held-click" id="held-click">[\s\S]*?<\/details>/)?.[0] ?? "";
+  assert.ok(held, "the card's click is not in the first story");
+  assert.ok(failures.indexOf('id="held-click"') < failures.indexOf('<article id="claygent"'), "the click is not in the first story");
+  assert.match(held, /^<details class="more held-click" id="held-click"><summary><span class="more-line more-label">How the held list actually went<\/span>/);
   assert.ok(!how().includes('<section id="held"'), "the card has its own section again");
   const card = cardHtml(held, "held-list");
   assert.ok(card.startsWith('<article class="pc pc-full" id="held-list">'), "no full held-list card behind the click");
-  assert.ok(decode(card).includes(`<h3 class="h3">${PROOF["held-list"].title}</h3>`), "the card's title is not an h3 under the click");
+  // 9 Nov: the story it sits in has the title as its own h3 (jury: the click opened on the same heading again), so the
+  // card inside the click shows no title.
+  assert.ok(!/<h[34] class="h3">/.test(card), "the card repeats its title inside the click");
+  assert.ok(decode(failures).includes(`<h3 class="h3">${PROOF["held-list"].title}</h3>`), "the story's heading is not the card's title");
   const flow = card.match(/<ol class="pc-flow">[\s\S]*?<\/ol>/)?.[0] ?? "";
   const steps = [...flow.matchAll(/<li class="pc-step">([\s\S]*?)<\/li>/g)].map((m) => m[1]);
   assert.equal(steps.length, 5);

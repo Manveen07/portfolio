@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, SPLIT, HABITS, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
 import { StoryText } from "@/components/StoryParts";
 import A from "@/components/A";
 import ProofCard from "@/components/ProofCard";
-import HabitRow from "@/components/HabitRow";
+import HabitRow, { PenExhibit } from "@/components/HabitRow";
+import StoryCard from "@/components/StoryCard";
 import SkillRows from "@/components/SkillRows";
 import FixLog from "@/components/FixLog";
 import OpenOnHash from "@/components/OpenOnHash";
@@ -34,6 +35,11 @@ import { pageJsonLd, ldJson } from "@/lib/md/person";
 // Words in data/how.ts; markdown copy at /how-i-build.md (lib/md/how.ts). The voice is his, casual on purpose.
 // 3 Nov: the inbox fleet (the agency's inbox bot, stage by stage, and where a person decides) sits after the skills
 // and their clicks, before the habit (his ask: "you did not have anything about inboxes").
+// 9 Nov (his ask: "readable and understanble ... show them how i am diffrent not just someone uses ai to build"; his pick
+// of three judged outlines, "Proof first"): the order is now the h1, What broke and what I changed (the held list, then
+// Claygent and the mail servers, each with what it was checked against and its limit), What I can do, Before I change a
+// rule, Me and my agents, The inbox fleet, Check it yourself, Say hi (the call offer before the hours line). Four readers had found the measured miss three
+// screens down, behind a click, under an agents drawing every AI builder has.
 
 const DESCRIPTION = `${HOW.headline} ${HOW.sub.join(" ")}`;
 
@@ -84,37 +90,50 @@ export default function HowIBuild() {
         )}
       </section>
 
-      <section id="agents" className="wrap sec">
-        <h2 className="kicker">{K.agents}</h2>
-        <AgentLanes />
-        {AGENTS.lines.map((line) => (
-          <p key={line} className="body">
-            {line}
-          </p>
-        ))}
-        {/* 3 Nov (option 5 of the animation mockups): what runs on its own and what waits for a person, behind its own
-            click so the first screen and its word count stay as they were. Words in data/how.ts (SPLIT). */}
-        <details className="more" id={SPLIT.id}>
-          <summary>
-            <span className="more-line more-label">{VISUAL.clicks[SPLIT.id]}</span>
-            <span className="more-hint" aria-hidden="true" />
-          </summary>
-          <OnItsOwn />
-        </details>
+      {/* 9 Nov (his pick, "Proof first"): the page opens on what broke and what changed, the held list first, each story in
+          one shape (components/StoryCard.tsx). The held-list card in full sits behind the first story's click; its id,
+          held-list, still opens it from home's "The whole flow →" (components/OpenOnHash.tsx). */}
+      <section id="failures" className="wrap sec">
+        <h2 className="kicker">{K.failures}</h2>
+        <StoryCard
+          id="held"
+          head={HELD.head}
+          picture={<PenExhibit x={HELD.exhibit} />}
+          lines={[HELD.line]}
+          checked={HELD.checked}
+          limit={HELD.limit}
+          click={
+            <details className="more held-click" id="held-click">
+              <summary>
+                <span className="more-line more-label">{VISUAL.clicks["held-list"]}</span>
+                <span className="more-hint" aria-hidden="true" />
+              </summary>
+              <ProofCard c={PROOF["held-list"]} density="full" level={4} links={false} title={false} />
+            </details>
+          }
+        />
+        {FAILURES.stories.map((s) => {
+          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
+          const Chart = CHARTS[s.id];
+          return (
+            <StoryCard
+              key={s.id}
+              id={s.id}
+              head={v.head}
+              picture={<Chart />}
+              caption={v.caption}
+              lines={v.lines}
+              checked={v.checked}
+              limit={v.limit}
+              click={<StoryText s={s} />}
+            />
+          );
+        })}
       </section>
 
       <section id="skills" className="wrap sec">
         <h2 className="kicker">{K.skills}</h2>
         <SkillRows />
-        {/* Round 5 (2 Nov): the held-list card in full, behind its own click under the rows. The card keeps its id,
-            held-list, so home's "The whole flow →" opens the click (components/OpenOnHash.tsx), as #identity does. */}
-        <details className="more held-click" id="held">
-          <summary>
-            <span className="more-line more-label">{VISUAL.clicks["held-list"]}</span>
-            <span className="more-hint" aria-hidden="true" />
-          </summary>
-          <ProofCard c={PROOF["held-list"]} density="full" level={3} links={false} />
-        </details>
         <details className="more" id="nerd">
           <summary>
             <span className="more-line more-label">{NERD.summary}</span>
@@ -152,6 +171,34 @@ export default function HowIBuild() {
         </details>
       </section>
 
+      <section id="habits" className="wrap sec">
+        <h2 className="kicker">{K.habits}</h2>
+        {HABITS.map((h) => (
+          <HabitRow key={h.id} h={h} />
+        ))}
+      </section>
+
+      <section id="agents" className="wrap sec">
+        <h2 className="kicker">{K.agents}</h2>
+        <AgentLanes />
+        {/* 3 Nov (option 5 of the animation mockups): what runs on its own and what waits for a person, behind its own
+            click so the first screen and its word count stay as they were. Words in data/how.ts (SPLIT). */}
+        <details className="more" id={SPLIT.id}>
+          <summary>
+            <span className="more-line more-label">{VISUAL.clicks[SPLIT.id]}</span>
+            <span className="more-hint" aria-hidden="true" />
+          </summary>
+          {/* 9 Nov: the two lines that sat under the drawing moved in here (move, never remove): two readers found them
+              repeating step 5 and the AI agents row on the first screen. */}
+          {AGENTS.lines.map((line) => (
+            <p key={line} className="body">
+              {line}
+            </p>
+          ))}
+          <OnItsOwn />
+        </details>
+      </section>
+
       {/* 3 Nov (his ask): the agency's inbox bot, stage by stage, and where a person decides, after the skills and their
           clicks. The lead line, the drawing, one caption and the credit show; each stage's detail sits behind one click.
           Words in data/how.ts (INBOX). */}
@@ -177,29 +224,6 @@ export default function HowIBuild() {
           </ol>
           <p className="body">{INBOX.never}</p>
         </details>
-      </section>
-
-      <section id="habits" className="wrap sec">
-        <h2 className="kicker">{K.habits}</h2>
-        {HABITS.map((h) => (
-          <HabitRow key={h.id} h={h} />
-        ))}
-      </section>
-
-      <section id="failures" className="wrap sec">
-        <h2 className="kicker">{K.failures}</h2>
-        {FAILURES.stories.map((s) => {
-          const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
-          const Chart = CHARTS[s.id];
-          return (
-            <article key={s.id} id={s.id} className="storycard">
-              <h3 className="h3">{v.head}</h3>
-              <Chart />
-              <p className="cap">{v.caption}</p>
-              <StoryText s={s} />
-            </article>
-          );
-        })}
       </section>
 
       <section id="live" className="wrap sec">
@@ -242,8 +266,10 @@ export default function HowIBuild() {
             {ME.email}
           </a>
         </p>
+        {/* 9 Nov: body size (was small grey), right under the address (jury: an agency founder's first question is
+            campaign results, and this is the answer); the hours line after it. */}
+        <p className="body">{CONTACT.results}</p>
         <p className="small">{CONTACT.where}</p>
-        <p className="small">{CONTACT.results}</p>
         <p className="cta-row" style={{ marginTop: 28 }}>
           <A href={ME.linkedin}>LinkedIn ↗</A>
           <A href={ME.github}>GitHub ↗</A>

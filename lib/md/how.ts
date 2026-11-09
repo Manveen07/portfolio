@@ -3,7 +3,7 @@
 // is written out (what is struck, what is circled), so nothing is only a picture. tests/how.test.mjs checks every block
 // and number against the built page.
 
-import { HOW, AGENTS, SPLIT, HABITS, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
 import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
@@ -31,6 +31,7 @@ const parts = (s: Story) => [
 function onItsOwn(): string[] {
   return [
     `### ${VISUAL.clicks[SPLIT.id]}`,
+    ...AGENTS.lines.map(para),
     `#### ${SPLIT.heads.bots}`,
     list(SPLIT.bots),
     `#### ${SPLIT.heads.person}`,
@@ -60,8 +61,35 @@ export function freeCheck(head: "heading" | "bold" = "heading"): string[] {
 /** A failure's chart, caption and four parts, under a heading of `level`, its click a level below. */
 const story = (s: Story, level: number) => {
   const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
-  return [`${"#".repeat(level)} ${v.head}`, para(`Chart: ${CHART[s.id]()}`), para(v.caption), `${"#".repeat(level + 1)} ${VISUAL.clicks[s.id]}`, ...parts(s)];
+  return [
+    `${"#".repeat(level)} ${v.head}`,
+    para(`Chart: ${CHART[s.id]()}`),
+    para(v.caption),
+    ...v.lines.map(para),
+    para(v.checked),
+    ...(v.limit ? [para(v.limit)] : []),
+    `${"#".repeat(level + 1)} ${VISUAL.clicks[s.id]}`,
+    ...parts(s),
+  ];
 };
+
+/** A red-pen line written out: what shows, then what is struck and what is circled. */
+const penLine = (x: { struck?: string; circled: string; rest?: string }) => {
+  const shown = `${x.struck ? `${x.struck} → ` : ""}${x.circled}${x.rest ?? ""}`;
+  const marks = `${x.struck ? ` Struck through in red: ${x.struck}.` : ""} Circled in red: ${x.circled}.`;
+  return para(`${shown}.${marks}`);
+};
+
+/** 9 Nov: the held list, the first story, in the shape the page draws it; the card in full under its click. */
+const held = () => [
+  `### ${HELD.head}`,
+  penLine(HELD.exhibit),
+  para(HELD.line),
+  para(HELD.checked),
+  para(HELD.limit),
+  `#### ${VISUAL.clicks["held-list"]}`,
+  proofMarkdown(PROOF["held-list"], "full", { level: 5, links: false, href }),
+];
 
 export function howMarkdown(): string {
   const K = VISUAL.kickers;
@@ -75,19 +103,14 @@ export function howMarkdown(): string {
     ...HOW.sub.map(para),
     ...(VISUAL.heroLinks.length ? [list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href))))] : []),
 
-    `## ${K.agents}`,
-    para(`Drawing: ${AGENTS.label}`),
-    para(pen(AGENTS.note)),
-    ...AGENTS.lines.map(para),
-    // 3 Nov: the click under the agents lines, as on the page.
-    ...onItsOwn(),
+    `## ${K.failures}`,
+    // 9 Nov (his pick, "Proof first"): the first section, the held list first.
+    ...held(),
+    ...FAILURES.stories.flatMap((s) => story(s, 3)),
 
     `## ${K.skills}`,
     list(SKILLS.map((s) => `**${s.title}**: ${md(s.line)}`)),
     para(`${SKILLS_NOT_YET.label} ${SKILLS_NOT_YET.text}`),
-    // Round 5 (2 Nov): the held-list card sits behind its own click under the rows, as on the page.
-    `### ${VISUAL.clicks["held-list"]}`,
-    proofMarkdown(PROOF["held-list"], "full", { level: 4, links: false, href }),
     `### ${NERD.summary}`,
     para(`Drawing: ${PIPELINE_STEPS.label}`),
     para(pen(PIPELINE_STEPS.note)),
@@ -100,6 +123,23 @@ export function howMarkdown(): string {
     ...freeCheck(),
     list(NERD.clay.map(md)),
 
+    `## ${K.habits}`,
+    ...HABITS.flatMap((h) => {
+      return [
+        `### ${h.head}`,
+        penLine(h.exhibit),
+        ...h.lines.map(para),
+        para(h.link ? `${h.checked} · ${link(h.link.label, href(h.link.href))}` : h.checked),
+        ...(h.story ? [`#### ${VISUAL.clicks[h.story.id]}`, ...parts(h.story)] : []),
+      ];
+    }),
+
+    `## ${K.agents}`,
+    para(`Drawing: ${AGENTS.label}`),
+    para(pen(AGENTS.note)),
+    // 9 Nov: the two lines sit inside the click, before its columns, as on the page.
+    ...onItsOwn(),
+
     // 3 Nov: the inbox fleet, after the skills and their clicks, as on the page; the drawing as its reading.
     `## ${K.fleet}`,
     para(INBOX.lead),
@@ -110,23 +150,6 @@ export function howMarkdown(): string {
     `### ${INBOX.summary}`,
     INBOX.stages.map((s, i) => `${i + 1}. **${stageHead(s)}** ${s.detail}`).join("\n"),
     para(INBOX.never),
-
-    `## ${K.habits}`,
-    ...HABITS.flatMap((h) => {
-      const x = h.exhibit;
-      const shown = `${x.struck ? `${x.struck} → ` : ""}${x.circled}${x.rest ?? ""}`;
-      const marks = `${x.struck ? ` Struck through in red: ${x.struck}.` : ""} Circled in red: ${x.circled}.`;
-      return [
-        `### ${h.head}`,
-        para(`${shown}.${marks}`),
-        ...h.lines.map(para),
-        para(h.link ? `${h.checked} · ${link(h.link.label, href(h.link.href))}` : h.checked),
-        ...(h.story ? [`#### ${VISUAL.clicks[h.story.id]}`, ...parts(h.story)] : []),
-      ];
-    }),
-
-    `## ${K.failures}`,
-    ...FAILURES.stories.flatMap((s) => story(s, 3)),
 
     `## ${K.live}`,
     list(
@@ -142,8 +165,8 @@ export function howMarkdown(): string {
     `## ${K.contact}`,
     para(CONTACT.ask),
     para(link(ME.email, `mailto:${ME.email}`)),
-    para(CONTACT.where),
     para(CONTACT.results),
+    para(CONTACT.where),
     para(
       [link("LinkedIn", ME.linkedin), link("GitHub", ME.github), link("Résumé (PDF)", abs("/resume.pdf")), link("Home", mdHref("/")), link("Writing", mdHref("/writing"))].join(" · "),
     ),

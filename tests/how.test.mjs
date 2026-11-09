@@ -20,7 +20,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { HOW, AGENTS, SPLIT, HABITS, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
+import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, EMAILS, PIPELINE_STEPS, SKILLS, SKILLS_NOT_YET, NERD, FREE_CHECK, INBOX, LIVE, VISUAL, logSummary, stageHead } from "../data/how.ts";
 import { HERO, JOBS, FIVE_HABITS } from "../data/portfolio.ts";
 import { PROOF } from "../data/proof.ts";
 
@@ -77,12 +77,13 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.equal(JSON.parse(app("how-i-build.md.meta")).headers["content-type"], "text/markdown; charset=utf-8");
   assert.match(app("sitemap.xml.body"), /<loc>https:\/\/manveen\.me\/how-i-build<\/loc>/);
   assert.ok(app("llms.txt.body").includes(`](${SITE}/how-i-build.md)`), "llms.txt does not link the copy");
-  // 3 Nov: the blurb names the sections in page order, read off this copy (tests/ai.test.mjs holds the order).
-  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} In page order: ${VISUAL.kickers.agents} (`), "llms.txt's blurb is the old one");
+  // 3 Nov: the blurb names the sections in page order, read off this copy (tests/ai.test.mjs holds the order). 9 Nov:
+  // the page opens on What broke, and what I changed (his pick, "Proof first").
+  assert.ok(app("llms.txt.body").includes(`for hiring managers: ${HOW.headline} In page order: ${VISUAL.kickers.failures} (`), "llms.txt's blurb is the old one");
   assert.ok(app("llms-full.txt.body").includes(md().trim()), "llms-full.txt does not hold the copy whole");
 });
 
-test("the first screen: the photo, the kicker, the h1, two sub lines (the role, then what an AI step is), no card, then Me and my agents", () => {
+test("the first screen: the photo, the kicker, the h1, the role line, no proof card, then What broke, and what I changed", () => {
   const hero = section("top");
   assert.equal((page().match(/<h1[\s>]/g) ?? []).length, 1);
   assert.equal(squash(plain(hero.match(/<h1>([\s\S]*?)<\/h1>/)[1])), HOW.headline);
@@ -106,9 +107,11 @@ test("the first screen: the photo, the kicker, the h1, two sub lines (the role, 
   assert.ok(!HERO.how.some((l) => /\b82\b/.test(l)), "the step count is in home's hero");
   assert.doesNotMatch(HOW.sub.join(" "), /Clay, n8n and Python/, "the tool list is back in the sub line");
   // Round 4: the held-list card left the first screen (three round 3 readers thought home's link "hadn't changed pages"),
-  // so Me and my agents follows the hero.
-  assert.ok(!hero.includes('class="pc '), "a proof card is back in the first screen");
-  assert.deepEqual([...page().matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]).slice(0, 2), ["top", "agents"]);
+  // so Me and my agents followed the hero. 9 Nov (his pick, "Proof first"): two cold readers, Hormozi and Karpathy each
+  // found the measured miss three screens down, so the held list comes back as the first story, in the story shape
+  // (the red-pen line, its checker and its limit), not as the home page's proof card; that card sits behind its click.
+  assert.ok(!hero.includes('class="pc '), "a proof card is back in the hero");
+  assert.deepEqual([...page().matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]).slice(0, 2), ["top", "failures"]);
   // No paragraph outside the sub block: anything else the hero says in a <p> is a row of links.
   const rest = hero.replace(/<div class="how-sub">[\s\S]*?<\/div>/, "").replace(/<p class="kicker hero-kicker">[^<]*<\/p>/, "");
   for (const [, p] of rest.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
@@ -122,7 +125,14 @@ test("the first screen: the photo, the kicker, the h1, two sub lines (the role, 
 // 3 Nov, his pick of the animation mockups (option 5): the new click under the agents lines adds its 11-word label
 // ("What runs on its own, and what waits for a person"); everything inside it, and the free check figure inside the
 // pipeline click, sits behind a click. Measured 687 (676 before).
-const VISIBLE_CAP = 687;
+// 9 Nov (his pick, "Proof first"): the held list opens the page in the story shape, and Claygent and the mail servers
+// gain what they were checked against and their limit (+); the skills row it repeated, the agents section's two lines
+// (into its click), a Claygent line and the email card's "costs twice" line (behind its click) went (-). Measured 749.
+// The 9 Nov jury: the mail-server card says what changed in a line, the pen line says "new ones", the Claygent tag says
+// whose labels on which rows, its caption drops "tuned on", and the held list's tag drops the bar it repeated: 756.
+const VISIBLE_CAP = 756;
+// The ceiling the comments above name (760): a cap past it fails.
+assert.ok(VISIBLE_CAP <= 760, "the cap is past the 760 ceiling");
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -161,22 +171,24 @@ test("short blocks: no visible paragraph over 30 words outside a card, and each 
   }
 });
 
-test("sections in order: agents, skills (the held-list card behind a click under the rows), the inbox fleet, habits, failures, live, contact, each holding its own picture", () => {
+test("sections in order: failures (the held list first, then the two charts), skills, habits, agents, the inbox fleet, live, contact, each holding its own picture", () => {
   const html = page();
   const h2 = [...html.matchAll(/<h2 class="kicker">([^<]*)<\/h2>/g)].map((m) => decode(m[1]));
   const K = VISUAL.kickers;
   // Verify loop round 3 (2 Nov): What I can do right after Me and my agents, no word changed (the round 2 recruiter gave
   // up in Two times it broke before reaching it; three readers called it the most useful part for a hirer).
   // 3 Nov: the inbox fleet after What I can do and its clicks, before the habit (his ask).
-  assert.deepEqual(h2, [K.agents, K.skills, K.fleet, K.habits, K.failures, K.live, K.contact]);
+  // 9 Nov (his pick of three judged outlines, "Proof first"): What broke, and what I changed opens the page, then the
+  // skills, the habit, the agents, the inbox fleet. Four readers found the measured miss three screens down.
+  assert.deepEqual(h2, [K.failures, K.skills, K.habits, K.agents, K.fleet, K.live, K.contact]);
   // Round 5 (2 Nov): the held-list card, in full, sits behind a click right under the skills rows (its label since round 6:
   // "How the held list actually went")
   // (all 4 round 4 readers said its story repeats); round 4 gave it a section of its own after What I can do.
-  const at = ["agents", "skills", "inbox-fleet", "habits", "failures", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
+  const at = ["failures", "skills", "habits", "agents", "inbox-fleet", "live", "contact"].map((id) => html.indexOf(`<section id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `a section is missing: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "the sections are out of order");
   assert.ok(!html.includes('<section id="held"'), "the held-list card has its own section again");
-  const mdAt = [`## ${K.agents}`, `## ${K.skills}`, `### ${VISUAL.clicks["held-list"]}`, `#### ${PROOF["held-list"].title}`, `### ${NERD.summary}`, `## ${K.fleet}`, `### ${INBOX.summary}`, `## ${K.habits}`, `## ${K.failures}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
+  const mdAt = [`## ${K.failures}`, `### ${HELD.head}`, `#### ${VISUAL.clicks["held-list"]}`, `##### ${PROOF["held-list"].title}`, `## ${K.skills}`, `### ${NERD.summary}`, `## ${K.habits}`, `## ${K.agents}`, `## ${K.fleet}`, `### ${INBOX.summary}`, `## ${K.live}`, `## ${K.contact}`].map((k) => md().indexOf(`${k}\n`));
   assert.ok(mdAt.every((i) => i >= 0), `a section is missing from the copy: ${mdAt}`);
   assert.deepEqual([...mdAt].sort((a, b) => a - b), mdAt, "the copy is not in page order");
   assert.ok(sketch(section("agents"), AGENTS.label), "#agents does not hold the agents drawing");
@@ -184,10 +196,28 @@ test("sections in order: agents, skills (the held-list card behind a click under
   const skills = section("skills");
   assert.deepEqual([...skills.matchAll(/<li id="([^"]+)" class="skill">/g)].map((m) => m[1]), SKILLS.map((s) => s.id));
   assert.match(skills, /<ul class="skills">/);
-  // Two clicks since round 5: the held-list card's, right under the rows, then the pipeline and the details.
-  const [held, ...nerd] = [...skills.matchAll(/<details[\s\S]*?<\/details>/g)];
-  assert.equal(nerd.length, 1, "#skills should hold two clicks");
-  assert.match(held[0], /^<details class="more held-click" id="held"><summary><span class="more-line more-label">How the held list actually went<\/span><span class="more-hint" aria-hidden="true"><\/span><\/summary><article class="pc pc-full" id="held-list">/);
+  // One click since 9 Nov: the pipeline and the details (the held-list card's click moved to the first story).
+  const nerd = [...skills.matchAll(/<details[\s\S]*?<\/details>/g)];
+  assert.equal(nerd.length, 1, "#skills should hold one click");
+  assert.ok(!skills.includes('id="held-list"'), "the held-list card is back under the skills rows");
+  // 9 Nov: the held list is the first story: its heading, the red-pen line (43 of 50 struck, 47 of 50 circled), the
+  // skills row's sentence, what it was checked against, its limit, then the card in full behind its click.
+  const failures = section("failures");
+  const heldAt = failures.indexOf('<article id="held" class="storycard">');
+  assert.ok(heldAt >= 0 && heldAt < failures.indexOf('<article id="claygent"'), "the held list is not the first story");
+  const heldStory = failures.slice(heldAt, failures.indexOf('<article id="claygent"'));
+  assert.equal(squash(plain(heldStory.match(/<h3 class="h3">([\s\S]*?)<\/h3>/)[1])), HELD.head);
+  // keep() holds each number to its words with no-break spaces, so it never wraps alone.
+  assert.match(heldStory, /<p class="habit-exhibit"><span class="pen"><s class="pen-strike">43[ \u00a0]of[ \u00a0]50<\/s><\/span>/, "43 of 50 is not struck");
+  assert.match(heldStory, /<span class="pen pen-circle">47[ \u00a0]of[ \u00a0]50<svg/, "47 of 50 is not circled");
+  for (const s of [HELD.line, HELD.checked, HELD.limit]) assert.ok(squash(plain(heldStory)).includes(s), `the held story lost: ${s}`);
+  // Jury (9 Nov, tests): pinned to their sources, so a cut caveat fails here and not only behind the click.
+  assert.equal(HELD.limit, PROOF["held-list"].limit, "the story's limit is not the card's three caveats");
+  assert.equal(HELD.checked, "checked against: a second Claude session");
+  assert.equal(PROOF["held-list"].title, HELD.head, "the story's heading is not the card's title");
+  assert.doesNotMatch(squash(plain(heldStory)), /fit check|\bhand[- ]?(?:labels?|labell?ed|read|checked)\b/i, "the held list is told as a fit check or hand labels");
+  assert.ok(heldStory.indexOf("story-tag") < heldStory.indexOf("story-limit") && heldStory.indexOf("story-limit") < heldStory.indexOf("<details"), "the held story's tag and limit are not before its click");
+  assert.match(heldStory, /<details class="more held-click" id="held-click"><summary><span class="more-line more-label">How the held list actually went<\/span><span class="more-hint" aria-hidden="true"><\/span><\/summary><article class="pc pc-full" id="held-list">/);
   assert.equal(squash(plain(nerd[0][0].match(/<summary>([\s\S]*?)<\/summary>/)[1])), NERD.summary);
   assert.ok(sketch(nerd[0][0], PIPELINE_STEPS.label), "the pipeline drawing is not inside the skills click");
   // v2.1 (2 Nov): the email story is told once, behind the habit card's own click (its id keeps #identity links
@@ -199,6 +229,8 @@ test("sections in order: agents, skills (the held-list card behind a click under
   const click = habit.match(/<details class="more" id="identity">[\s\S]*?<\/details>/)?.[0] ?? "";
   assert.ok(click, "the habit card has no click with the email story");
   assert.match(click, /<summary><span class="more-line more-label">How the re-run actually went<\/span>/);
+  // 9 Nov: the card's "costs twice" line left the visible lines; the click says it.
+  assert.ok(squash(plain(click)).includes("every wrong rejection costs twice"), "the cost line is not in the habit's click");
   const parts = click.match(/<dl class="story">[\s\S]*?<\/dl>/)?.[0] ?? "";
   assert.deepEqual([...parts.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]), ["What broke", "How I found it", "How I proved the fix", "What it changed"]);
   assert.equal((html.match(/2,376 past provider emails/g) ?? []).length, 1, "the side-by-side on 2,376 emails is told in more than one story");
@@ -211,6 +243,15 @@ test("sections in order: agents, skills (the held-list card behind a click under
     const caption = squash(plain(card.match(/<p class="cap">([\s\S]*?)<\/p>/)?.[1] ?? ""));
     assert.ok(caption && caption.split(" ").length <= 25, `${s.id}: caption is missing or long (${caption})`);
     assert.ok(card.includes(`<summary><span class="more-line more-label">${VISUAL.clicks[s.id]}</span>`), `${s.id}: the click is not labelled for its story`);
+    // 9 Nov: each story says what it was checked against, before its click.
+    const v = VISUAL.stories[s.id];
+    assert.ok(card.includes(`<p class="habit-tag story-tag">${v.checked.replace(/'/g, "&#x27;")}</p>`), `${s.id}: no checked-against line`);
+    assert.ok(v.checked.startsWith("checked against: "), `${s.id}: the tag does not say what it was checked against`);
+    // Jury (9 Nov, tests): the lines and the limit show before the click, the tag before the limit.
+    const shown = squash(plain(card.slice(0, card.indexOf("<details"))));
+    for (const l of [...v.lines, v.limit].filter(Boolean)) assert.ok(shown.includes(squash(l)), `${s.id}: not shown before the click: ${l}`);
+    assert.ok(card.indexOf("story-tag") < card.indexOf("<details"), `${s.id}: the tag is not before the click`);
+    if (v.limit) assert.ok(card.indexOf("story-tag") < card.indexOf("story-limit") && card.indexOf("story-limit") < card.indexOf("<details"), `${s.id}: the limit is not between the tag and the click`);
     const story = card.match(/<details[\s\S]*?<\/details>/)?.[0] ?? "";
     const dts = [...story.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]);
     assert.deepEqual(dts, ["What broke", "How I found it", "How I proved the fix", "What it changed"], `${s.id}: parts`);
@@ -268,6 +309,8 @@ test("retired claims stay off the page and its copy", () => {
       /never s(?:een|aw)|30 of 30|25 of 25|124 of 124|nothing moves on|had to match|hand-labelled 25|live only after|label 25 to 30|check every email|every email vs|only now/i,
     );
     assert.doesNotMatch(s, /Slack (?:button|card)/i);
+    // 9 Nov (jury, tests): only 10 of the 25 Claygent tuning rows carry his labels, so never "25 companies I labelled".
+    assert.doesNotMatch(s, /\b25 (?:companies )?(?:that )?I(?:'d| had)? labell?ed\b|\blabell?ed (?:all )?25\b/i, "25 companies are called his labels");
     assert.doesNotMatch(s, /\bI sent\b/);
     assert.doesNotMatch(s, /\b870\+|95\.5%|nine mornings|\btoy\b/i);
     assert.doesNotMatch(s, /\bhand[- ]?(?:read|labell?ed|checked)\b.{0,80}\b4[37] of 50\b|\b4[37] of 50\b.{0,80}\bhand[- ]?(?:read|labell?ed|checked)\b/i);
@@ -456,11 +499,12 @@ test("the review's retired wordings stay off the page and its copy (2 Nov)", () 
 });
 
 // ── 2 Nov: the new sections' data rules ─────────────────────────────────
-test("skills: nine rows, one plain sentence each with its number, then one Not yet line (v2.1)", () => {
+test("skills: eight rows, one plain sentence each with its number, then one Not yet line (v2.1; 9 Nov)", () => {
   // Manveen, 2 Nov, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
+  // 9 Nov: "Checking AI output" left the rows; the first story tells it, in the row's own sentence (HELD.line).
   assert.deepEqual(
     SKILLS.map((s) => s.title),
-    ["AI agents", "Checking AI output", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
+    ["AI agents", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
   );
   assert.equal(new Set(SKILLS.map((s) => s.id)).size, SKILLS.length, "two rows share an id");
   for (const s of SKILLS) {
@@ -479,8 +523,10 @@ test("skills: nine rows, one plain sentence each with its number, then one Not y
   // The held list (SOURCES.md row 34): agreement with a Claude review, never hand labels; under the bar, then a fix and
   // 47 on new rows. Review (2 Nov): the card's terms, never "fit check" (the Claygent step's name on this page). Round 4:
   // "a second Claude session", as on the card.
-  assert.match(row("skill-checking"), /My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones\./);
-  assert.doesNotMatch(row("skill-checking"), /fit check/, "the held list is called the fit check");
+  // 9 Nov: the sentence is the first story's line now (HELD.line), word for word, and still never "fit check".
+  assert.equal(HELD.line, "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones.");
+  assert.doesNotMatch(HELD.line, /fit check/, "the held list is called the fit check");
+  assert.ok(squash(plain(section("failures"))).includes(HELD.line), "the held list's sentence is not on the page");
   // 3 Nov: the eval inventory's count, from what is done (the 31 Oct eval inventory).
   assert.match(row("skill-testing"), /42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid\./);
   // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
@@ -539,7 +585,9 @@ test("habit: the email check replayed before switching, struck and circled, with
   // it matches (all 4 round 2 readers stumbled on it), in the same 16 words.
   assert.match(h.head, /^Our email match check \(right person, right company\) refused real people, so I re-ran its refusals$/);
   assert.ok(h.head.split(" ").length <= 16, "the habit head grew");
-  assert.match(h.lines.join(" "), /costs twice: we paid for that email, then pay the next provider\./);
+  // 9 Nov: "costs twice" moved behind the card's click, where the story's first part says it.
+  assert.doesNotMatch(h.lines.join(" "), /costs twice/, "the cost line is back on the card");
+  assert.match(EMAILS.broke, /every wrong rejection costs twice/, "the click lost the cost line");
   assert.match(h.lines.join(" "), /Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost\./);
   // The limit, said last, covers both numbers: the 70 came from the same 123 the rules did, and nobody checked the 77
   // (round 3: the cto read the old line as contradicting the head). Round 4: in the first person.
@@ -607,8 +655,9 @@ test("the inbox fleet: seven stages in order, the person's three circled in red,
   assert.deepEqual(INBOX.stages.map((s) => s.name), ["order", "set up", "score", "watch", "warm-up", "retire list", "before the bill"]);
   assert.deepEqual(INBOX.stages.map((s) => s.who), ["person", "bot", "bot", "bot", "test", "person", "person"]);
   const html = page();
-  const at = ["skills", "inbox-fleet", "habits"].map((id) => html.indexOf(`<section id="${id}"`));
-  assert.ok(at[0] >= 0 && at[0] < at[1] && at[1] < at[2], `not after What I can do and before the habit: ${at}`);
+  // 9 Nov (his pick, "Proof first"): after Me and my agents, before Check it yourself.
+  const at = ["agents", "inbox-fleet", "live"].map((id) => html.indexOf(`<section id="${id}"`));
+  assert.ok(at[0] >= 0 && at[0] < at[1] && at[1] < at[2], `not after Me and my agents and before Check it yourself: ${at}`);
   const sec = section("inbox-fleet");
   const copy = unmark(md());
   const drawing = sketch(sec, INBOX.label);
@@ -789,19 +838,23 @@ test("the free check (3 Nov): under Clay in depth, every bar to scale of the mar
   assert.ok(Math.max(...d) >= 3 && Math.max(...d) <= 3.6, `the last part starts at ${Math.max(...d)} s`);
 });
 
-test("what runs on its own (3 Nov): its own click under the agents lines, two columns, real lines only, each in the site's words", () => {
+test("what runs on its own (3 Nov): its own click under the agents drawing, the two agents lines inside it, two columns, real lines only, each in the site's words", () => {
   const S = SPLIT;
   const sec = section("agents");
   const clicks = [...sec.matchAll(/<details[\s\S]*?<\/details>/g)].map((m) => m[0]);
   assert.equal(clicks.length, 1, "#agents should hold one click");
   const click = clicks[0];
-  assert.ok(sec.indexOf(AGENTS.lines[1]) < sec.indexOf("<details"), "the click is not under the agents lines");
+  // 9 Nov: the two lines under the drawing moved inside the click, before its columns (two readers found them repeating
+  // step 5 and the AI agents row); nothing sits between the drawing and the click.
+  assert.ok(sec.indexOf(AGENTS.lines[0]) > sec.indexOf("<details"), "the agents lines are back under the drawing");
+  assert.ok(sec.indexOf("<svg") >= 0 && sec.indexOf("<svg") < sec.indexOf("<details"), "the click is above the agents drawing");
   assert.equal(VISUAL.clicks[S.id], "What runs on its own, and what waits for a person");
+  const lines = AGENTS.lines.map((l) => `<p class="body">${l}</p>`).join("");
   assert.ok(
     decode(click).startsWith(
-      `<details class="more" id="${S.id}"><summary><span class="more-line more-label">${VISUAL.clicks[S.id]}</span><span class="more-hint" aria-hidden="true"></span></summary><div class="split"><div class="split-top"><button type="button" class="replay">${S.replay}</button></div><div class="split-cols">`,
+      `<details class="more" id="${S.id}"><summary><span class="more-line more-label">${VISUAL.clicks[S.id]}</span><span class="more-hint" aria-hidden="true"></span></summary>${lines}<div class="split"><div class="split-top"><button type="button" class="replay">${S.replay}</button></div><div class="split-cols">`,
     ),
-    "the click is not styled like the page's other clicks, or its figure doesn't open it",
+    "the click is not styled like the page's other clicks, its lines aren't first, or its figure doesn't open it",
   );
   // The columns: the drawing's lane name for the person; every line in the server HTML, in order.
   assert.deepEqual([...click.matchAll(/<h3 class="split-head[^"]*">([^<]*)<\/h3>/g)].map((m) => decode(m[1])), ["agents and bots", "a person"]);
@@ -812,13 +865,14 @@ test("what runs on its own (3 Nov): its own click under the agents lines, two co
   const calls = [...list("split-calls").matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => [...m[1].matchAll(/<p class="split-(?:call|why)">([\s\S]*?)<\/p>/g)].map((p) => squash(plain(p[1]))));
   assert.deepEqual(calls, S.person.map((c) => [c.call, ...(c.why ? [c.why] : [])]));
   assert.equal(squash(plain(click.match(/<p class="split-cap">([\s\S]*?)<\/p>/)?.[1] ?? "")), S.note);
-  // The copy prints it under the agents lines, before What I can do.
-  const mdAt = [`## ${VISUAL.kickers.agents}\n`, `### ${VISUAL.clicks[S.id]}\n`, `#### ${S.heads.bots}\n`, `#### ${S.heads.person}\n`, `## ${VISUAL.kickers.skills}\n`].map((s) => md().indexOf(s));
+  // The copy prints it under the agents drawing, its two lines first, before The inbox fleet (9 Nov).
+  const mdAt = [`## ${VISUAL.kickers.agents}\n`, `### ${VISUAL.clicks[S.id]}\n`, `${AGENTS.lines[0]}\n`, `#### ${S.heads.bots}\n`, `#### ${S.heads.person}\n`, `## ${VISUAL.kickers.fleet}\n`].map((s) => md().indexOf(s));
   assert.ok(mdAt.every((i) => i >= 0) && inOrder(mdAt), `the copy is not in page order: ${mdAt}`);
 
   // Left: every line is already on this page, in its words, in the order things ran (review, 3 Nov: the free check
   // before the Claygent spend, as the free check figure shows).
-  const skill = (id) => SKILLS.find((s) => s.id === id)?.line ?? "";
+  // 9 Nov: "Checking AI output" left the skills rows; its sentence is the first story's line (HELD.line).
+  const skill = (id) => (id === "skill-checking" ? HELD.line : (SKILLS.find((s) => s.id === id)?.line ?? ""));
   const [cutLine, claygentLine, agentsLine, inboxLine, alertsLine, listLine] = S.bots;
   assert.ok(CLAY_LINE.includes(`${claygentLine}, and 16,728 passed.`), "the Claygent line is not the Clay line's");
   assert.ok(CLAY_LINE.includes("a free mail-server check cut 28% of it"));

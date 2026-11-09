@@ -139,19 +139,23 @@ export default function ProofCard({
   density,
   level,
   links = true,
+  title = true,
 }: {
   c: Card;
   density: "full" | "compact";
-  level: 2 | 3;
+  /** 4 since 9 Nov: /how-i-build's held-list card sits under the first story's own h3. */
+  level: 2 | 3 | 4;
   /** Off where the card's link would point at the card itself (held-list on /how-i-build). */
   links?: boolean;
+  /** Off inside /how-i-build's first story (9 Nov), whose own h3 is the card's title; the card keeps every other part. */
+  title?: boolean;
 }) {
-  const H = level === 2 ? "h2" : "h3";
+  const H = level === 2 ? "h2" : level === 3 ? "h3" : "h4";
   const full = density === "full";
   return (
     <article className={`pc pc-${density}`} id={c.slug}>
       <p className="pc-eyebrow">{c.eyebrow}</p>
-      <H className="h3">{keep(c.title)}</H>
+      {title && <H className="h3">{keep(c.title)}</H>}
       <Before c={c} full={full} />
       {full ? <Flow steps={c.steps} /> : <Pair c={c} />}
       <p className="note pc-legend">circled: {keep(c.circledLabel)}</p>

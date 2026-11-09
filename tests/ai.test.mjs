@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 import { RESUME, PDF_OVERRIDES } from "../data/resume.ts";
 import { LLMS_INTRO } from "../data/llms-intro.ts";
 import { ME, HERO, JOBS, PILOT, FREELANCE } from "../data/portfolio.ts";
-import { HOW, LIVE, CONTACT, SKILLS, VISUAL } from "../data/how.ts";
+import { HOW, HELD, LIVE, CONTACT, VISUAL } from "../data/how.ts";
 import { PROOF } from "../data/proof.ts";
 import { pageHash, bodyFile } from "../lib/page-dates.ts";
 
@@ -561,7 +561,8 @@ test("llms.txt's /how-i-build line names its sections in page order, read off th
   const order = line.match(/In page order: (.+)\.$/)?.[1].replace(/ \([^)]*\)/g, "").split("; ").filter((s) => s !== "My corrections log");
   const h2s = [...app("how-i-build.md.body").matchAll(/^## (.+)$/gm)].map((m) => m[1]);
   assert.deepEqual(order, h2s);
-  assert.deepEqual(h2s.slice(0, 3), [VISUAL.kickers.agents, VISUAL.kickers.skills, VISUAL.kickers.fleet]);
+  // 9 Nov (his pick, "Proof first"): What broke, and what I changed opens the page.
+  assert.deepEqual(h2s.slice(0, 3), [VISUAL.kickers.failures, VISUAL.kickers.skills, VISUAL.kickers.habits]);
   // Every click on the page is named (the verifier, 3 Nov: the habit's and both failure stories' were missing); the
   // corrections log is named by its own summary.
   const summaries = [...app("how-i-build.html").matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) => m[1].replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").trim());
@@ -584,7 +585,8 @@ test("llms.txt's Projects and work: the jobs whole, the held list with its cavea
   const card = PROOF["held-list"];
   const held = items.find((l) => l.startsWith(`- [${card.title}](${SITE}/how-i-build.md): `));
   assert.ok(held, "no held-list line");
-  assert.ok(held.includes(SKILLS.find((s) => s.id === "skill-checking").line) && held.endsWith(card.limit), "the held list lost its numbers or its caveat");
+  // 9 Nov: the skills row's sentence is the first story's line (HELD.line).
+  assert.ok(held.includes(HELD.line) && held.endsWith(card.limit), "the held list lost its numbers or its caveat");
   // The repos, after the jobs and the held list, in the page's words; Tender Radar last, with its own caveat.
   const repos = LIVE.items.filter((l) => l.code || l.text);
   assert.deepEqual(items.slice(-repos.length).map((l) => l.match(/^- \[([^\]]+)\]\(([^)]+)\)/).slice(1)), repos.map((l) => [l.label.replace(/\s*[↗→]$/, ""), l.href]));
