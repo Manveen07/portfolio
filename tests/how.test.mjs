@@ -130,9 +130,9 @@ test("the first screen: the photo, the kicker, the h1, the role line, no proof c
 // (into its click), a Claygent line and the email card's "costs twice" line (behind its click) went (-). Measured 749.
 // The 9 Nov jury: the mail-server card says what changed in a line, the pen line says "new ones", the Claygent tag says
 // whose labels on which rows, its caption drops "tuned on", and the held list's tag drops the bar it repeated: 756.
-const VISIBLE_CAP = 756;
-// The ceiling the comments above name (760): a cap past it fails.
-assert.ok(VISIBLE_CAP <= 760, "the cap is past the 760 ceiling");
+// 9 Nov evening, his call ("i think they add value"): the Checking AI output row and the email card's "costs twice"
+// line came back, past the 760 ceiling the comments above name: 804. The cap still stops any growth without a decision.
+const VISIBLE_CAP = 804;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
@@ -229,7 +229,7 @@ test("sections in order: failures (the held list first, then the two charts), sk
   const click = habit.match(/<details class="more" id="identity">[\s\S]*?<\/details>/)?.[0] ?? "";
   assert.ok(click, "the habit card has no click with the email story");
   assert.match(click, /<summary><span class="more-line more-label">How the re-run actually went<\/span>/);
-  // 9 Nov: the card's "costs twice" line left the visible lines; the click says it.
+  // 9 Nov: the click says the cost too (the card's line is back, his call).
   assert.ok(squash(plain(click)).includes("every wrong rejection costs twice"), "the cost line is not in the habit's click");
   const parts = click.match(/<dl class="story">[\s\S]*?<\/dl>/)?.[0] ?? "";
   assert.deepEqual([...parts.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]), ["What broke", "How I found it", "How I proved the fix", "What it changed"]);
@@ -499,12 +499,13 @@ test("the review's retired wordings stay off the page and its copy (2 Nov)", () 
 });
 
 // ── 2 Nov: the new sections' data rules ─────────────────────────────────
-test("skills: eight rows, one plain sentence each with its number, then one Not yet line (v2.1; 9 Nov)", () => {
+test("skills: nine rows, one plain sentence each with its number, then one Not yet line (v2.1; 9 Nov)", () => {
   // Manveen, 2 Nov, on the rows with a receipt and a gap each: "i was not sure what we are going for in this".
-  // 9 Nov: "Checking AI output" left the rows; the first story tells it, in the row's own sentence (HELD.line).
+  // 9 Nov: "Checking AI output" left the rows with the redesign and came back the same evening, his call ("i think they
+  // add value"), in the same sentence as the first story's line (HELD.line).
   assert.deepEqual(
     SKILLS.map((s) => s.title),
-    ["AI agents", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
+    ["AI agents", "Checking AI output", "Testing AI steps", "Clay", "Finding emails", "Deliverability", "n8n", "CRM", "Python and tests"],
   );
   assert.equal(new Set(SKILLS.map((s) => s.id)).size, SKILLS.length, "two rows share an id");
   for (const s of SKILLS) {
@@ -527,6 +528,7 @@ test("skills: eight rows, one plain sentence each with its number, then one Not 
   assert.equal(HELD.line, "My agents' company picks matched a second Claude session on 43 of 50, under my 90% bar; I held the list until a fix passed 47 of 50 new ones.");
   assert.doesNotMatch(HELD.line, /fit check/, "the held list is called the fit check");
   assert.ok(squash(plain(section("failures"))).includes(HELD.line), "the held list's sentence is not on the page");
+  assert.equal(row("skill-checking"), `Checking AI output ${HELD.line}`, "the Checking AI output row is not the held list's sentence");
   // 3 Nov: the eval inventory's count, from what is done (the 31 Oct eval inventory).
   assert.match(row("skill-testing"), /42 of my 82 AI steps, the places where an AI decides or writes something, have a test so far; 11 of them are solid\./);
   // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
@@ -585,8 +587,8 @@ test("habit: the email check replayed before switching, struck and circled, with
   // it matches (all 4 round 2 readers stumbled on it), in the same 16 words.
   assert.match(h.head, /^Our email match check \(right person, right company\) refused real people, so I re-ran its refusals$/);
   assert.ok(h.head.split(" ").length <= 16, "the habit head grew");
-  // 9 Nov: "costs twice" moved behind the card's click, where the story's first part says it.
-  assert.doesNotMatch(h.lines.join(" "), /costs twice/, "the cost line is back on the card");
+  // 9 Nov: off the card with the redesign, back the same evening (his call); the click says it too.
+  assert.match(h.lines.join(" "), /costs twice: we paid for that email, then pay the next provider\./);
   assert.match(EMAILS.broke, /every wrong rejection costs twice/, "the click lost the cost line");
   assert.match(h.lines.join(" "), /Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost\./);
   // The limit, said last, covers both numbers: the 70 came from the same 123 the rules did, and nobody checked the 77

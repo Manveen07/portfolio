@@ -208,10 +208,9 @@ export const HABITS: Habit[] = [
     // the new rules": the same fact (the identity audit, line 11: "After the fix: 70 of 123 unique refusals pass").
     head: "Our email match check (right person, right company) refused real people, so I re-ran its refusals",
     exhibit: { struck: "123 refused", circled: "70 of them", rest: " pass the new rules" },
-    // 9 Nov: "Each wrong refusal costs twice: we paid for that email, then pay the next provider." cut from the visible
-    // lines; the click's first part already says it ("every wrong rejection costs twice", EMAILS.broke). Named to him
-    // for his yes (move, never remove).
+    // 9 Nov: cut from the visible lines with the redesign, back the same evening, his call: "i think they add value".
     lines: [
+      "Each wrong refusal costs twice: we paid for that email, then pay the next provider.",
       "Before switching, I ran old and new rules on all 2,376 past emails: 77 more passed and no old pass was lost.",
       "I built the rules from those 123, and no one has checked yet whether the 77 are the right people.",
     ],
@@ -361,8 +360,9 @@ export const SKILLS: Skill[] = [
   // Never "every morning". Review (2 Nov, truth): the approval is a gate ("approves each draft before it sends"), not a
   // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
   { id: "skill-agents", title: "AI agents", line: "My Claude Code agents have drafted follow-ups since 16 Oct; each send needs a person's yes." },
-  // 9 Nov: the "Checking AI output" row (the held list in one sentence) moved to the first story, which tells it with its
-  // numbers and caveat on the first screen; its sentence is HELD.line.
+  // 9 Nov: the "Checking AI output" row left the rows when the first story told the held list; back the same evening,
+  // his call: "i think they add value". Its sentence is HELD.line, one string for both places.
+  { id: "skill-checking", title: "Checking AI output", line: HELD.line },
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
   // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
   // row 11: "70,508 rows in 382 queries, search quota only"). 23 words.
