@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { HOW, AGENTS, SPLIT, HABITS, HELD, TESTING, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
-import { ME, PHOTO } from "@/data/portfolio";
+import { ME, PHOTO, REFERENCE } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
 import { StoryText } from "@/components/StoryParts";
@@ -77,6 +77,9 @@ export default function HowIBuild() {
             {HOW.sub.map((line) => (
               <p key={line}>{line}</p>
             ))}
+            {/* 10 Nov (his ask: "build social proof to a recuiter that visits how i build page"): the one outside
+                voice he has, home's own sentence (data/portfolio.ts REFERENCE), on the first screen. */}
+            <p className="how-ref">{REFERENCE}</p>
           </div>
         </div>
         {VISUAL.heroLinks.length > 0 && (

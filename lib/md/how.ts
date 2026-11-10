@@ -4,7 +4,7 @@
 // and number against the built page.
 
 import { HOW, AGENTS, SPLIT, HABITS, HELD, FAILURES, PIPELINE_STEPS, SKILLS, TESTING, NERD, FREE_CHECK, INBOX, LIVE, CONTACT, VISUAL, logSummary, shortDate, stageHead, type Story } from "@/data/how";
-import { ME, PHOTO } from "@/data/portfolio";
+import { ME, PHOTO, REFERENCE } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
@@ -101,6 +101,7 @@ export function howMarkdown(): string {
     `# ${HOW.headline}`,
     para(`*${HOW.title}*. By ${ME.name}. Web page: ${abs("/how-i-build")}`),
     ...HOW.sub.map(para),
+    para(REFERENCE),
     ...(VISUAL.heroLinks.length ? [list(VISUAL.heroLinks.map((l) => link(bare(l.label), href(l.href))))] : []),
 
     `## ${K.skills}`,

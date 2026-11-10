@@ -521,6 +521,8 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .how-sub { margin: 14px 0 0; font-size: 19px; line-height: 1.5; color: var(--ink); }
 .how-sub p { margin: 0; }
 .how-sub p + p { margin-top: 8px; }
+/* 10 Nov: the reference, one step quieter than the role line above it. */
+.how-sub .how-ref { font-size: 16px; color: var(--dim); }
 /* Under 720px the photo sits right of the h1 at 72px, so the h1, the sub lines and Me and my agents start the first screen. */
 /* Round 6 (2 Nov): the kicker ("How I build") takes the first row and the h1 the second, as on home. */
 @media (max-width: 719px) {
