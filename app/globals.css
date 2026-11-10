@@ -576,12 +576,22 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 .skill-title { margin: 0 0 2px; font-size: 17px; font-weight: 800; line-height: 1.5; letter-spacing: -0.01em; }
 .skill-line { margin: 0; font-size: 17px; line-height: 1.5; text-wrap: pretty; }
 .skill-line a { padding: 11px 0; }
+/* 10 Nov (his ask: no wall of text, don't undersell): each row is a tile that leads with its figure; the sentence
+   sits under it, one step quieter. One column on a phone, two from 560px, three from 900px. */
+.skills { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 28px; }
+.skill-title::before { content: attr(data-fig); display: block; margin: 0 0 4px; font-size: 22px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+.skill-title { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--dim); }
+.skill-title::before { color: var(--ink); }
+.skill-line { margin-top: 6px; font-size: 15px; line-height: 1.5; color: var(--dim); }
+.skill:first-child { padding-top: 14px; }
+@media (min-width: 560px) { .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .skills { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .skills-notyet { margin: 0 0 6px; padding: 14px 0; font-size: 17px; line-height: 1.5; }
 .skills-notyet-label { display: block; margin: 0 0 2px; font-weight: 800; letter-spacing: -0.01em; }
 @media (min-width: 640px) {
   .habit { padding: 22px; }
-  .skill, .skills-notyet { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 20px; }
-  .skill-title, .skills-notyet-label { margin: 0; }
+  .skills-notyet { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 20px; }
+  .skills-notyet-label { margin: 0; }
 }
 
 /* The corrections log, behind one click: newest first, a date and one link each. */

@@ -1,5 +1,5 @@
 import { Inline } from "@/components/Prose";
-import { SKILLS, type Skill } from "@/data/how";
+import { SKILLS, FIGS, type Skill } from "@/data/how";
 import { keep } from "@/lib/text";
 
 // What I've built (9 Nov; What I can do from v2.1, 2 Nov), on /how-i-build: one row per system, the skill in a hiring manager's words and one plain
@@ -14,7 +14,9 @@ export default function SkillRows({ rows = SKILLS }: { rows?: Skill[] }) {
       <ul className="skills">
         {rows.map((s) => (
           <li key={s.id} id={s.id} className="skill">
-            <h3 className="skill-title">{s.title}</h3>
+            {/* 10 Nov: the figure is drawn above the title from this attribute (globals.css), so the row's own words stay
+                one title and one sentence. */}
+            <h3 className="skill-title" data-fig={FIGS[s.id]}>{s.title}</h3>
             <p className="skill-line">
               <Inline s={keep(s.line)} linkClass="link" />
             </p>

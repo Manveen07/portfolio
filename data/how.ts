@@ -811,7 +811,14 @@ export const VISUAL = {
   // number (SOURCES.md row 34). Review (2 Nov, Karpathy): the reviewer was the Claude session that wrote the rubric.
   share: ["43 of 50", "agreed with the Claude session that wrote the rubric, under my 90% bar, so I held the list"] as [string, string],
   // Cut 3 (2 Nov): the hero's links down the page ("What I can do", "Check it yourself") went; the rail does the job.
-  heroLinks: [] as { label: string; href: string }[],
+  // 10 Nov (his ask: "easy to follow"): back, as the page's map under the h1: four jumps in the sections' own labels.
+  // A phone has no rail, and a reader who gives the page ten seconds sees where the proof, the misses and the tests are.
+  heroLinks: [
+    { label: "What I've built", href: "#skills" },
+    { label: "What I caught", href: "#failures" },
+    { label: "How I test", href: "#how-i-test" },
+    { label: "Check it yourself", href: "#live" },
+  ] as { label: string; href: string }[],
   stories: {
     claygent: {
       head: "Claygent, Clay's AI step that reads websites, said no to the good companies",
@@ -916,4 +923,27 @@ export const VISUAL = {
     live: "Check it yourself",
     contact: "Say hi",
   },
+};
+
+// ── 10 Nov (his ask: "someone visiting my website get's my skills without that wall of text", "does not undersell"):
+// each row of What I've built and How I test leads with its figure, a few words lifted from the row's own sentence, so a
+// skimmer reads nine results and seven tests without reading a paragraph. Nothing here may say more than its sentence:
+// the gate is "merged", never running; the agents "draft". components/SkillRows.tsx draws it above the title. ──
+export const FIGS: Record<string, string> = {
+  "skill-checking": "43 of 50, then 47",
+  "skill-agents": "Drafting since 16 Oct",
+  "skill-inbox": "Inboxes scored 0 to 100",
+  "skill-finder": "31 Clay workflows",
+  "skill-clay": "34,044 companies, 0 data credits",
+  "skill-emails": "78% of 15,514 found",
+  "skill-deliverability": "Bounces 2.7% to 0.7%",
+  "skill-exclusions": "13 live leads removed",
+  "skill-crm": "Replies written to HubSpot",
+  "test-suite": "872 tests",
+  "test-code": "149 tests",
+  "skill-n8n": "Alerts on 40 workflows",
+  "test-alerts": "Flagged a dropped reply",
+  "skill-python": "60 tests, a release gate",
+  "test-gates": "Blocks an unchecked send",
+  "test-stop": "Gate merged 3 Nov",
 };

@@ -140,7 +140,9 @@ test("the first screen: the photo, the kicker, the h1, the role line, no proof c
 // The 9 Nov late jury: the rows say who the follow-ups are for, where the lead finder ran and why it stopped, what the
 // HubSpot sync wrote, and the gate as merged; the n8n and Python rows moved to How I test: 1012. Round 2: 1013.
 // 10 Nov (his ask, social proof for a recruiter): the reference sentence on the first screen, +21: 1034.
-const VISIBLE_CAP = 1034;
+// 10 Nov (his ask, "easy to follow"): the four jump links under the h1, +9: 1043. The rows' lead figures are drawn from an
+// attribute, not counted: each repeats words of its own sentence.
+const VISIBLE_CAP = 1043;
 
 test("visible words stay at the count measured at the build", (t) => {
   // 2 Nov, v2: 844 measured with the design's full copy; the session's call was to apply its cut order (section 15,
