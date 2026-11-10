@@ -384,7 +384,8 @@ export const SKILLS: Skill[] = [
   // sentence says who attended, never that the invites caused it (the first lists were the owner's).
   // Same day: the tracker sheet he linked has 67 people who replied (61 by email, 6 on LinkedIn) and 22 registered as of
   // its 28 Oct export; its Attending column is empty, so the 60 is not on the page until a source shows it.
-  { id: "skill-event", title: "Event invites", line: "For the agency's own meetup I built the LinkedIn and email invites, sent in five waves, and an n8n reply tracker: 67 people replied and 22 registered." },
+  // Later the same day, his words: "eveent happened and 45 attended". The count is his; 22 had registered by 28 Oct.
+  { id: "skill-event", title: "Event invites", line: "For the agency's own meetup I built the LinkedIn and email invites, sent in five waves, and an n8n reply tracker: 67 people replied and 45 came to the event." },
   // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
   // résumé does, "after", never "because" (with gateway leads out of both periods his drop is 1.31% to 0.49%). The
   // inbox checks: the capabilities index (the DNS auth checker, the daily setup audit with its warm-up checks, the
@@ -950,7 +951,7 @@ export const VISUAL = {
 // skimmer reads nine results and seven tests without reading a paragraph. Nothing here may say more than its sentence:
 // the gate is "merged", never running; the agents "draft". components/SkillRows.tsx draws it above the title. ──
 export const FIGS: Record<string, string> = {
-  "skill-event": "67 replies, 22 registered",
+  "skill-event": "67 replies, 45 attended",
   "skill-checking": "Held a list under my 90% bar",
   "skill-agents": "A person's yes on every send",
   "skill-inbox": "Inboxes scored 0 to 100",
