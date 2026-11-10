@@ -14,7 +14,9 @@ export default function Footer() {
         <Link href="/writing">Writing</Link> · <a href={`mailto:${ME.email}`}>{ME.email}</a>
       </p>
       {/* 2 Nov (verify loop round 3): the freelance pilot's own page, linked once, here. */}
-      <p className="small">
+      {/* 10 Nov (blind readers, 3 of 3: "a job or gigs?"): hidden on /how-i-build, the page sent to recruiters
+          (globals.css). */}
+      <p className="small foot-freelance">
         <Link href={FREELANCE.href}>{FREELANCE.link}</Link>
       </p>
       <p className="small">

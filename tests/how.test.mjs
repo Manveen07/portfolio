@@ -268,9 +268,11 @@ test("sections in order: what I've built, how I test, how I check the work (the 
     assert.ok(v.checked.startsWith("checked against: "), `${s.id}: the tag does not say what it was checked against`);
     // Jury (9 Nov, tests): the lines and the limit show before the click, the tag before the limit.
     const shown = squash(plain(card.slice(0, card.indexOf("<details"))));
-    for (const l of [...v.lines, v.limit].filter(Boolean)) assert.ok(shown.includes(squash(l)), `${s.id}: not shown before the click: ${l}`);
+    // 10 Nov (three blind readers): a story marked limitInClick opens its click with the limit instead.
+    for (const l of [...v.lines, v.limitInClick ? null : v.limit].filter(Boolean)) assert.ok(shown.includes(squash(l)), `${s.id}: not shown before the click: ${l}`);
+    if (v.limitInClick) assert.ok(squash(plain(card.slice(card.indexOf("<details")))).includes(squash(v.limit)), `${s.id}: the limit left the page`);
     assert.ok(card.indexOf("story-tag") < card.indexOf("<details"), `${s.id}: the tag is not before the click`);
-    if (v.limit) assert.ok(card.indexOf("story-tag") < card.indexOf("story-limit") && card.indexOf("story-limit") < card.indexOf("<details"), `${s.id}: the limit is not between the tag and the click`);
+    if (v.limit && !v.limitInClick) assert.ok(card.indexOf("story-tag") < card.indexOf("story-limit") && card.indexOf("story-limit") < card.indexOf("<details"), `${s.id}: the limit is not between the tag and the click`);
     const story = card.match(/<details[\s\S]*?<\/details>/)?.[0] ?? "";
     const dts = [...story.matchAll(/<dt>([^<]*)<\/dt>/g)].map((m) => m[1]);
     assert.deepEqual(dts, ["What broke", "How I found it", "How I proved the fix", "What it changed"], `${s.id}: parts`);
@@ -562,7 +564,7 @@ test("what I've built: eleven systems, one plain sentence each with its number, 
   assert.match(row("skill-exclusions"), /found 13 live leads, 5 already emailed, all removed; a daily n8n sync now keeps excluded companies out of new uploads\./);
   assert.doesNotMatch(row("skill-exclusions"), /BettrData|Bettr/i, "the client is named");
   // Round 5 (2 Nov): why the map cost 0 data credits (SOURCES.md row 11: "search quota only"; 3 of 4 round 4 readers asked).
-  assert.match(row("skill-clay"), /I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0\.18 credits each\./);
+  assert.match(row("skill-clay"), /I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; then Claygent checked 24,506 of them at about 0\.18 credits each\./);
   assert.match(row("skill-emails"), /verified emails for 12,030 of 15,514 decision-makers \(78%\) in one batch\./);
   assert.match(row("skill-deliverability"), /^Deliverability After I screened out high-bounce mail servers, bounces on my lists went from 2\.7% to 0\.7%/);
   assert.doesNotMatch(row("skill-deliverability"), /\bbecause\b/, "the bounce drop said as because");

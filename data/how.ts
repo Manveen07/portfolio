@@ -388,7 +388,7 @@ export const SKILLS: Skill[] = [
   // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
   // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
   // row 11: "70,508 rows in 382 queries, search quota only").
-  { id: "skill-clay", title: "Clay and Claygent", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
+  { id: "skill-clay", title: "Clay and Claygent", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; then Claygent checked 24,506 of them at about 0.18 credits each." },
   // NERD.clay[0] (SOURCES.md row 9: 31 loops across 3 accounts), past tense: the searches paused on 27 Oct.
   // Jury (9 Nov, late, hiring manager): "3 accounts" read as 3 target accounts, and "until 27 Oct" as broken; NERD.clay[0]
   // says why it stopped ("paused to save search quota").
@@ -710,7 +710,8 @@ export const LIVE: { items: LiveItem[]; privacy: string; log: LogEntry[] } = {
       href: "https://github.com/Manveen07/champion-move-checker",
       label: "champion-move-checker ↗",
       code: "python -m champion gate cases/dev.jsonl --matcher naive",
-      text: "prints BLOCKED: a plain name match gets 8 of 29.",
+      // 10 Nov (blind readers, 3 of 3: "sounds like a chess tool"): what the repo is, in the job agent profile's words.
+      text: "prints BLOCKED: a plain name match gets 8 of 29. The tool finds a past customer at their new company.",
     },
     {
       id: "live-n8n",
@@ -847,6 +848,9 @@ export const VISUAL = {
       // 30 words (the page's cap for a visible block): FREE_CHECK.rows[3].note with the story's scope. "companies" (truth:
       // "ones" read as relabelled segments) and "their bar" (hiring manager: "my bar" two cards from "my 90% bar" read as
       // the same bar).
+      // 10 Nov (blind readers, 3 of 3 re-read it three times; his call: "they all ar true either way"): this limit opens
+      // the story's click instead of sitting above it (moved, not removed). The caption above still says whose labels.
+      limitInClick: true,
       limit: "Three segments passed only after I relabelled borderline companies, which isn't proof; two missed their bar and ran, so on 3 Nov I merged a check that stops a miss.",
       // The four good ones are his labels in the tuning set; the r4 and r6 runs answer "fit" for all four after the
       // rewrite. The last row is segment 5's 30 later rows he labelled: 18 good, all 18 answered "fit". He labelled

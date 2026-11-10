@@ -27,13 +27,15 @@ export function StoryParts({ s }: { s: Story }) {
   );
 }
 
-export function StoryText({ s, id }: { s: Story; id?: string }) {
+export function StoryText({ s, id, lead }: { s: Story; id?: string; lead?: string }) {
   return (
     <details className="more" id={id}>
       <summary>
         <span className="more-line more-label">{VISUAL.clicks[s.id]}</span>
         <span className="more-hint" aria-hidden="true" />
       </summary>
+      {/* 10 Nov: a story's limit, when it opens the click instead of sitting above it. */}
+      {lead && <p className="cap story-limit">{lead}</p>}
       <StoryParts s={s} />
     </details>
   );

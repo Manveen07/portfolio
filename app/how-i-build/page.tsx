@@ -152,6 +152,7 @@ export default function HowIBuild() {
         {FAILURES.stories.map((s) => {
           const v = VISUAL.stories[s.id as keyof typeof VISUAL.stories];
           const Chart = CHARTS[s.id];
+          const inClick = "limitInClick" in v && v.limitInClick;
           return (
             <StoryCard
               key={s.id}
@@ -161,8 +162,8 @@ export default function HowIBuild() {
               caption={v.caption}
               lines={v.lines}
               checked={v.checked}
-              limit={v.limit}
-              click={<StoryText s={s} />}
+              limit={inClick ? undefined : v.limit}
+              click={<StoryText s={s} lead={inClick ? v.limit : undefined} />}
             />
           );
         })}

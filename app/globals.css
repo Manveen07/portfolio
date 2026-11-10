@@ -919,3 +919,6 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
   .pen-js:not(.pen-live) .ns-gate:not(.in) .ns-blocked { animation: pen-failsafe 0s 5s both; }
 }
 @keyframes pen-failsafe { to { opacity: 1; transform: none; visibility: visible; } }
+
+/* 10 Nov: /how-i-build goes to recruiters; the freelance link stays on every other page. */
+body:has(.hero.how) .foot-freelance { display: none; }
