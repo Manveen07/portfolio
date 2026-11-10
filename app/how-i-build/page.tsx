@@ -170,7 +170,7 @@ export default function HowIBuild() {
           rows' shape, after what he caught (jury, editor: pictures come sooner). Words in data/how.ts (TESTING). */}
       <section id="how-i-test" className="wrap sec">
         <h2 className="kicker">{K.testing}</h2>
-        <SkillRows rows={TESTING} />
+        <SkillRows rows={TESTING} ledger />
         {/* 9 Nov, late (jury): the testing list that sat in the pipeline click, under its own click here. */}
         <details className="more" id="how-each-test">
           <summary>

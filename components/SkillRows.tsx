@@ -8,10 +8,12 @@ import { keep } from "@/lib/text";
 // has an id, so a DM can link one row. Words in data/how.ts (SKILLS).
 
 // 9 Nov, late: the same rows carry How I test (data/how.ts TESTING).
-export default function SkillRows({ rows = SKILLS }: { rows?: Skill[] }) {
+// 10 Nov (his call: "how i test and what ive built look similar ... change one of them"): `ledger` lays the rows out as
+// one list, figure on the left and sentence on the right; without it they are tiles.
+export default function SkillRows({ rows = SKILLS, ledger = false }: { rows?: Skill[]; ledger?: boolean }) {
   return (
     <>
-      <ul className="skills">
+      <ul className={ledger ? "skills ledger" : "skills"}>
         {rows.map((s) => (
           <li key={s.id} id={s.id} className="skill">
             {/* 10 Nov: the figure is drawn above the title from this attribute (globals.css), so the row's own words stay
