@@ -6,6 +6,9 @@ import Writing from "@/components/Writing";
 import Contact from "@/components/Contact";
 import type { Metadata } from "next";
 import { homeJsonLd, ldJson } from "@/lib/md/person";
+import Link from "next/link";
+import SkillRows from "@/components/SkillRows";
+import { SKILLS, HOME_BUILT, VISUAL } from "@/data/how";
 import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS } from "@/data/proof";
 
 // The page's canonical address (one URL per page for search engines) and its markdown copy, for AI agents (llmstxt.org).
@@ -21,6 +24,14 @@ export default function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(homeJsonLd()) }} />
       <Hero />
+      {/* 10 Nov: the first rows of What I've built, as on /how-i-build, right under the hero (data/how.ts HOME_BUILT). */}
+      <section id={HOME_BUILT.id} className="wrap sec">
+        <h2 className="kicker">{VISUAL.kickers.skills}</h2>
+        <SkillRows rows={SKILLS.slice(0, HOME_BUILT.count)} />
+        <p className="links built-more">
+          <Link href={HOME_BUILT.link.href}>{HOME_BUILT.link.label}</Link>
+        </p>
+      </section>
       <section id="proof-cards" className="wrap sec">
         <h2 className="kicker">{HOME_BAND.kicker}</h2>
         {HOME_CARDS.map((slug) => (

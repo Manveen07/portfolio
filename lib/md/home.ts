@@ -5,7 +5,7 @@
 
 import { NEWEST_FIRST } from "@/data/posts";
 import { ME, HERO, HERO_KICKER, SAY_HI, PHOTO, REFERENCE, NOW_LINE, JOBS, OFF_CLOCK, FREELANCE, FIVE_HABITS, type WorkItem } from "@/data/portfolio";
-import { CONTACT } from "@/data/how";
+import { CONTACT, SKILLS, HOME_BUILT, VISUAL } from "@/data/how";
 import { abs, mdHref, SITE } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
 import { PROOF, HOME_CARDS, HOME_BAND, HOME_OWN_BAND, HOME_OWN_CARDS, type ProofCard } from "@/data/proof";
@@ -74,6 +74,11 @@ export function homeMarkdown(): string {
     para(ME.hours),
     // 3 Nov: the strip after the link down and the hours line, as on the page.
     ...fiveHabits(),
+
+    // 10 Nov: the first rows of What I've built, as on the page.
+    `## ${VISUAL.kickers.skills}`,
+    list(SKILLS.slice(0, HOME_BUILT.count).map((s) => `**${s.title}**: ${s.line}`)),
+    para(link(HOME_BUILT.link.label, mdHref(HOME_BUILT.link.href))),
 
     `## ${HOME_BAND.kicker}`,
     ...HOME_CARDS.map((slug) => proofMarkdown(PROOF[slug], "compact", { level: 3, links: true, href: mdHref })),

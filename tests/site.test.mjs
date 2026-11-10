@@ -544,7 +544,8 @@ test("one reading column, centred: header, sections and footer share its width a
   const html = markup("index.html");
   assert.match(html, /<header class="wrap head">/);
   // Six since round 6 (2 Nov): Tender Radar's section left the home page.
-  assert.equal(count(html, /<section[^>]*class="wrap sec/), 6);
+  // Seven since 10 Nov: What I've built, under the hero.
+  assert.equal(count(html, /<section[^>]*class="wrap sec/), 7);
   assert.match(html, /<footer class="wrap foot">/);
   // The old left-weighted page (column plus note column in one box) is gone: no 1000px layout block.
   assert.equal(mediaBlocks(styles, "1000px").length, 0, "a 1000px media block is left over");
@@ -847,11 +848,12 @@ test("sections appear in the agreed order: six, the held-list card second, the j
   // Built on my own (PresentAI) is off the home page.
   // (1 Nov to 2 Nov all three cards sat in one band before Tender Radar, DESIGN-PLAN.md section 2.)
   // Round 6 (2 Nov): Tender Radar (#proof) left the home page: its AI step had failed on every new notice since September.
-  const at = ["top", "proof-cards", "work", "own-checks", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
+  // 10 Nov (his ask, improvements to the landing page): the first rows of What I've built sit right under the hero.
+  const at = ["top", "systems", "proof-cards", "work", "own-checks", "writing", "contact"].map((id) => html.indexOf(`id="${id}"`));
   assert.ok(at.every((i) => i >= 0), `missing a section: ${at}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, "sections out of order");
   for (const id of ["people", "broke", "drawings", "wrong", "built", "proof"]) assert.ok(!html.includes(`id="${id}"`), `a removed section is back: #${id}`);
-  assert.equal(count(html, /<section[\s>]/), 6, "the home page does not have exactly six sections");
+  assert.equal(count(html, /<section[\s>]/), 7, "the home page does not have exactly seven sections");
 });
 
 test("one Calendly link on the site's pages, at the end of /working-with-me, none on home since round 3, and no buttons", () => {
@@ -963,6 +965,7 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
     // 3 Nov: the strip at the end of the hero (his pick of the animation mockups, option 2) is a sub-part of the hero, so
     // its heading is an h2 under the h1, before the first section's kicker. Not a kicker: it stays in the column.
     "How I work on outbound",
+    "What I've built",
     "How I check my AI",
     "Work",
     "AI checks on my own projects",
@@ -972,7 +975,7 @@ test("home page headings: one h1, an h2 per section, h3 for cards and job histor
   ]);
   // Three proof cards (two of them behind their clicks), two work entries and the three newest posts (round 3: the
   // pilot's sub-heading left with the pilot, leadlens's entry with its duplicate; round 4: PresentAI's entry left).
-  assert.equal(count(html, /<h3[\s>]/), 8);
+  assert.equal(count(html, /<h3[\s>]/), 12); // 10 Nov: plus the four rows of What I've built
 });
 
 test("a kicker that is now a heading still looks like a kicker", () => {
@@ -984,7 +987,7 @@ test("a kicker that is now a heading still looks like a kicker", () => {
   assert.doesNotMatch(rule, /font-weight:(?:[5-9]\d\d|bold)/);
   // The kicker is an h2 now: it must be the element that carries the class.
   // Five since round 6 (2 Nov): Tender Radar's section left the home page.
-  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 5);
+  assert.equal(count(markup("index.html"), /<h2 class="kicker">/), 6);
 });
 
 /** A prose post up to its "More writing" list: the post's own headings. */

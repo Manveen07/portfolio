@@ -974,3 +974,12 @@ export const FIGS: Record<string, string> = {
 // behind one click whose label counts and names them from their own titles (components/SkillRows.tsx). ──
 export const TESTS_SHOWN = 4;
 export const moreLabel = (rest: { title: string }[]) => `${rest.length} more: ${rest.map((s) => s.title).join(", ")}`;
+
+// ── 10 Nov (his ask: "any impovement you want to make on landing page"; the blind readers' top gap on /how-i-build was
+// no result on the first screens, and home had none either): home shows the first rows of What I've built right under
+// the hero, the same rows and sentences as /how-i-build, with one link to the rest. ──
+export const HOME_BUILT = {
+  id: "systems",
+  count: 4,
+  link: { label: `All ${SKILLS.length}, and how I test them \u2192`, href: "/how-i-build#skills" },
+} as const;
