@@ -49,6 +49,10 @@ export const HOW = {
   // 3 Nov (his ask, "i just want us to not look weak"): the step count left the first screen; it is the skills row
   // "Testing AI steps", said from what is done (the 31 Oct eval inventory).
   sub: ["GTM engineer at an outbound agency since November 2025."] as [string],
+  // 10 Nov (blind readers, 3 of 3: "is Caprae the agency?"): the reference says where he worked for its writer. Title
+  // and dates are the Caprae job card's (data/portfolio.ts JOBS, from the signed letter); the rest is REFERENCE's words.
+  reference:
+    "Zackary Beckham, COO of Caprae Capital Partners, where I was a machine learning intern, wrote me a signed letter of recommendation (11 Jan 2026). Full letter on request.",
 } as const;
 
 // ── Me and my agents: what runs each day, where a person approves ──
@@ -370,7 +374,25 @@ export type Skill = {
 // first check of live campaigns on 30 Oct, before the daily job existed, so the job is said to keep them out now; the 5
 // already emailed are the must-say; the client is never named). Out: "Testing AI steps" (42 of 82, 11 solid) and the
 // "Not yet" line.
+// 10 Nov (three blind readers, his ask: "have some blid reader act as a recuiter and fix all gaps"): the order a
+// recruiter reads for: the plain results first (bounces, emails found, the market, the Clay workflows), then the AI rows,
+// whose figures now say what happened in words. All three readers stopped at "43 of 50, then 47" as the first tile.
 export const SKILLS: Skill[] = [
+  // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
+  // résumé does, "after", never "because" (with gateway leads out of both periods his drop is 1.31% to 0.49%). The
+  // inbox checks: the capabilities index (the DNS auth checker, the daily setup audit with its warm-up checks, the
+  // placement testing suite), his own commits from July to November.
+  { id: "skill-deliverability", title: "Deliverability", line: "After I screened out high-bounce mail servers, bounces on my lists went from 2.7% to 0.7%; I built DNS, inbox placement and warm-up checks." },
+  // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
+  { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },
+  // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
+  // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
+  // row 11: "70,508 rows in 382 queries, search quota only").
+  { id: "skill-clay", title: "Clay and Claygent", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
+  // NERD.clay[0] (SOURCES.md row 9: 31 loops across 3 accounts), past tense: the searches paused on 27 Oct.
+  // Jury (9 Nov, late, hiring manager): "3 accounts" read as 3 target accounts, and "until 27 Oct" as broken; NERD.clay[0]
+  // says why it stopped ("paused to save search quota").
+  { id: "skill-finder", title: "Clay lead finder", line: "My 31 Clay workflows found new people on a schedule for the agency and 2 clients until 27 Oct, when the searches paused to save search quota." },
   // Jury (9 Nov, late, hiring manager): Checking AI output first, the line that proves the h1; the n8n alerts and the
   // public Python repo moved to How I test (TESTING), ids kept so DM links still work.
   // 9 Nov: back the same evening, his call: "i think they add value". Its sentence is HELD.line.
@@ -380,26 +402,6 @@ export const SKILLS: Skill[] = [
   // claim that a person has approved every draft: the run logs list cards waiting unapproved since 23 Oct.
   // Jury (9 Nov, late, founder): who the follow-ups are for (SOURCES.md row 34, "leads who replied with interest").
   { id: "skill-agents", title: "AI follow-up agents", line: "Since 16 Oct my Claude Code agents have drafted follow-ups to leads who replied with interest; each send needs a person's yes." },
-  // Proof bank 9 and the fleet section below: "365 of the bot's 386 commits are mine" (so "most", with the teammate
-  // credit beside it), "scores it 0 to 100", "a person decides what we buy". Jury (9 Nov, late, truth): never "scores
-  // about 350": on 2 Nov it scored one client's 72 while about 281 dropped out (the plan lapse); 350 is the tracked count,
-  // in the fleet caption. 28 words.
-  { id: "skill-inbox", title: "Inbox bot", line: "I built most of our inbox bot (a teammate built its renewal tracker): it scores our sending inboxes 0 to 100, and a person decides what we buy." },
-  // NERD.clay[0] (SOURCES.md row 9: 31 loops across 3 accounts), past tense: the searches paused on 27 Oct.
-  // Jury (9 Nov, late, hiring manager): "3 accounts" read as 3 target accounts, and "until 27 Oct" as broken; NERD.clay[0]
-  // says why it stopped ("paused to save search quota").
-  { id: "skill-finder", title: "Clay lead finder", line: "My 31 Clay workflows found new people on a schedule for the agency and 2 clients until 27 Oct, when the searches paused to save search quota." },
-  // SOURCES.md rows 11 and 13 and the credits row (about 0.18 each). "checked 24,506", never "qualified"; never beside
-  // 17,056. Round 5 (2 Nov): 3 of 4 round 4 readers asked how a map costs 0 credits, so the row says why (SOURCES.md
-  // row 11: "70,508 rows in 382 queries, search quota only").
-  { id: "skill-clay", title: "Clay and Claygent", line: "I mapped a 34,044-company market for 0 data credits, because Clay's search spends search quota; Claygent checked 24,506 at about 0.18 credits each." },
-  // SOURCES.md rows 17 and 18: one batch, never a rate; "multi-provider", never "cheapest first".
-  { id: "skill-emails", title: "Finding emails", line: "My multi-provider waterfall found verified emails for 12,030 of 15,514 decision-makers (78%) in one batch." },
-  // SOURCES.md row 31 and his claims-checked LinkedIn line: his lists 2.74% then 0.73%, said to one decimal as the
-  // résumé does, "after", never "because" (with gateway leads out of both periods his drop is 1.31% to 0.49%). The
-  // inbox checks: the capabilities index (the DNS auth checker, the daily setup audit with its warm-up checks, the
-  // placement testing suite), his own commits from July to November.
-  { id: "skill-deliverability", title: "Deliverability", line: "After I screened out high-bounce mail servers, bounces on my lists went from 2.7% to 0.7%; I built DNS, inbox placement and warm-up checks." },
   // SOURCES.md "CRM builds" row 4 (his 4 Nov "we built it though both of them"): from an agency client's HubSpot, the
   // live check of 30 Oct found 13 leads at 6 excluded companies, 5 already sent the first email; the daily n8n job
   // (06:15 IST since 30 Oct) adds new customers to the sending tool's block list, which stops uploads. 29 words.
@@ -411,6 +413,11 @@ export const SKILLS: Skill[] = [
   // Jury (9 Nov, late, hiring manager): the row a RevOps reader looks for named no fields; SOURCES.md's HubSpot section
   // (his 7 Nov wording: "writes last reply date, campaign and lead category into contact properties"), past tense.
   { id: "skill-crm", title: "HubSpot reply sync", line: "I built an n8n sync that wrote the last reply date, campaign and lead category from the sending tool into HubSpot contact properties." },
+  // Proof bank 9 and the fleet section below: "365 of the bot's 386 commits are mine" (so "most", with the teammate
+  // credit beside it), "scores it 0 to 100", "a person decides what we buy". Jury (9 Nov, late, truth): never "scores
+  // about 350": on 2 Nov it scored one client's 72 while about 281 dropped out (the plan lapse); 350 is the tracked count,
+  // in the fleet caption. 28 words.
+  { id: "skill-inbox", title: "Inbox bot", line: "I built most of our inbox bot (a teammate built its renewal tracker): it scores our sending inboxes 0 to 100, and a person decides what we buy." },
 ];
 
 // ── How I test (9 Nov, late): the second section, right after What I've built ──
@@ -432,19 +439,19 @@ export const SKILLS: Skill[] = [
 export const TESTING: Skill[] = [
   // Jury (9 Nov, late, round 2): the day-job suite first, then his own tracker.
   { id: "test-suite", title: "A test suite", line: "My day-job pipeline's test suite passed 872 tests on 19 Oct, including replays of stored data and old-versus-new runs on past results." },
-  // Jury (9 Nov, late, truth): "My own n8n task tracker" (NERD.testing[0]), so the 149 tests don't read as the agency's
-  // workflows'. The agency's 40 live workflows have error alerts (the next row), not tests.
-  { id: "test-code", title: "My n8n task tracker", line: "My own n8n task tracker has 149 tests: its JavaScript runs in Node exactly as n8n runs it, and recorded Slack clicks are replayed against the webhook." },
   // SOURCES.md row 74: 40 is the 14 Oct count (the error workflow was linked that day). The public repo's README: 45
   // tests.
   { id: "skill-n8n", title: "n8n error alerts", line: "On 14 Oct I put error alerts on 40 live workflows; my public n8n repo runs 45 tests." },
   // Jury (9 Nov, late, truth): the replay with its actor, a regression test (Proof bank 8: "when I replayed 13 Oct's data,
   // a day our webhook had dropped a reply, it flagged the miss"), in 27 words.
   { id: "test-alerts", title: "Knowing when it breaks", line: "A daily health check matches replies and bounces to webhook runs; when I replayed 13 Oct, a day our webhook dropped a reply, it flagged the miss." },
+  { id: "test-gates", title: "Checks before a send", line: "On campaigns I upload myself, my scripts can't upload, start or resume a campaign until every email's facts trace to the research and a fresh AI reader passes it." },
+  // Jury (9 Nov, late, truth): "My own n8n task tracker" (NERD.testing[0]), so the 149 tests don't read as the agency's
+  // workflows'. The agency's 40 live workflows have error alerts (the next row), not tests.
+  { id: "test-code", title: "My n8n task tracker", line: "My own n8n task tracker has 149 tests: its JavaScript runs in Node exactly as n8n runs it, and recorded Slack clicks are replayed against the webhook." },
   // The public README (snapshot of 31 Oct, line 9): 60 tests and a release gate in CI. Rules code with AI-written labels
   // on made-up data, so it backs no claim about AI steps; its README says so itself.
   { id: "skill-python", title: "Public Python repo", line: "My public Python repo has 60 tests and a release gate in CI: [champion-move-checker](https://github.com/Manveen07/champion-move-checker)." },
-  { id: "test-gates", title: "Checks before a send", line: "On campaigns I upload myself, my scripts can't upload, start or resume a campaign until every email's facts trace to the research and a fresh AI reader passes it." },
   // Jury (9 Nov, late, truth, a blocker): merged, never live (SOURCES.md "Claygent production gate (3 Nov 2026)", his Say
   // line: "On 3 Nov I merged that check for those 5 niches: any niche that misses its bar stops before it runs, and it put
   // all five on hold until they're re-scored").
@@ -818,6 +825,8 @@ export const VISUAL = {
     { label: "What I caught", href: "#failures" },
     { label: "How I test", href: "#how-i-test" },
     { label: "Check it yourself", href: "#live" },
+    // 10 Nov (blind readers, 3 of 3): the resume sat only at the foot of the page.
+    { label: "R\u00e9sum\u00e9 (PDF)", href: "/resume.pdf" },
   ] as { label: string; href: string }[],
   stories: {
     claygent: {
@@ -930,8 +939,8 @@ export const VISUAL = {
 // skimmer reads nine results and seven tests without reading a paragraph. Nothing here may say more than its sentence:
 // the gate is "merged", never running; the agents "draft". components/SkillRows.tsx draws it above the title. ──
 export const FIGS: Record<string, string> = {
-  "skill-checking": "43 of 50, then 47",
-  "skill-agents": "Drafting since 16 Oct",
+  "skill-checking": "Held a list under my 90% bar",
+  "skill-agents": "A person's yes on every send",
   "skill-inbox": "Inboxes scored 0 to 100",
   "skill-finder": "31 Clay workflows",
   "skill-clay": "34,044 companies, 0 data credits",
@@ -947,3 +956,8 @@ export const FIGS: Record<string, string> = {
   "test-gates": "Blocks an unchecked send",
   "test-stop": "Gate merged 3 Nov",
 };
+
+// ── 10 Nov (blind readers, 3 of 3: seven rows of test counts lost them): How I test shows this many rows; the rest sit
+// behind one click whose label counts and names them from their own titles (components/SkillRows.tsx). ──
+export const TESTS_SHOWN = 4;
+export const moreLabel = (rest: { title: string }[]) => `${rest.length} more: ${rest.map((s) => s.title).join(", ")}`;

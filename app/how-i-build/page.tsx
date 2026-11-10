@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { HOW, AGENTS, SPLIT, HABITS, HELD, TESTING, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
-import { ME, PHOTO, REFERENCE } from "@/data/portfolio";
+import { TESTS_SHOWN, HOW, AGENTS, SPLIT, HABITS, HELD, TESTING, FAILURES, PIPELINE_STEPS, NERD, INBOX, LIVE, CONTACT, VISUAL, stageHead } from "@/data/how";
+import { ME, PHOTO } from "@/data/portfolio";
 import { PROOF } from "@/data/proof";
 import { Inline } from "@/components/Prose";
 import { StoryText } from "@/components/StoryParts";
@@ -79,7 +79,9 @@ export default function HowIBuild() {
             ))}
             {/* 10 Nov (his ask: "build social proof to a recuiter that visits how i build page"): the one outside
                 voice he has, home's own sentence (data/portfolio.ts REFERENCE), on the first screen. */}
-            <p className="how-ref">{REFERENCE}</p>
+            <p className="how-ref">{HOW.reference}</p>
+            {/* 10 Nov (blind readers, 3 of 3): where he is and the hours he works sat only in the last line of the page. */}
+            <p className="how-ref">{CONTACT.where}</p>
           </div>
         </div>
         {VISUAL.heroLinks.length > 0 && (
@@ -170,7 +172,7 @@ export default function HowIBuild() {
           rows' shape, after what he caught (jury, editor: pictures come sooner). Words in data/how.ts (TESTING). */}
       <section id="how-i-test" className="wrap sec">
         <h2 className="kicker">{K.testing}</h2>
-        <SkillRows rows={TESTING} ledger />
+        <SkillRows rows={TESTING} ledger first={TESTS_SHOWN} moreId="more-tests" />
         {/* 9 Nov, late (jury): the testing list that sat in the pipeline click, under its own click here. */}
         <details className="more" id="how-each-test">
           <summary>

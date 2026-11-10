@@ -526,7 +526,8 @@ test("what I've built: eleven systems, one plain sentence each with its number, 
     SKILLS.map((s) => s.title),
     // 9 Nov, late (his pick, "What I've built"): the rows name the systems; Testing AI steps is out, three systems are in.
     // Jury (9 Nov, late): Checking AI output first; the n8n and Python rows moved to How I test; the CRM row names its sync.
-    ["Checking AI output", "AI follow-up agents", "Inbox bot", "Clay lead finder", "Clay and Claygent", "Finding emails", "Deliverability", "HubSpot exclusions", "HubSpot reply sync"],
+    // 10 Nov (three blind readers; his ask to fix what they found): plain results first, then the AI rows.
+    ["Deliverability", "Finding emails", "Clay and Claygent", "Clay lead finder", "Checking AI output", "AI follow-up agents", "HubSpot exclusions", "HubSpot reply sync", "Inbox bot"],
   );
   assert.equal(new Set(SKILLS.map((s) => s.id)).size, SKILLS.length, "two rows share an id");
   for (const s of SKILLS) {

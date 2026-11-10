@@ -12,7 +12,7 @@ import { resumeMarkdown } from "@/lib/md/resume";
 import { postMarkdown } from "@/lib/md/posts";
 import { howMarkdown } from "@/lib/md/how";
 import { workingMarkdown } from "@/lib/md/working";
-import { HOW, HELD, LIVE, CONTACT, VISUAL, SPLIT, NERD, INBOX, FREE_CHECK, logSummary, shortDate } from "@/data/how";
+import { TESTS_SHOWN, moreLabel, TESTING, HOW, HELD, LIVE, CONTACT, VISUAL, SPLIT, NERD, INBOX, FREE_CHECK, logSummary, shortDate } from "@/data/how";
 import { PROOF } from "@/data/proof";
 
 const lc = (s: string) => `${s.charAt(0).toLowerCase()}${s.slice(1)}`;
@@ -63,7 +63,7 @@ function howLine(): string {
     [K.agents]: [VISUAL.clicks[SPLIT.id]],
     [K.skills]: [NERD.summary],
     // 9 Nov, late: How I test's own click.
-    [K.testing]: [VISUAL.clicks["how-i-test"]],
+    [K.testing]: [moreLabel(TESTING.slice(TESTS_SHOWN)), VISUAL.clicks["how-i-test"]],
     [K.habits]: [VISUAL.clicks.identity],
     [K.failures]: [VISUAL.clicks["held-list"], VISUAL.clicks.claygent, VISUAL.clicks.bounces],
     [K.fleet]: [INBOX.summary],
