@@ -262,10 +262,11 @@ test("live and saved run numbers both count scheduled runs only", () => {
 });
 
 // ── Task 5: what people say, and job history that matches the letter ───
-test("Zackary's reference is one plain line with his title, company and the letter's date, and no email address", () => {
+test("Zackary's reference is one line from his letter, word for word, with his title and company, and no email address", () => {
   const t = text("index.html");
   // Round 4 (2 Nov): the quoted excerpt is cut (all 4 round 3 readers flagged it as AI-sounding); the reference stays.
-  assert.match(t, /Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation \(11 Jan 2026\)\. Full letter on request\./);
+  // 18 Nov (his ask): a line from the letter, word for word, instead of the sentence about the letter.
+  assert.match(t, /"\.\.\.a level of maturity that far exceeded typical intern expectations," wrote Zackary Beckham, COO of Caprae Capital Partners\./);
   // Round 6 (2 Nov): no ban on the excerpt ("effectively communicated complex engineering concepts to non-technical
   // stakeholders", cut in round 4 on reader flags) or its red note ("the bit that matters if you don't write code"):
   // putting them back is his call.
@@ -524,7 +525,7 @@ test("the reference follows the Caprae card as one plain line of the Work sectio
   const nowAt = work.indexOf('<p class="small now">');
   assert.ok(capraeAt > 0, "no Caprae entry");
   assert.ok(capraeEnd < refAt && refAt < nowAt, "the reference is not between the Caprae entry and the Now line");
-  assert.match(work, /<\/article><p class="body ref">Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation \(11 Jan 2026\)\. Full letter on request\.<\/p>/);
+  assert.match(work, /<\/article><p class="body ref">(?:"|&quot;)\.\.\.a level of maturity that far exceeded typical intern expectations,(?:"|&quot;) wrote Zackary Beckham, COO of Caprae Capital Partners\.<\/p>/);
 });
 
 test("the Work section ends with the Now line and the resume link", () => {

@@ -201,8 +201,10 @@ export const PIPELINE = {
 // technical documentation, and effectively communicated complex engineering concepts to non-technical stakeholders.")
 // is cut: all 4 round 3 readers flagged it as AI-sounding, and every other line of the letter is as generic. The
 // reference stays, as a line (moved, not removed). ──
+// 18 Nov (his ask, "so intead share line he said"): a line from the letter, word for word, in place of the sentence
+// about the letter (first paragraph: "...demonstrated ... a level of maturity that far exceeded typical intern expectations").
 export const REFERENCE =
-  "Zackary Beckham, COO of Caprae Capital Partners, wrote me a signed letter of recommendation (11 Jan 2026). Full letter on request.";
+  '"...a level of maturity that far exceeded typical intern expectations," wrote Zackary Beckham, COO of Caprae Capital Partners.';
 
 // The last line of the Work section, before the resume link.
 export const NOW_LINE = "B.Tech Computer Science, MSIT Delhi, 2026.";
