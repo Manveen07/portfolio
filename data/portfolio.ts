@@ -202,9 +202,10 @@ export const PIPELINE = {
 // is cut: all 4 round 3 readers flagged it as AI-sounding, and every other line of the letter is as generic. The
 // reference stays, as a line (moved, not removed). ──
 // 18 Nov (his ask, "so intead share line he said"): a line from the letter, word for word, in place of the sentence
-// about the letter (first paragraph: "...demonstrated ... a level of maturity that far exceeded typical intern expectations").
+// about the letter. 18 Nov, his pick: the third paragraph's clause (the excerpt cut on 2 Nov after reader flags), as it
+// fits a GTM role best.
 export const REFERENCE =
-  '"...a level of maturity that far exceeded typical intern expectations," wrote Zackary Beckham, COO of Caprae Capital Partners.';
+  '"...effectively communicated complex engineering concepts to non-technical stakeholders," wrote Zackary Beckham, COO of Caprae Capital Partners.';
 
 // The last line of the Work section, before the resume link.
 export const NOW_LINE = "B.Tech Computer Science, MSIT Delhi, 2026.";

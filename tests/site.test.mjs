@@ -266,7 +266,7 @@ test("Zackary's reference is one line from his letter, word for word, with his t
   const t = text("index.html");
   // Round 4 (2 Nov): the quoted excerpt is cut (all 4 round 3 readers flagged it as AI-sounding); the reference stays.
   // 18 Nov (his ask): a line from the letter, word for word, instead of the sentence about the letter.
-  assert.match(t, /"\.\.\.a level of maturity that far exceeded typical intern expectations," wrote Zackary Beckham, COO of Caprae Capital Partners\./);
+  assert.match(t, /"\.\.\.effectively communicated complex engineering concepts to non-technical stakeholders," wrote Zackary Beckham, COO of Caprae Capital Partners\./);
   // Round 6 (2 Nov): no ban on the excerpt ("effectively communicated complex engineering concepts to non-technical
   // stakeholders", cut in round 4 on reader flags) or its red note ("the bit that matters if you don't write code"):
   // putting them back is his call.
@@ -525,7 +525,7 @@ test("the reference follows the Caprae card as one plain line of the Work sectio
   const nowAt = work.indexOf('<p class="small now">');
   assert.ok(capraeAt > 0, "no Caprae entry");
   assert.ok(capraeEnd < refAt && refAt < nowAt, "the reference is not between the Caprae entry and the Now line");
-  assert.match(work, /<\/article><p class="body ref">(?:"|&quot;)\.\.\.a level of maturity that far exceeded typical intern expectations,(?:"|&quot;) wrote Zackary Beckham, COO of Caprae Capital Partners\.<\/p>/);
+  assert.match(work, /<\/article><p class="body ref">(?:"|&quot;)\.\.\.effectively communicated complex engineering concepts to non-technical stakeholders,(?:"|&quot;) wrote Zackary Beckham, COO of Caprae Capital Partners\.<\/p>/);
 });
 
 test("the Work section ends with the Now line and the resume link", () => {

@@ -52,9 +52,9 @@ export const HOW = {
   // 10 Nov (blind readers, 3 of 3: "is Caprae the agency?"): the reference says where he worked for its writer. Title
   // and dates are the Caprae job card's (data/portfolio.ts JOBS, from the signed letter); the rest is REFERENCE's words.
   // 18 Nov (his ask, "i don't really like this line ... so intead share line he said"): a line from the letter, word for
-  // word (first paragraph, its last clause), in place of the sentence about the letter.
+  // word, in place of the sentence about the letter. His pick: the third paragraph's clause (cut 2 Nov on reader flags).
   reference:
-    '"...a level of maturity that far exceeded typical intern expectations," wrote Zackary Beckham, COO of Caprae Capital Partners, where I was a machine learning intern.',
+    '"...effectively communicated complex engineering concepts to non-technical stakeholders," wrote Zackary Beckham, COO of Caprae Capital Partners, where I was a machine learning intern.',
 } as const;
 
 // ── Me and my agents: what runs each day, where a person approves ──
