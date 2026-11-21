@@ -71,6 +71,8 @@ test("the page and its markdown copy are built, and the head names both", () => 
   assert.match(head, /<meta property="og:image" content="https:\/\/manveen\.me\/how-i-build\/opengraph-image/);
   assert.ok(head.includes(`<link rel="alternate" type="text/markdown" href="${SITE}/how-i-build.md"/>`));
   assert.ok(head.includes('<link rel="describedby" href="/llms.txt" type="text/plain"/>'));
+  // 21 Nov (his ask, to be found for "gtm engineer" and his name): the search-result title says both.
+  assert.ok(head.includes("<title>GTM engineer portfolio | Manveen Singh</title>"), "the title does not name the search and him");
   // The description is the h1 and the sub lines (2 Nov; two lines since round 4).
   assert.ok(decode(head).includes(`<meta name="description" content="${HOW.headline} ${HOW.sub.join(" ")}"/>`), "the description is not the h1 and the sub lines");
   assert.ok(existsSync(path.join(root, ".next/server/app/how-i-build/opengraph-image.body")), "no share card");

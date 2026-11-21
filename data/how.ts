@@ -33,6 +33,10 @@
 
 export const HOW = {
   title: "How I build GTM systems",
+  // 21 Nov (his ask, "i want to come up for gtm engineer and manveen singh"): the browser-tab and search-result title
+  // only. "GTM engineer portfolio" is a search whose first page is personal sites (checked 21 Nov), and this page is
+  // his: what he built, how he tests it. The page's own words, share cards and llms.txt keep `title`.
+  searchTitle: "GTM engineer portfolio",
   // 2 Nov: the h1 names the AI edge; the held-list card under it is the one past miss that proves it. It holds only
   // because the sub line says plainly, on the same screen, that 40 of the 82 AI steps he built have no test (the eval
   // inventory, 31 Oct, its count line). Review (Karpathy): the h1 was contradicted a screen later and limited three

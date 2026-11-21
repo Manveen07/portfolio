@@ -44,7 +44,7 @@ import { pageJsonLd, ldJson } from "@/lib/md/person";
 const DESCRIPTION = `${HOW.headline} ${HOW.sub.join(" ")}`;
 
 export const metadata: Metadata = {
-  title: `${HOW.title} | Manveen Singh`,
+  title: `${HOW.searchTitle} | Manveen Singh`,
   description: DESCRIPTION,
   alternates: { canonical: "/how-i-build", types: { "text/markdown": "/how-i-build.md" } },
   openGraph: { title: HOW.title, description: DESCRIPTION, url: "/how-i-build", type: "website", siteName: "Manveen Singh", locale: "en_US" },
