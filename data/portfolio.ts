@@ -979,7 +979,7 @@ export const INBOUND: {
     {
       parts: [
         { t: "p", s: "All the leads here are made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead." },
-        { t: "p", s: "What a business would get from this: every enquiry has one owner, a written reason and a deadline, a late one is flagged, and a weekly report counts what happened." },
+        { t: "p", s: "What a business would get: every enquiry goes to one team with a written reason, those worth a call get a deadline, late ones are flagged, and a weekly report counts what happened." },
         { t: "fig", fig: "route" },
         { t: "p", s: "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person." },
         { t: "p", s: "HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals (possible sales). n8n is a tool for building automations: steps that run by themselves when something happens, like a form being sent. A lead is someone who has shown interest, here by filling in a form." },

@@ -1937,7 +1937,7 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
   // Then what a business would get, the route drawing, and only then the three words a non-technical reader needs
   // and that there are two tests (polish round, 24 Nov: a business owner on a phone read two screens of text first).
   const opening = I.sections[0].parts.filter((p) => p.t === "p").map((p) => p.s);
-  assert.match(opening[1], /^What a business would get from this: every enquiry has one owner, a written reason and a deadline/);
+  assert.match(opening[1], /^What a business would get: every enquiry goes to one team with a written reason, those worth a call get a deadline/);
   assert.equal(opening[2], "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person.");
   assert.match(opening[3], /^HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals \(possible sales\)\. n8n is a tool for building automations: steps that run by themselves/);
   assert.match(opening[4], /It has two tests: a small one with 20 made-up leads, which Priya is in, and a big one with 300\.$/);
