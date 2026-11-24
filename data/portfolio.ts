@@ -728,6 +728,15 @@ export const PILOT = {
 //   (L03). So no line calls the 16 a result. The 225 behind the 74% are the follow-ups done or overdue: FR "Speed to
 //   lead by queue" (214 for the four sales teams, 11 of the 19 for partnerships; the other 8 were not due yet). The
 //   nightly job's timer is off (RES "The nightly schedule is off"), so no line says it runs every night.
+// - Polish round (24 Nov, a non-technical reader on a phone and a fact check): the 214 in the lede are "of them", so
+//   the two counts no longer read as a contradiction. The opening says what a business gets, then the drawing, then the
+//   definitions. The role points are as route.js gives them (BUYER_FUNCTION: sales, revenue, revops, growth, marketing
+//   op, sales systems, sales development); RULES "Score" says "or ops", which the code does not do. "Flagged" is a line
+//   on the task and priority HIGH, and nothing is sent to a person: SLA-NOTES.md 1, RULES "SLA watchdog". The 44 were
+//   records of real companies in the test account, from outside the project: RES feature 7, RULES "Data hygiene"
+//   (none is named here, ever). Why the three timers are off: RES "The hourly / nightly / weekly schedule is off" (two
+//   of them write to HubSpot, the report only reads; all three are the owner's call). The 80 sales leads with no
+//   answer are by design: funnel_data.js simulate() (decision: accept | reject | none).
 // Rules for the figures: every word here; each number built into one string; red only through the pen; no new keyframes.
 export type InboundFig = "route" | "slip" | "teams" | "memo" | "game" | "decisions" | "copies" | "batch" | "funnel" | "bands";
 export type InboundPart = Block | { t: "fig"; fig: InboundFig };
@@ -787,7 +796,7 @@ export const INBOUND: {
 } = {
   // 81 characters: the share card sets a long title at 54px (app/writing/[slug]/opengraph-image.tsx).
   title: "What happens after someone fills in your demo form, tested with 300 made-up leads",
-  lede: "When someone asks for a demo on a company's website, something has to decide who calls them back and how fast. I built that on HubSpot and n8n and tested it with 300 made-up leads. All 300 went to the team my rules said they should. 214 reached a sales team. A small program played the sales reps: it said yes to 66 and marked 16 as won sales.",
+  lede: "When someone asks for a demo on a company's website, something has to decide who calls them back and how fast. I built that on HubSpot and n8n and tested it with 300 made-up leads. All 300 landed where my rules said they should, 214 of them with a sales team. A small program played the salespeople (reps): it said yes to 66 of those leads and marked 16 as won sales.",
   /** The words before each click's label. */
   moreTag: "Read more:",
 
@@ -795,13 +804,13 @@ export const INBOUND: {
   route: {
     head: "One made-up lead's route, start to finish",
     label:
-      "A lead's route on one line with 6 stops, shown for Priya, a made-up lead. 1 form: Priya asks for a demo. 2 score: 95 out of 100. 3 team: enterprise sales. 4 deadline: call within 1 hour, circled in red. 5 yes or no: the rep says yes. 6 upkeep: nightly tidy-up, weekly report. Circled: the deadline. Late calls get flagged.",
+      "A lead's route on one line with 6 stops, shown for Priya, a made-up lead. 1 form: Priya asks for a demo. 2 score: 95 out of 100. 3 team: enterprise sales. 4 deadline: call within 1 hour, circled in red. 5 yes or no: the rep accepts the lead. 6 upkeep: nightly tidy-up, weekly report. Circled: the deadline. Late calls get flagged.",
     stops: [
       { name: "form", dim: ["Priya asks", "for a demo"], tall: "Priya asks for a demo" },
       { name: "score", dim: ["95 out of 100"], tall: "95 out of 100" },
       { name: "team", dim: ["enterprise", "sales"], tall: "enterprise sales" },
       { name: "deadline", dim: ["call within", "1 hour"], tall: "call within 1 hour", loop: "1 hour" },
-      { name: "yes or no", dim: ["the rep says", "yes"], tall: "the rep says yes" },
+      { name: "yes or no", dim: ["rep accepts", "the lead"], tall: "the rep accepts the lead" },
       { name: "upkeep", dim: ["nightly tidy-up", "weekly report"], tall: "nightly tidy-up, weekly report" },
     ],
     note: "circled: the deadline. Late calls get flagged.",
@@ -823,7 +832,7 @@ export const INBOUND: {
       of: "out of 100",
       fit: 55,
       ready: 40,
-      captions: ["fit 55 of 60: company size 30, seniority 20, a sales or operations job 5", "ready to buy 40 of 40: demo form 25, buying words 15"],
+      captions: ["fit 55 of 60: company size 30, seniority 20, a sales or revenue job 5", "ready to buy 40 of 40: demo form 25, buying words 15"],
     },
   },
 
@@ -930,7 +939,7 @@ export const INBOUND: {
       { label: "the oldest 100 companies in the account", n: 100, ringed: 44, ringedFirst: true, value: "44 changed by mistake, all 44 put back the same hour" },
       { label: "mine in that batch", n: 0, ringed: 0, value: "0" },
     ],
-    key: "ringed in red: changed by mistake",
+    key: "ringed in red: changed by mistake. Filled: left alone.",
   },
 
   // F8, components/sketches/FunnelOnce.tsx. Bars to scale of the first row (300). No red on this figure.
@@ -949,7 +958,7 @@ export const INBOUND: {
       name: "First follow-ups on time",
       sub: "done inside the team's deadline",
       line: "74% (167 of 225)",
-      note: "The late ones are follow-up tasks the program left open. I ran the report as if it were 30 hours after the last lead came in, so a sales follow-up still open by then counts as late. The 225 are the 214 sales follow-ups and 11 for partnerships. 8 more were not due yet.",
+      note: "The late ones are follow-up tasks the program left open. I ran the report as if it were 30 hours after the last lead came in, so a sales follow-up still open by then counts as late. The 225 are the 214 sales follow-ups plus 11 of the 19 partnership ones. The other 8 were not due yet.",
     },
   },
 
@@ -969,13 +978,13 @@ export const INBOUND: {
     // 0. The opening, under the lede: no heading.
     {
       parts: [
-        { t: "p", s: "Everything here is made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead." },
-        { t: "p", s: "HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals (possible sales). n8n is a tool for building automations: steps that run by themselves when something happens, like a form being sent. A lead is someone who has shown interest, here by filling in a form." },
+        { t: "p", s: "All the leads here are made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead." },
         { t: "p", s: "What a business would get from this: every enquiry has one owner, a written reason and a deadline, a late one is flagged, and a weekly report counts what happened." },
-        { t: "p", s: "This page follows one made-up lead, Priya, from her form to the weekly report, and shows the two things that went wrong on the way. There are two tests on it: a small one with 20 made-up leads, which Priya is in, and a big one with 300." },
         { t: "fig", fig: "route" },
         { t: "p", s: "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person." },
-        { t: "p", s: 'The technical detail sits behind the "read more" lines, and the code is linked at the end.' },
+        { t: "p", s: "HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals (possible sales). n8n is a tool for building automations: steps that run by themselves when something happens, like a form being sent. A lead is someone who has shown interest, here by filling in a form." },
+        { t: "p", s: "This page follows one made-up lead, Priya, from her form to the weekly report, and shows the two things that went wrong on the way. It has two tests: a small one with 20 made-up leads, which Priya is in, and a big one with 300." },
+        { t: "p", s: 'The technical detail sits behind the "read more" lines.' },
       ],
       more: [],
     },
@@ -986,7 +995,7 @@ export const INBOUND: {
         { t: "p", s: "Priya is made up: a director at a made-up health company with 8,500 staff, asking for a demo." },
         { t: "fig", fig: "slip" },
         { t: "p", s: 'Every lead gets a score out of 100. Up to 60 points are for fit: how big the company is and how senior the person is. Up to 40 are for how ready they sound: which form they used, and buying words like "evaluating" or "budget".' },
-        { t: "p", s: "Priya scores 95. The score does one job: it marks the follow-up as high, medium or low priority. A separate list of checks picks the team, and the deadline comes from the team." },
+        { t: "p", s: "Priya scores 95. The score does one job: it sets how urgent the follow-up call is, high, medium or low. A separate list of checks picks the team, and the deadline comes from the team." },
       ],
       more: [
         {
@@ -999,7 +1008,7 @@ export const INBOUND: {
               rows: [
                 ["Company size", "1,000 or more staff 30, 100 to 999 25, 20 to 99 15, 2 to 19 8, one person 3, unknown 5"],
                 ["Seniority", "executive 25, director or head 20, manager or lead 12, anyone else 5, student 0"],
-                ["Role", "5 more if the title is in sales, revenue, growth or operations"],
+                ["Role", "5 more if the title is in sales, revenue, growth, RevOps or marketing operations"],
                 ["Which form", "demo form 25, pricing page 20, contact form or webinar 10, partner form 10, guide download 5, newsletter 2"],
                 ["Buying words", '15 more for words like "this week", "budget", "contract ends", "evaluating" or "need a call"'],
               ],
@@ -1029,7 +1038,7 @@ export const INBOUND: {
         { t: "fig", fig: "teams" },
         { t: "p", s: "The rep's follow-up task carries the score and the reason, so they can see why this lead is theirs." },
         { t: "fig", fig: "memo" },
-        { t: "p", s: "One company has one owner. When Priya's colleague Grace filled in the same form, she went to the same team, because it already had her company." },
+        { t: "p", s: "One company belongs to one team. When Priya's colleague Grace filled in the same form, she went to the same team, because it already had her company." },
       ],
       more: [
         {
@@ -1094,9 +1103,9 @@ export const INBOUND: {
     {
       parts: [
         { t: "h2", s: "The clock starts, and the rep says yes or no" },
-        { t: "p", s: "Once the follow-up task exists, the clock runs. If the deadline passes with no first contact, the task is flagged as late and raised to high priority. That happens once, so a late lead cannot sit unnoticed and the rep is not nagged every hour." },
-        { t: "p", s: 'Then the rep answers. A yes keeps the lead with them. A no needs a reason from a fixed list, and the reason decides where the lead goes next.' },
-        { t: "p", s: 'My tests had no real reps. A small program gave their answers. It gave Priya a yes, with the note "Discovery call booked". In the 300-lead test it answered 134 of the 214 leads that reached a sales team. The rest got no answer.' },
+        { t: "p", s: "Once the follow-up task exists, the clock runs. If the deadline passes with no first contact, the task is flagged as late: it gets a line saying so and moves to high priority in HubSpot. That happens once for each task, and no message is sent to anyone." },
+        { t: "p", s: 'Then the rep accepts the lead or turns it down. A yes keeps the lead with them. A no needs a reason from a fixed list, and the reason decides where the lead goes next.' },
+        { t: "p", s: 'My tests had no real reps. A small program gave their answers. It gave Priya a yes, with the note "Discovery call booked". In the 300-lead test it answered 134 of the 214 leads that reached a sales team. The rest it left unanswered on purpose.' },
         { t: "fig", fig: "decisions" },
       ],
       more: [
@@ -1135,8 +1144,8 @@ export const INBOUND: {
     // 5
     {
       parts: [
-        { t: "h2", s: "Mistake one: HubSpot made two of every company" },
-        { t: "p", s: "This happened in my first live test. A live test sends the made-up leads into the HubSpot test account itself. I sent 20 made-up leads, twice, and one check failed: 35 company records where there should have been 17." },
+        { t: "h2", s: "Mistake one: HubSpot made extra copies of every company" },
+        { t: "p", s: "This happened in my first live test. A live test sends the made-up leads into the HubSpot test account itself. I sent 20 leads, twice, and one check failed: 35 company records where there should have been 17." },
         { t: "fig", fig: "copies" },
         { t: "p", s: "HubSpot was making its own company record every time I saved a person, and my automation then made another. Saving the company first fixed it, and the same test has passed since: one company per web address." },
         { t: "p", s: "It matters because two records for one company can end up with two different owners." },
@@ -1159,7 +1168,7 @@ export const INBOUND: {
       parts: [
         { t: "h2", s: "Mistake two: my tidy-up job changed 44 companies outside the project" },
         { t: "p", s: "A tidy-up job, built to run every night, cleans the data: it fixes country names, merges duplicate companies and brings leads back on their return date. Its timer is off, and I run it by hand." },
-        { t: "p", s: 'To find duplicates, its first live run read "the oldest 100 companies in the account". My test account also held more than 100 older companies from outside this project, so none of the 100 were mine.' },
+        { t: "p", s: 'To find duplicates, its first live run read "the oldest 100 companies in the account". My test account also held more than 100 older records of real companies, from outside this project, so none of the 100 were mine.' },
         { t: "p", s: 'It found 0 duplicates and changed the country on 44 of those companies from "United States" to "US".' },
         { t: "fig", fig: "batch" },
         { t: "p", s: "I put all 44 back to their exact old values the same hour and checked each one." },
@@ -1171,7 +1180,7 @@ export const INBOUND: {
             "Before it changes anything, it refuses any company that is not test data. An automated test plants an outside company and checks it is left alone.",
           ],
         },
-        { t: "p", s: 'What I took from it: choose records by a rule that names your own, never "the first 100". And check each record again just before changing it, in case the first check picked the wrong ones.' },
+        { t: "p", s: 'What I took from it: choose records by a rule that names your own, never "the first 100". And check each record again just before changing it.' },
       ],
       more: [
         {
@@ -1202,7 +1211,7 @@ export const INBOUND: {
         { t: "h2", s: "300 leads in, counted at every step" },
         { t: "p", s: "To test the whole thing, I generated 300 made-up leads and sent them through the same test account, with the small program playing the reps. The program also decided which deals were won or lost, so the 16 shows the report counts wins correctly. It is not a win rate." },
         { t: "fig", fig: "funnel" },
-        { t: "p", s: "A weekly report reads all of this back from HubSpot and counts it. It only reads and changes nothing." },
+        { t: "p", s: "A weekly report reads all of this back from HubSpot and counts it. It changes nothing." },
         { t: "p", s: "The 74% says the report can tell on-time from late. It says nothing about how fast a real team would be." },
       ],
       more: [
@@ -1237,8 +1246,8 @@ export const INBOUND: {
         { t: "h2", s: "Does a high score mean a better lead?" },
         { t: "p", s: "The weekly report splits leads into three groups by score and shows how often a rep accepted each." },
         { t: "fig", fig: "bands" },
-        { t: "p", s: "On this data, yes: reps accepted 52% of high-score leads and 7% of low-score ones. But I made the simulated reps likelier to accept high scores. So this shows the report can detect a pattern when there is one. Whether this score works on real leads is untested." },
-        { t: "p", s: 'For won deals the report answered "not enough data", because the low-score group closed only 2 deals.' },
+        { t: "p", s: "On this data, yes. But I made the simulated reps likelier to accept high scores. So this shows the report can detect a pattern when there is one. Whether this score works on real leads is untested." },
+        { t: "p", s: 'For won deals the report answered "not enough data", because the low-score group had only 2 finished deals.' },
       ],
       more: [
         {
@@ -1266,12 +1275,12 @@ export const INBOUND: {
         {
           t: "ul",
           items: [
-            "It has only seen made-up data, in a free account with one user. The teams are a label on the lead, not different people's inboxes.",
+            "It has only handled made-up leads, in a free account with one user. The teams are a label on the lead, not different people's inboxes.",
             "Deadlines are plain clock hours, so nights and weekends count.",
             "The form's web address is protected by one password. A form on a public web page cannot keep that password secret, so a real site would pass the form through its own server first.",
             "The nightly job reads at most 100 contacts and 100 companies a run, and says so when it hits that.",
             "Two people from a brand-new company who submit in the same second can still create two company records. The nightly job merges them.",
-            "The three timers (late flag, nightly tidy-up, weekly report) are switched off. I ran each by hand for the tests.",
+            "The three timers (late flag, nightly tidy-up, weekly report) are switched off. Switching them on is the account owner's decision, because two of them change HubSpot with nobody watching. I ran each by hand for the tests.",
             "Alerts when an automation fails are the next part, and they are not built yet.",
           ],
         },

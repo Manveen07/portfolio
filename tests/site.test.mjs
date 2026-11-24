@@ -1921,21 +1921,26 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
   assert.equal(plain(page.match(/<h1>([\s\S]*?)<\/h1>/)[1]).trim(), I.title);
   // Line 1, the lede: what it is, that the leads are made up, and the funnel's numbers. 214 is the four sales teams, so
   // it never says "with a deadline" (233 leads got one). Review round, 24 Nov: the one number that says it works (all
-  // 300 went where the rules said) is here, and a program, not a person, said yes and marked the wins.
+  // 300 went where the rules said) is here, and a program, not a person, said yes and marked the wins. Polish round,
+  // 24 Nov: "All 300 went to the team... 214 reached a sales team" read as a contradiction to a first-time reader, so
+  // the 214 are "of them"; the reps are said once as salespeople.
   assert.equal(plain(page.match(/<p class="lede">([\s\S]*?)<\/p>/)[1]).trim(), I.lede);
-  assert.match(I.lede, /tested it with 300 made-up leads\. All 300 went to the team my rules said they should\. 214 reached a sales team\. A small program played the sales reps: it said yes to 66 and marked 16 as won sales\.$/);
+  assert.match(I.lede, /tested it with 300 made-up leads\. All 300 landed where my rules said they should, 214 of them with a sales team\. A small program played the salespeople \(reps\): it said yes to 66 of those leads and marked 16 as won sales\.$/);
+  assert.doesNotMatch(I.lede, /214 reached a sales team/, "the lede's two counts read as a contradiction again");
   assert.doesNotMatch(I.lede, /won deals|accepted 66/, "the lede reads like a sales result again");
   assert.doesNotMatch(JSON.stringify(I), /214 reached a salesperson|with a deadline: 214/);
   // Line 2, the first paragraph: made-up data, never a real lead, and who the page follows.
   const first = plain(body.match(/<p class="body"[^>]*>([\s\S]*?)<\/p>/)[1]).trim();
   assert.equal(first, I.sections[0].parts[0].s);
-  assert.equal(first, "Everything here is made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead.");
-  // Then the three words a non-technical reader needs, what a business would get, and that there are two tests.
+  // It says the leads are made up, not "everything": the test account also held records of real companies (mistake two).
+  assert.equal(first, "All the leads here are made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead.");
+  // Then what a business would get, the route drawing, and only then the three words a non-technical reader needs
+  // and that there are two tests (polish round, 24 Nov: a business owner on a phone read two screens of text first).
   const opening = I.sections[0].parts.filter((p) => p.t === "p").map((p) => p.s);
-  assert.match(opening[1], /^HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals \(possible sales\)\. n8n is a tool for building automations: steps that run by themselves/);
-  assert.match(opening[2], /^What a business would get from this: every enquiry has one owner, a written reason and a deadline/);
-  assert.match(opening[3], /There are two tests on it: a small one with 20 made-up leads, which Priya is in, and a big one with 300\.$/);
-  assert.equal(opening[4], "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person.");
+  assert.match(opening[1], /^What a business would get from this: every enquiry has one owner, a written reason and a deadline/);
+  assert.equal(opening[2], "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person.");
+  assert.match(opening[3], /^HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals \(possible sales\)\. n8n is a tool for building automations: steps that run by themselves/);
+  assert.match(opening[4], /It has two tests: a small one with 20 made-up leads, which Priya is in, and a big one with 300\.$/);
   // Ten sections under their headings, in order, then the list of other posts.
   const article = page.match(/<article[\s\S]*?<\/article>/)[0];
   const heads = [...article.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => plain(m[1]).trim());
@@ -1944,7 +1949,7 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
     "One team gets her, with a reason and a deadline",
     "Your turn: three leads my rules had to sort",
     "The clock starts, and the rep says yes or no",
-    "Mistake one: HubSpot made two of every company",
+    "Mistake one: HubSpot made extra copies of every company",
     "Mistake two: my tidy-up job changed 44 companies outside the project",
     "300 leads in, counted at every step",
     "Does a high score mean a better lead?",
@@ -1953,9 +1958,9 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
     "More writing",
   ]);
   assert.deepEqual(I.sections.flatMap((s) => s.parts.filter((p) => p.t === "h2").map((p) => p.s)), heads.slice(0, 10));
-  // The opening has no heading: the route sketch sits under four short paragraphs, with its own title.
+  // The opening has no heading: the route sketch sits under two short paragraphs, with its own title.
   assert.ok(!I.sections[0].parts.some((p) => p.t === "h2"));
-  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "p", "p", "fig", "p", "p"]);
+  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "fig", "p", "p", "p", "p"]);
   assert.match(body, /<h3 class="fc-head crm-head crm-route-head">One made-up lead(?:'|&#x27;)s route, start to finish<\/h3><div class="sketch" role="img"/, "the route has no title over it");
   // No scripted outcome reads like a result: no heading or line calls the 16 a win count of the system's own.
   assert.doesNotMatch(t, /16 won\b|ended as won deals|live system/);
@@ -1984,6 +1989,14 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
     // The job is built to run nightly, and its timer is off: the page never says it runs every night.
     "A tidy-up job, built to run every night, cleans the data",
     "Its timer is off, and I run it by hand.",
+    // Polish round, 24 Nov: whose records they were, said as the build's own results say it, with no company named.
+    "My test account also held more than 100 older records of real companies, from outside this project, so none of the 100 were mine.",
+    // What "flagged" is: a line on the task and high priority. Nothing messages a person.
+    "the task is flagged as late: it gets a line saying so and moves to high priority in HubSpot. That happens once for each task, and no message is sent to anyone.",
+    // What the rep says yes or no to.
+    "Then the rep accepts the lead or turns it down. A yes keeps the lead with them.",
+    // Why the timers are off: it is a decision, not unfinished work.
+    "Switching them on is the account owner's decision, because two of them change HubSpot with nobody watching.",
   ]) {
     assert.ok(open.includes(s), `not on the open page: ${s}`);
   }
@@ -1993,6 +2006,10 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
   assert.ok(inboundOpen().includes(`<aside class="note">${I.bands.note}</aside>`), "the caveat is not the figure's red note");
   assert.ok(open.includes("Whether this score works on real leads is untested."));
   assert.doesNotMatch(open, /Every night a tidy-up job/);
+  // No real company is named anywhere on the page, open or behind a click.
+  assert.doesNotMatch(plain(postBody(IN_SLUG)), /sony|microsoft/i);
+  // The follow-up is a call before the page says "follow-up task".
+  assert.ok(open.indexOf("it sets how urgent the follow-up call is, high, medium or low") < open.indexOf("follow-up task"), "\"follow-up task\" is used before the follow-up is introduced");
   assert.ok(open.includes("The 74% says the report can tell on-time from late. It says nothing about how fast a real team would be."));
   // The AI reviewer is a second opinion, and the page says so in the open.
   assert.ok(open.includes("The reviewer is an AI, so I treat this as a second opinion."));
@@ -2076,7 +2093,11 @@ test("the inbound CRM post: each figure's words and numbers are in the server HT
   assert.ok(slip.includes('<p class="crm-score-n"><b>95</b> out of 100</p>'));
   assert.deepEqual(widths(slip), [0.55, 0.4]);
   assert.equal(I.slip.score.fit + I.slip.score.ready, +I.slip.score.n);
-  assert.deepEqual(ps(slip, "crm-key crm-key-fit").concat(ps(slip, "crm-key crm-key-ready")), ["fit 55 of 60: company size 30, seniority 20, a sales or operations job 5", "ready to buy 40 of 40: demo form 25, buying words 15"]);
+  assert.deepEqual(ps(slip, "crm-key crm-key-fit").concat(ps(slip, "crm-key crm-key-ready")), ["fit 55 of 60: company size 30, seniority 20, a sales or revenue job 5", "ready to buy 40 of 40: demo form 25, buying words 15"]);
+  // The role points as the build's route.js gives them (BUYER_FUNCTION: sales, revenue, revops, growth, marketing op...):
+  // a plain operations title gets none, so no line says "operations" on its own.
+  assert.ok(JSON.stringify(I).includes("5 more if the title is in sales, revenue, growth, RevOps or marketing operations"));
+  assert.doesNotMatch(JSON.stringify(I), /sales or operations job|growth or operations/);
   assert.equal(30 + 20 + 5, I.slip.score.fit);
   assert.equal(25 + 15, I.slip.score.ready);
 
@@ -2240,7 +2261,7 @@ test("the inbound CRM post: the funnel plays once in about 3 seconds on the free
   assert.equal(Math.round((167 / 225) * 100), 74);
   assert.match(result, /<p class="fc-note" style="--at:3s">The late ones are follow-up tasks the program left open\./);
   // Why 225 and not 214: the note says what the 225 are, and they add up.
-  assert.ok(result.includes("The 225 are the 214 sales follow-ups and 11 for partnerships. 8 more were not due yet."));
+  assert.ok(result.includes("The 225 are the 214 sales follow-ups plus 11 of the 19 partnership ones. The other 8 were not due yet."));
   assert.equal(214 + 11, 225);
   // A program set the outcomes, and the rows say so.
   assert.deepEqual(rows.slice(2).map((m) => decodeText(m[2])), ["a small program played the reps", "a possible sale opened in HubSpot; the qualifier's leads get none yet", "the program marked the deal as won"]);
