@@ -1538,11 +1538,12 @@ test("the home page lists the three newest posts after the work: the titles only
   // 25 Oct: the n8n testing post is the newest, so the eval post now sits behind "All writing".
   // 3 Nov: the champion-move-checker post (option 3 of his animation mockups) is the newest, so the notes post moves
   // behind "All writing" the same way; its list title stays on the writing index.
-  assert.deepEqual(items.map((m) => m[1]), ["a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework"], "not the three newest, newest first");
-  assert.equal(items[0][2], "A champion tracker that can say it isn&#x27;t sure");
-  assert.equal(items[1][2], "How I test an n8n workflow before it goes live");
+  // 24 Nov: the inbound-CRM post (HubSpot + n8n) is the newest, so the drawings post moves behind "All writing" too.
+  assert.deepEqual(items.map((m) => m[1]), ["an-inbound-crm-on-hubspot-and-n8n", "a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons"], "not the three newest, newest first");
+  assert.equal(items[0][2], "Inbound lead routing I built on HubSpot and n8n");
+  assert.equal(items[1][2], "A champion tracker that can say it isn&#x27;t sure");
+  assert.equal(items[2][2], "How I test an n8n workflow before it goes live");
   assert.doesNotMatch(plain(w), /because of one week of green ticks|still crashed every morning/, "a flagged line is back");
-  assert.match(items[2][2], /^Marking the AI(?:'|&#x27;)s homework$/);
   // Round 4 (2 Nov): two round 3 readers flagged "Things AI got confidently wrong" as AI-sounding; the lists say how many
   // (the post pins exactly four, tested below), and the post keeps its own title.
   assert.match(markup("writing.html"), /<h2 class="h3">Four AI mistakes I caught<\/h2>/);
@@ -1568,6 +1569,7 @@ test("the writing index lists every post newest first, with the date each one sh
   const html = markup("writing.html");
   const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(items, [
+    ["an-inbound-crm-on-hubspot-and-n8n", "24 November 2026 · 7 min read"],
     ["a-champion-tracker-that-can-say-it-isnt-sure", "3 November 2026 · 3 min read"],
     ["149-tests-for-a-few-slack-buttons", "25 October 2026 · 3 min read"],
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
@@ -1590,7 +1592,7 @@ test("the writing pages link back home, and a post links the rest of the writing
     assert.match(post, /<a class="link" href="\/writing">← all writing<\/a><a class="link" href="\/">Home<\/a><a class="link" href="\/#contact">Write to me<\/a>/);
     const more = post.slice(post.indexOf("More writing"));
     const listed = [...more.matchAll(/<a href="\/writing\/([a-z0-9-]+)">/g)].map((m) => m[1]);
-    assert.deepEqual(listed, ["a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
+    assert.deepEqual(listed, ["an-inbound-crm-on-hubspot-and-n8n", "a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"].filter((x) => x !== s), `${s}: More writing`);
   }
 });
 

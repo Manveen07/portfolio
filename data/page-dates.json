@@ -1,11 +1,11 @@
 {
   "/": {
-    "date": "2026-11-19",
-    "hash": "fc3f79ac48d9c01a"
+    "date": "2026-11-24",
+    "hash": "597f16e745d9b8b0"
   },
   "/writing": {
-    "date": "2026-11-03",
-    "hash": "5fcd349e1f4f252a"
+    "date": "2026-11-24",
+    "hash": "8cf3b6f1cc686f8d"
   },
   "/how-i-build": {
     "date": "2026-11-19",
@@ -14,6 +14,10 @@
   "/working-with-me": {
     "date": "2026-11-03",
     "hash": "f6aeb4a902e389b8"
+  },
+  "/writing/an-inbound-crm-on-hubspot-and-n8n": {
+    "date": "2026-11-24",
+    "hash": "1ffd1995eebf07d5"
   },
   "/writing/a-champion-tracker-that-can-say-it-isnt-sure": {
     "date": "2026-11-03",
