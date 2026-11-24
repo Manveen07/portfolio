@@ -70,9 +70,10 @@ export const POSTS: Post[] = [
     cardTitle: "What happens after a demo form: lead routing I built on HubSpot and n8n",
     line: "One made-up lead followed from the form to the weekly report, then 300 more to test it.",
     date: "2026-11-24",
-    // The open path (the "read more" clicks closed): tests/site.test.mjs counts the words outside them, about 2,450
-    // with every figure's words, so 9 is the least it allows.
-    readMins: 9,
+    // The open path (the "read more" clicks closed): tests/site.test.mjs counts the words outside them, about 2,720
+    // with every figure's words after the review round (plain definitions and the notes that say what a number is), so
+    // 10 is the least it allows.
+    readMins: 10,
     tags: ["hubspot", "n8n", "revops"],
     summary: INBOUND.lede,
     body: { component: "inbound-crm" },

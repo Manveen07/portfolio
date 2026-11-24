@@ -936,10 +936,19 @@ body:has(.hero.how) .foot-freelance { display: none; }
 .crm-head { margin: 0 0 14px; }
 .crm-cap { margin: 0 0 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; color: var(--dim); text-wrap: pretty; }
 .crm-under { margin: -8px 0 14px; }
+/* The score figure's caveat sits between its heading and its bars. */
+.crm-fig .annotated > .note { margin: 0 0 16px; }
+/* The route's title, over the drawing. */
+.crm-route-head { margin: 22px 0 0; }
+.crm-sec > div > .crm-route-head + .sketch { margin-top: 10px; }
 /* The technical detail, behind a click at the end of its section. */
 .crm-mores { max-width: var(--col); margin: 6px 0 0; border-top: 1px dashed var(--rule); }
 .crm-more-tag { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; color: var(--dim); }
 .crm-more-body { padding: 2px 0 6px; }
+/* A five-column table fits a phone: Prose sets 16px side padding inline, so this needs !important. */
+@media (max-width: 480px) {
+  .crm-more-body table th, .crm-more-body table td { padding-left: 8px !important; padding-right: 8px !important; }
+}
 /* A bar row: the name, a team's deadline, its grey line, then the bar to scale and its value. Phones stack them; from
    640px the bar sits beside the words (the .fc-track rule above puts it in column 2). */
 .crm-rows { list-style: none; padding: 0; margin: 0; }
@@ -987,6 +996,8 @@ body:has(.hero.how) .foot-freelance { display: none; }
 .udots i.ring { background: transparent; box-shadow: inset 0 0 0 2px var(--red); }
 .udots i.kept { background: transparent; box-shadow: inset 0 0 0 2px var(--ink); }
 .crm-units .urow { align-items: start; margin-bottom: 14px; }
+/* Rows of 20: 17 is one row, 35 that row and 15 more, the batch of 100 five full rows. 238px, so it fits a 320px phone. */
+.crm-units .udots { grid-template-columns: repeat(20, 10px); }
 .crm-units .ulabel { font-size: 12.5px; color: var(--ink); }
 .crm-units .uval { line-height: 1.3; }
 .crm-dotkey { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.4; color: var(--dim); }
@@ -1005,6 +1016,13 @@ body:has(.hero.how) .foot-freelance { display: none; }
 .crm-game .ns-call { margin: 0; }
 .crm-game .ns-call p { margin: 0 0 5px; }
 .crm-game .ns-call p:last-child { margin-bottom: 0; }
+/* Before a pick the box is empty (its room is kept, so nothing jumps): one grey line says what it is for. Only where
+   the answers wait for a pick: on a working page (pen-live) with motion allowed. Reduced motion and the 5-second
+   failsafe show the answers in the box from the start. */
+@media (prefers-reduced-motion: no-preference) {
+  .crm-game .ns-callbox { position: relative; }
+  .pen-live .crm-game .ns-case[data-open] .ns-callbox::before { content: "pick one above to see what my rules did"; position: absolute; left: 12px; top: 10px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; color: var(--dim); }
+}
 .ns-case[data-result="rules"] .ns-same, .ns-case[data-result="reviewer"] .ns-rev { visibility: visible; }
 @media (min-width: 640px) {
   .crm-game .ns-case { grid-template-columns: minmax(0, 1fr); }

@@ -147,20 +147,21 @@ export function DecisionRows() {
   );
 }
 
-/** F9: how often a rep accepted a lead in each score band, with the caveat as the figure's one red note. */
+/** F9: how often a rep accepted a lead in each score band, with the caveat as the figure's one red note, above the bars. */
 export function BandRows() {
   const B = I.bands;
   return (
     <figure className="crm-fig">
+      {/* The note sits under the heading, before the bars: it is about the whole chart, not its last row. */}
       <Annotated note={B.note}>
         <h3 className="fc-head crm-head">{B.head}</h3>
         <p className="crm-cap crm-under">{B.under}</p>
-        <ol className="crm-rows" role="list">
-          {B.rows.map((r) => (
-            <Row key={r.name} r={r} max={100} />
-          ))}
-        </ol>
       </Annotated>
+      <ol className="crm-rows" role="list">
+        {B.rows.map((r) => (
+          <Row key={r.name} r={r} max={100} />
+        ))}
+      </ol>
     </figure>
   );
 }
@@ -172,11 +173,14 @@ function DotRows({ label, rows, dotKey }: { label: string; rows: DotRow[]; dotKe
       {rows.map((r) => (
         <div key={r.label} className="urow main" title={`${r.label}: ${r.value}`}>
           <span className="ulabel">{r.label}</span>
-          <span className="udots">
-            {Array.from({ length: r.n }, (_, k) => (
-              <i key={k} className={(r.ringedFirst ? k < r.ringed : k >= r.n - r.ringed) ? "ring" : undefined} />
-            ))}
-          </span>
+          {/* A row of none draws no dots, so its value sits beside its label. */}
+          {r.n > 0 && (
+            <span className="udots">
+              {Array.from({ length: r.n }, (_, k) => (
+                <i key={k} className={(r.ringedFirst ? k < r.ringed : k >= r.n - r.ringed) ? "ring" : undefined} />
+              ))}
+            </span>
+          )}
           <span className="uval">{r.value}</span>
         </div>
       ))}

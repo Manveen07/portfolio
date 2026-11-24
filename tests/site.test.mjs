@@ -1572,7 +1572,7 @@ test("the writing index lists every post newest first, with the date each one sh
   const html = markup("writing.html");
   const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(items, [
-    ["an-inbound-crm-on-hubspot-and-n8n", "24 November 2026 · 9 min read"],
+    ["an-inbound-crm-on-hubspot-and-n8n", "24 November 2026 · 10 min read"],
     ["a-champion-tracker-that-can-say-it-isnt-sure", "3 November 2026 · 3 min read"],
     ["149-tests-for-a-few-slack-buttons", "25 October 2026 · 3 min read"],
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
@@ -1920,14 +1920,22 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
   assert.ok(I.title.length <= 85, `the title is ${I.title.length} characters`);
   assert.equal(plain(page.match(/<h1>([\s\S]*?)<\/h1>/)[1]).trim(), I.title);
   // Line 1, the lede: what it is, that the leads are made up, and the funnel's numbers. 214 is the four sales teams, so
-  // it never says "with a deadline" (233 leads got one).
+  // it never says "with a deadline" (233 leads got one). Review round, 24 Nov: the one number that says it works (all
+  // 300 went where the rules said) is here, and a program, not a person, said yes and marked the wins.
   assert.equal(plain(page.match(/<p class="lede">([\s\S]*?)<\/p>/)[1]).trim(), I.lede);
-  assert.match(I.lede, /tested it with 300 made-up leads: 214 reached a sales team, simulated sales reps accepted 66, and 16 ended as won deals\.$/);
+  assert.match(I.lede, /tested it with 300 made-up leads\. All 300 went to the team my rules said they should\. 214 reached a sales team\. A small program played the sales reps: it said yes to 66 and marked 16 as won sales\.$/);
+  assert.doesNotMatch(I.lede, /won deals|accepted 66/, "the lede reads like a sales result again");
   assert.doesNotMatch(JSON.stringify(I), /214 reached a salesperson|with a deadline: 214/);
   // Line 2, the first paragraph: made-up data, never a real lead, and who the page follows.
   const first = plain(body.match(/<p class="body"[^>]*>([\s\S]*?)<\/p>/)[1]).trim();
   assert.equal(first, I.sections[0].parts[0].s);
-  assert.match(first, /^Everything here is made-up data, in a free HubSpot account and an n8n I run myself\. It has never handled a real lead\./);
+  assert.equal(first, "Everything here is made-up data, in a free HubSpot account and a copy of n8n I run myself. It has never handled a real lead.");
+  // Then the three words a non-technical reader needs, what a business would get, and that there are two tests.
+  const opening = I.sections[0].parts.filter((p) => p.t === "p").map((p) => p.s);
+  assert.match(opening[1], /^HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals \(possible sales\)\. n8n is a tool for building automations: steps that run by themselves/);
+  assert.match(opening[2], /^What a business would get from this: every enquiry has one owner, a written reason and a deadline/);
+  assert.match(opening[3], /There are two tests on it: a small one with 20 made-up leads, which Priya is in, and a big one with 300\.$/);
+  assert.equal(opening[4], "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person.");
   // Ten sections under their headings, in order, then the list of other posts.
   const article = page.match(/<article[\s\S]*?<\/article>/)[0];
   const heads = [...article.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => plain(m[1]).trim());
@@ -1937,24 +1945,30 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
     "Your turn: three leads my rules had to sort",
     "The clock starts, and the rep says yes or no",
     "Mistake one: HubSpot made two of every company",
-    "Mistake two: my tidy-up job changed 44 companies that were not mine",
-    "300 leads in, 16 won",
+    "Mistake two: my tidy-up job changed 44 companies outside the project",
+    "300 leads in, counted at every step",
     "Does a high score mean a better lead?",
     "What it doesn't do",
     "How I checked it, and the code",
     "More writing",
   ]);
   assert.deepEqual(I.sections.flatMap((s) => s.parts.filter((p) => p.t === "h2").map((p) => p.s)), heads.slice(0, 10));
-  // The opening has no heading: the route sketch sits under the lede's two paragraphs.
+  // The opening has no heading: the route sketch sits under four short paragraphs, with its own title.
   assert.ok(!I.sections[0].parts.some((p) => p.t === "h2"));
-  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "fig", "p"]);
+  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "p", "p", "fig", "p", "p"]);
+  assert.match(body, /<h3 class="fc-head crm-head crm-route-head">One made-up lead(?:'|&#x27;)s route, start to finish<\/h3><div class="sketch" role="img"/, "the route has no title over it");
+  // No scripted outcome reads like a result: no heading or line calls the 16 a win count of the system's own.
+  assert.doesNotMatch(t, /16 won\b|ended as won deals|live system/);
+  assert.ok(t.includes("The program also decided which deals were won or lost, so the 16 shows the report counts wins correctly. It is not a win rate."));
+  // "Live" is said in plain words where it first appears.
+  assert.ok(t.includes("This happened in my first live test. A live test sends the made-up leads into the HubSpot test account itself."));
   // Never production, never a client; plain words; no jokes to guard, but no sales words either.
   assert.doesNotMatch(t, /in production|for a client|leverage|seamless|robust|delve|unlock|elevate|game-changer|honest|Here's the thing|[—–]/i);
   // The only product names besides HubSpot and n8n are inside Priya's made-up message, quoted exactly, and where it
   // came from.
   assert.equal(count(t, "Salesforce"), count(t, "Need SSO and Salesforce, budget approved."));
   assert.equal(count(t, /[Ll]inked[Ii]n/), 3, "LinkedIn is named outside the slip's line and the click on link tags");
-  assert.match(page, /· 9 min read · hubspot, n8n, revops<\/p>/);
+  assert.match(page, /· 10 min read · hubspot, n8n, revops<\/p>/);
 });
 
 test("the inbound CRM post: the mistakes, the caveat and the limits are on the open page, not behind a click", () => {
@@ -1962,11 +1976,14 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
   const open = plain(inboundOpen());
   // The first cleanup run: 44 companies outside the project, put back the same hour, and what stops it now.
   for (const s of [
-    "Mistake two: my tidy-up job changed 44 companies that were not mine",
+    "Mistake two: my tidy-up job changed 44 companies outside the project",
     'changed the country on 44 of those companies from "United States" to "US"',
-    "I put all 44 back to their exact old values within the hour and read each one back.",
+    "I put all 44 back to their exact old values the same hour and checked each one.",
     "44 changed by mistake, all 44 put back the same hour",
-    "an automated test plants an outside company and checks it is left alone",
+    "An automated test plants an outside company and checks it is left alone.",
+    // The job is built to run nightly, and its timer is off: the page never says it runs every night.
+    "A tidy-up job, built to run every night, cleans the data",
+    "Its timer is off, and I run it by hand.",
   ]) {
     assert.ok(open.includes(s), `not on the open page: ${s}`);
   }
@@ -1974,7 +1991,8 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
   assert.equal(I.bands.note, "I made the simulated reps likelier to accept high scores.");
   assert.equal(count(open, I.bands.note), 2, "the caveat is not both on the figure and in the paragraph under it");
   assert.ok(inboundOpen().includes(`<aside class="note">${I.bands.note}</aside>`), "the caveat is not the figure's red note");
-  assert.ok(open.includes("It says nothing about whether this score works on real leads."));
+  assert.ok(open.includes("Whether this score works on real leads is untested."));
+  assert.doesNotMatch(open, /Every night a tidy-up job/);
   assert.ok(open.includes("The 74% says the report can tell on-time from late. It says nothing about how fast a real team would be."));
   // The AI reviewer is a second opinion, and the page says so in the open.
   assert.ok(open.includes("The reviewer is an AI, so I treat this as a second opinion."));
@@ -2027,8 +2045,19 @@ test("the inbound CRM post: each figure's words and numbers are in the server HT
   assert.equal(count(route[3], 'class="mark"'), 2, "not one red loop in each drawing");
   assert.deepEqual(I.route.stops.filter((s) => s.loop).map((s) => [s.name, s.loop]), [["deadline", "1 hour"]]);
   assert.ok(md.includes(`*Drawing:* ${I.route.label}`), "markdown: the route's reading");
-  // Each line of the wide drawing fits its 115-unit step (15 characters of 13-unit mono).
-  for (const s of I.route.stops) for (const d of s.dim) assert.ok(d.length <= 15, `too long for the wide drawing: ${d}`);
+  // The wide drawing's words render at 13px like the site's other sketches (14.2 units in a 720 box), and each line
+  // ends 6 units or more before the next stop's words: the stops are spaced by word length (LeadRoute.tsx, X).
+  const wide = route[3].match(/<svg class="sketch-wide"[^>]*>/)[0];
+  assert.match(wide, /viewBox="0 0 720 138"/);
+  assert.match(wide, /font-size="14\.2"/);
+  const X = [20, 128, 250, 350, 462, 580];
+  I.route.stops.forEach((s, i) => {
+    for (const d of [`${i + 1} ${s.name}`, ...s.dim]) {
+      const end = X[i] - 6 + d.length * 14.2 * 0.6;
+      assert.ok(end + 6 <= (X[i + 1] ?? 726) - 6, `too long for the wide drawing: ${d} ends at ${end}`);
+    }
+  });
+  assert.ok(md.includes(`### ${I.route.head}\n\n*Drawing:* ${I.route.label}`), "markdown: the route's title");
 
   // F2, the slip: the form's fields, the pen under the one word the rule matched, the score and its two parts.
   const slip = body.match(/<div class="pin crm-slip">[\s\S]*?<\/figure>/)[0];
@@ -2047,14 +2076,14 @@ test("the inbound CRM post: each figure's words and numbers are in the server HT
   assert.ok(slip.includes('<p class="crm-score-n"><b>95</b> out of 100</p>'));
   assert.deepEqual(widths(slip), [0.55, 0.4]);
   assert.equal(I.slip.score.fit + I.slip.score.ready, +I.slip.score.n);
-  assert.deepEqual(ps(slip, "crm-key crm-key-fit").concat(ps(slip, "crm-key crm-key-ready")), ["fit 55 of 60: company size 30, seniority 20, role 5", "ready to buy 40 of 40: demo form 25, buying words 15"]);
+  assert.deepEqual(ps(slip, "crm-key crm-key-fit").concat(ps(slip, "crm-key crm-key-ready")), ["fit 55 of 60: company size 30, seniority 20, a sales or operations job 5", "ready to buy 40 of 40: demo form 25, buying words 15"]);
   assert.equal(30 + 20 + 5, I.slip.score.fit);
   assert.equal(25 + 15, I.slip.score.ready);
 
   // F3, the teams: seven rows, each bar its share of the largest, the 300 accounted for, the first deadline circled.
-  const teams = body.match(/<h3 class="fc-head crm-head">Seven teams\.[\s\S]*?<\/figure>/)[0];
+  const teams = body.match(/<h3 class="fc-head crm-head">Seven places a lead can land\.[\s\S]*?<\/figure>/)[0];
   assert.deepEqual(ps(teams, "fc-name"), I.teams.rows.map((r) => r.name));
-  assert.deepEqual(ps(teams, "crm-due"), ["call within 1 hour", "call within 1 hour", "call within 4 hours", "within 24 hours", "within 48 hours", "no deadline, no task", "no deadline, no task"]);
+  assert.deepEqual(ps(teams, "crm-due"), ["call within 1 hour", "call within 1 hour", "call within 4 hours", "within 24 hours", "within 48 hours", "no deadline, nobody is asked to call", "no deadline, nobody is asked to call"]);
   assert.deepEqual(ps(teams, "fc-val").map(Number), [20, 45, 76, 73, 19, 54, 13]);
   assert.equal(I.teams.rows.reduce((a, r) => a + r.n, 0), 300);
   assert.equal(I.teams.rows.slice(0, 4).reduce((a, r) => a + r.n, 0), 214);
@@ -2072,9 +2101,11 @@ test("the inbound CRM post: each figure's words and numbers are in the server HT
     'They wrote: "Evaluating vendors for Q1. Need SSO and Salesforce, budget approved."',
   ]);
   assert.ok(md.includes("```text\n" + I.memo.lines.join("\n") + "\n```"), "markdown: the rep's note");
+  // The note is quoted exactly, so its two words the page uses nowhere else are said in plain words in its caption.
+  assert.equal(I.memo.caption, 'the note the rep gets, word for word. "Intent" is the ready-to-buy part of the score, and "queue" is my system\'s word for team.');
 
   // F5, the answers: a yes and six kinds of no, 134 in all.
-  const answers = body.match(/<h3 class="fc-head crm-head">What 134 simulated answers did[\s\S]*?<\/figure>/)[0];
+  const answers = body.match(/<h3 class="fc-head crm-head">What the simulated reps answered, 134 times[\s\S]*?<\/figure>/)[0];
   assert.deepEqual(ps(answers, "fc-val").map(Number), [66, 19, 15, 15, 10, 5, 4]);
   assert.equal(I.decisions.no.reduce((a, r) => a + r.n, 0), 68);
   assert.equal(I.decisions.yes.n + 68, 134);
@@ -2088,14 +2119,21 @@ test("the inbound CRM post: each figure's words and numbers are in the server HT
   assert.equal(decodeText(units[0][1]), "The first live test: 17 companies in the test, 35 company records in HubSpot.");
   assert.deepEqual(dots(units[0][2]), [[17, 0], [35, 35 - 17]]);
   assert.equal(decodeText(units[1][1]), "The first run of the nightly job read the oldest 100 companies in the account. 0 were mine. It changed 44 by mistake, and all 44 were put back the same hour.");
-  assert.deepEqual(dots(units[1][2]), [[100, 44], [0, 0]]);
+  // A row of none ("mine in that batch: 0") draws no dots, so its value sits beside its label.
+  assert.deepEqual(dots(units[1][2]), [[100, 44]]);
+  assert.match(units[1][2], /<span class="ulabel">mine in that batch<\/span><span class="uval">0<\/span>/);
+  // Rows of 20, so 17 is one row and 35 is that row and 15 more: the doubling shows.
+  assert.match(css(), /\.crm-units \.udots\{grid-template-columns:repeat\(20,10px\)\}/);
   assert.match(units[1][2], /<span class="udots">(?:<i class="ring"><\/i>){44}(?:<i><\/i>){56}<\/span>/, "the 44 are not the first dots");
   for (const u of units) assert.match(plain(u[2]), /ringed in red: /);
   assert.doesNotMatch(plain(body), /\b56\b/, "a count that is in no source is printed");
   for (const k of ["copies", "batch"]) assert.ok(md.includes(`*Drawing:* ${I[k].label}`), `markdown: ${k}`);
 
   // F9, the score bands: the rates are the counts under them, and the caveat is the figure's red note.
-  const bands = body.match(/<div class="annotated">[\s\S]*?<\/aside>/)[0];
+  const bands = body.match(/<figure class="crm-fig"><div class="annotated">[\s\S]*?<\/figure>/)[0];
+  // The caveat is about the whole chart, so it sits under the heading and before the bars, never under the last row.
+  assert.ok(bands.indexOf('<aside class="note">') < bands.indexOf('<ol class="crm-rows"'), "the caveat is under the last bar");
+  assert.ok(md.indexOf(`*Red pen:* ${I.bands.note}`) < md.indexOf(`- ${I.bands.rows[0].name}`), "markdown: the caveat is after the rows");
   assert.deepEqual(ps(bands, "fc-val"), ["52%", "29%", "7%"]);
   assert.deepEqual(ps(bands, "fc-sub"), ["31 of 60 accepted", "32 of 111 accepted", "3 of 43 accepted"]);
   for (const r of I.bands.rows) {
@@ -2115,7 +2153,7 @@ test("the inbound CRM post: sort the lead has every call in the server HTML, fou
   const cases = [...game.matchAll(/<li class="ns-case" data-open="">([\s\S]*?)<\/li>/g)].map((m) => m[1]);
   assert.equal(cases.length, 3, "not three cases, or one is not waiting for a pick");
   const want = [
-    ["Leo Martin, Account Executive at Quantly, 60 staff", 'Asked for a demo. Wrote: "We sell something similar, would love to compare notes on your stack."', "my rules: no one, his email domain is on my competitor list", 'the reviewer: no one, "Known competitor fishing for information on our stack"'],
+    ["Leo Martin, Account Executive at Quantly, 60 staff", 'Asked for a demo. Wrote: "We sell something similar, would love to compare notes on your stack."', "my rules: no one, his company's email address is on my competitor list", 'the reviewer: no one, "Known competitor fishing for information on our stack"'],
     [
       "Chloe Dubois, Office Manager at Maison Lune, 40 staff",
       'Used the contact form. Wrote: "My boss asked me to find out more."',
@@ -2128,7 +2166,7 @@ test("the inbound CRM post: sort the lead has every call in the server HTML, fou
       'Downloaded a guide. Wrote: "Doing a thesis on sales automation."',
       "my rules: emails only, a student gets marketing emails and no follow-up task",
       'the reviewer: no one, "Student doing thesis research; not a buyer"',
-      "what I did: I kept mine. Emails only opens no task, so it costs nothing, and students become buyers.",
+      "what I did: I kept mine. Emails only opens no follow-up task, so it costs nothing, and students become buyers.",
     ],
   ];
   cases.forEach((html, i) => {
@@ -2149,11 +2187,13 @@ test("the inbound CRM post: sort the lead has every call in the server HTML, fou
   assert.equal(agree[3], G.dots.label);
   assert.equal(agree[2], "<i></i>".repeat(18) + '<i class="ring"></i><i class="kept"></i>');
   assert.equal(G.dots.same + G.dots.changed + G.dots.kept, 20);
+  // The caption is the dots' key: which mark is which, with its count.
+  assert.equal(G.dots.label, "20 leads. Filled dot: my rules and the reviewer agreed (18). Red ring: the reviewer was right and I changed the rule (1). Black ring: I kept my rule (1).");
   // The markdown copy: how to play (no digits: the page has buttons instead), the choices, every case with both calls.
   const md = read(`.next/server/app/md/writing/${IN_SLUG}.body`).replace(/\r\n/g, "\n");
   assert.doesNotMatch(G.howToPlay, /\d/);
   assert.ok(md.includes(`*${G.howToPlay}* The choices: salesperson now, qualifier first, emails only, no one.`));
-  assert.ok(md.includes('**Leo Martin, Account Executive at Quantly, 60 staff** · Asked for a demo. Wrote: "We sell something similar, would love to compare notes on your stack." · my rules: **no one**, his email domain is on my competitor list · the reviewer: **no one**, "Known competitor fishing for information on our stack"'));
+  assert.ok(md.includes('**Leo Martin, Account Executive at Quantly, 60 staff** · Asked for a demo. Wrote: "We sell something similar, would love to compare notes on your stack." · my rules: **no one**, his company\'s email address is on my competitor list · the reviewer: **no one**, "Known competitor fishing for information on our stack"'));
   assert.ok(md.includes(`what I did: ${G.cases[2].after}`));
   assert.ok(md.includes(`*Drawing:* ${G.dots.label}`));
   // The styles: the namesake game's, with four picks under the case at every width and two by two on a narrow phone.
@@ -2163,6 +2203,9 @@ test("the inbound CRM post: sort the lead has every call in the server HTML, fou
   assert.match(styles, /\.pen-js \.crm-game \.ns-picks\{display:flex\}/);
   assert.match(styles, /@media \(max-width:479px\)\{\.pen-js \.crm-game \.ns-picks\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.ok(mediaBlocks(styles, "640px").some((b) => /\.crm-game \.ns-case\{grid-template-columns:minmax\(0,1fr\)\}/.test(b)), "four picks squeeze the case into a side column from 640px");
+  // Before a pick the kept room says what it is for, only where the answers wait for a pick (a working page, motion on).
+  assert.match(styles, /@media \(prefers-reduced-motion:no-preference\)\{[^@]*\.pen-live \.crm-game \.ns-case\[data-open\] \.ns-callbox:{1,2}before\{content:"pick one above to see what my rules did"/);
+  assert.equal(count(styles, /\.ns-callbox:{1,2}before\{/g), 1, "the hint has a second rule, outside the motion query");
   assert.match(styles, /\.ns-pick\{[^}]*min-height:44px/);
   assert.match(styles, /\.ns-pick:focus-visible\{outline:2px solid var\(--red\)/);
   // The state is the three picks: no timers, no observers, no words that only JavaScript writes.
@@ -2180,9 +2223,9 @@ test("the inbound CRM post: the funnel plays once in about 3 seconds on the free
   assert.deepEqual(rows.map((m) => [m[1], m[6]]), [
     ["Leads in", "300"],
     ["Reached a sales team", "214 · 71%"],
-    ["Accepted by a rep", "66 · 31% of those"],
-    ["Became a deal", "54 · 82%"],
-    ["Won", "16 · 30% of the deals"],
+    ["Accepted by a rep", "66 · 31% of the 214"],
+    ["Became a deal", "54 · 82% of the 66"],
+    ["Won", "16 · 30% of the 54"],
   ]);
   // Each bar is its count's share of the 300, and each rate is the step before it.
   rows.forEach((m, i) => assert.ok(near(+m[4], +(F.rows[i].n / 300).toFixed(4)), `${m[1]}: bar not to scale`));
@@ -2195,7 +2238,12 @@ test("the inbound CRM post: the funnel plays once in about 3 seconds on the free
   const result = fig.match(/<div class="fc-result">[\s\S]*$/)[0];
   assert.ok(result.includes('<p class="fc-line" style="--at:2.8s">74% (167 of 225)</p>'));
   assert.equal(Math.round((167 / 225) * 100), 74);
-  assert.match(result, /<p class="fc-note" style="--at:3s">The late ones are tasks the simulation left open\./);
+  assert.match(result, /<p class="fc-note" style="--at:3s">The late ones are follow-up tasks the program left open\./);
+  // Why 225 and not 214: the note says what the 225 are, and they add up.
+  assert.ok(result.includes("The 225 are the 214 sales follow-ups and 11 for partnerships. 8 more were not due yet."));
+  assert.equal(214 + 11, 225);
+  // A program set the outcomes, and the rows say so.
+  assert.deepEqual(rows.slice(2).map((m) => decodeText(m[2])), ["a small program played the reps", "a possible sale opened in HubSpot; the qualifier's leads get none yet", "the program marked the deal as won"]);
   const delays = [...fig.matchAll(/--at:([\d.]+)s/g)].map((m) => +m[1]);
   assert.ok(Math.max(...delays) <= 3.2, `the last part starts at ${Math.max(...delays)} s`);
   // No red on this figure, and the last bar (16 of 300) never shrinks out of sight.
@@ -2220,4 +2268,5 @@ test("the inbound CRM post: the funnel plays once in about 3 seconds on the free
   assert.match(outsideMedia(styles), /\.crm-row\{[^}]*grid-template-columns:minmax\(0,1fr\)/);
   assert.ok(mediaBlocks(styles, "640px").some((b) => /\.crm-row\{[^}]*grid-template-columns:240px minmax\(0,1fr\)/.test(b)), "no two columns from 640px");
   assert.match(styles, /\.crm-memo\{[^}]*overflow-wrap:anywhere/);
+  assert.match(styles, /@media \(max-width:480px\)\{\.crm-more-body table th,\.crm-more-body table td\{padding-left:8px ?!important;padding-right:8px ?!important\}\}/, "a five-column table is wider than a phone");
 });

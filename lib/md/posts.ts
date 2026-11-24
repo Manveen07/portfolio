@@ -89,7 +89,7 @@ function inboundCrm(): string[] {
   const G = I.game;
   const pick = Object.fromEntries(G.picks.map((p) => [p.call, p.label]));
   const figs: Record<InboundFig, () => string[]> = {
-    route: () => [drawing(I.route.label)],
+    route: () => [`### ${I.route.head}`, drawing(I.route.label)],
     slip: () => {
       const m = I.slip.message;
       return [
@@ -133,7 +133,7 @@ function inboundCrm(): string[] {
       const R = I.funnel.result;
       return [`### ${I.funnel.head}`, list([...I.funnel.rows.map(row), `${R.name} · ${R.sub} · ${R.line}`]), para(R.note)];
     },
-    bands: () => [`### ${I.bands.head}`, para(I.bands.under), list(I.bands.rows.map(row)), para(pen(I.bands.note))],
+    bands: () => [`### ${I.bands.head}`, para(I.bands.under), para(pen(I.bands.note)), list(I.bands.rows.map(row))],
   };
   return I.sections.flatMap((s) => [
     ...s.parts.flatMap((p) => (p.t === "fig" ? figs[p.fig]() : [block(p)])),
