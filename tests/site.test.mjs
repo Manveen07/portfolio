@@ -1572,7 +1572,7 @@ test("the writing index lists every post newest first, with the date each one sh
   const html = markup("writing.html");
   const items = [...html.matchAll(/<li><a href="\/writing\/([a-z0-9-]+)"><p class="small">([^<]*)<\/p><h2 class="h3">/g)].map((m) => [m[1], m[2]]);
   assert.deepEqual(items, [
-    ["an-inbound-crm-on-hubspot-and-n8n", "24 November 2026 · 10 min read"],
+    ["an-inbound-crm-on-hubspot-and-n8n", "24 November 2026 · 9 min read"],
     ["a-champion-tracker-that-can-say-it-isnt-sure", "3 November 2026 · 3 min read"],
     ["149-tests-for-a-few-slack-buttons", "25 October 2026 · 3 min read"],
     ["marking-the-ais-homework", "Marked 26 Sep 2026 · 2 min read"],
@@ -1938,9 +1938,10 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
   // and that there are two tests (polish round, 24 Nov: a business owner on a phone read two screens of text first).
   const opening = I.sections[0].parts.filter((p) => p.t === "p").map((p) => p.s);
   assert.match(opening[1], /^What a business would get: every enquiry goes to one team with a written reason, those worth a call get a deadline/);
-  assert.equal(opening[2], "Stops 1 to 4 happen by themselves as soon as the form is sent. Stop 5 is the first one that needs a person.");
-  assert.match(opening[3], /^HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals \(possible sales\)\. n8n is a tool for building automations: steps that run by themselves/);
-  assert.match(opening[4], /It has two tests: a small one with 20 made-up leads, which Priya is in, and a big one with 300\.$/);
+  assert.equal(opening[2], "Stops 1 to 4 run by themselves the moment the form is sent. Stop 5 is the first that needs a person.");
+  // Trimmed 24 Nov ("to much text"): two words a non-technical reader needs, in one short paragraph.
+  assert.match(opening[3], /^HubSpot is a CRM, where a sales team keeps its contacts, companies and deals\. n8n runs the automations/);
+  assert.equal(opening.length, 4);
   // Ten sections under their headings, in order, then the list of other posts.
   const article = page.match(/<article[\s\S]*?<\/article>/)[0];
   const heads = [...article.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => plain(m[1]).trim());
@@ -1960,20 +1961,20 @@ test("the inbound CRM post: the numbers in the first two lines, ten headings in 
   assert.deepEqual(I.sections.flatMap((s) => s.parts.filter((p) => p.t === "h2").map((p) => p.s)), heads.slice(0, 10));
   // The opening has no heading: the route sketch sits under two short paragraphs, with its own title.
   assert.ok(!I.sections[0].parts.some((p) => p.t === "h2"));
-  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "fig", "p", "p", "p", "p"]);
+  assert.deepEqual(I.sections[0].parts.map((p) => p.t), ["p", "p", "fig", "p", "p"]);
   assert.match(body, /<h3 class="fc-head crm-head crm-route-head">One made-up lead(?:'|&#x27;)s route, start to finish<\/h3><div class="sketch" role="img"/, "the route has no title over it");
   // No scripted outcome reads like a result: no heading or line calls the 16 a win count of the system's own.
   assert.doesNotMatch(t, /16 won\b|ended as won deals|live system/);
   assert.ok(t.includes("The program also decided which deals were won or lost, so the 16 shows the report counts wins correctly. It is not a win rate."));
   // "Live" is said in plain words where it first appears.
-  assert.ok(t.includes("This happened in my first live test. A live test sends the made-up leads into the HubSpot test account itself."));
+  assert.ok(t.includes("In my first live test, where the made-up leads go into the HubSpot test account itself,"));
   // Never production, never a client; plain words; no jokes to guard, but no sales words either.
   assert.doesNotMatch(t, /in production|for a client|leverage|seamless|robust|delve|unlock|elevate|game-changer|honest|Here's the thing|[—–]/i);
   // The only product names besides HubSpot and n8n are inside Priya's made-up message, quoted exactly, and where it
   // came from.
   assert.equal(count(t, "Salesforce"), count(t, "Need SSO and Salesforce, budget approved."));
   assert.equal(count(t, /[Ll]inked[Ii]n/), 3, "LinkedIn is named outside the slip's line and the click on link tags");
-  assert.match(page, /· 10 min read · hubspot, n8n, revops<\/p>/);
+  assert.match(page, /· 9 min read · hubspot, n8n, revops<\/p>/);
 });
 
 test("the inbound CRM post: the mistakes, the caveat and the limits are on the open page, not behind a click", () => {
@@ -1985,16 +1986,16 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
     'changed the country on 44 of those companies from "United States" to "US"',
     "I put all 44 back to their exact old values the same hour and checked each one.",
     "44 changed by mistake, all 44 put back the same hour",
-    "An automated test plants an outside company and checks it is left alone.",
+    "Now the job only touches companies linked to leads the system handled, and refuses anything that is not test data.",
     // The job is built to run nightly, and its timer is off: the page never says it runs every night.
     "A tidy-up job, built to run every night, cleans the data",
     "Its timer is off, and I run it by hand.",
     // Polish round, 24 Nov: whose records they were, said as the build's own results say it, with no company named.
     "My test account also held more than 100 older records of real companies, from outside this project, so none of the 100 were mine.",
     // What "flagged" is: a line on the task and high priority. Nothing messages a person.
-    "the task is flagged as late: it gets a line saying so and moves to high priority in HubSpot. That happens once for each task, and no message is sent to anyone.",
+    "the task is flagged as late: it moves to high priority in HubSpot. No message is sent to anyone.",
     // What the rep says yes or no to.
-    "Then the rep accepts the lead or turns it down. A yes keeps the lead with them.",
+    "Then the rep accepts the lead or turns it down. A no needs a reason, and the reason decides where the lead goes next.",
     // Why the timers are off: it is a decision, not unfinished work.
     "Switching them on is the account owner's decision, because two of them change HubSpot with nobody watching.",
   ]) {
@@ -2013,20 +2014,22 @@ test("the inbound CRM post: the mistakes, the caveat and the limits are on the o
   assert.ok(open.includes("The 74% says the report can tell on-time from late. It says nothing about how fast a real team would be."));
   // The AI reviewer is a second opinion, and the page says so in the open.
   assert.ok(open.includes("The reviewer is an AI, so I treat this as a second opinion."));
-  // The limits: a heading and an open list of seven, after everything else but the checks table.
+  // The limits: a heading and an open list of the four that change what a buyer gets, after everything else but
+  // the checks. Trimmed 24 Nov ("to much text"): three smaller ones sit in one click under it.
   const limits = I.sections.find((s) => s.parts[0]?.s === "What it doesn't do");
-  assert.equal(limits.more.length, 0, "the limits have a click");
-  assert.equal(limits.parts[1].items.length, 7);
+  assert.deepEqual(limits.more.map((m) => m.label), ["Three smaller limits"]);
+  assert.equal(limits.parts[1].items.length, 4);
+  assert.equal(limits.more[0].body[0].items.length, 3);
   for (const it of limits.parts[1].items) assert.ok(open.includes(it), `limit not on the open page: ${it}`);
   assert.ok(open.indexOf("What it doesn't do") > open.indexOf("Does a high score mean a better lead?"));
 });
 
-test("the inbound CRM post: twelve read-more clicks, closed, labelled, whole in the markdown copy", () => {
+test("the inbound CRM post: fourteen read-more clicks, closed, labelled, whole in the markdown copy", () => {
   const I = INBOUND;
   const body = postBody(IN_SLUG);
   const labels = I.sections.flatMap((s) => s.more.map((m) => m.label));
-  assert.equal(labels.length, 12);
-  assert.equal(count(body, '<details class="more">'), 12);
+  assert.equal(labels.length, 14);
+  assert.equal(count(body, '<details class="more">'), 14);
   assert.doesNotMatch(body, /<details[^>]*\sopen/, "a click is open in the server HTML");
   const shown = [...body.matchAll(/<summary><span class="more-line"><span class="crm-more-tag">Read more:<\/span> <span class="more-label">([\s\S]*?)<\/span><\/span><span class="more-hint" aria-hidden="true"><\/span><\/summary>/g)].map((m) => plain(m[1]));
   assert.deepEqual(shown, labels);
@@ -2259,9 +2262,9 @@ test("the inbound CRM post: the funnel plays once in about 3 seconds on the free
   const result = fig.match(/<div class="fc-result">[\s\S]*$/)[0];
   assert.ok(result.includes('<p class="fc-line" style="--at:2.8s">74% (167 of 225)</p>'));
   assert.equal(Math.round((167 / 225) * 100), 74);
-  assert.match(result, /<p class="fc-note" style="--at:3s">The late ones are follow-up tasks the program left open\./);
+  assert.match(result, /<p class="fc-note" style="--at:3s">Late means the program left the task open past its deadline\./);
   // Why 225 and not 214: the note says what the 225 are, and they add up.
-  assert.ok(result.includes("The 225 are the 214 sales follow-ups plus 11 of the 19 partnership ones. The other 8 were not due yet."));
+  assert.ok(result.includes("The 225 are the 214 sales follow-ups plus 11 of the 19 partnership ones. Another 8 were not due yet."));
   assert.equal(214 + 11, 225);
   // A program set the outcomes, and the rows say so.
   assert.deepEqual(rows.slice(2).map((m) => decodeText(m[2])), ["a small program played the reps", "a possible sale opened in HubSpot; the qualifier's leads get none yet", "the program marked the deal as won"]);
