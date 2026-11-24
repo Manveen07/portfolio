@@ -39,13 +39,13 @@ export const POSTS: Post[] = [
   {
     // Written 24 Nov 2026 (Manveen, ~01:00 IST: "once your are done we should write a detaied blog with public repo").
     // All synthetic data. Paths are under C:\Users\Manveen\Desktop\new_things_to_mess_araound\new 10x engineer\projects\
-    // inbound-routing\ (R = README.md). Every number, and where it comes from (blog-claims.json in that folder holds
+    // inbound-routing\ (R = RESULTS.md, the dated results; README.md holds the summary). Every number, and where it comes from (blog-claims.json in that folder holds
     // the exact quote for each, checked by money/upwork/tools/claims_check.py --strict-numbers):
     // - 300 leads, 134 decisions, 38 first touches, 36 deal outcomes, 214 / 66 / 54 / 16, 74% (167/225), 30 hours,
     //   2,858 HubSpot calls, the SQL recount, the planted record, 0 writes: R "Result, 24 Nov 2026 (feature 8)".
     // - Score bands 0-44 / 45-69 / 70+ (107/43/3/7%, 133/111/32/29%, 60/60/31/52%): funnel-report.html, "Conversion by
     //   score band". Fisher p < 0.001; win rate "not enough data", 70+ n=22, 0-44 n=2, need 10: R feature 8 info lines.
-    // - 87 unit tests: R files table ("node --test runs all six test files: 87"); re-run 24 Nov, 87 pass.
+    // - 88 unit tests: README.md ("88 unit tests"; was 87 until the public-ready commit 67a54e2c); re-run 24 Nov, 88 pass.
     // - 7 queues, score 0-100 (fit 60, intent 40), SLAs 1 h / 1 h / 4 h / 24 h / 48 h, routing_reason, upsert by email:
     //   RULES.md "Queues", "Score", "Rules a real CRM forces on you".
     // - 35 company records for 17 domains, company first, oldest record, company_matches: RULES.md; 20 leads posted
@@ -56,7 +56,8 @@ export const POSTS: Post[] = [
     // - Recycle +90 / +180 days, closed lost: RULES.md "Rep decisions". Lifecycle vs decision field: R feature 6.
     // - 44 companies, "the oldest 100", same hour, restored 44/44, two-layer fix, unit test: R feature 7 and RULES.md.
     //   Reset guard and the gmail lead: R feature 8. Archive restorable 90 days: RULES.md "Data hygiene".
-    // - Live checks 13/13, 13/13, 15/15, 20/20, 15/15; 300/300 routed = offline: R per feature.
+    // - Live checks: README.md summary (newest runs): replay 14 of 14, watchdog 13 of 13, decisions 16 of 16, hygiene
+    //   20 of 20, funnel 15 of 15; 300/300 routed = offline: R feature 8.
     // - Limits (100 per run, 1,000 leads, wall-clock SLA, one shared key, failure alerts next): R "Known limits", PLAN.md.
     // Repo link: the public copy Manveen asked for, github.com/Manveen07/hubspot-n8n-inbound-crm.
     slug: "an-inbound-crm-on-hubspot-and-n8n",
@@ -71,7 +72,7 @@ export const POSTS: Post[] = [
     body: [
       {
         t: "p",
-        s: "Everything here is built on made-up data, in a free HubSpot portal and a self-hosted n8n. None of it has run in production. It has 87 unit tests, and every feature was tested live before the next one started. The most useful lesson came from a mistake: scope every batch job by a filter that names your own records, never by \"first N\".",
+        s: "Everything here is built on made-up data, in a free HubSpot portal and a self-hosted n8n. None of it has run in production. It has 88 unit tests, and every feature was tested live before the next one started. The most useful lesson came from a mistake: scope every batch job by a filter that names your own records, never by \"first N\".",
       },
       { t: "h2", s: "What an inbound CRM has to get right" },
       {
@@ -83,9 +84,9 @@ export const POSTS: Post[] = [
         head: ["What it has to do", "What I built", "Live test"],
         rows: [
           ["Scoring and routing", "A 0-100 score, 7 queues, one owner per company", "300 of 300 leads routed live the same as the offline rules"],
-          ["Attribution", "First and last touch from UTM tags, cleaned", "13 of 13 checks"],
+          ["Attribution", "First and last touch from UTM tags, cleaned", "14 of 14 checks"],
           ["Speed to lead", "A watchdog that escalates late follow-ups", "13 of 13 checks"],
-          ["Lead handoff", "Rep accept or reject, with a required reason", "15 of 15 checks"],
+          ["Lead handoff", "Rep accept or reject, with a required reason", "16 of 16 checks"],
           ["Data hygiene", "A nightly cleanup job and a data dictionary", "20 of 20 checks"],
           ["Reporting", "A weekly funnel report", "15 of 15 checks, equal to a separate SQL recount"],
         ],
