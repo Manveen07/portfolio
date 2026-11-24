@@ -1,10 +1,10 @@
 // The writing pages as markdown: /writing.md (the list) and /writing/<slug>.md (each post).
 // Post bodies already use markdown's inline syntax (**bold**, *italic*, `code`, [text](url)), so blocks print as is.
-// The posts drawn by components (drawing-proof, the confidently-wrong notes, the namesake game) are written out from the same
+// The posts drawn by components (drawing-proof, the confidently-wrong notes, the namesake game, the inbound CRM post) are written out from the same
 // data the components render; tests/ai.test.mjs checks every block, alt text and number against the built page.
 
 import { NEWEST_FIRST, postDate, type Block, type Post, type PostComponent } from "@/data/posts";
-import { ME, DRAWINGS as D, WRONG, NAMESAKE as N, type Pin } from "@/data/portfolio";
+import { ME, DRAWINGS as D, WRONG, NAMESAKE as N, INBOUND as I, type Pin, type InboundFig, type InboundRow } from "@/data/portfolio";
 import { abs, mdHref } from "@/lib/site";
 import { para, list, link, image, pen } from "@/lib/md/format";
 
@@ -80,10 +80,72 @@ function namesake(): string[] {
   ];
 }
 
+/** components/Inbound.tsx, top to bottom (24 Nov): each section's prose, each figure written out from the data it is
+    drawn from (a drawing's reading, a bar figure's head and one line per row, the game with every call), then the
+    section's "read more" clicks, whole: on the page they are closed, here they are plain text. */
+function inboundCrm(): string[] {
+  const row = (r: InboundRow) => [r.name, r.due, r.sub, r.value].filter(Boolean).join(" · ");
+  const drawing = (label: string) => para(`*Drawing:* ${label}`);
+  const G = I.game;
+  const pick = Object.fromEntries(G.picks.map((p) => [p.call, p.label]));
+  const figs: Record<InboundFig, () => string[]> = {
+    route: () => [drawing(I.route.label)],
+    slip: () => {
+      const m = I.slip.message;
+      return [
+        para(`*${I.slip.eyebrow}*`),
+        list([
+          ...I.slip.rows.map(([k, v]) => `${k}: ${v}`),
+          `${m.label}: ${m.before}${m.marked}${m.after} ${m.scribble} (the red pen underlines "${m.marked}")`,
+          `${I.slip.last[0]}: ${I.slip.last[1]}`,
+        ]),
+        para(`**${I.slip.score.n}** ${I.slip.score.of}`),
+        list(I.slip.score.captions),
+      ];
+    },
+    teams: () => [
+      `### ${I.teams.head}`,
+      list(I.teams.rows.flatMap((r, i) => [row(r), ...(i + 1 === I.teams.sum.after ? [I.teams.sum.text] : [])])),
+      para(`${pen(I.teams.note)} (on the first row, where the red pen circles "${I.teams.rows[0].due}")`),
+    ],
+    memo: () => [para(I.memo.caption), ["```text", ...I.memo.lines, "```"].join("\n")],
+    game: () => [
+      para(`*${G.eyebrow}*`),
+      `### ${G.head}`,
+      para(G.intro),
+      para(`*${G.howToPlay}* The choices: ${G.picks.map((p) => p.label).join(", ")}.`),
+      list(
+        G.cases.map((c) =>
+          [
+            `**${c.who}** · ${c.did}`,
+            `${G.tags.rules} **${pick[c.rules.call]}**, ${c.rules.why}`,
+            `${G.tags.reviewer} **${pick[c.reviewer.call]}**, ${c.reviewer.said}`,
+            ...(c.after ? [`${G.tags.after} ${c.after}`] : []),
+          ].join(" · "),
+        ),
+      ),
+      drawing(G.dots.label),
+    ],
+    decisions: () => [`### ${I.decisions.head}`, list([row(I.decisions.yes), I.decisions.noLabel, ...I.decisions.no.map(row)])],
+    copies: () => [drawing(I.copies.label), list([...I.copies.rows.map((r) => `${r.label}: ${r.value}`), I.copies.key])],
+    batch: () => [drawing(I.batch.label), list([...I.batch.rows.map((r) => `${r.label}: ${r.value}`), I.batch.key])],
+    funnel: () => {
+      const R = I.funnel.result;
+      return [`### ${I.funnel.head}`, list([...I.funnel.rows.map(row), `${R.name} · ${R.sub} · ${R.line}`]), para(R.note)];
+    },
+    bands: () => [`### ${I.bands.head}`, para(I.bands.under), list(I.bands.rows.map(row)), para(pen(I.bands.note))],
+  };
+  return I.sections.flatMap((s) => [
+    ...s.parts.flatMap((p) => (p.t === "fig" ? figs[p.fig]() : [block(p)])),
+    ...s.more.flatMap((m) => [`**${I.moreTag} ${m.label}**`, ...m.body.map(block)]),
+  ]);
+}
+
 const COMPONENT_MD: Record<PostComponent, () => string[]> = {
   "drawing-proof": drawingProof,
   "confidently-wrong": () => WRONG.pins.map(pin),
   "champion-namesake": namesake,
+  "inbound-crm": inboundCrm,
 };
 
 /** The line under a post's title, as the page shows it. */

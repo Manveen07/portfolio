@@ -1,7 +1,7 @@
 // Blog / writing content. Block-based so we render without any markdown dep.
 // Inline syntax supported by the renderer: **bold**, `code`, *italic*, [text](url).
 
-import { DRAWINGS, WRONG, NAMESAKE, type Pin } from "./portfolio";
+import { DRAWINGS, WRONG, NAMESAKE, INBOUND, type Pin } from "./portfolio";
 
 export type Block =
   | { t: "h2"; s: string }
@@ -15,7 +15,7 @@ export type Block =
 
 /** A post drawn by its own component instead of prose blocks. Its words stay in data/portfolio.ts;
     app/writing/[slug]/page.tsx picks the component and lib/md/posts.ts writes its markdown copy. */
-export type PostComponent = "drawing-proof" | "confidently-wrong" | "champion-namesake";
+export type PostComponent = "drawing-proof" | "confidently-wrong" | "champion-namesake" | "inbound-crm";
 
 export type Post = {
   slug: string;
@@ -61,179 +61,21 @@ export const POSTS: Post[] = [
     // - Limits (100 per run, 1,000 leads, wall-clock SLA, one shared key, failure alerts next): R "Known limits", PLAN.md.
     // Repo link: the public copy Manveen asked for, github.com/Manveen07/hubspot-n8n-inbound-crm.
     slug: "an-inbound-crm-on-hubspot-and-n8n",
-    title: "Inbound routing, SLAs and hygiene on HubSpot and n8n, tested with 300 made-up leads",
-    cardTitle: "Inbound lead routing I built on HubSpot and n8n",
-    line: "Routing, SLAs, rep handoff, nightly cleanup and a funnel report, tested live with 300 made-up leads.",
+    // Draft 2 (24 Nov, his words on draft 1: "i thik make it readable for a non technical person and make it visual
+    // experience"): the page is drawn by components/Inbound.tsx from INBOUND in data/portfolio.ts, which also lists the
+    // source of every number the figures add (Priya's fields and score, where the 300 landed first, the answers by
+    // reason, the step rates, the on-time table by team, google's 72 leads and 7 wins). The technical detail of draft 1
+    // sits behind closed "read more" clicks and is whole in the markdown copy (lib/md/posts.ts).
+    title: INBOUND.title,
+    cardTitle: "What happens after a demo form: lead routing I built on HubSpot and n8n",
+    line: "One made-up lead followed from the form to the weekly report, then 300 more to test it.",
     date: "2026-11-24",
-    readMins: 7,
+    // The open path (the "read more" clicks closed): tests/site.test.mjs counts the words outside them, about 2,450
+    // with every figure's words, so 9 is the least it allows.
+    readMins: 9,
     tags: ["hubspot", "n8n", "revops"],
-    summary:
-      "I built inbound lead handling on top of HubSpot with n8n and tested it on synthetic data: 300 made-up leads and simulated rep decisions, sent through the live workflows. The weekly report counted 214 leads that reached a sales queue, 66 that a rep accepted, 54 deals and 16 won.",
-    body: [
-      {
-        t: "p",
-        s: "Everything here is built on made-up data, in a free HubSpot portal and a self-hosted n8n. None of it has run in production. It has 88 unit tests, and every feature was tested live before the next one started. The most useful lesson came from a mistake: scope every batch job by a filter that names your own records, never by \"first N\".",
-      },
-      { t: "h2", s: "What an inbound CRM has to get right" },
-      {
-        t: "p",
-        s: "A form lead has to reach the right person fast, with a reason they can read, and without a second copy of the contact or company. Later, the data has to be clean enough to report on.",
-      },
-      {
-        t: "table",
-        head: ["What it has to do", "What I built", "Live test"],
-        rows: [
-          ["Scoring and routing", "A 0-100 score, 7 queues, one owner per company", "300 of 300 leads routed live the same as the offline rules"],
-          ["Attribution", "First and last touch from UTM tags, cleaned", "14 of 14 checks"],
-          ["Speed to lead", "A watchdog that escalates late follow-ups", "13 of 13 checks"],
-          ["Lead handoff", "Rep accept or reject, with a required reason", "16 of 16 checks"],
-          ["Data hygiene", "A nightly cleanup job and a data dictionary", "20 of 20 checks"],
-          ["Reporting", "A weekly funnel report", "15 of 15 checks, equal to a separate SQL recount"],
-        ],
-      },
-      { t: "h2", s: "How it works" },
-      {
-        t: "p",
-        s: "**Routing.** A form posts to an n8n webhook. It scores the lead from 0 to 100: up to 60 for fit (size, seniority, title) and up to 40 for intent (which form, plus a buying signal like \"budget\"). Then a fixed list of checks picks the queue, and the first match wins.",
-      },
-      {
-        t: "p",
-        s: "The 7 queues are enterprise, mid-market and SMB AE (account executive, the rep who sells), SDR (the rep who qualifies first), partnerships, nurture and disqualified. The score only sets the task's priority. Every routed contact gets a `routing_reason`, so a rep can see why the lead landed with them.",
-      },
-      {
-        t: "p",
-        s: "Each queue with a person behind it gets a first follow-up task, due by the queue's SLA (service-level agreement: here, how fast someone must make first contact). That's 1 hour for enterprise and mid-market, 4 for SMB, 24 for SDR and 48 for partnerships. AE leads also open a deal, and a repeat form opens no second task or deal.",
-      },
-      {
-        t: "p",
-        s: "**Attribution.** UTM tags are the parameters on a link that say where a click came from, like `utm_source=google`. Each contact keeps a first touch, the channel that first brought them in, written once and never overwritten, and a last touch, rewritten on every form. Messy values are cleaned into a short list, so `fb` becomes `meta`.",
-      },
-      {
-        t: "p",
-        s: "A CSV import skips that cleaning, so a weekly count of values outside the list should be 0. It's a cheap check for any CRM.",
-      },
-      {
-        t: "p",
-        s: "**SLA watchdog.** A second workflow raises each overdue follow-up task to high priority once, and records speed to lead: minutes from the form to the completed task. A test run can move its clock forward. At 5 hours ahead, the 12 tasks with a 1 or 4 hour SLA escalated, the 3 with 24 or 48 hours didn't, and a second run changed nothing.",
-      },
-      {
-        t: "p",
-        s: "Measure speed to lead from the task's creation time. A months-old contact who fills in a new form adds months if you use the contact's create date.",
-      },
-      {
-        t: "p",
-        s: "**Rep accept or reject.** A reject needs a reason from a fixed list, and the reason decides where the lead goes. Not the buyer goes back to the SDR. Bad timing goes to nurture with a recycle date 90 days out, no budget or too small with 180 days, and spam is disqualified. An open deal on a rejected lead is closed lost with the reason.",
-      },
-      {
-        t: "p",
-        s: "Lifecycle stage can't tell you whether a rep accepted a lead. HubSpot's default setting moves a contact to \"opportunity\" as soon as a deal is linked, and my first live check of this feature failed on exactly that. Count handoffs with a decision field.",
-      },
-      {
-        t: "p",
-        s: "**Nightly hygiene.** A cleanup job maps job titles to seniority and function, turns country names into ISO codes (\"United Kingdom\" becomes GB) and merges duplicate companies. It also moves nurture leads to SDR on their recycle date and counts missing fields. It writes only what differs, so a second run straight after makes 0 changes.",
-      },
-      {
-        t: "p",
-        s: "Merges keep the oldest company and archive the copies, since archived records stay restorable for 90 days and HubSpot's own merge can't be undone. A data dictionary lists every custom field and what broken looks like.",
-      },
-      {
-        t: "p",
-        s: "**Funnel report.** A weekly, read-only report. Its numbers are further down.",
-      },
-      {
-        t: "p",
-        s: "The webhooks need a shared-secret header: without it, a request gets a 401 and nothing is written. The watchdog, the cleanup job and the report have schedules, all switched off on purpose. Switched on, the first two would edit HubSpot with nobody watching.",
-      },
-      { t: "h2", s: "HubSpot made two of every company" },
-      {
-        t: "p",
-        s: "The first live run posted 20 made-up leads to the webhook, twice. It failed one check: 35 company records for 17 domains. HubSpot has a default setting that creates a company for every new email domain the moment a contact is saved. My workflow saved the contact first and then made its own company, so every domain got two.",
-      },
-      {
-        t: "p",
-        s: "The fix was to write the company first, so HubSpot links the contact to it. The lookup also takes the oldest record for a domain and returns `company_matches`, how many it found, so a duplicate shows up in every response.",
-      },
-      {
-        t: "p",
-        s: "If that auto-create setting is on in your portal, write companies first. If your automation owns companies, switch the setting off. One case is still open: two people from a brand-new company who submit in the same second can each make a company. That happened in a later live test, and the nightly job merged the pair.",
-      },
-      { t: "h2", s: "A reviewer who never saw my rules" },
-      {
-        t: "p",
-        s: "To test the rules, a fresh AI reviewer that had never seen them or the code routed the same 20 leads, from the lead table and a one-line meaning per queue. The rules agreed with it on 18 of 20. These are AI labels, not hand labels.",
-      },
-      {
-        t: "p",
-        s: "The first miss was an office manager at a 40-person company whose message said her boss asked her to find out more. My rules sent her to nurture, and the reviewer said SDR. The reviewer was right: someone gathering facts for a decision-maker should hear from a person. I added a check that sends that case to the SDR, never to an AE, and agreement went to 19 of 20.",
-      },
-      {
-        t: "p",
-        s: "The second was a student writing a thesis. The reviewer disqualified him and my rules put him in nurture. I kept mine on purpose: nurture opens no task, so it costs nothing, and students become buyers.",
-      },
-      { t: "h2", s: "My cleanup job edited 44 companies it shouldn't have" },
-      {
-        t: "p",
-        s: "The first live run of the nightly job went wrong. To find duplicate companies, it read the oldest 100 companies in the portal. My test portal also holds more than 100 companies from outside this project. So the demo companies fell outside the batch, the job found 0 duplicates, and it changed the country on 44 of those other companies from \"United States\" to \"US\".",
-      },
-      {
-        t: "p",
-        s: "I put all 44 back to their exact old values the same hour and read each one back. Then I fixed it in two layers. The job now looks only at companies linked to contacts the routing touched, plus their same-domain copies. And the planning step refuses to write any company outside example.com, with a unit test that plants a non-demo company and checks it's left alone.",
-      },
-      {
-        t: "p",
-        s: "Scoping by a filter is the first guard. A second one sits at the write, so a bad read can't become a bad write. My reset job got the same treatment: it stops before archiving anything if a search returns a record that isn't on its list. After a rewrite, its first run did stop, over one made-up lead with a gmail address, and nothing was archived.",
-      },
-      { t: "h2", s: "The funnel, and does the score work?" },
-      {
-        t: "p",
-        s: "300 synthetic leads went through the live routing webhook, then 134 simulated rep decisions through the live decision webhook. 38 completed follow-ups and 36 closed deals went in through test-only inputs on the watchdog and report workflows.",
-      },
-      {
-        t: "p",
-        s: "Here an MQL (marketing-qualified lead) is a lead that reached a sales queue, AE or SDR, and an SQL (sales-qualified lead) is one a rep accepted. The run counted 300 leads, 214 MQLs, 66 SQLs, 54 deals and 16 won. 74% of first follow-up tasks were done inside their SLA (167 of 225 with a result, partnership tasks included). The misses are tasks left open, because the report's clock was set 30 hours after the last lead.",
-      },
-      {
-        t: "p",
-        s: "The question I most wanted answered was whether the lead score predicts anything.",
-      },
-      {
-        t: "table",
-        head: ["Score band", "Leads", "MQL", "SQL", "Accepted"],
-        rows: [
-          ["0-44", "107", "43", "3", "7%"],
-          ["45-69", "133", "111", "32", "29%"],
-          ["70+", "60", "60", "31", "52%"],
-        ],
-      },
-      {
-        t: "p",
-        s: "For rep acceptance, yes on this data: 52% of 70+ MQLs were accepted against 7% in the 0-44 band, and a one-sided Fisher exact test gives p < 0.001. For win rate the report says \"not enough data\". The bottom band closed only 2 deals, and the report wants 10 in each band before it gives a p-value, so a small sample can't produce a confident answer.",
-      },
-      {
-        t: "p",
-        s: "There's a caveat. I made the simulated reps likelier to accept high scores. So this shows the report can detect an effect when there is one, and says nothing about whether this score works on real leads.",
-      },
-      {
-        t: "p",
-        s: "To check the report itself, I wrote an independent recount in SQL from the generator's ground truth, and the numbers matched. A planted non-demo record was left out, a second run gave identical numbers, and the report made 0 writes. The whole run took 2,858 HubSpot API calls.",
-      },
-      { t: "h2", s: "What it doesn't do" },
-      {
-        t: "ul",
-        items: [
-          "It has only seen made-up data, on a free portal with one user, so queues are a field, not separate reps.",
-          "SLA hours are wall-clock, so nights and weekends count.",
-          "The webhook key is one shared secret, and a browser form can't hide it. A real site would post through its own server.",
-          "The cleanup job reads at most 100 contacts and 100 companies per run, and says so when it hits the cap.",
-          "Failure alerts are the next feature, and they aren't built yet.",
-        ],
-      },
-      { t: "h2", s: "The code" },
-      {
-        t: "p",
-        s: "The workflows, the rules and the tests are public: [github.com/Manveen07/hubspot-n8n-inbound-crm](https://github.com/Manveen07/hubspot-n8n-inbound-crm).",
-      },
-    ],
+    summary: INBOUND.lede,
+    body: { component: "inbound-crm" },
   },
   {
     // Written 3 Nov 2026: option 3 of his animation mockups that day ("other can be in their respected blogs"), the

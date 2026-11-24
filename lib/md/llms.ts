@@ -92,6 +92,8 @@ const repoLines = () =>
     gave only 29/29 = 100%, which the careful matcher gets by construction, so an agent would have quoted it alone). */
 function postFacts(p: Post): string {
   if (Array.isArray(p.body)) return "";
+  // 24 Nov: the inbound CRM post's summary carries its numbers (300, 214, 66, 16), so its line adds nothing.
+  if (p.body.component === "inbound-crm") return "";
   if (p.body.component === "drawing-proof") return ` Numbers: ${D.marks.map(([n, l]) => `${n} ${l}`).join("; ")}.`;
   if (p.body.component === "champion-namesake") {
     const [naive, mine] = NAMESAKE.gate.lines.split("\n").filter((l) => l.startsWith("agreement")).map((l) => l.replace(/^agreement with labels\s+/, ""));

@@ -7,6 +7,7 @@ import Prose from "@/components/Prose";
 import Drawings from "@/components/Drawings";
 import Wrong from "@/components/Wrong";
 import Namesake from "@/components/Namesake";
+import Inbound from "@/components/Inbound";
 import { postJsonLd, ldJson } from "@/lib/md/person";
 import { modified } from "@/lib/md/dates";
 import { abs } from "@/lib/site";
@@ -16,6 +17,7 @@ const BODIES: Record<PostComponent, ComponentType> = {
   "drawing-proof": Drawings,
   "confidently-wrong": Wrong,
   "champion-namesake": Namesake,
+  "inbound-crm": Inbound,
 };
 
 export function generateStaticParams() {

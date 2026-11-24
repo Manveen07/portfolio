@@ -1,10 +1,11 @@
-// All copy for the home page, and the words of the three posts drawn by components (DRAWINGS, WRONG, NAMESAKE).
+// All copy for the home page, and the words of the four posts drawn by components (DRAWINGS, WRONG, NAMESAKE, INBOUND).
 // Components read from here; edit words here.
 // Rules for every string: spec section 5 (no dashes, no sales words, Manveen's
 // own phrasing where spec 5a has it). Every figure needs a source: see
 // docs/superpowers/specs/2026-10-13-claims.md.
 
-// Types only (erased when it runs, so the tests can load this file on its own): NAMESAKE's story is prose blocks.
+// Types only (erased when it runs, so the tests can load this file on its own): NAMESAKE's story and INBOUND's
+// sections are prose blocks.
 import type { Block } from "./posts";
 
 // ── Identity ─────────────────────────────────────────────────────────
@@ -677,3 +678,625 @@ export const PILOT = {
   sketchLabel:
     "A call about what wastes your time, then a fixed quote, then a month on your real requests with every miss logged, then you decide whether to keep it.",
 } as const;
+
+// ── The inbound CRM post (24 Nov 2026): /writing/an-inbound-crm-on-hubspot-and-n8n, drawn by components/Inbound.tsx ──
+// Manveen, 24 Nov, on draft 1 (prose blocks): "i thik make it readable for a non technical person and make it visual
+// experience". So the page follows one made-up lead, Priya, from her form to the weekly report, one figure per step, in
+// plain words; the technical detail sits in closed "read more" clicks (`more`), whole in the markdown copy.
+// All made-up data: a free HubSpot account and an n8n he runs himself. It never handled a real lead, and no line says
+// it did. The only names are HubSpot, n8n and the made-up test data (Priya's message is quoted exactly, so it names
+// two products; nothing else does).
+// Sources, all under C:\Users\Manveen\Desktop\new_things_to_mess_araound\new 10x engineer\projects\inbound-routing\
+// (the public copy is github.com/Manveen07/hubspot-n8n-inbound-crm; blog-claims.json there holds a quote for each claim):
+// - RES = RESULTS.md, RULES = RULES.md, FR = funnel-report.html, FL = funnel-live-2026-11-24.json,
+//   RL = replay-live-2026-11-24.json, DL = decision-live-2026-11-24.json, REV = reviewer-labels.csv, LEADS = leads.csv.
+// - Lede and funnel: 300 leads, 214 reached a sales team, 66 accepted, 54 deals, 16 won, and the step rates 71%, 31%,
+//   82%, 30%: FR stage tiles; RES "Result, 24 Nov 2026 (feature 8)". 74% (167 of 225), the clock 30 hours after the last
+//   lead: FR and RES feature 8. 214 is the four sales teams; 233 leads got a follow-up with a deadline (214 and the 19
+//   partnerships), so no line says "214 reached a salesperson with a deadline".
+// - Priya (L03): name, title, Lumen Health, 8,500 staff, demo form, her message, LinkedIn paid post: LEADS L03. Score
+//   95, fit 55, intent 40, the rule matched "Evaluating", team enterprise_ae: RL L03. The parts 30, 20, 5, 25, 15 and
+//   the caps 60 and 40: RULES "Score". The rep's note, "Discovery call booked.", accept: DL L03 (hs_task_body,
+//   decision_note). Grace Kim (L19), 65, "company already owned by this queue": RL L19.
+// - Seven teams, who lands in each, the deadlines 1 h / 1 h / 4 h / 24 h / 48 h: RULES "Queues". Where the 300 landed
+//   first (20, 45, 76, 73, 19, 54, 13): FL leads[].queue, counted 24 Nov; FR "Speed to lead by queue" confirms the
+//   first five. FR's own queue row (98 and 17) is the state after rep decisions, so it is not used.
+// - The game: Leo (L06), Chloe (L13), Arjun (L08): LEADS; RL reasons; REV quotes word for word. 18 of 20, 19 of 20
+//   after the fix for Chloe, 13 of 13 on the re-run, AI labels: RES "Blind review of the routing".
+// - Yes or no: 134 decisions (RES feature 8); 66 accepted, 68 rejected as 19, 15, 15, 10, 5, 4: FR "Rejections and the
+//   recycle queue". Where each goes, 90 and 180 days: RULES "Rep decisions".
+// - 35 company records for 17 domains; 20 leads sent twice: RULES and RES "Result, 22 Nov 2026". No count after the fix
+//   is in the sources, so none is drawn and no "18" is printed.
+// - The nightly job's first run: the oldest 100 companies, 0 duplicates, 44 changed from "United States" to "US", all
+//   44 put back the same hour, the two guards and the planted outside company: RES feature 7; RULES "Data hygiene".
+//   The outside companies are never named, and no "56" is printed.
+// - Score bands (60/60/31/52%, 133/111/32/29%, 107/43/3/7%), Fisher p < 0.001, win rate "not enough data" (22 and 2
+//   closed deals, 10 needed): FR "Conversion by score band"; RES feature 8. The caveat (simulated reps were made
+//   likelier to accept high scores): RES feature 8.
+// - Read more: the scoring table and the 13 checks: RULES "Score", "Order of checks". Link tags, first and last touch,
+//   20 of 20 and 5: RULES "UTM rules", RES feature 4. 0 new contacts, companies, deals, tasks on a resend: RES 23 Nov.
+//   The late flag at +5 hours (15 open, 12 flagged, 3 not, 0 more): RES feature 5. Decisions and lifecycle stage: RES
+//   feature 6. The on-time table by team (233, 167, 58, 8): FR "Speed to lead by queue". google 72 leads and 7 wins:
+//   FR "Funnel by first-touch source". 134 decisions, 38 follow-ups, 36 closed deals, 2,858 requests, the recount: RES
+//   feature 8. The key on the two form addresses: README "Webhook key".
+// - The checks table: README summary (88 automated tests; 14 of 14, 13 of 13, 16 of 16, 20 of 20, 15 of 15) and RES
+//   feature 8 (300 of 300).
+// Rules for the figures: every word here; each number built into one string; red only through the pen; no new keyframes.
+export type InboundFig = "route" | "slip" | "teams" | "memo" | "game" | "decisions" | "copies" | "batch" | "funnel" | "bands";
+export type InboundPart = Block | { t: "fig"; fig: InboundFig };
+export type InboundMore = { label: string; body: Block[] };
+export type InboundSection = { parts: InboundPart[]; more: InboundMore[] };
+/** One bar row: a name, a grey line, the value as shown, and the count the bar is drawn to. `due` is a team's deadline. */
+export type InboundRow = { name: string; sub: string; value: string; n: number; due?: string };
+export type LeadCall = "SALES" | "QUALIFY" | "EMAILS" | "NO_ONE";
+export type LeadCase = {
+  who: string;
+  did: string;
+  rules: { call: LeadCall; why: string };
+  reviewer: { call: LeadCall; said: string };
+  after?: string;
+};
+/** One row of a dot figure: `n` dots, the first `ringed` of them red rings when `ringedFirst`, else the last. */
+export type DotRow = { label: string; n: number; ringed: number; ringedFirst?: boolean; value: string };
+
+export const INBOUND: {
+  title: string;
+  lede: string;
+  moreTag: string;
+  route: { label: string; stops: { name: string; dim: string[]; tall: string; loop?: string }[]; note: string };
+  slip: {
+    eyebrow: string;
+    rows: [string, string][];
+    message: { label: string; before: string; marked: string; after: string; scribble: string };
+    last: [string, string];
+    score: { n: string; of: string; fit: number; ready: number; captions: [string, string] };
+  };
+  teams: { head: string; rows: InboundRow[]; sum: { after: number; text: string }; note: string };
+  memo: { caption: string; lines: string[] };
+  game: {
+    id: string;
+    eyebrow: string;
+    head: string;
+    intro: string;
+    howToPlay: string;
+    tags: { rules: string; reviewer: string; after: string };
+    picks: { call: LeadCall; label: string }[];
+    verdict: { rules: string; reviewer: string; differ: string };
+    cases: LeadCase[];
+    dots: { same: number; changed: number; kept: number; label: string };
+  };
+  decisions: { head: string; yes: InboundRow; noLabel: string; no: InboundRow[] };
+  copies: { label: string; rows: DotRow[]; key: string };
+  batch: { label: string; rows: DotRow[]; key: string };
+  funnel: {
+    id: string;
+    head: string;
+    replay: string;
+    rows: InboundRow[];
+    result: { name: string; sub: string; line: string; note: string };
+  };
+  bands: { head: string; under: string; rows: InboundRow[]; note: string };
+  sections: InboundSection[];
+} = {
+  // 81 characters: the share card sets a long title at 54px (app/writing/[slug]/opengraph-image.tsx).
+  title: "What happens after someone fills in your demo form, tested with 300 made-up leads",
+  lede: "When someone asks for a demo on a company's website, something has to decide who calls them back and how fast. I built that on HubSpot and n8n and tested it with 300 made-up leads: 214 reached a sales team, simulated sales reps accepted 66, and 16 ended as won deals.",
+  /** The words before each click's label. */
+  moreTag: "Read more:",
+
+  // F1, components/sketches/LeadRoute.tsx. Stop 6 is generic: Priya is not in the weekly report.
+  route: {
+    label:
+      "A lead's route on one line with 6 stops, shown for Priya, a made-up lead. 1 form: Priya asks for a demo. 2 score: 95 out of 100. 3 team: enterprise sales. 4 deadline: call within 1 hour, circled in red. 5 yes or no: the rep says yes. 6 upkeep: nightly tidy-up, weekly report. Circled: the deadline. Late calls get flagged.",
+    stops: [
+      { name: "form", dim: ["Priya asks", "for a demo"], tall: "Priya asks for a demo" },
+      { name: "score", dim: ["95 out of 100"], tall: "95 out of 100" },
+      { name: "team", dim: ["enterprise", "sales"], tall: "enterprise sales" },
+      { name: "deadline", dim: ["call within", "1 hour"], tall: "call within 1 hour", loop: "1 hour" },
+      { name: "yes or no", dim: ["the rep says", "yes"], tall: "the rep says yes" },
+      { name: "upkeep", dim: ["nightly tidy-up", "weekly report"], tall: "nightly tidy-up, weekly report" },
+    ],
+    note: "circled: the deadline. Late calls get flagged.",
+  },
+
+  // F2, LeadSlip. LEADS L03; the pen underlines "Evaluating" only: RL shows that is the word the rule matched.
+  slip: {
+    eyebrow: "a made-up lead from the build's test table",
+    rows: [
+      ["Name", "Priya Nair"],
+      ["Job title", "Director of Revenue Operations"],
+      ["Company", "Lumen Health, 8,500 staff"],
+      ["Form", "demo request"],
+    ],
+    message: { label: "Message", before: '"', marked: "Evaluating", after: ' vendors for Q1. Need SSO and Salesforce, budget approved."', scribble: "buying words: +15" },
+    last: ["Came from", "LinkedIn, a paid post"],
+    score: {
+      n: "95",
+      of: "out of 100",
+      fit: 55,
+      ready: 40,
+      captions: ["fit 55 of 60: company size 30, seniority 20, role 5", "ready to buy 40 of 40: demo form 25, buying words 15"],
+    },
+  },
+
+  // F3, TeamRows. Bars to scale of the largest (76).
+  teams: {
+    head: "Seven teams. The bars show where 300 made-up test leads landed first.",
+    rows: [
+      { name: "Enterprise sales", sub: "1,000 or more staff, ready to talk", due: "call within 1 hour", value: "20", n: 20 },
+      { name: "Mid-size sales", sub: "100 to 999 staff, ready to talk", due: "call within 1 hour", value: "45", n: 45 },
+      { name: "Small-business sales", sub: "under 100 staff, ready to talk", due: "call within 4 hours", value: "76", n: 76 },
+      { name: "Qualifier", sub: "a rep who checks first: a bigger company that is not clearly ready, or size unknown", due: "within 24 hours", value: "73", n: 73 },
+      { name: "Partnerships", sub: "wants to resell or refer", due: "within 48 hours", value: "19", n: 19 },
+      { name: "Emails only", sub: "students, personal email with no company, small and not ready", due: "no deadline, no task", value: "54", n: 54 },
+      { name: "Ruled out", sub: "junk, test entries, competitors", due: "no deadline, no task", value: "13", n: 13 },
+    ],
+    sum: { after: 4, text: "these four are the sales teams: 214 of the 300" },
+    note: "Priya landed here. She was in an earlier 20-lead test, so she is not in these bars.",
+  },
+
+  // RepNote. DL L03, hs_task_body, its first three lines exactly.
+  memo: {
+    caption: "the note the rep gets, word for word",
+    lines: ["Score 95 (fit 55, intent 40).", "Why this queue: enterprise, high intent.", 'They wrote: "Evaluating vendors for Q1. Need SSO and Salesforce, budget approved."'],
+  },
+
+  // F4, components/sketches/RouteTheLead.tsx.
+  game: {
+    id: "sort-the-lead",
+    eyebrow: "made-up data, three of the 20 test leads",
+    head: "Who should get this lead?",
+    intro: "Pick for each one. Then see what my rules did and what the reviewer said.",
+    // Markdown only: the page has the buttons this sentence describes. No digits (the page would not have them).
+    howToPlay: "On the page you pick who should get each lead, and your pick shows what my rules did and what the reviewer said.",
+    tags: { rules: "my rules:", reviewer: "the reviewer:", after: "what I did:" },
+    picks: [
+      { call: "SALES", label: "salesperson now" },
+      { call: "QUALIFY", label: "qualifier first" },
+      { call: "EMAILS", label: "emails only" },
+      { call: "NO_ONE", label: "no one" },
+    ],
+    // All three are in the server HTML under every case; CSS shows the one that fits the pick. "reviewer" can only
+    // show on Arjun, the one case where the two differ.
+    verdict: { rules: "you picked what my rules do now", reviewer: "you picked what the reviewer picked", differ: "you picked differently" },
+    cases: [
+      {
+        who: "Leo Martin, Account Executive at Quantly, 60 staff",
+        did: 'Asked for a demo. Wrote: "We sell something similar, would love to compare notes on your stack."',
+        rules: { call: "NO_ONE", why: "his email domain is on my competitor list" },
+        reviewer: { call: "NO_ONE", said: '"Known competitor fishing for information on our stack"' },
+      },
+      {
+        who: "Chloe Dubois, Office Manager at Maison Lune, 40 staff",
+        did: 'Used the contact form. Wrote: "My boss asked me to find out more."',
+        rules: { call: "QUALIFY", why: "a small company with no buying words, but she is asking for her boss, so a person checks within 24 hours" },
+        reviewer: { call: "QUALIFY", said: '"Not the buyer; gathering info for her boss; qualify first"' },
+        after: "At first my rules said emails only. The reviewer was right, so I added a rule. It sends her to the qualifier, never straight to a salesperson.",
+      },
+      {
+        who: "Arjun Mehta, student, university email",
+        did: 'Downloaded a guide. Wrote: "Doing a thesis on sales automation."',
+        rules: { call: "EMAILS", why: "a student gets marketing emails and no follow-up task" },
+        reviewer: { call: "NO_ONE", said: '"Student doing thesis research; not a buyer"' },
+        after: "I kept mine. Emails only opens no task, so it costs nothing, and students become buyers.",
+      },
+    ],
+    // RES "Blind review": 18 the same, Chloe (changed), Arjun (kept).
+    dots: {
+      same: 18,
+      changed: 1,
+      kept: 1,
+      label: "20 leads sorted by my rules and by the reviewer: 18 the same; 1 where the reviewer was right and I changed the rule, which makes 19 of 20; 1 where I kept my rule.",
+    },
+  },
+
+  // F5, DecisionRows. Bars to scale of the largest (66).
+  decisions: {
+    head: "What 134 simulated answers did",
+    yes: { name: "yes", sub: "stays with the rep, follow-up marked done", value: "66", n: 66 },
+    noLabel: "no, with a reason: 68",
+    no: [
+      { name: "no, bad timing", sub: "emails only, back in 90 days", value: "19", n: 19 },
+      { name: "no, no budget", sub: "emails only, back in 180 days", value: "15", n: 15 },
+      { name: "no, not the buyer", sub: "back to the qualifier, to find the buyer", value: "15", n: 15 },
+      { name: "no, too small", sub: "emails only, back in 180 days", value: "10", n: 10 },
+      { name: "no, duplicate", sub: "stays where it is", value: "5", n: 5 },
+      { name: "no, spam or competitor", sub: "ruled out", value: "4", n: 4 },
+    ],
+  },
+
+  // F6, DotRows. 35 dots: 17 ink, the rest ringed in red. No row after the fix: that count is not in the sources.
+  copies: {
+    label: "The first live test: 17 companies in the test, 35 company records in HubSpot.",
+    rows: [
+      { label: "companies in the test", n: 17, ringed: 0, value: "17" },
+      { label: "company records HubSpot held", n: 35, ringed: 18, value: "35" },
+    ],
+    key: "ringed in red: the extra records",
+  },
+
+  // F7, DotRows. 100 dots, the 44 changed ones first, ringed in red.
+  batch: {
+    label: "The first run of the nightly job read the oldest 100 companies in the account. 0 were mine. It changed 44 by mistake, and all 44 were put back the same hour.",
+    rows: [
+      { label: "the batch it read: the oldest 100 companies in the account", n: 100, ringed: 44, ringedFirst: true, value: "44 changed by mistake, all 44 put back the same hour" },
+      { label: "mine in that batch", n: 0, ringed: 0, value: "0" },
+    ],
+    key: "ringed in red: changed by mistake",
+  },
+
+  // F8, components/sketches/FunnelOnce.tsx. Bars to scale of the first row (300). No red on this figure.
+  funnel: {
+    id: "the-funnel",
+    head: "300 made-up leads, step by step",
+    replay: "replay",
+    rows: [
+      { name: "Leads in", sub: "made-up people who filled in a form", value: "300", n: 300 },
+      { name: "Reached a sales team", sub: "a salesperson or the qualifier", value: "214 · 71%", n: 214 },
+      { name: "Accepted by a rep", sub: "a script played the reps", value: "66 · 31% of those", n: 66 },
+      { name: "Became a deal", sub: "accepted leads with a deal opened", value: "54 · 82%", n: 54 },
+      { name: "Won", sub: "the deal closed as a sale", value: "16 · 30% of the deals", n: 16 },
+    ],
+    result: {
+      name: "First follow-ups on time",
+      sub: "inside the team's deadline",
+      line: "74% (167 of 225)",
+      note: "The late ones are tasks the simulation left open. The report's clock was set 30 hours after the last lead.",
+    },
+  },
+
+  // F9, BandRows. Bars to scale of 100%. The red note is the figure's one red.
+  bands: {
+    head: "How often a rep accepted a lead, by score",
+    under: "of the leads in each band that reached a sales team",
+    rows: [
+      { name: "High score, 70 and over", sub: "31 of 60 accepted", value: "52%", n: 52 },
+      { name: "Middle, 45 to 69", sub: "32 of 111 accepted", value: "29%", n: 29 },
+      { name: "Low, under 45", sub: "3 of 43 accepted", value: "7%", n: 7 },
+    ],
+    note: "I made the simulated reps likelier to accept high scores.",
+  },
+
+  sections: [
+    // 0. The opening, under the lede: no heading.
+    {
+      parts: [
+        { t: "p", s: "Everything here is made-up data, in a free HubSpot account and an n8n I run myself. It has never handled a real lead. This page follows one made-up lead, Priya, from her form to the weekly report, and shows the two things that went wrong on the way." },
+        { t: "p", s: "HubSpot is a CRM, the database where a sales team keeps its contacts, companies and deals. n8n is a tool for building automations. A lead is someone who has shown interest, here by filling in a form." },
+        { t: "fig", fig: "route" },
+        { t: "p", s: 'Each step below has a picture and a few lines. The technical detail sits behind the "read more" lines, and the code is public, linked at the end.' },
+      ],
+      more: [],
+    },
+    // 1
+    {
+      parts: [
+        { t: "h2", s: "Priya fills in a form" },
+        { t: "p", s: "Priya is made up: a director at a made-up health company with 8,500 staff, asking for a demo." },
+        { t: "fig", fig: "slip" },
+        { t: "p", s: 'Every lead gets a score out of 100. Up to 60 points are for fit: how big the company is and how senior the person is. Up to 40 are for how ready they sound: which form they used, and buying words like "evaluating" or "budget".' },
+        { t: "p", s: "Priya scores 95. The score does one job: it sets how urgent the follow-up is. A separate list of checks picks who gets her." },
+      ],
+      more: [
+        {
+          label: "How the score is worked out",
+          body: [
+            { t: "p", s: "The score runs from 0 to 100. Up to 60 points are for fit and up to 40 for intent, which is how ready the lead sounds." },
+            {
+              t: "table",
+              head: ["Part", "Points"],
+              rows: [
+                ["Company size", "1,000 or more staff 30, 100 to 999 25, 20 to 99 15, 2 to 19 8, one person 3, unknown 5"],
+                ["Seniority", "executive 25, director or head 20, manager or lead 12, anyone else 5, student 0"],
+                ["Role", "5 more if the title is in sales, revenue, growth or operations"],
+                ["Which form", "demo form 25, pricing page 20, contact form or webinar 10, partner form 10, guide download 5, newsletter 2"],
+                ["Buying words", '15 more for words like "this week", "budget", "contract ends", "evaluating" or "need a call"'],
+              ],
+            },
+            { t: "p", s: "Priya: 30 for size, 20 for director, 5 for a revenue operations title, 25 for the demo form and 15 for buying words. That is 95." },
+            { t: "p", s: "The score sets the follow-up task's priority: 70 and over is high, 45 to 69 medium, under 45 low. It never picks the team." },
+          ],
+        },
+        {
+          label: "How it records where a lead came from",
+          body: [
+            { t: "p", s: "Links in ads and emails carry tags that say where a click came from (UTM tags, like `utm_source=google`). The form sends them along." },
+            { t: "p", s: "Each contact keeps two copies. First touch is the channel that first brought them in. It is written once and never overwritten. Last touch is rewritten on every form." },
+            { t: "p", s: "Messy values are cleaned into a short list. `fb` becomes `meta`, and Priya's `LinkedIn` with a stray space after it becomes `linkedin`. A form with no tags at all is recorded as `direct`." },
+            { t: "p", s: "A spreadsheet import skips that cleaning, so a weekly count of values outside the list should be 0. It is a cheap check for any CRM." },
+            { t: "p", s: "Live test: 20 leads sent three times, 5 of them coming back from a new channel. First touch stayed the same for 20 of 20, and last touch moved for the 5." },
+          ],
+        },
+      ],
+    },
+    // 2
+    {
+      parts: [
+        { t: "h2", s: "One team gets her, with a reason and a deadline" },
+        { t: "p", s: "Every form ends with exactly one of seven teams. Five have a person and a deadline for first contact. One gets marketing emails only, and one is ruled out." },
+        { t: "p", s: "A fixed list of checks picks the team, top to bottom, and the first match wins. Priya's company has over 1,000 staff and she sounds ready, so she goes to enterprise sales, who have 1 hour." },
+        { t: "fig", fig: "teams" },
+        { t: "p", s: "The sales rep gets a task with the score and the reason, so they can see why this lead is theirs." },
+        { t: "fig", fig: "memo" },
+        { t: "p", s: "One company has one owner. When Priya's colleague Grace filled in the same form, she went to the same team, because it already had her company." },
+      ],
+      more: [
+        {
+          label: "The 13 checks, in order",
+          body: [
+            { t: "p", s: "The team comes from a fixed list of checks, top to bottom. The first one that matches wins." },
+            {
+              t: "ul",
+              items: [
+                "No valid email, or no form name: refused, nothing saved.",
+                'Junk like "asdf" or "test": ruled out.',
+                "An email domain on the competitor list: ruled out.",
+                'The partner form, or "resell", "refer" or "partner" in the message: partnerships.',
+                "A student title or a university email: emails only.",
+                "A personal email with no company: emails only.",
+                "A rep already said no and that still holds: the lead stays where the rep sent it.",
+                "The person already belongs to a sales team: they stay with it.",
+                "Their company already belongs to a sales team: the same team.",
+                "Company size unknown: the qualifier checks first.",
+                "Ready to talk (demo form, pricing page, or buying words): a sales team, by company size.",
+                "Not ready and a small company, but asking for a decision-maker: the qualifier.",
+                "Not ready: a small company gets emails only, a mid-size or bigger one goes to the qualifier.",
+              ],
+            },
+            { t: "p", s: 'Buying words are a fixed list, including "this week", "asap", "contract ends", "budget", "ready to buy", "need a call", "evaluating", "security questionnaire" and "procurement".' },
+          ],
+        },
+        {
+          label: "One company, one owner, and no second copy",
+          body: [
+            { t: "p", s: "A second person from a company that a sales team already holds goes to that team. Grace Kim, Priya's colleague, scored 65 and still landed with enterprise sales, because Lumen Health already belonged to it." },
+            { t: "p", s: "Saving is by email address, so a repeat form updates the person and does not make a second one. Each form gets an id, and the same id twice opens no second task or deal." },
+            { t: "p", s: "A lead that goes to a sales team also opens one deal, HubSpot's record of a possible sale. A lead for the qualifier opens a task and no deal." },
+            { t: "p", s: "Live test: the same 20 leads sent a second and a third time made 0 new contacts, 0 companies, 0 deals and 0 tasks." },
+            { t: "p", s: "Every saved lead carries its reason in a field called `routing_reason`. That is the line the rep reads." },
+          ],
+        },
+      ],
+    },
+    // 3
+    {
+      parts: [
+        { t: "h2", s: "Your turn: three leads my rules had to sort" },
+        { t: "p", s: "Rules like these are a judgement written down, so I wanted a second opinion that did not come from me. An AI reviewer that had never seen my rules or the code sorted the same 20 test leads." },
+        { t: "fig", fig: "game" },
+        { t: "p", s: "18 of 20 matched. One miss showed a real gap and I changed the rule, which makes 19 of 20. On the other I kept my rule and wrote down why." },
+        { t: "p", s: "The reviewer is an AI, so I treat this as a second opinion. Labels from a person would be the stronger test, and that column is still empty." },
+      ],
+      more: [
+        {
+          label: "How the reviewer was set up",
+          body: [
+            { t: "p", s: "A fresh AI reviewer that had never seen my rules or the code sorted the same 20 leads. It got the table of leads and a one-line meaning for each team, with no size cut-offs." },
+            { t: "p", s: "My rules agreed with it on 18 of 20, and on 19 of 20 after the fix for Chloe's case." },
+            { t: "p", s: "These are an AI's labels. The column for a person's labels is still empty." },
+            { t: "p", s: "After the fix I ran the live test again on a clean account. 13 of 13 checks passed, and Chloe went to the qualifier with a follow-up task." },
+          ],
+        },
+      ],
+    },
+    // 4
+    {
+      parts: [
+        { t: "h2", s: "The clock starts, and the rep says yes or no" },
+        { t: "p", s: "Once the task exists, the clock runs. If the deadline passes with no first contact, the task is flagged as late and raised to high priority. That happens once, so a late lead cannot sit unnoticed and the rep is not nagged every hour." },
+        { t: "p", s: 'Then the rep answers. A yes keeps the lead with them. A no needs a reason from a fixed list, and the reason decides where the lead goes next. Priya\'s rep said yes, with the note "Discovery call booked."' },
+        { t: "p", s: "In the 300-lead test a script played the reps." },
+        { t: "fig", fig: "decisions" },
+        { t: "p", s: 'The reason is what gives a rejected lead a next step: "bad timing" comes back in 90 days, and "not the buyer" goes to the qualifier to find the right person.' },
+      ],
+      more: [
+        {
+          label: "How the late flag works",
+          body: [
+            { t: "p", s: "A second automation looks at open follow-up tasks. If one is past its deadline (what sales teams call an SLA), it raises the task to high priority and adds one line saying when it was due and how late it is. The next run sees that line and leaves the task alone, so each task is flagged once." },
+            { t: "p", s: "To test it without waiting, a test run can be told what time it is. With 15 open follow-ups and the clock set 5 hours ahead, the 12 with a 1 or 4 hour deadline were flagged and the 3 with 24 or 48 hours were not. A second run flagged 0 more." },
+            { t: "p", s: "It also records speed to lead: the minutes from the form to the first follow-up being done. I measure from the moment the task was created. Measured from the day the contact was created, a contact from months ago who fills in a new form adds months." },
+            { t: "p", s: "It is built to run every hour. I left that timer off: switched on, it would edit HubSpot with nobody watching, and that is the account owner's call." },
+          ],
+        },
+        {
+          label: "What a yes or a no changes in HubSpot",
+          body: [
+            { t: "p", s: "A yes marks the lead as in progress, completes the follow-up task and leaves the deal open. A no completes the task and closes any open deal as lost, with the reason." },
+            {
+              t: "table",
+              head: ["Reason", "Where the lead goes", "Comes back"],
+              rows: [
+                ["Not the buyer", "the qualifier, with a new task due in 24 hours", "no date"],
+                ["Bad timing", "emails only", "after 90 days"],
+                ["No budget", "emails only", "after 180 days"],
+                ["Too small", "emails only", "after 180 days"],
+                ["Duplicate", "stays where it is", "no date"],
+                ["Spam or competitor", "ruled out", "never"],
+              ],
+            },
+            { t: "p", s: "A no also holds. If a rejected lead fills in another form, they stay where the rep sent them and no new task or deal opens. One exception: a lead rejected for bad timing who comes back with buying words goes to a salesperson again." },
+            { t: "p", s: "The nightly job moves a lead from emails only to the qualifier on its return date. Sending the same decision twice changes nothing." },
+            { t: "p", s: 'One HubSpot detail: lifecycle stage, HubSpot\'s own label for how far along a contact is, cannot tell you whether a rep accepted a lead. A default setting moves a contact to "opportunity" as soon as a deal is linked, and my first live check of this part failed on exactly that. I count handoffs with a separate decision field.' },
+          ],
+        },
+      ],
+    },
+    // 5
+    {
+      parts: [
+        { t: "h2", s: "Mistake one: HubSpot made two of every company" },
+        { t: "p", s: "This happened in my first live test. I sent 20 made-up leads, twice, and one check failed: 35 company records where there should have been 17." },
+        { t: "fig", fig: "copies" },
+        { t: "p", s: "HubSpot was making its own company record every time I saved a person, and my automation then made another. Saving the company first fixed it, and the same test has passed since: one company per web address." },
+        { t: "p", s: "Why it matters: two records for one company means two owners and two versions of the truth." },
+      ],
+      more: [
+        {
+          label: "Why HubSpot made the copies, and the fix",
+          body: [
+            { t: "p", s: "HubSpot has a default setting that creates a company for every new email domain the moment a contact is saved. My automation saved the contact first and then made its own company, so each one got a second record." },
+            { t: "p", s: "The fix was the order: save the company first, then the person, and HubSpot links the person to the company that is already there." },
+            { t: "p", s: "The lookup also takes the oldest record for a domain and reports how many it found, in a field called `company_matches`. A duplicate now shows up in every response." },
+            { t: "p", s: "If that setting is on in your account, write companies first. If your automation owns companies, switch the setting off." },
+            { t: "p", s: "One case is still open. Two people from a brand-new company who submit in the same second can each make a company. That happened in a later live test, and the nightly job merged the pair." },
+          ],
+        },
+      ],
+    },
+    // 6
+    {
+      parts: [
+        { t: "h2", s: "Mistake two: my tidy-up job changed 44 companies that were not mine" },
+        { t: "p", s: "Every night a tidy-up job cleans the data: it fixes country names, merges duplicate companies and brings leads back on their return date." },
+        { t: "p", s: 'To find duplicates, its first live run read "the oldest 100 companies in the account". My test account also held more than 100 older companies from outside this project, so none of the 100 were mine.' },
+        { t: "p", s: 'It found 0 duplicates and changed the country on 44 of those companies from "United States" to "US".' },
+        { t: "fig", fig: "batch" },
+        { t: "p", s: "I put all 44 back to their exact old values within the hour and read each one back." },
+        { t: "p", s: "Then I added two guards:" },
+        {
+          t: "ul",
+          items: [
+            "It only reads companies linked to leads the system handled.",
+            "Before any write it refuses a company that is not test data, and an automated test plants an outside company and checks it is left alone.",
+          ],
+        },
+        { t: "p", s: 'What I took from it: pick records with a filter that names your own, never "the first 100". And put a second guard at the write, so a bad read cannot become a bad write.' },
+      ],
+      more: [
+        {
+          label: "The two guards, and what else the nightly job does",
+          body: [
+            { t: "p", s: "Guard one is the read. The job now looks only at companies linked to leads the system has handled, plus other records with the same web domain." },
+            { t: "p", s: "Guard two is the write. The step that plans the changes refuses any company outside the test data's reserved example.com addresses." },
+            { t: "p", s: "My reset job, which clears the test data, got the same treatment. It stops before removing anything if a search returns a record that is not on its list. After I rewrote it, its first run did stop, over one made-up lead with a gmail address, and nothing was removed." },
+            { t: "p", s: "What the job does on a normal night:" },
+            {
+              t: "ul",
+              items: [
+                "Works out seniority and department from the job title, for reporting.",
+                'Turns country names into two-letter codes, so "United Kingdom" becomes GB. A value it does not know, like "Europe", is left alone and named in the run\'s summary.',
+                "Merges duplicate companies. It keeps the oldest and archives the copies, because archived records can be restored for 90 days and HubSpot's own merge cannot be undone.",
+                "Moves leads from emails only to the qualifier on their return date.",
+                "Counts required fields that are empty.",
+              ],
+            },
+            { t: "p", s: "It writes only what differs, so a second run straight after makes 0 changes. A data dictionary lists every custom field, what writes it and what broken looks like." },
+          ],
+        },
+      ],
+    },
+    // 7
+    {
+      parts: [
+        { t: "h2", s: "300 leads in, 16 won" },
+        { t: "p", s: "One lead shows the steps. To see whether the whole thing holds up, I generated 300 made-up leads and sent them through the live system, with a script playing the reps. Priya is not one of the 300; she comes from the earlier 20-lead tests." },
+        { t: "fig", fig: "funnel" },
+        { t: "p", s: "A weekly report reads all of this back from HubSpot and counts it. It only reads and changes nothing." },
+        { t: "p", s: "The 74% says the report can tell on-time from late. It says nothing about how fast a real team would be." },
+      ],
+      more: [
+        {
+          label: "How the 300-lead run worked, and how I checked the report",
+          body: [
+            { t: "p", s: "300 made-up leads from a fixed random seed went in through the live form address, then 134 simulated rep decisions through the live decision address. 38 completed follow-ups and 36 closed deals went in through test-only inputs." },
+            { t: "p", s: "In CRM terms, a lead that reached a sales team is a marketing-qualified lead (MQL) and one a rep accepted is a sales-qualified lead (SQL). The 19 partnership leads are counted on their own line." },
+            { t: "p", s: "Fewer deals than accepted leads is expected: a lead the qualifier accepts opens no deal yet." },
+            {
+              t: "table",
+              head: ["Team", "Follow-ups", "On time", "Late", "Not due yet"],
+              rows: [
+                ["Enterprise sales", "20", "18", "2", "0"],
+                ["Mid-size sales", "45", "31", "14", "0"],
+                ["Small-business sales", "76", "61", "15", "0"],
+                ["Qualifier", "73", "46", "27", "0"],
+                ["Partnerships", "19", "11", "0", "8"],
+                ["All", "233", "167", "58", "8"],
+              ],
+            },
+            { t: "p", s: "Every follow-up that was completed was done within minutes, in test time. The late ones were still open when the report's clock, set 30 hours after the last lead, judged them." },
+            { t: "p", s: "The report also splits the same counts by where a lead first came from. In this run google brought 72 of the 300 leads and 7 of the 16 wins." },
+            { t: "p", s: "To check the report itself, I wrote a separate recount as a database query from the lead generator's own records, and the numbers matched. A planted record from outside the test data was left out, a second run gave identical numbers, and the report made 0 writes. The whole run took 2,858 requests to HubSpot." },
+          ],
+        },
+      ],
+    },
+    // 8
+    {
+      parts: [
+        { t: "h2", s: "Does a high score mean a better lead?" },
+        { t: "p", s: "This was the question I most wanted the report to answer. It splits leads into three score bands and shows how often a rep accepted each." },
+        { t: "fig", fig: "bands" },
+        { t: "p", s: "On this data, yes: reps accepted 52% of high-score leads and 7% of low-score ones. But I made the simulated reps likelier to accept high scores. So this shows the report can detect a pattern when there is one. It says nothing about whether this score works on real leads." },
+        { t: "p", s: 'For won deals the report answered "not enough data", because the low band closed only 2 deals. A small sample cannot give a confident answer, and the report says so.' },
+      ],
+      more: [
+        {
+          label: "The numbers behind the score answer",
+          body: [
+            {
+              t: "table",
+              head: ["Score band", "Leads", "Reached a sales team", "Accepted", "Rate"],
+              rows: [
+                ["0-44", "107", "43", "3", "7%"],
+                ["45-69", "133", "111", "32", "29%"],
+                ["70+", "60", "60", "31", "52%"],
+              ],
+            },
+            { t: "p", s: "The test is a one-sided Fisher exact test of the top band against the bottom band, and it gives p < 0.001." },
+            { t: "p", s: 'For win rate the report says "not enough data". The top band had 22 closed deals and the bottom band 2, and the report wants 10 in each before it gives a p-value.' },
+          ],
+        },
+      ],
+    },
+    // 9. The limits: an open list, never behind a click.
+    {
+      parts: [
+        { t: "h2", s: "What it doesn't do" },
+        {
+          t: "ul",
+          items: [
+            "It has only seen made-up data, in a free account with one user. The seven teams are a label on the lead, not seven people's inboxes.",
+            "Deadlines are plain clock hours, so nights and weekends count.",
+            "The forms are protected by one shared key, and a form in a browser cannot hide it. A real site would send the form through its own server.",
+            "The nightly job reads at most 100 contacts and 100 companies a run, and says so when it hits that.",
+            "Two people from a brand-new company who submit in the same second can still create two company records. The nightly job merges them.",
+            "The three timers (late flag, nightly tidy-up, weekly report) are switched off. I ran each by hand for the tests.",
+            "Alerts when an automation fails are the next part, and they are not built yet.",
+          ],
+        },
+      ],
+      more: [],
+    },
+    // 10
+    {
+      parts: [
+        { t: "h2", s: "How I checked it, and the code" },
+        { t: "p", s: "I built it one part at a time and tested each part against the real HubSpot test account before starting the next." },
+        {
+          t: "table",
+          head: ["What was checked", "Result"],
+          rows: [
+            ["The rules on their own, automated tests", "88 pass"],
+            ["Sorting, company records and where a lead came from", "14 of 14 live checks"],
+            ["The late flag", "13 of 13"],
+            ["The rep's yes or no", "16 of 16"],
+            ["The nightly tidy-up", "20 of 20"],
+            ["The weekly report", "15 of 15, and equal to a separate recount"],
+            ["The 300 test leads", "300 of 300 sorted live the same as the rules predicted"],
+          ],
+        },
+        { t: "p", s: "The automations, the rules in plain words, every test result and the tests are public: [github.com/Manveen07/hubspot-n8n-inbound-crm](https://github.com/Manveen07/hubspot-n8n-inbound-crm)." },
+      ],
+      more: [
+        {
+          label: "The key on the two form addresses",
+          body: [
+            { t: "p", s: "The two addresses that accept data (webhooks, web addresses another system posts to) need a shared secret in a header. Without it the request is refused with a 401 and nothing is written." },
+            { t: "p", s: "Tested live: a lead and a rep decision sent with no key, and with a wrong key, were refused every time and nothing changed in HubSpot." },
+          ],
+        },
+      ],
+    },
+  ],
+};

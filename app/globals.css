@@ -925,3 +925,95 @@ h1 { font-size: clamp(34px, 5.2vw, 62px); line-height: 1.05; font-weight: 800; m
 /* 10 Nov: /how-i-build goes to recruiters; the freelance link stays on every other page. */
 body:has(.hero.how) .foot-freelance { display: none; }
 .built-more { margin-top: 18px; }
+
+/* ── The inbound CRM post (24 Nov): /writing/an-inbound-crm-on-hubspot-and-n8n (components/Inbound.tsx, InboundCharts.tsx
+   and the three sketches). One made-up lead followed down the page, a figure per step. Nothing new to look at: the bar
+   rows are the free check's (.fc-name, .fc-sub, .fc-track, .fc-bar, .fc-val) without its play, the slip is a pinned
+   note, the dots are /how-i-build's units, the game is the namesake's, the funnel is a .fc. Ink, dim and the pencil
+   rule; red only through the pen (a circle, an underline, a ring, a margin note). No new colours, fonts or keyframes. */
+.crm-fig { margin: 22px 0 28px; }
+.crm-sec > div > .sketch { margin: 20px 0 24px; }
+.crm-head { margin: 0 0 14px; }
+.crm-cap { margin: 0 0 6px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; color: var(--dim); text-wrap: pretty; }
+.crm-under { margin: -8px 0 14px; }
+/* The technical detail, behind a click at the end of its section. */
+.crm-mores { max-width: var(--col); margin: 6px 0 0; border-top: 1px dashed var(--rule); }
+.crm-more-tag { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; color: var(--dim); }
+.crm-more-body { padding: 2px 0 6px; }
+/* A bar row: the name, a team's deadline, its grey line, then the bar to scale and its value. Phones stack them; from
+   640px the bar sits beside the words (the .fc-track rule above puts it in column 2). */
+.crm-rows { list-style: none; padding: 0; margin: 0; }
+.crm-row { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 0 14px; }
+.crm-row:last-child { margin-bottom: 0; }
+.crm-row .fc-sub { text-wrap: pretty; }
+.crm-due { margin: 3px 0 2px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; }
+/* The loop round the first deadline hugs it, so it stays clear of the name above and the grey line under it. */
+.crm-due .pen-circle { margin-left: -6px; padding: 0 6px; }
+.crm-due .pen-circle svg { top: -6px; height: calc(100% + 12px); }
+.crm-row .crm-note { margin: 10px 0 4px; }
+/* A line between groups of rows: the four sales teams' total, the answers that were a no. */
+.crm-sum { margin: 0 0 14px; padding: 0 0 12px; border-bottom: 1px dashed var(--rule); }
+.crm-sum p { margin: 0; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; color: var(--dim); text-wrap: balance; }
+.crm-sum:not(.crm-sub) p::before { content: "\2191  " / ""; }
+.crm-sub { padding: 12px 0 0; border-top: 1px dashed var(--rule); border-bottom: 0; }
+@media (min-width: 640px) {
+  .crm-row { grid-template-columns: 240px minmax(0, 1fr); column-gap: 16px; }
+  .crm-row .crm-note { grid-column: 1 / -1; grid-row: 3; }
+}
+/* The form, on a pinned slip (the confidently-wrong notes' .pin), and the score under it: one bar on a 0 to 100 track,
+   the fit points in ink, the ready-to-buy points in grey, a 2px gap between, the rest of the track empty. */
+.crm-slip { max-width: 540px; margin: 8px 0 0; }
+.crm-fields { display: grid; gap: 10px; margin: 10px 0 0; }
+.crm-fields > div { display: grid; grid-template-columns: minmax(0, 1fr); }
+.crm-fields dt { font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.crm-fields dd { margin: 0; font-size: 17px; line-height: 1.45; }
+.crm-fields .crm-scribble { display: block; margin: 5px 0 0; }
+.crm-score { max-width: 540px; margin: 24px 0 0; }
+.crm-score-n { margin: 0 0 8px; font-size: 15px; line-height: 1; color: var(--dim); }
+.crm-score-n b { margin-right: 2px; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.crm-stack { display: flex; gap: 2px; height: 14px; margin: 0 0 10px; border-left: 1px solid var(--rule); border-radius: 0 4px 4px 0; box-shadow: inset 0 0 0 1px var(--rule); }
+.crm-stack i { flex: none; width: calc(var(--w) * 100% - 1px); background: var(--ink); }
+.crm-stack .crm-ready { background: var(--dim); border-radius: 0 4px 4px 0; }
+.crm-key { position: relative; margin: 0 0 3px; padding-left: 18px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12.5px; line-height: 1.5; }
+.crm-key::before { content: ""; position: absolute; left: 0; top: 0.4em; width: 10px; height: 10px; background: var(--ink); }
+.crm-key-ready::before { background: var(--dim); }
+@media (min-width: 640px) {
+  .crm-fields > div { grid-template-columns: 112px minmax(0, 1fr); column-gap: 14px; align-items: baseline; }
+}
+/* The note the rep gets: mono in a wash box, like the namesake's terminal. Long lines wrap inside it. */
+.crm-memo { padding: 12px 14px; background: var(--wash); border: 1px solid var(--rule); font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.crm-memo p { margin: 0; }
+/* Dots: a red ring for a record that went wrong, an ink ring for the one call I kept; and what a ring means, under them. */
+.udots i.ring { background: transparent; box-shadow: inset 0 0 0 2px var(--red); }
+.udots i.kept { background: transparent; box-shadow: inset 0 0 0 2px var(--ink); }
+.crm-units .urow { align-items: start; margin-bottom: 14px; }
+.crm-units .ulabel { font-size: 12.5px; color: var(--ink); }
+.crm-units .uval { line-height: 1.3; }
+.crm-dotkey { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono), "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.4; color: var(--dim); }
+.crm-dotkey i { flex: none; width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--red); }
+.crm-agree { margin: 18px 0 0; }
+.crm-agree .udots { grid-template-columns: repeat(20, 10px); margin: 0 0 8px; }
+.crm-agree .crm-cap { max-width: 560px; margin: 0; }
+/* Sort the lead: the namesake game's classes. Four picks, so they sit under the case at every width, two by two on a
+   narrow phone; without JavaScript they are not there at all (the calls all show). A pick's three lines rise in as one. */
+.crm-game { margin: 26px 0 30px; }
+.crm-game .ns-head { font-size: 21px; }
+.crm-game .ns-picks { display: none; }
+.pen-js .crm-game .ns-picks { display: flex; }
+/* The answer's place is a pencilled box from the start, so the room kept for it reads as a blank to be filled in. */
+.crm-game .ns-callbox { margin: 4px 0 0; padding: 10px 12px; border: 1px dashed var(--rule); }
+.crm-game .ns-call { margin: 0; }
+.crm-game .ns-call p { margin: 0 0 5px; }
+.crm-game .ns-call p:last-child { margin-bottom: 0; }
+.ns-case[data-result="rules"] .ns-same, .ns-case[data-result="reviewer"] .ns-rev { visibility: visible; }
+@media (min-width: 640px) {
+  .crm-game .ns-case { grid-template-columns: minmax(0, 1fr); }
+  .crm-game .ns-picks { grid-column: 1; grid-row: auto; flex-wrap: wrap; margin: 4px 0 0; }
+}
+@media (max-width: 479px) {
+  .pen-js .crm-game .ns-picks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .crm-game .ns-pick { padding: 0 8px; }
+}
+/* The funnel is a .fc: its play, replay and waiting states are the rules above. Its last bar (16 of 300) stays visible. */
+.crm-funnel { margin: 22px 0 28px; }
+.crm-funnel .fc-bar { min-width: 6px; }
