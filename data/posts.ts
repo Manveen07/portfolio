@@ -70,10 +70,11 @@ export const POSTS: Post[] = [
     cardTitle: "What happens after a demo form: lead routing I built on HubSpot and n8n",
     line: "One made-up lead followed from the form to the weekly report, then 300 more to test it.",
     date: "2026-11-24",
-    // Trimmed 24 Nov (his words: "to much text"): about 2,240 words on the open path. Before that, about 2,720
+    // Cut to 5 minutes 24 Nov (his words: "a five minute read is a mark that I want to reach"): about 1,500 words on
+    // the open path. Before: 2,240 after the first trim ("to much text"), and about 2,720
     // with every figure's words after the review round (plain definitions and the notes that say what a number is), so
     // 10 is the least it allows.
-    readMins: 9,
+    readMins: 5,
     tags: ["hubspot", "n8n", "revops"],
     summary: INBOUND.lede,
     body: { component: "inbound-crm" },

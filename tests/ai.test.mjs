@@ -238,7 +238,7 @@ test("llms.txt lists every post under Writing, newest first, with the date its p
   // 24 Nov: the inbound-CRM post (HubSpot + n8n, synthetic data) is the newest; its line ends with its date and its
   // summary carries the funnel numbers (rewritten the same day in plain words, when the post became a drawn page).
   assert.deepEqual(writing.map((m) => m[1]), ["an-inbound-crm-on-hubspot-and-n8n", "a-champion-tracker-that-can-say-it-isnt-sure", "149-tests-for-a-few-slack-buttons", "marking-the-ais-homework", "things-ai-got-confidently-wrong", "schema-as-eval-spec"]);
-  assert.match(writing[0][2], /300 made-up leads\. All 300 landed where my rules said they should, 214 of them with a sales team\. A small program played the salespeople \(reps\): it said yes to 66 of those leads and marked 16 as won sales\. \(24 November 2026\)$/);
+  assert.match(writing[0][2], /tested it with 300 made-up leads\. All 300 landed where my rules said they should\. \(24 November 2026\)$/);
   assert.match(writing[1][2], /Numbers: the naive version 8\/29 = 28%, BLOCKED; this one 29\/29 = 100%, PASS, on dev cases it passes by construction; blind first runs 23\/31, 25\/31 and 20\/31, all BLOCKED\. \(3 November 2026\)$/);
   assert.match(writing[2][2], /\(25 October 2026\)$/);
   assert.match(writing[3][2], /Numbers: 7 of 419 answers wrong \(1\.7%\)[^\n]*\(Marked 26 Sep 2026\)$/);
